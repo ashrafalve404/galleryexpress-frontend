@@ -1,0 +1,112 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import { HiChevronLeft, HiChevronRight } from 'react-icons/hi';
+import { SearchCard } from './SearchCard';
+
+const slides = [
+  {
+    image: '/hero_banner_1.png',
+    title: "Explore Cox's Bazar Coastal Highway",
+    subtitle: 'Daily Scania & Volvo AC Express Coaches with Deluxe Seat Comfort',
+  },
+  {
+    image: '/hero_banner_2.png',
+    title: 'Scenic Green Journeys to Sylhet',
+    subtitle: 'Punctual Departures & GPS-Tracked Fleet Across All Routes',
+  },
+  {
+    image: '/hero_banner_3.png',
+    title: 'Intercity Highway Express',
+    subtitle: 'Connecting Dhaka, Chittagong, Rajshahi & Khulna Daily',
+  },
+];
+
+export function HeroSlider() {
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % slides.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const prevSlide = () => setCurrent((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+  const nextSlide = () => setCurrent((prev) => (prev + 1) % slides.length);
+
+  return (
+    <section className="relative z-20 pt-16 sm:pt-20 bg-gray-50">
+      {/* 1. Dedicated Banner Carousel Block (100% Fully Visible on Mobile & PC) */}
+      <div className="relative w-full h-[230px] xs:h-[270px] sm:h-[350px] md:h-[440px] lg:h-[500px] xl:h-[540px] overflow-hidden">
+        {slides.map((s, index) => (
+          <div
+            key={index}
+            className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
+              index === current ? 'opacity-100 z-10' : 'opacity-0 z-0'
+            }`}
+          >
+            <Image
+              src={s.image}
+              alt={s.title}
+              fill
+              sizes="100vw"
+              priority={index === 0}
+              className="object-cover object-center"
+              quality={90}
+            />
+            {/* Soft Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-black/20" />
+
+            {/* Slide Overlay Text */}
+            <div className="absolute bottom-8 sm:bottom-12 lg:bottom-16 left-4 sm:left-10 right-4 max-w-xl text-white z-20">
+              <h1 className="text-lg sm:text-3xl lg:text-4xl font-black text-white leading-tight drop-shadow-md">
+                {s.title}
+              </h1>
+              <p className="text-white/85 text-xs sm:text-sm font-medium mt-1 drop-shadow-xs line-clamp-2">
+                {s.subtitle}
+              </p>
+            </div>
+          </div>
+        ))}
+
+        {/* Navigation Arrows */}
+        <button
+          onClick={prevSlide}
+          className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/40 hover:bg-[#E31B23] text-white backdrop-blur-md flex items-center justify-center transition-all border border-white/20 shadow-lg"
+          aria-label="Previous Slide"
+        >
+          <HiChevronLeft size={20} />
+        </button>
+
+        <button
+          onClick={nextSlide}
+          className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/40 hover:bg-[#E31B23] text-white backdrop-blur-md flex items-center justify-center transition-all border border-white/20 shadow-lg"
+          aria-label="Next Slide"
+        >
+          <HiChevronRight size={20} />
+        </button>
+
+        {/* Slide Indicators */}
+        <div className="absolute top-3 right-3 sm:right-6 z-30 flex items-center gap-1.5">
+          {slides.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrent(i)}
+              className={`h-1.5 rounded-full transition-all ${
+                i === current ? 'w-6 bg-[#E31B23]' : 'w-2 bg-white/50'
+              }`}
+              aria-label={`Go to slide ${i + 1}`}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* 2. Search Booking Widget Container - Positioned Under the Banner Section */}
+      <div className="relative z-30 max-w-4xl mx-auto px-4 -mt-8 sm:-mt-12 lg:-mt-16 pb-8 sm:pb-12">
+        <SearchCard />
+      </div>
+    </section>
+  );
+}

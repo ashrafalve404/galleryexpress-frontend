@@ -36,14 +36,10 @@ export function Header() {
     setUserMenuOpen(false);
   }, [pathname]);
 
-  const isHome = pathname === '/';
-
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled || !isHome
-          ? 'bg-white shadow-sm border-b border-gray-100'
-          : 'bg-transparent'
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white ${
+        scrolled ? 'shadow-md border-b border-gray-100' : 'border-b border-gray-100/80 shadow-xs'
       }`}
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -52,7 +48,7 @@ export function Header() {
           <Link href={ROUTES.HOME} className="flex items-center shrink-0">
             <img
               src="/galleryexplogo.png"
-              alt="Gallery Express"
+              alt="Gallery Express Limited"
               className="h-10 sm:h-12 w-auto object-contain transition-transform hover:scale-105"
             />
           </Link>
@@ -66,9 +62,7 @@ export function Header() {
                 className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
                   pathname === link.href
                     ? 'bg-[#E31B23]/10 text-[#E31B23]'
-                    : scrolled || !isHome
-                    ? 'text-gray-700 hover:text-[#111111] hover:bg-gray-100/70'
-                    : 'text-white/90 hover:text-white hover:bg-white/15'
+                    : 'text-gray-700 hover:text-[#111111] hover:bg-gray-100/80'
                 }`}
               >
                 {link.label}
@@ -79,10 +73,8 @@ export function Header() {
           {/* Right Side */}
           <div className="flex items-center gap-3">
             <a
-              href="tel:+88018XXXXXXXX"
-              className={`hidden lg:flex items-center gap-1.5 text-sm font-semibold transition-colors ${
-                scrolled || !isHome ? 'text-gray-700 hover:text-[#E31B23]' : 'text-white/90 hover:text-white'
-              }`}
+              href="tel:01826110036"
+              className="hidden lg:flex items-center gap-1.5 text-sm font-semibold text-gray-700 hover:text-[#E31B23] transition-colors"
             >
               <HiPhone className="text-[#E31B23] text-base" />
               <span>Help</span>
@@ -92,11 +84,7 @@ export function Header() {
               <div className="relative">
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className={`hidden lg:flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-sm font-semibold transition-all ${
-                    scrolled || !isHome
-                      ? 'bg-gray-100 hover:bg-gray-200/80 text-gray-800'
-                      : 'bg-white/15 hover:bg-white/25 text-white backdrop-blur-sm'
-                  }`}
+                  className="hidden lg:flex items-center gap-2.5 px-3.5 py-2 bg-gray-100 hover:bg-gray-200/80 rounded-xl text-sm font-semibold text-gray-800 transition-all"
                 >
                   <div className="w-6 h-6 rounded-full bg-[#E31B23] flex items-center justify-center text-white text-xs font-bold shadow-sm">
                     {(user.name || user.email || 'U').charAt(0).toUpperCase()}
@@ -147,11 +135,7 @@ export function Header() {
             {/* Mobile menu button */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className={`lg:hidden p-2 rounded-xl transition-colors ${
-                scrolled || !isHome
-                  ? 'text-gray-700 hover:bg-gray-100'
-                  : 'text-white hover:bg-white/15'
-              }`}
+              className="lg:hidden p-2 rounded-xl text-gray-700 hover:bg-gray-100 transition-colors"
               aria-label="Toggle menu"
             >
               {menuOpen ? <HiX size={24} /> : <HiMenu size={24} />}

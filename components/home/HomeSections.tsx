@@ -1,16 +1,62 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { HiShieldCheck, HiClock, HiLocationMarker, HiCheckCircle, HiChevronDown } from 'react-icons/hi';
-import { Search, Armchair, CreditCard, QrCode, ArrowRight } from 'lucide-react';
-import { ROUTES } from '@/lib/utils/constants';
+import Image from 'next/image';
+import { useQuery } from '@tanstack/react-query';
+import { HiShieldCheck, HiClock, HiLocationMarker, HiCheckCircle, HiChevronDown, HiChevronLeft, HiChevronRight } from 'react-icons/hi';
+import { RiBusFill } from 'react-icons/ri';
+import { Search, Armchair, CreditCard, QrCode, ArrowRight, Clock } from 'lucide-react';
+import client from '@/lib/api/client';
 import { today } from '@/lib/utils/date';
 
-const popularRoutes = [
+interface BackendRoute {
+  id: string;
+  origin: string;
+  destination: string;
+  distanceKm?: number;
+  durationMins?: number;
+  status: string;
+}
+
+const DEFAULT_POPULAR_ROUTES = [
   { from: 'Dhaka', to: 'Chittagong', duration: '4h 30m', fare: '৳550', departures: '12+ daily' },
-  { from: 'Dhaka', to: 'Sylhet', duration: '4h', fare: '৳500', departures: '10+ daily' },
-  { from: "Dhaka", to: "Cox's Bazar", duration: '8h', fare: '৳900', departures: '8+ daily' },
-  { from: 'Dhaka', to: 'Rajshahi', duration: '5h', fare: '৳600', departures: '8+ daily' },
-  { from: 'Dhaka', to: 'Khulna', duration: '6h', fare: '৳650', departures: '6+ daily' },
+  { from: 'Dhaka', to: "Cox's Bazar", duration: '8h', fare: '৳900', departures: '8+ daily' },
+  { from: 'Dhaka', to: 'Sylhet', duration: '6h', fare: '৳500', departures: '10+ daily' },
+  { from: 'Dhaka', to: 'Rajshahi', duration: '5h 30m', fare: '৳600', departures: '8+ daily' },
+  { from: 'Dhaka', to: 'Khulna', duration: '6h 30m', fare: '৳650', departures: '6+ daily' },
   { from: 'Chittagong', to: "Cox's Bazar", duration: '2h 30m', fare: '৳300', departures: '15+ daily' },
+];
+
+const destinations = [
+  {
+    name: "Cox's Bazar",
+    tag: 'Beach & Ocean',
+    desc: "World's longest natural sandy sea beach & scenic marine drive highway.",
+    image: '/dest_coxsbazar.png',
+    fare: 'From ৳900',
+  },
+  {
+    name: 'Chittagong',
+    tag: 'Port & Hill Tracts',
+    desc: 'Commercial hub, Patenga sea beach & lush green hill tracts scenery.',
+    image: '/dest_chittagong.png',
+    fare: 'From ৳550',
+  },
+  {
+    name: 'Sylhet',
+    tag: 'Tea Capital',
+    desc: 'Lush green tea estates, natural springs & serene hill landscapes.',
+    image: '/dest_sylhet.png',
+    fare: 'From ৳500',
+  },
+  {
+    name: 'Rajshahi',
+    tag: 'Silk & Heritage',
+    desc: 'Padma riverfront, ancient silk heritage & clean divisional capital.',
+    image: '/dest_rajshahi.png',
+    fare: 'From ৳600',
+  },
 ];
 
 const features = [
@@ -47,38 +93,227 @@ const steps = [
   },
 ];
 
+function formatMinutes(mins?: number): string {
+  if (!mins) return '4h+';
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  if (m === 0) return `${h}h`;
+  return `${h}h ${m}m`;
+}
+
+export function PopularDestinations() {
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % destinations.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const prevSlide = () => setCurrent((prev) => (prev === 0 ? destinations.length - 1 : prev - 1));
+  const nextSlide = () => setCurrent((prev) => (prev + 1) % destinations.length);
+
+  return (
+    <section className="py-16 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 sm:mb-10">
+          <div>
+            <h2 className="text-2xl sm:text-3xl font-black text-[#111111]">Popular Destinations</h2>
+            <p className="text-gray-500 mt-1 text-sm font-medium">Explore Bangladesh's most iconic travel hubs</p>
+          </div>
+        </div>
+
+        {/* ========== MOBILE MODE SLIDER (< sm) WITH HORIZONTAL TRANSLATE SLIDE EFFECT ========== */}
+        <div className="sm:hidden relative w-full overflow-hidden rounded-2xl shadow-lg border border-gray-100">
+          <div
+            className="flex w-full transition-transform duration-500 ease-out"
+            style={{ transform: `translateX(-${current * 100}%)` }}
+          >
+            {destinations.map((d) => (
+              <div key={d.name} className="w-full shrink-0 h-88 relative">
+                <Link
+                  href={`/search?from=Dhaka&to=${encodeURIComponent(d.name)}&date=${today()}`}
+                  className="group relative w-full h-full flex flex-col justify-end p-6"
+                >
+                  {/* Image poster background */}
+                  <div className="absolute inset-0 z-0">
+                    <Image
+                      src={d.image}
+                      alt={d.name}
+                      fill
+                      sizes="100vw"
+                      className="object-cover"
+                      quality={90}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10" />
+                  </div>
+
+                  {/* Content overlay */}
+                  <div className="relative z-10 text-white">
+                    <span className="inline-block bg-[#E31B23] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full mb-2 uppercase tracking-wide shadow-sm">
+                      {d.tag}
+                    </span>
+
+                    <h3 className="text-2xl font-black text-white mb-1">
+                      {d.name}
+                    </h3>
+
+                    <p className="text-white/85 text-xs line-clamp-2 mb-4 leading-relaxed font-medium">
+                      {d.desc}
+                    </p>
+
+                    <div className="flex items-center justify-between text-xs pt-3 border-t border-white/20 font-semibold text-white/90">
+                      <span>{d.fare}</span>
+                      <span className="text-[#E31B23] font-bold flex items-center gap-1 bg-white text-[#E31B23] px-3 py-1 rounded-xl shadow-sm">
+                        Book <ArrowRight size={12} />
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            ))}
+          </div>
+
+          {/* Mobile Navigation Arrows */}
+          <button
+            onClick={prevSlide}
+            className="absolute left-2.5 top-1/2 -translate-y-1/2 z-30 w-7 h-7 rounded-full bg-black/25 hover:bg-black/50 text-white/80 hover:text-white backdrop-blur-xs flex items-center justify-center border border-white/15 transition-all active:scale-90"
+            aria-label="Previous Destination"
+          >
+            <HiChevronLeft size={16} />
+          </button>
+          <button
+            onClick={nextSlide}
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 z-30 w-7 h-7 rounded-full bg-black/25 hover:bg-black/50 text-white/80 hover:text-white backdrop-blur-xs flex items-center justify-center border border-white/15 transition-all active:scale-90"
+            aria-label="Next Destination"
+          >
+            <HiChevronRight size={16} />
+          </button>
+
+          {/* Slide Dot Indicators */}
+          <div className="absolute top-3 right-3 z-30 flex items-center gap-1.5">
+            {destinations.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrent(i)}
+                className={`h-1.5 rounded-full transition-all ${
+                  i === current ? 'w-5 bg-[#E31B23]' : 'w-2 bg-white/60'
+                }`}
+                aria-label={`Go to destination ${i + 1}`}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* ========== DESKTOP GRID (≥ sm) ========== */}
+        <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {destinations.map((d) => (
+            <Link
+              key={d.name}
+              href={`/search?from=Dhaka&to=${encodeURIComponent(d.name)}&date=${today()}`}
+              className="group relative h-80 rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 flex flex-col justify-end p-6 border border-gray-100"
+            >
+              {/* Image poster background */}
+              <div className="absolute inset-0 z-0">
+                <Image
+                  src={d.image}
+                  alt={d.name}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                  className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                  quality={90}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10 group-hover:from-black/95 transition-all" />
+              </div>
+
+              {/* Content overlay */}
+              <div className="relative z-10 text-white">
+                <span className="inline-block bg-[#E31B23] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full mb-2 uppercase tracking-wide shadow-sm">
+                  {d.tag}
+                </span>
+
+                <h3 className="text-xl font-black text-white mb-1 group-hover:text-red-400 transition-colors">
+                  {d.name}
+                </h3>
+
+                <p className="text-white/80 text-xs line-clamp-2 mb-4 leading-relaxed font-medium">
+                  {d.desc}
+                </p>
+
+                <div className="flex items-center justify-between text-xs pt-3 border-t border-white/20 font-semibold text-white/90">
+                  <span>{d.fare}</span>
+                  <span className="text-[#E31B23] font-bold group-hover:translate-x-1 transition-transform flex items-center gap-1 bg-white text-[#E31B23] px-3 py-1 rounded-xl shadow-sm">
+                    Book <ArrowRight size={12} />
+                  </span>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function PopularRoutes() {
+  const { data: apiRoutes } = useQuery({
+    queryKey: ['public', 'routes'],
+    queryFn: async () => {
+      const { data } = await client.get('/api/v1/routes');
+      const list = data?.data || data || [];
+      return Array.isArray(list) ? list : [];
+    },
+  });
+
+  const activeRoutes = Array.isArray(apiRoutes) && apiRoutes.length > 0
+    ? apiRoutes
+        .filter((r: BackendRoute) => r.status === 'ACTIVE')
+        .slice(0, 6)
+        .map((r: BackendRoute) => ({
+          from: r.origin,
+          to: r.destination,
+          duration: formatMinutes(r.durationMins),
+          fare: 'From ৳500',
+          departures: 'Daily Daily',
+        }))
+    : DEFAULT_POPULAR_ROUTES;
+
   return (
     <section className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-10">
           <div>
             <h2 className="text-2xl sm:text-3xl font-black text-[#111111]">Popular Routes</h2>
-            <p className="text-gray-500 mt-1 text-sm font-medium">Most frequented intercity trips</p>
+            <p className="text-gray-500 mt-1 text-sm font-medium">Most frequented intercity bus trips across Bangladesh</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {popularRoutes.map((r) => (
+          {activeRoutes.map((r, i) => (
             <Link
-              key={`${r.from}-${r.to}`}
+              key={`${r.from}-${r.to}-${i}`}
               href={`/search?from=${encodeURIComponent(r.from)}&to=${encodeURIComponent(r.to)}&date=${today()}`}
               className="group bg-white p-6 rounded-2xl border border-gray-100 shadow-xs hover:shadow-xl hover:border-[#E31B23]/30 transition-all duration-300 transform hover:-translate-y-1"
             >
               <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2 text-lg font-black text-[#111111]">
+                <div className="flex items-center gap-2 text-base sm:text-lg font-black text-[#111111]">
                   <span>{r.from}</span>
                   <span className="text-[#E31B23]">→</span>
                   <span>{r.to}</span>
                 </div>
-                <span className="bg-[#E31B23]/10 text-[#E31B23] px-3 py-1 rounded-full font-black text-sm">
+                <span className="bg-[#E31B23]/10 text-[#E31B23] px-3 py-1 rounded-full font-black text-xs sm:text-sm">
                   {r.fare}
                 </span>
               </div>
 
-              <div className="flex items-center justify-between text-xs text-gray-500 pt-4 border-t border-gray-50 font-medium">
-                <span>⏱ {r.duration}</span>
-                <span>🚌 {r.departures}</span>
+              <div className="flex items-center justify-between text-xs text-gray-500 pt-4 border-t border-gray-100 font-semibold">
+                <span className="flex items-center gap-1.5">
+                  <Clock size={14} className="text-[#E31B23]" /> {r.duration}
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <RiBusFill size={15} className="text-[#E31B23]" /> Direct Bus
+                </span>
                 <span className="text-[#E31B23] font-bold group-hover:translate-x-1 transition-transform flex items-center gap-1">
                   Book <ArrowRight size={12} />
                 </span>
@@ -96,7 +331,7 @@ export function WhyChooseUs() {
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
-          <h2 className="text-2xl sm:text-3xl font-black text-[#111111]">Why Choose Gallery Express?</h2>
+          <h2 className="text-2xl sm:text-3xl font-black text-[#111111]">Why Choose Gallery Express Limited?</h2>
           <p className="text-gray-500 mt-2 text-sm font-medium">We deliver excellence across every single journey.</p>
         </div>
 

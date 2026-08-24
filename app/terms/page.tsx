@@ -40,7 +40,7 @@ export default function TermsPage() {
             <p>Gallery Express is not liable for delays caused by traffic, weather, or unforeseen events. We will, however, always strive to minimize inconvenience.</p>
           </Section>
           <Section title="7. Contact">
-            <p>For queries regarding these terms, contact us at info@galleryexpress.com or call +880 18XX-XXXXXX.</p>
+            <p>For queries regarding these terms, contact us at galleryexpresslimited@gmail.com or call 01826-110036.</p>
           </Section>
         </div>
       </main>

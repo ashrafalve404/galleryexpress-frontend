@@ -11,31 +11,88 @@ interface SeatProps {
 
 function SeatComponent({ seat, isSelected, onToggle }: SeatProps) {
   const isUnavailable =
-    seat.isBooked || seat.isHeld || seat.status !== 'AVAILABLE' || seat.seatType === 'DRIVER' || seat.seatType === 'HELPER' || seat.seatType === 'BLOCKED';
+    seat.isBooked ||
+    seat.isHeld ||
+    seat.status !== 'AVAILABLE' ||
+    seat.seatType === 'DRIVER' ||
+    seat.seatType === 'HELPER' ||
+    seat.seatType === 'BLOCKED';
 
-  const getClassName = () => {
-    if (isUnavailable) return 'seat seat-booked cursor-not-allowed';
-    if (isSelected) {
-      if (seat.seatType === 'LADIES') return 'seat seat-ladies seat-selected';
-      if (seat.seatType === 'VIP') return 'seat seat-vip seat-selected';
-      return 'seat seat-selected';
+  if (seat.seatType === 'DRIVER') {
+    return (
+      <div className="w-10 h-12 rounded-t-xl rounded-b-md bg-slate-100 border border-slate-200 flex flex-col items-center justify-center text-slate-500 shadow-xs">
+        <RiCarFill size={16} />
+        <span className="text-[8px] font-bold uppercase mt-0.5">Driver</span>
+      </div>
+    );
+  }
+
+  if (seat.seatType === 'HELPER') {
+    return (
+      <div className="w-10 h-12 rounded-t-xl rounded-b-md bg-slate-100 border border-slate-200 flex flex-col items-center justify-center text-slate-500 shadow-xs">
+        <RiUserFill size={16} />
+        <span className="text-[8px] font-bold uppercase mt-0.5">Helper</span>
+      </div>
+    );
+  }
+
+  if (seat.seatType === 'BLOCKED') {
+    return (
+      <div className="w-10 h-12 rounded-t-xl rounded-b-md bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-300">
+        <RiSubtractLine size={14} />
+      </div>
+    );
+  }
+
+  // Realistic seat styles (Headrest + Backrest + Bottom Cushion)
+  const getStyles = () => {
+    if (isUnavailable) {
+      return {
+        outer: 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed',
+        headrest: 'bg-gray-300/60',
+        cushion: 'bg-gray-300/40',
+        badge: 'text-gray-400 font-semibold',
+      };
     }
-    if (seat.seatType === 'LADIES') return 'seat seat-ladies cursor-pointer';
-    if (seat.seatType === 'VIP') return 'seat seat-vip cursor-pointer';
-    return 'seat seat-available cursor-pointer';
+    if (isSelected) {
+      return {
+        outer: 'bg-[#E31B23] border-[#C41920] text-white shadow-md scale-105 transition-all ring-2 ring-[#E31B23]/30',
+        headrest: 'bg-red-900/60',
+        cushion: 'bg-red-800/50',
+        badge: 'text-white font-black',
+      };
+    }
+    if (seat.seatType === 'LADIES') {
+      return {
+        outer: 'bg-pink-50 border-pink-200 text-pink-700 hover:bg-pink-100 hover:border-pink-300 cursor-pointer shadow-xs',
+        headrest: 'bg-pink-300/70',
+        cushion: 'bg-pink-200/50',
+        badge: 'text-pink-800 font-bold',
+      };
+    }
+    if (seat.seatType === 'VIP') {
+      return {
+        outer: 'bg-amber-50 border-amber-300 text-amber-800 hover:bg-amber-100 hover:border-amber-400 cursor-pointer shadow-xs',
+        headrest: 'bg-amber-300/80',
+        cushion: 'bg-amber-200/60',
+        badge: 'text-amber-900 font-bold',
+      };
+    }
+    // Available regular seat
+    return {
+      outer: 'bg-sky-50 border-sky-200 text-sky-800 hover:bg-sky-100 hover:border-sky-300 hover:-translate-y-0.5 cursor-pointer shadow-xs',
+      headrest: 'bg-sky-200/80',
+      cushion: 'bg-sky-100',
+      badge: 'text-sky-950 font-bold',
+    };
   };
 
-  const renderContent = () => {
-    if (seat.seatType === 'DRIVER') return <RiCarFill className="text-gray-400 text-sm mx-auto" />;
-    if (seat.seatType === 'HELPER') return <RiUserFill className="text-gray-400 text-sm mx-auto" />;
-    if (seat.seatType === 'BLOCKED') return <RiSubtractLine className="text-gray-300 text-xs mx-auto" />;
-    return seat.seatNumber;
-  };
+  const style = getStyles();
 
   return (
     <div
-      className={getClassName()}
       onClick={() => !isUnavailable && onToggle(seat)}
+      className={`relative w-10 h-12 rounded-t-xl rounded-b-md border flex flex-col items-center justify-between p-1 transition-all select-none ${style.outer}`}
       title={
         isUnavailable
           ? seat.isBooked || seat.isHeld
@@ -43,12 +100,20 @@ function SeatComponent({ seat, isSelected, onToggle }: SeatProps) {
             : `Not available (${seat.status})`
           : `Seat ${seat.seatNumber} (${seat.seatType})`
       }
-      aria-label={`Seat ${seat.seatNumber}`}
       role="button"
       tabIndex={isUnavailable ? -1 : 0}
       onKeyDown={(e) => e.key === 'Enter' && !isUnavailable && onToggle(seat)}
     >
-      {renderContent()}
+      {/* Top Headrest Cushion */}
+      <div className={`w-7 h-1.5 rounded-full ${style.headrest}`} />
+
+      {/* Seat Number */}
+      <span className={`text-[11px] leading-none ${style.badge}`}>
+        {seat.seatNumber}
+      </span>
+
+      {/* Bottom Seat Cushion */}
+      <div className={`w-8 h-2 rounded-xs ${style.cushion}`} />
     </div>
   );
 }
@@ -63,15 +128,32 @@ interface SeatMapProps {
 export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 4 }: SeatMapProps) {
   const selectedIds = new Set(selectedSeats.map((s) => s.id));
 
-  // Group seats by row
-  const rowMap = new Map<number, Seat[]>();
+  // Helper to parse row letter and column index (e.g., "A1" -> Row A, Col 1)
+  const parseSeatPos = (s: Seat) => {
+    const match = s.seatNumber?.match(/^([A-Z]+)(\d+)$/i);
+    if (match) {
+      return {
+        rowKey: match[1].toUpperCase(),
+        colNum: parseInt(match[2], 10),
+      };
+    }
+    const rowNames = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
+    const rIdx = Math.max(0, (s.row ?? 1) - 1);
+    return {
+      rowKey: rowNames[rIdx] || `R${s.row || 1}`,
+      colNum: s.column ?? 1,
+    };
+  };
+
+  // Group seats by row key (A, B, C, D, E, F, G, H, I, J)
+  const rowMap = new Map<string, Seat[]>();
   seats.forEach((seat) => {
-    const row = seat.row ?? 0;
-    if (!rowMap.has(row)) rowMap.set(row, []);
-    rowMap.get(row)!.push(seat);
+    const { rowKey } = parseSeatPos(seat);
+    if (!rowMap.has(rowKey)) rowMap.set(rowKey, []);
+    rowMap.get(rowKey)!.push(seat);
   });
 
-  const rows = Array.from(rowMap.entries()).sort(([a], [b]) => a - b);
+  const rows = Array.from(rowMap.entries()).sort(([a], [b]) => a.localeCompare(b));
 
   const handleToggle = (seat: Seat) => {
     if (selectedIds.has(seat.id)) {
@@ -84,26 +166,45 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 4 }: SeatMa
   return (
     <div className="select-none">
       {/* Legend */}
-      <div className="flex flex-wrap gap-x-4 gap-y-2 mb-6 text-xs font-semibold">
-        <div className="flex items-center gap-1.5">
-          <div className="seat seat-available w-6 h-6 rounded" style={{ fontSize: '8px' }} />
-          <span className="text-gray-600">Available</span>
+      <div className="flex flex-wrap gap-x-5 gap-y-2 mb-6 text-xs font-semibold">
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-6 rounded-t-lg rounded-b-xs bg-sky-50 border border-sky-200 flex flex-col justify-between items-center p-0.5">
+            <div className="w-3.5 h-1 rounded-full bg-sky-200" />
+            <div className="w-4 h-1 rounded-xs bg-sky-100" />
+          </div>
+          <span className="text-gray-700 font-bold">Available</span>
         </div>
-        <div className="flex items-center gap-1.5">
-          <div className="seat seat-selected w-6 h-6 rounded" style={{ fontSize: '8px' }} />
-          <span className="text-gray-600">Selected</span>
+
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-6 rounded-t-lg rounded-b-xs bg-[#E31B23] border border-[#C41920] flex flex-col justify-between items-center p-0.5">
+            <div className="w-3.5 h-1 rounded-full bg-red-900/60" />
+            <div className="w-4 h-1 rounded-xs bg-red-800/50" />
+          </div>
+          <span className="text-gray-700 font-bold">Selected</span>
         </div>
-        <div className="flex items-center gap-1.5">
-          <div className="seat seat-booked w-6 h-6 rounded" style={{ fontSize: '8px' }} />
-          <span className="text-gray-600">Booked</span>
+
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-6 rounded-t-lg rounded-b-xs bg-gray-100 border border-gray-200 flex flex-col justify-between items-center p-0.5">
+            <div className="w-3.5 h-1 rounded-full bg-gray-300" />
+            <div className="w-4 h-1 rounded-xs bg-gray-200" />
+          </div>
+          <span className="text-gray-700 font-bold">Booked</span>
         </div>
-        <div className="flex items-center gap-1.5">
-          <div className="seat seat-ladies w-6 h-6 rounded" style={{ fontSize: '8px' }} />
-          <span className="text-gray-600">Ladies</span>
+
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-6 rounded-t-lg rounded-b-xs bg-pink-50 border border-pink-200 flex flex-col justify-between items-center p-0.5">
+            <div className="w-3.5 h-1 rounded-full bg-pink-300" />
+            <div className="w-4 h-1 rounded-xs bg-pink-200" />
+          </div>
+          <span className="text-gray-700 font-bold">Ladies</span>
         </div>
-        <div className="flex items-center gap-1.5">
-          <div className="seat seat-vip w-6 h-6 rounded" style={{ fontSize: '8px' }} />
-          <span className="text-gray-600">VIP</span>
+
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-6 rounded-t-lg rounded-b-xs bg-amber-50 border border-amber-300 flex flex-col justify-between items-center p-0.5">
+            <div className="w-3.5 h-1 rounded-full bg-amber-300" />
+            <div className="w-4 h-1 rounded-xs bg-amber-200" />
+          </div>
+          <span className="text-gray-700 font-bold">VIP</span>
         </div>
       </div>
 
@@ -120,17 +221,17 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 4 }: SeatMa
 
         {/* Seats grid */}
         <div className="p-6 overflow-x-auto">
-          <div className="space-y-3 min-w-max mx-auto" style={{ width: 'fit-content' }}>
-            {rows.map(([rowNum, rowSeats]) => {
-              const sorted = [...rowSeats].sort((a, b) => (a.column ?? 0) - (b.column ?? 0));
-              const leftSeats = sorted.filter((s) => (s.column ?? 0) < 2);
-              const rightSeats = sorted.filter((s) => (s.column ?? 0) >= 2);
+          <div className="space-y-3.5 min-w-max mx-auto" style={{ width: 'fit-content' }}>
+            {rows.map(([rowKey, rowSeats]) => {
+              const sorted = [...rowSeats].sort((a, b) => parseSeatPos(a).colNum - parseSeatPos(b).colNum);
+              const leftSeats = sorted.filter((s) => parseSeatPos(s).colNum <= 2);
+              const rightSeats = sorted.filter((s) => parseSeatPos(s).colNum > 2);
 
               return (
-                <div key={rowNum} className="flex items-center gap-3">
-                  <span className="text-xs text-gray-400 w-4 shrink-0 text-right font-mono font-semibold">{rowNum}</span>
-                  {/* Left seats */}
-                  <div className="flex gap-2">
+                <div key={rowKey} className="flex items-center gap-3">
+                  <span className="text-xs text-gray-400 w-5 shrink-0 text-right font-mono font-bold">{rowKey}</span>
+                  {/* Left seats (A1, A2) */}
+                  <div className="flex gap-2.5">
                     {leftSeats.map((seat) => (
                       <SeatComponent
                         key={seat.id}
@@ -140,10 +241,14 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 4 }: SeatMa
                       />
                     ))}
                   </div>
-                  {/* Aisle */}
-                  <div className="w-6" />
-                  {/* Right seats */}
-                  <div className="flex gap-2">
+
+                  {/* Center Aisle */}
+                  <div className="w-7 text-center text-[10px] font-bold text-gray-300 uppercase tracking-widest px-1">
+                    Aisle
+                  </div>
+
+                  {/* Right seats (A3, A4) */}
+                  <div className="flex gap-2.5">
                     {rightSeats.map((seat) => (
                       <SeatComponent
                         key={seat.id}
@@ -166,10 +271,13 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 4 }: SeatMa
       </div>
 
       {selectedSeats.length > 0 && (
-        <div className="mt-4 p-3.5 bg-[#E31B23]/5 rounded-xl border border-[#E31B23]/20">
+        <div className="mt-4 p-3.5 bg-[#E31B23]/5 rounded-xl border border-[#E31B23]/20 flex items-center justify-between">
           <p className="text-sm font-bold text-[#E31B23]">
             Selected Seats: {selectedSeats.map((s) => s.seatNumber).join(', ')}
           </p>
+          <span className="text-xs font-bold text-gray-600 bg-white px-2.5 py-1 rounded-md border border-gray-200">
+            {selectedSeats.length} / {maxSeats} max
+          </span>
         </div>
       )}
     </div>

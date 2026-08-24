@@ -19,7 +19,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   if (!isAuthenticated) return null;
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gray-50" suppressHydrationWarning>
       <AdminSidebar />
       <main className="flex-1 min-w-0 lg:ml-60 transition-all duration-300">
         <div className="p-4 sm:p-6 lg:p-8 pt-20 lg:pt-8">

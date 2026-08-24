@@ -24,16 +24,16 @@ export function Footer() {
     <footer className="bg-[#111111] text-white">
       {/* Top CTA Band */}
       <div className="bg-[#E31B23]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div>
-            <h3 className="text-xl font-bold">Ready to travel?</h3>
-            <p className="text-white/80 text-sm mt-1">Book your seat now and enjoy a comfortable journey.</p>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-14 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="text-center md:text-left">
+            <h3 className="text-2xl sm:text-3xl font-black text-white">Ready to travel?</h3>
+            <p className="text-white/90 text-sm sm:text-base font-medium mt-1.5">Book your seat now and enjoy a comfortable journey across Bangladesh.</p>
           </div>
           <Link
             href={ROUTES.SEARCH}
-            className="shrink-0 bg-white text-[#E31B23] font-semibold px-6 py-3 rounded-xl hover:bg-gray-50 transition-colors"
+            className="shrink-0 bg-white text-[#E31B23] font-bold px-7 py-3.5 rounded-xl hover:bg-gray-100 transition-all shadow-md hover:shadow-lg active:scale-95 text-sm sm:text-base"
           >
-            Book a Ticket
+            Book a Ticket →
           </Link>
         </div>
       </div>
@@ -43,13 +43,16 @@ export function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
           <div>
-            <Link href={ROUTES.HOME} className="inline-block bg-white p-2.5 sm:p-3 rounded-2xl shadow-md mb-5 border border-white/10 hover:scale-105 transition-transform">
+            <Link href={ROUTES.HOME} className="inline-block bg-white p-4 sm:p-5 rounded-2xl shadow-xl mb-5 border border-white/10 hover:scale-105 transition-transform">
               <img
                 src="/galleryexplogo.png"
-                alt="Gallery Express"
-                className="h-9 sm:h-11 w-auto object-contain"
+                alt="Gallery Express Limited"
+                className="h-14 sm:h-18 md:h-22 w-auto object-contain"
               />
             </Link>
+            <h3 className="text-white font-black text-lg sm:text-xl mb-1.5 tracking-tight">
+              Gallery Express Limited
+            </h3>
             <p className="text-gray-400 text-sm leading-relaxed">
               Bangladesh's trusted intercity bus service. Safe, comfortable, and always on time.
             </p>
@@ -111,18 +114,18 @@ export function Footer() {
             <ul className="space-y-4">
               <li className="flex gap-3 text-sm text-gray-300">
                 <MapPin size={16} className="text-[#E31B23] shrink-0 mt-0.5" />
-                <span>Dhaka to Sylhet, Chittagong, Cox's Bazar & more</span>
+                <span>Navana Shopping Centre, Gulshan Avenue 01, Gulshan, Dhaka, Bangladesh</span>
               </li>
               <li className="flex gap-3 text-sm text-gray-300">
                 <Phone size={16} className="text-[#E31B23] shrink-0 mt-0.5" />
-                <a href="tel:+88018XXXXXXXX" className="hover:text-white transition-colors">
-                  +880 18XX-XXXXXX
+                <a href="tel:01826110036" className="hover:text-white transition-colors">
+                  01826-110036
                 </a>
               </li>
               <li className="flex gap-3 text-sm text-gray-300">
                 <Mail size={16} className="text-[#E31B23] shrink-0 mt-0.5" />
-                <a href="mailto:info@galleryexpress.com" className="hover:text-white transition-colors">
-                  info@galleryexpress.com
+                <a href="mailto:galleryexpresslimited@gmail.com" className="hover:text-white transition-colors">
+                  galleryexpresslimited@gmail.com
                 </a>
               </li>
             </ul>
@@ -133,7 +136,7 @@ export function Footer() {
       {/* Bottom Bar */}
       <div className="border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-500">
-          <span>&copy; {year} Gallery Express. All rights reserved.</span>
+          <span>&copy; {year} Gallery Express Limited. All rights reserved.</span>
           <span className="flex items-center gap-1">
             <Bus size={14} className="text-[#E31B23]" />
             Safe &amp; Comfortable Journeys

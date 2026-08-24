@@ -26,7 +26,7 @@ function SearchResults() {
   const displayDate = date ? getRelativeDate(date + 'T00:00:00') : '';
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8" suppressHydrationWarning>
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <Link href={ROUTES.HOME} className="p-2 rounded-xl hover:bg-gray-100 transition-colors">
@@ -108,7 +108,7 @@ export default function SearchPage() {
       <Header />
       <main className="flex-1 pt-20 pb-10 bg-gray-50 min-h-screen">
         {/* Compact search bar at top */}
-        <div className="bg-white border-b border-gray-100 py-4 mb-4">
+        <div className="bg-white border-b border-gray-100 py-4 mb-4 relative z-40">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <SearchCard />
           </div>

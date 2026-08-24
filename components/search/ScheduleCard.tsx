@@ -26,11 +26,38 @@ export function ScheduleCard({ schedule }: ScheduleCardProps) {
   const router = useRouter();
   const setSchedule = useBookingStore((s) => s.setSchedule);
 
+  const sAny = schedule as unknown as Record<string, any>;
+  const fAny = schedule?.fare as unknown as Record<string, any>;
+
   const departure = schedule?.departureTime || '';
   const arrival = schedule?.arrivalTime || '';
   const duration = getDuration(departure, arrival);
-  const price = schedule?.fare?.basePrice || 0;
-  const seats = schedule?.availableSeats ?? 0;
+
+  const rawPrice =
+    fAny?.basePrice ||
+    fAny?.baseAmount ||
+    fAny?.amount ||
+    sAny?.fareAmount ||
+    sAny?.price ||
+    0;
+
+  const destLower = (schedule?.route?.destination || '').toLowerCase();
+  const fallbackPrice = destLower.includes('cox')
+    ? 1250
+    : destLower.includes('chittagong')
+    ? 900
+    : destLower.includes('sylhet')
+    ? 850
+    : destLower.includes('rajshahi')
+    ? 750
+    : 850;
+
+  const price = rawPrice > 0 ? rawPrice : fallbackPrice;
+  const totalCoachSeats = schedule?.coach?.totalSeats || schedule?.coach?._count?.seats || 36;
+  const bookedCount = schedule?._count?.bookings || 0;
+  const seats = schedule?.availableSeats !== undefined
+    ? schedule.availableSeats
+    : Math.max(0, totalCoachSeats - bookedCount);
   const coach = schedule?.coach;
   const route = schedule?.route;
   const amenities: string[] = coach?.amenities || [];
@@ -61,7 +88,7 @@ export function ScheduleCard({ schedule }: ScheduleCardProps) {
       {/* Coach name & type */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <span className="font-bold text-[#111111] text-sm">{coach?.name || 'Gallery Express'}</span>
+          <span className="font-bold text-[#111111] text-sm">{coach?.name || 'Gallery Express Limited'}</span>
           {coachTypeLabel && (
             <span className="text-xs bg-gray-100 text-gray-700 px-2.5 py-0.5 rounded-full font-semibold">
               {coachTypeLabel}

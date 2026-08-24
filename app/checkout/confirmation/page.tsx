@@ -146,7 +146,7 @@ export default function ConfirmationPage() {
 
           <p className="text-center text-xs text-gray-400">
             Questions? Contact us at{' '}
-            <a href="tel:+880XXXXXXXX" className="text-[#E31B23]">+880 18XX-XXXXXX</a>
+            <a href="tel:01826110036" className="text-[#E31B23]">01826-110036</a>
           </p>
         </div>
       </main>

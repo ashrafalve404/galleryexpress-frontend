@@ -106,8 +106,14 @@ export const useBookingStore = create<BookingState>()(
 
       setSearch: (from, to, date) => set({ from, to, date }),
 
-      setSchedule: (scheduleId, schedule) =>
-        set({ scheduleId, schedule, selectedSeats: [], step: 'select-seat' }),
+      setSchedule: (scheduleId, schedule) => {
+        const currentId = get().scheduleId;
+        if (currentId === scheduleId) {
+          set({ schedule });
+        } else {
+          set({ scheduleId, schedule, selectedSeats: [], step: 'select-seat' });
+        }
+      },
 
       toggleSeat: (seat) => {
         const { selectedSeats } = get();
@@ -140,8 +146,8 @@ export const useBookingStore = create<BookingState>()(
 
       getTotalAmount: () => {
         const { selectedSeats, schedule } = get();
-        if (!schedule) return 0;
-        return selectedSeats.length * schedule.fare;
+        const fallbackFare = schedule?.fare || 0;
+        return selectedSeats.reduce((sum, seat) => sum + (seat.price || fallbackFare), 0);
       },
 
       getFinalAmount: () => {

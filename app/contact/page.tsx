@@ -24,9 +24,9 @@ export default function ContactPage() {
             {/* Contact Info */}
             <div className="space-y-5">
               {[
-                { icon: Phone, label: 'Customer Support', value: '+880 18XX-XXXXXX', sub: 'Available 7 days a week', href: 'tel:+880XXXXXXXX' },
-                { icon: Mail, label: 'Email', value: 'info@galleryexpress.com', sub: 'We reply within 24 hours', href: 'mailto:info@galleryexpress.com' },
-                { icon: MapPin, label: 'Head Office', value: 'Dhaka, Bangladesh', sub: 'Gabtoli Bus Terminal, Dhaka 1216' },
+                { icon: Phone, label: 'Customer Support', value: '01826-110036', sub: 'Available 7 days a week', href: 'tel:01826110036' },
+                { icon: Mail, label: 'Email', value: 'galleryexpresslimited@gmail.com', sub: 'We reply within 24 hours', href: 'mailto:galleryexpresslimited@gmail.com' },
+                { icon: MapPin, label: 'Head Office', value: 'Gulshan, Dhaka', sub: 'Navana Shopping Centre, Gulshan Avenue 01, Gulshan, Dhaka, Bangladesh' },
                 { icon: Clock, label: 'Business Hours', value: '6:00 AM – 10:00 PM', sub: 'All days including holidays' },
               ].map(({ icon: Icon, label, value, sub, href }) => (
                 <div key={label} className="bg-white rounded-2xl border border-gray-100 p-5 flex gap-4">

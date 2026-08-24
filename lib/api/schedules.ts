@@ -21,26 +21,29 @@ export interface Schedule {
   coach: {
     id: string;
     name: string;
-    registrationNo: string;
-    coachType: string | { name?: string };
-    totalSeats: number;
-    amenities: string[];
+    registrationNo?: string;
+    registrationNumber?: string;
+    coachType?: string | { name?: string };
+    totalSeats?: number;
+    amenities?: string[];
+    _count?: { seats?: number };
   };
   route: {
     id: string;
-    name: string;
+    name?: string;
     origin: string;
     destination: string;
-    distanceKm: number;
-    estimatedDurationMin: number;
-    stops: RouteStop[];
+    distanceKm?: number;
+    estimatedDurationMin?: number;
+    stops?: RouteStop[];
   };
-  fare: {
+  fare?: {
     basePrice: number;
-    currency: string;
+    currency?: string;
   };
-  availableSeats: number;
+  availableSeats?: number;
   status: string;
+  _count?: { bookings?: number };
 }
 
 export interface Seat {

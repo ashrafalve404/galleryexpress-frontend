@@ -11,13 +11,13 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: 'Gallery Express — Bus Tickets Online',
-    template: '%s | Gallery Express',
+    default: 'Gallery Express Limited — Bus Tickets Online',
+    template: '%s | Gallery Express Limited',
   },
   description:
-    'Book bus tickets online with Gallery Express. Safe, comfortable, and on-time intercity bus service across Bangladesh. Easy booking, instant tickets.',
-  keywords: ['bus ticket', 'online booking', 'Bangladesh bus', 'Gallery Express', 'intercity bus'],
-  authors: [{ name: 'Gallery Express' }],
+    'Book bus tickets online with Gallery Express Limited. Safe, comfortable, and on-time intercity bus service across Bangladesh. Easy booking, instant tickets.',
+  keywords: ['bus ticket', 'online booking', 'Bangladesh bus', 'Gallery Express Limited', 'intercity bus'],
+  authors: [{ name: 'Gallery Express Limited' }],
   icons: {
     icon: [
       { url: '/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
@@ -30,10 +30,10 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_BD',
-    siteName: 'Gallery Express',
-    title: 'Gallery Express — Bus Tickets Online',
+    siteName: 'Gallery Express Limited',
+    title: 'Gallery Express Limited — Bus Tickets Online',
     description:
-      'Book bus tickets online with Gallery Express. Safe, comfortable, and on-time intercity bus service across Bangladesh.',
+      'Book bus tickets online with Gallery Express Limited. Safe, comfortable, and on-time intercity bus service across Bangladesh.',
   },
   robots: {
     index: true,

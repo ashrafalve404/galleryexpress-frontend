@@ -16,8 +16,14 @@ interface UserItem {
   status: string;
 }
 
+import { useAuthStore } from '@/lib/store/authStore';
+import { PermissionNotice } from '@/components/admin/PermissionNotice';
+
 export default function AdminUsersPage() {
   const qc = useQueryClient();
+  const { user } = useAuthStore();
+  const isAdmin = user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN';
+
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<UserItem | null>(null);
@@ -33,6 +39,7 @@ export default function AdminUsersPage() {
 
   const { data: usersData, isLoading } = useQuery({
     queryKey: ['admin', 'users'],
+    enabled: isAdmin,
     queryFn: async () => {
       const { data } = await client.get('/api/v1/admin/users', { params: { limit: 100 } });
       const list = data?.data?.data || data?.data || data?.users || [];
@@ -130,6 +137,10 @@ export default function AdminUsersPage() {
           <h1 className="text-xl sm:text-2xl font-black text-[#111111]">Users & Staff</h1>
           <p className="text-gray-500 text-xs sm:text-sm mt-0.5 font-medium">{users.length} registered accounts</p>
         </div>
+
+      {!isAdmin && (
+        <PermissionNotice moduleName="Users & Staff Management" requiredRole="Administrator" />
+      )}
         <button
           onClick={() => {
             setEditing(null);

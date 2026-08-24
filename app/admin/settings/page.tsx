@@ -6,20 +6,27 @@ import { useState, useEffect } from 'react';
 import client from '@/lib/api/client';
 import { toast } from 'sonner';
 
+import { useAuthStore } from '@/lib/store/authStore';
+import { PermissionNotice } from '@/components/admin/PermissionNotice';
+
 export default function AdminSettingsPage() {
   const qc = useQueryClient();
+  const { user } = useAuthStore();
+  const isAdmin = user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN';
+
   const [form, setForm] = useState({
-    companyName: 'Gallery Express',
-    companyPhone: '+880 1700-000000',
-    companyEmail: 'info@galleryexpress.com',
-    companyAddress: 'Sayedabad Bus Terminal, Dhaka, Bangladesh',
+    companyName: 'Gallery Express Limited',
+    companyPhone: '01826-110036',
+    companyEmail: 'galleryexpresslimited@gmail.com',
+    companyAddress: 'Navana Shopping Centre, Gulshan Avenue 01, Gulshan, Dhaka, Bangladesh',
     websiteUrl: 'https://galleryexpress.com',
     currency: 'BDT',
     timezone: 'Asia/Dhaka',
   });
 
-  const { data: settingsData, isLoading } = useQuery({
+  const { data: settingsData } = useQuery({
     queryKey: ['admin', 'settings'],
+    enabled: isAdmin,
     queryFn: async () => {
       const { data } = await client.get('/api/v1/admin/settings');
       return data?.data || data || [];
@@ -55,11 +62,20 @@ export default function AdminSettingsPage() {
       qc.invalidateQueries({ queryKey: ['admin', 'settings'] });
       toast.success('System settings saved successfully!');
     },
-    onError: (err: Error) => toast.error(err.message || 'Failed to save settings'),
+    onError: (err: any) => {
+      const msg = err.response?.status === 403
+        ? 'Access Denied: Only Administrators can modify system settings.'
+        : err.message || 'Failed to save settings';
+      toast.error(msg);
+    },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isAdmin) {
+      toast.error('Access Denied: Administrator role required.');
+      return;
+    }
     saveMutation.mutate(form);
   };
 
@@ -71,6 +87,10 @@ export default function AdminSettingsPage() {
           <p className="text-gray-500 text-xs sm:text-sm mt-0.5 font-medium">Manage company info and operational preferences</p>
         </div>
       </div>
+
+      {!isAdmin && (
+        <PermissionNotice moduleName="System Settings & Company Profile" requiredRole="Administrator" />
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="bg-white rounded-2xl border border-gray-100 p-6 space-y-4 shadow-xs">

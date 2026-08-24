@@ -1,7 +1,7 @@
 {
-  "name": "Gallery Express",
+  "name": "Gallery Express Limited",
   "short_name": "GalleryExpress",
-  "description": "Book intercity bus tickets online across Bangladesh with Gallery Express.",
+  "description": "Book intercity bus tickets online across Bangladesh with Gallery Express Limited.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#111111",
