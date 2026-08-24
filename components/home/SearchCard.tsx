@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { HiSearch, HiExclamationCircle, HiSwitchHorizontal } from 'react-icons/hi';
+import { HiSearch, HiExclamationCircle, HiSwitchHorizontal, HiChevronLeft, HiChevronRight } from 'react-icons/hi';
 import { RiMapPin2Fill, RiCalendarEventFill } from 'react-icons/ri';
 import { useBookingStore } from '@/lib/store/bookingStore';
-import { today, tomorrow } from '@/lib/utils/date';
+import { today, tomorrow, formatDate } from '@/lib/utils/date';
+import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay, isBefore, startOfDay, parseISO } from 'date-fns';
 
 const POPULAR_CITIES = [
   'Dhaka',
@@ -38,11 +39,11 @@ function CityInput({ id, label, placeholder, value, onChange }: CityInputProps) 
 
   return (
     <div className="relative flex-1">
-      <label htmlFor={id} className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">
+      <label htmlFor={id} className="block text-[11px] font-bold text-gray-500 uppercase tracking-wide mb-1">
         {label}
       </label>
       <div className="relative">
-        <RiMapPin2Fill className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#E31B23] text-lg pointer-events-none" />
+        <RiMapPin2Fill className="absolute left-3 top-1/2 -translate-y-1/2 text-[#E31B23] text-base pointer-events-none" />
         <input
           id={id}
           type="text"
@@ -52,22 +53,169 @@ function CityInput({ id, label, placeholder, value, onChange }: CityInputProps) 
           onBlur={() => setTimeout(() => setOpen(false), 200)}
           placeholder={placeholder}
           autoComplete="off"
-          className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#111111] font-semibold placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23] transition-all text-sm"
+          className="w-full pl-9 pr-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-[#111111] font-bold placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23] transition-all text-xs sm:text-sm"
         />
       </div>
       {open && filtered.length > 0 && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-100 rounded-2xl shadow-xl z-50 overflow-hidden animate-fade-in py-1">
+        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-100 rounded-xl shadow-xl z-50 overflow-hidden animate-fade-in py-1">
           {filtered.slice(0, 6).map((city) => (
             <button
               key={city}
               type="button"
               onMouseDown={() => { onChange(city); setOpen(false); }}
-              className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-[#E31B23]/5 hover:text-[#E31B23] flex items-center gap-2 font-medium transition-colors"
+              className="w-full text-left px-3.5 py-2 text-xs sm:text-sm text-gray-700 hover:bg-[#E31B23]/5 hover:text-[#E31B23] flex items-center gap-2 font-medium transition-colors"
             >
-              <RiMapPin2Fill className="text-gray-400 text-base" />
+              <RiMapPin2Fill className="text-gray-400 text-sm" />
               {city}
             </button>
           ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+interface ProfessionalDatePickerProps {
+  value: string;
+  onChange: (dateStr: string) => void;
+}
+
+function ProfessionalDatePicker({ value, onChange }: ProfessionalDatePickerProps) {
+  const [open, setOpen] = useState(false);
+  const selectedDate = value ? parseISO(value) : new Date();
+  const [currentMonth, setCurrentMonth] = useState(selectedDate);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const monthStart = startOfMonth(currentMonth);
+  const monthEnd = endOfMonth(monthStart);
+  const startDate = startOfWeek(monthStart);
+  const endDate = endOfWeek(monthEnd);
+
+  const days: Date[] = [];
+  let day = startDate;
+  while (day <= endDate) {
+    days.push(day);
+    day = addDays(day, 1);
+  }
+
+  const todayStart = startOfDay(new Date());
+
+  const formattedDisplay = value ? formatDate(value, 'EEE, dd MMM yyyy') : 'Select Date';
+
+  return (
+    <div className="relative flex-1" ref={containerRef}>
+      <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wide mb-1">
+        Journey Date
+      </label>
+      
+      {/* Trigger Button */}
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center gap-3 pl-3 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-[#111111] font-bold hover:bg-gray-100/80 focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23] transition-all text-xs sm:text-sm text-left group"
+      >
+        <RiCalendarEventFill className="text-[#E31B23] text-base shrink-0 group-hover:scale-110 transition-transform" />
+        <span className="truncate">{formattedDisplay}</span>
+      </button>
+
+      {/* Calendar Popover Modal */}
+      {open && (
+        <div className="absolute top-full left-0 sm:left-0 right-0 sm:right-auto mt-2 bg-white border border-gray-100 rounded-2xl shadow-2xl z-[100] p-3 sm:p-4 w-[280px] xs:w-[300px] sm:w-[310px] mx-auto sm:mx-0 animate-fade-in-up">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-2.5 pb-2 border-b border-gray-100">
+            <button
+              type="button"
+              onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
+              className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors"
+            >
+              <HiChevronLeft size={18} />
+            </button>
+            <span className="font-bold text-gray-900 text-xs sm:text-sm">
+              {format(currentMonth, 'MMMM yyyy')}
+            </span>
+            <button
+              type="button"
+              onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
+              className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors"
+            >
+              <HiChevronRight size={18} />
+            </button>
+          </div>
+
+          {/* Weekday headers */}
+          <div className="grid grid-cols-7 gap-1 text-center mb-1.5">
+            {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((d) => (
+              <span key={d} className="text-[10px] sm:text-[11px] font-bold text-gray-400 uppercase">
+                {d}
+              </span>
+            ))}
+          </div>
+
+          {/* Days Grid */}
+          <div className="grid grid-cols-7 gap-1 text-center">
+            {days.map((d, idx) => {
+              const isPast = isBefore(d, todayStart);
+              const isSelected = isSameDay(d, selectedDate);
+              const isCurrentMonth = isSameMonth(d, currentMonth);
+
+              return (
+                <button
+                  key={idx}
+                  type="button"
+                  disabled={isPast}
+                  onClick={() => {
+                    onChange(format(d, 'yyyy-MM-dd'));
+                    setOpen(false);
+                  }}
+                  className={`h-8 w-8 sm:h-9 sm:w-9 rounded-xl flex items-center justify-center text-xs font-bold transition-all mx-auto ${
+                    isSelected
+                      ? 'bg-[#E31B23] text-white shadow-md scale-105'
+                      : isPast
+                      ? 'text-gray-300 cursor-not-allowed'
+                      : !isCurrentMonth
+                      ? 'text-gray-300 hover:bg-gray-50'
+                      : 'text-gray-800 hover:bg-[#E31B23]/10 hover:text-[#E31B23]'
+                  }`}
+                >
+                  {format(d, 'd')}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Quick Action Footer */}
+          <div className="mt-2.5 pt-2 border-t border-gray-100 flex items-center justify-between text-xs font-bold text-gray-500">
+            <button
+              type="button"
+              onClick={() => {
+                onChange(today());
+                setOpen(false);
+              }}
+              className="hover:text-[#E31B23] transition-colors"
+            >
+              Today
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                onChange(tomorrow());
+                setOpen(false);
+              }}
+              className="hover:text-[#E31B23] transition-colors"
+            >
+              Tomorrow
+            </button>
+          </div>
         </div>
       )}
     </div>
@@ -101,12 +249,12 @@ export function SearchCard() {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-2xl p-5 sm:p-8 w-full max-w-3xl mx-auto border border-gray-100">
-      <h2 className="text-[#111111] font-black text-lg mb-6 flex items-center gap-2">
+    <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 w-full max-w-3xl mx-auto border border-gray-100 text-left">
+      <h2 className="text-[#111111] font-black text-base sm:text-lg mb-3 flex items-center gap-2">
         Find Your Bus
       </h2>
 
-      <form onSubmit={handleSearch} className="space-y-4">
+      <form onSubmit={handleSearch} className="space-y-3">
         {/* From / Swap / To */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-2">
           <CityInput
@@ -120,10 +268,10 @@ export function SearchCard() {
           <button
             type="button"
             onClick={handleSwap}
-            className="shrink-0 self-center sm:self-end mb-[1px] w-11 h-[48px] flex items-center justify-center rounded-xl border border-gray-200 bg-gray-50 hover:bg-[#E31B23] hover:text-white hover:border-[#E31B23] transition-all group"
+            className="shrink-0 self-center sm:self-end mb-[1px] w-10 h-[40px] flex items-center justify-center rounded-xl border border-gray-200 bg-gray-50 hover:bg-[#E31B23] hover:text-white hover:border-[#E31B23] transition-all group"
             aria-label="Swap cities"
           >
-            <HiSwitchHorizontal className="text-gray-600 text-xl group-hover:text-white transition-colors" />
+            <HiSwitchHorizontal className="text-gray-600 text-lg group-hover:text-white transition-colors" />
           </button>
 
           <CityInput
@@ -135,47 +283,36 @@ export function SearchCard() {
           />
         </div>
 
-        {/* Date */}
-        <div>
-          <label htmlFor="travel-date" className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">
-            Journey Date
-          </label>
-          <div className="relative">
-            <RiCalendarEventFill className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#E31B23] text-lg pointer-events-none" />
-            <input
-              id="travel-date"
-              type="date"
-              value={localDate}
-              min={today()}
-              onChange={(e) => setLocalDate(e.target.value)}
-              className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#111111] font-semibold focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23] transition-all text-sm"
-            />
+        {/* Date & Date Shortcuts */}
+        <div className="flex flex-col sm:flex-row sm:items-end gap-3">
+          <ProfessionalDatePicker
+            value={localDate}
+            onChange={setLocalDate}
+          />
+
+          <div className="flex gap-1.5 shrink-0 pb-[1px]">
+            {['Today', 'Tomorrow'].map((label, i) => {
+              const d = i === 0 ? today() : tomorrow();
+              return (
+                <button
+                  key={label}
+                  type="button"
+                  onClick={() => setLocalDate(d)}
+                  className={`px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                    localDate === d
+                      ? 'bg-[#E31B23] text-white shadow-xs'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {label}
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* Quick date shortcuts */}
-        <div className="flex gap-2 pt-1">
-          {['Today', 'Tomorrow'].map((label, i) => {
-            const d = i === 0 ? today() : tomorrow();
-            return (
-              <button
-                key={label}
-                type="button"
-                onClick={() => setLocalDate(d)}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  localDate === d
-                    ? 'bg-[#E31B23] text-white shadow-sm'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {label}
-              </button>
-            );
-          })}
-        </div>
-
         {error && (
-          <div className="text-rose-600 text-xs font-semibold flex items-center gap-2 bg-rose-50 border border-rose-100 p-3 rounded-xl">
+          <div className="text-rose-600 text-xs font-semibold flex items-center gap-2 bg-rose-50 border border-rose-100 p-2.5 rounded-xl">
             <HiExclamationCircle className="text-base shrink-0" />
             <span>{error}</span>
           </div>
@@ -183,9 +320,9 @@ export function SearchCard() {
 
         <button
           type="submit"
-          className="w-full bg-[#E31B23] hover:bg-[#C41920] text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 text-base"
+          className="w-full bg-[#E31B23] hover:bg-[#C41920] text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg active:scale-[0.99] text-sm sm:text-base mt-1"
         >
-          <HiSearch className="text-lg" />
+          <HiSearch className="text-base sm:text-lg" />
           Search Buses
         </button>
       </form>

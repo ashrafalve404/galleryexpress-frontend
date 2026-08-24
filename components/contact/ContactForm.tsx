@@ -15,7 +15,7 @@ export function ContactForm() {
         {[
           { label: 'Your Name', type: 'text', placeholder: 'Full name' },
           { label: 'Email Address', type: 'email', placeholder: 'you@example.com' },
-          { label: 'Phone (optional)', type: 'tel', placeholder: '01XXXXXXXXX' },
+          { label: 'Phone Number', type: 'tel', placeholder: '01XXXXXXXXX' },
         ].map(({ label, type, placeholder }) => (
           <div key={label}>
             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">{label}</label>

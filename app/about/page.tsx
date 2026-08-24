@@ -32,9 +32,9 @@ export default function AboutPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               {[
-                { value: '500K+', label: 'Passengers Served', desc: 'Happy customers who chose Gallery Express' },
-                { value: '50+', label: 'Routes', desc: 'Covering all major cities and towns' },
-                { value: '100+', label: 'Modern Coaches', desc: 'AC coaches with amenities' },
+                { value: '50K+', label: 'Passengers Served', desc: 'Happy customers who chose Gallery Express' },
+                { value: '15+', label: 'Routes', desc: 'Covering key intercity routes' },
+                { value: '25+', label: 'Modern Coaches', desc: 'AC & Non-AC coaches with amenities' },
               ].map((stat) => (
                 <div key={stat.label} className="bg-[#E31B23]/5 border border-[#E31B23]/20 rounded-2xl p-6 text-center">
                   <div className="text-3xl font-black text-[#E31B23] mb-1">{stat.value}</div>

@@ -11,7 +11,7 @@ export default function PrivacyPage() {
       <main className="flex-1 pt-24 pb-16 min-h-screen bg-gray-50">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl font-black text-[#111111] mb-2">Privacy Policy</h1>
-          <p className="text-gray-400 text-sm mb-8">Last updated: January 2024</p>
+          <p className="text-gray-400 text-sm mb-8">Last updated: August 2026</p>
           {[
             { title: '1. Information We Collect', content: 'We collect personal information you provide during registration and booking, including name, email, phone number, and payment information. We also collect usage data to improve our services.' },
             { title: '2. How We Use Your Information', content: 'Your information is used to process bookings, send ticket confirmations, provide customer support, and improve our services. We do not sell your personal data to third parties.' },

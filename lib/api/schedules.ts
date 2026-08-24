@@ -22,7 +22,7 @@ export interface Schedule {
     id: string;
     name: string;
     registrationNo: string;
-    coachType: string;
+    coachType: string | { name?: string };
     totalSeats: number;
     amenities: string[];
   };
@@ -56,14 +56,21 @@ export interface Seat {
 }
 
 export async function searchSchedules(params: SearchScheduleParams): Promise<Schedule[]> {
-  const { data } = await client.get('/api/v1/schedules/search', {
-    params: withCompany({
-      from: params.from,
-      to: params.to,
-      date: params.date,
-    }),
-  });
-  return data?.data || data || [];
+  try {
+    const { data } = await client.get('/api/v1/schedules/search', {
+      params: withCompany({
+        origin: params.from,
+        destination: params.to,
+        from: params.from,
+        to: params.to,
+        date: params.date,
+      }),
+    });
+    return data?.data || (Array.isArray(data) ? data : []);
+  } catch (error) {
+    console.warn('No schedules found or search parameter error:', error);
+    return [];
+  }
 }
 
 export async function getSchedule(id: string): Promise<Schedule> {

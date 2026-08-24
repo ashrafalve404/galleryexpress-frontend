@@ -3,8 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import Image from 'next/image';
-import { Mail, Lock, Eye, EyeOff, Bus } from 'lucide-react';
+import { Phone, Lock, Eye, EyeOff, Bus } from 'lucide-react';
 import { useState } from 'react';
 import { useLogin } from '@/lib/hooks/useAuth';
 import { loginSchema, type LoginFormData } from '@/lib/validations/authSchema';
@@ -19,7 +18,11 @@ export default function LoginPage() {
   });
 
   const onSubmit = (data: LoginFormData) => {
-    login.mutate(data);
+    login.mutate({
+      phone: data.phone,
+      loginIdentifier: data.phone,
+      password: data.password,
+    });
   };
 
   return (
@@ -42,7 +45,7 @@ export default function LoginPage() {
             Your journey<br />starts here.
           </h2>
           <p className="text-gray-400 text-sm leading-relaxed">
-            Sign in to manage your bookings, download tickets, and enjoy a seamless travel experience with Gallery Express.
+            Sign in with your mobile number to manage your bookings, view printable tickets, and travel across Bangladesh with Gallery Express.
           </p>
         </div>
 
@@ -68,48 +71,48 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
-                Email Address
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">
+                Mobile Number or Email
               </label>
               <div className="relative">
-                <Mail size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <Phone size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
-                  {...register('email')}
-                  type="email"
-                  placeholder="you@example.com"
-                  className="w-full pl-10 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23] transition-all"
+                  {...register('phone')}
+                  type="text"
+                  placeholder="017XXXXXXXX or email"
+                  className="w-full pl-10 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23] transition-all"
                 />
               </div>
-              {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+              {errors.phone && <p className="text-red-500 text-xs mt-1 font-medium">{errors.phone.message}</p>}
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">
                 Password
               </label>
               <div className="relative">
-                <Lock size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
                   {...register('password')}
                   type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••"
-                  className="w-full pl-10 pr-10 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23] transition-all"
+                  className="w-full pl-10 pr-10 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23] transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
                   {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
               </div>
-              {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
+              {errors.password && <p className="text-red-500 text-xs mt-1 font-medium">{errors.password.message}</p>}
             </div>
 
             <button
               type="submit"
               disabled={login.isPending}
-              className="w-full bg-[#E31B23] disabled:opacity-70 hover:bg-[#C41920] text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all hover:shadow-md text-sm mt-2"
+              className="w-full bg-[#E31B23] disabled:opacity-70 hover:bg-[#C41920] text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all hover:shadow-md text-sm mt-2 active:scale-[0.99]"
             >
               {login.isPending ? (
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -119,14 +122,14 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <p className="text-center text-sm text-gray-500 mt-6">
+          <p className="text-center text-sm text-gray-500 mt-6 font-medium">
             Don't have an account?{' '}
-            <Link href={ROUTES.REGISTER} className="text-[#E31B23] font-semibold hover:underline">
-              Create one
+            <Link href={ROUTES.REGISTER} className="text-[#E31B23] font-bold hover:underline">
+              Register now
             </Link>
           </p>
 
-          <p className="text-center text-xs text-gray-400 mt-4">
+          <p className="text-center text-xs text-gray-400 mt-4 font-medium">
             <Link href={ROUTES.HOME} className="hover:text-[#E31B23] transition-colors">
               ← Back to home
             </Link>

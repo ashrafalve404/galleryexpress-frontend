@@ -12,7 +12,7 @@ export default function CancellationPolicyPage() {
       <main className="flex-1 pt-24 pb-16 min-h-screen bg-gray-50">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl font-black text-[#111111] mb-2">Cancellation Policy</h1>
-          <p className="text-gray-400 text-sm mb-8">Last updated: January 2024</p>
+          <p className="text-gray-400 text-sm mb-8">Last updated: August 2026</p>
 
           <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 mb-6 flex items-center gap-3">
             <AlertTriangle size={18} className="text-amber-600 shrink-0" />

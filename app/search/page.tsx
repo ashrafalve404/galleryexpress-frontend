@@ -49,18 +49,26 @@ function SearchResults() {
 
       {/* Error */}
       {isError && !isLoading && (
-        <div className="bg-red-50 border border-red-100 rounded-2xl p-8 text-center">
-          <AlertCircle size={32} className="text-red-400 mx-auto mb-3" />
-          <h3 className="font-bold text-gray-800 mb-1">Failed to load schedules</h3>
-          <p className="text-gray-500 text-sm mb-4">
-            {(error as Error)?.message || 'Please check your connection and try again.'}
+        <div className="bg-amber-50/80 border border-amber-200/80 rounded-2xl p-8 text-center max-w-xl mx-auto shadow-xs">
+          <AlertCircle size={36} className="text-amber-500 mx-auto mb-3" />
+          <h3 className="font-bold text-gray-900 text-lg mb-1">No schedules currently available</h3>
+          <p className="text-gray-600 text-sm mb-5 leading-relaxed">
+            We couldn't find any trips from <strong>{from}</strong> to <strong>{to}</strong> for the selected date. Try searching for a different date or route.
           </p>
-          <button
-            onClick={() => refetch()}
-            className="inline-flex items-center gap-2 bg-[#E31B23] text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-[#C41920] transition-colors"
-          >
-            <RefreshCw size={14} /> Try Again
-          </button>
+          <div className="flex justify-center gap-3">
+            <button
+              onClick={() => refetch()}
+              className="inline-flex items-center gap-2 bg-white border border-gray-200 text-gray-700 px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-colors shadow-xs"
+            >
+              <RefreshCw size={14} /> Refresh
+            </button>
+            <Link
+              href={ROUTES.HOME}
+              className="inline-flex items-center gap-2 bg-[#E31B23] text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-[#C41920] transition-colors shadow-xs"
+            >
+              Try Different Date
+            </Link>
+          </div>
         </div>
       )}
 

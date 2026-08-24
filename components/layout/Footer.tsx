@@ -43,11 +43,11 @@ export function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
           <div>
-            <Link href={ROUTES.HOME} className="inline-block mb-5">
+            <Link href={ROUTES.HOME} className="inline-block bg-white p-2.5 sm:p-3 rounded-2xl shadow-md mb-5 border border-white/10 hover:scale-105 transition-transform">
               <img
                 src="/galleryexplogo.png"
                 alt="Gallery Express"
-                className="h-10 w-auto object-contain"
+                className="h-9 sm:h-11 w-auto object-contain"
               />
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed">

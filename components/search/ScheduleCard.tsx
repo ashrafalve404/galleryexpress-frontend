@@ -26,13 +26,13 @@ export function ScheduleCard({ schedule }: ScheduleCardProps) {
   const router = useRouter();
   const setSchedule = useBookingStore((s) => s.setSchedule);
 
-  const departure = schedule.departureTime;
-  const arrival = schedule.arrivalTime;
+  const departure = schedule?.departureTime || '';
+  const arrival = schedule?.arrivalTime || '';
   const duration = getDuration(departure, arrival);
-  const price = schedule.fare?.basePrice || 0;
-  const seats = schedule.availableSeats ?? 0;
-  const coach = schedule.coach;
-  const route = schedule.route;
+  const price = schedule?.fare?.basePrice || 0;
+  const seats = schedule?.availableSeats ?? 0;
+  const coach = schedule?.coach;
+  const route = schedule?.route;
   const amenities: string[] = coach?.amenities || [];
 
   const handleBook = () => {
@@ -49,15 +49,22 @@ export function ScheduleCard({ schedule }: ScheduleCardProps) {
 
   const seatColor = seats === 0 ? 'text-rose-600' : seats <= 5 ? 'text-amber-600' : 'text-emerald-600';
 
+  const coachTypeLabel =
+    typeof coach?.coachType === 'object' && coach?.coachType
+      ? (coach.coachType as { name?: string }).name
+      : typeof coach?.coachType === 'string'
+      ? coach.coachType
+      : '';
+
   return (
     <div className="bg-white border border-gray-100 rounded-2xl p-5 hover:shadow-lg hover:border-gray-200 transition-all group">
       {/* Coach name & type */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <span className="font-bold text-[#111111] text-sm">{coach?.name || 'Gallery Express'}</span>
-          {coach?.coachType && (
+          {coachTypeLabel && (
             <span className="text-xs bg-gray-100 text-gray-700 px-2.5 py-0.5 rounded-full font-semibold">
-              {coach.coachType}
+              {coachTypeLabel}
             </span>
           )}
         </div>

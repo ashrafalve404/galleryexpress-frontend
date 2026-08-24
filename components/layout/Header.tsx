@@ -99,37 +99,37 @@ export function Header() {
                   }`}
                 >
                   <div className="w-6 h-6 rounded-full bg-[#E31B23] flex items-center justify-center text-white text-xs font-bold shadow-sm">
-                    {user.name.charAt(0).toUpperCase()}
+                    {(user.name || user.email || 'U').charAt(0).toUpperCase()}
                   </div>
-                  <span className="max-w-[100px] truncate">{user.name}</span>
+                  <span className="max-w-[100px] truncate">{user.name || user.email || 'User'}</span>
                   <HiChevronDown className={`transition-transform duration-200 ${userMenuOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 {userMenuOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 py-1.5 animate-fade-in z-50">
+                  <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 animate-fade-in z-50">
                     {isAdmin() && (
                       <Link
                         href={ROUTES.ADMIN}
-                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-[#E31B23]"
+                        className="flex items-center gap-2.5 px-4 py-2 text-sm font-semibold text-gray-700 hover:text-[#E31B23] transition-colors group"
                       >
-                        <HiViewGrid className="text-gray-500" />
-                        Admin Panel
+                        <HiViewGrid className="text-gray-400 group-hover:text-[#E31B23] transition-colors" />
+                        <span>Admin Panel</span>
                       </Link>
                     )}
                     <Link
                       href={ROUTES.MY_BOOKING}
-                      className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-[#E31B23]"
+                      className="flex items-center gap-2.5 px-4 py-2 text-sm font-semibold text-gray-700 hover:text-[#E31B23] transition-colors group"
                     >
-                      <HiTicket className="text-gray-500" />
-                      My Bookings
+                      <HiTicket className="text-gray-400 group-hover:text-[#E31B23] transition-colors" />
+                      <span>My Bookings</span>
                     </Link>
-                    <hr className="my-1 border-gray-100" />
+                    <hr className="my-1.5 border-gray-100" />
                     <button
                       onClick={logout}
-                      className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-rose-600 hover:bg-rose-50"
+                      className="w-full flex items-center gap-2.5 px-4 py-2 text-sm font-semibold text-rose-600 hover:text-rose-700 transition-colors group"
                     >
-                      <HiLogout />
-                      Logout
+                      <HiLogout className="text-rose-400 group-hover:text-rose-700 transition-colors" />
+                      <span>Logout</span>
                     </button>
                   </div>
                 )}

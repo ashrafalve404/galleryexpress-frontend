@@ -20,7 +20,7 @@ export default function TermsPage() {
       <main className="flex-1 pt-24 pb-16 min-h-screen bg-gray-50">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl font-black text-[#111111] mb-2">Terms &amp; Conditions</h1>
-          <p className="text-gray-400 text-sm mb-8">Last updated: January 2024</p>
+          <p className="text-gray-400 text-sm mb-8">Last updated: August 2026</p>
           <Section title="1. Acceptance of Terms">
             <p>By booking tickets through Gallery Express, you agree to these terms and conditions. Please read them carefully before proceeding with a booking.</p>
           </Section>

@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { HiShieldCheck, HiClock, HiLocationMarker, HiCheckCircle, HiArrowRight, HiChevronDown } from 'react-icons/hi';
+import { HiShieldCheck, HiClock, HiLocationMarker, HiCheckCircle, HiChevronDown } from 'react-icons/hi';
+import { Search, Armchair, CreditCard, QrCode, ArrowRight } from 'lucide-react';
 import { ROUTES } from '@/lib/utils/constants';
 import { today } from '@/lib/utils/date';
 
@@ -20,49 +21,67 @@ const features = [
 ];
 
 const steps = [
-  { step: '01', title: 'Search', desc: 'Enter origin, destination, and select your journey date.' },
-  { step: '02', title: 'Select Seat', desc: 'Choose preferred seats from our interactive coach layout.' },
-  { step: '03', title: 'Pay Securely', desc: 'Pay via bKash, Nagad, Card, or Counter payment options.' },
-  { step: '04', title: 'Get Ticket', desc: 'Receive your instant digital ticket with QR code for boarding.' },
+  {
+    step: '01',
+    icon: Search,
+    title: 'Search',
+    desc: 'Enter origin, destination, and select your journey date.',
+  },
+  {
+    step: '02',
+    icon: Armchair,
+    title: 'Select Seat',
+    desc: 'Choose preferred seats from our interactive coach layout.',
+  },
+  {
+    step: '03',
+    icon: CreditCard,
+    title: 'Pay Securely',
+    desc: 'Pay via bKash, Nagad, Card, or Counter payment options.',
+  },
+  {
+    step: '04',
+    icon: QrCode,
+    title: 'Get Ticket',
+    desc: 'Receive your instant digital ticket with QR code for boarding.',
+  },
 ];
 
 export function PopularRoutes() {
   return (
     <section className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between mb-10">
+        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-10">
           <div>
             <h2 className="text-2xl sm:text-3xl font-black text-[#111111]">Popular Routes</h2>
-            <p className="text-gray-500 mt-1.5 text-sm font-medium">Most frequented intercity trips</p>
+            <p className="text-gray-500 mt-1 text-sm font-medium">Most frequented intercity trips</p>
           </div>
-          <Link
-            href={ROUTES.SEARCH}
-            className="text-[#E31B23] text-sm font-bold flex items-center gap-1 hover:gap-2 transition-all"
-          >
-            All Routes <HiArrowRight />
-          </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {popularRoutes.map((route, i) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {popularRoutes.map((r) => (
             <Link
-              key={i}
-              href={`${ROUTES.SEARCH}?from=${encodeURIComponent(route.from)}&to=${encodeURIComponent(route.to)}&date=${today()}`}
-              className="bg-white rounded-2xl p-5 border border-gray-100 hover:border-[#E31B23]/40 hover:shadow-lg transition-all group"
+              key={`${r.from}-${r.to}`}
+              href={`/search?from=${encodeURIComponent(r.from)}&to=${encodeURIComponent(r.to)}&date=${today()}`}
+              className="group bg-white p-6 rounded-2xl border border-gray-100 shadow-xs hover:shadow-xl hover:border-[#E31B23]/30 transition-all duration-300 transform hover:-translate-y-1"
             >
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2 text-sm font-bold text-[#111111]">
-                  <span>{route.from}</span>
-                  <HiArrowRight className="text-[#E31B23]" />
-                  <span>{route.to}</span>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2 text-lg font-black text-[#111111]">
+                  <span>{r.from}</span>
+                  <span className="text-[#E31B23]">→</span>
+                  <span>{r.to}</span>
                 </div>
-                <span className="text-[#E31B23] font-black text-base">{route.fare}</span>
-              </div>
-              <div className="flex items-center gap-4 text-xs font-semibold text-gray-500">
-                <span className="flex items-center gap-1">
-                  <HiClock className="text-gray-400 text-sm" /> {route.duration}
+                <span className="bg-[#E31B23]/10 text-[#E31B23] px-3 py-1 rounded-full font-black text-sm">
+                  {r.fare}
                 </span>
-                <span>{route.departures}</span>
+              </div>
+
+              <div className="flex items-center justify-between text-xs text-gray-500 pt-4 border-t border-gray-50 font-medium">
+                <span>⏱ {r.duration}</span>
+                <span>🚌 {r.departures}</span>
+                <span className="text-[#E31B23] font-bold group-hover:translate-x-1 transition-transform flex items-center gap-1">
+                  Book <ArrowRight size={12} />
+                </span>
               </div>
             </Link>
           ))}
@@ -74,14 +93,13 @@ export function PopularRoutes() {
 
 export function WhyChooseUs() {
   return (
-    <section className="py-20">
+    <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
           <h2 className="text-2xl sm:text-3xl font-black text-[#111111]">Why Choose Gallery Express?</h2>
-          <p className="text-gray-500 mt-2 max-w-xl mx-auto text-sm font-medium">
-            Dedicated to delivering the most reliable, comfortable, and efficient bus travel experience in Bangladesh.
-          </p>
+          <p className="text-gray-500 mt-2 text-sm font-medium">We deliver excellence across every single journey.</p>
         </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {features.map(({ icon: Icon, title, desc }) => (
             <div
@@ -107,23 +125,29 @@ export function HowItWorks() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
           <h2 className="text-2xl sm:text-3xl font-black">Book in 4 Simple Steps</h2>
-          <p className="text-gray-400 mt-2 text-sm">From search to digital ticket in under 3 minutes.</p>
+          <p className="text-gray-400 mt-2 text-sm font-medium">From search to digital ticket in under 3 minutes.</p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {steps.map((s, i) => (
-            <div key={i} className="relative">
-              {i < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-8 left-full w-full h-px bg-white/15 z-0" />
-              )}
-              <div className="relative z-10">
-                <div className="w-16 h-16 rounded-2xl bg-[#E31B23] flex items-center justify-center mb-5 font-black text-xl shadow-lg">
-                  {s.step}
+          {steps.map((s, i) => {
+            const Icon = s.icon;
+            return (
+              <div key={s.step} className="relative">
+                {i < steps.length - 1 && (
+                  <div className="hidden lg:block absolute top-8 left-full w-full h-px bg-white/15 z-0" />
+                )}
+                <div className="relative z-10">
+                  <div className="w-16 h-16 rounded-2xl bg-[#E31B23] flex items-center justify-center mb-4 shadow-lg text-white">
+                    <Icon size={28} />
+                  </div>
+                  <div className="text-sm font-black text-[#E31B23] uppercase tracking-wider mb-1">
+                    STEP {s.step}
+                  </div>
+                  <h3 className="font-bold text-lg mb-2">{s.title}</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">{s.desc}</p>
                 </div>
-                <h3 className="font-bold text-lg mb-2">{s.title}</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">{s.desc}</p>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
@@ -184,10 +208,10 @@ export function FAQSection() {
 
 export function TrustSection() {
   const stats = [
-    { value: '500K+', label: 'Happy Passengers' },
-    { value: '50+', label: 'Intercity Routes' },
-    { value: '100+', label: 'Modern Coaches' },
-    { value: '10+', label: 'Years of Excellence' },
+    { value: '50K+', label: 'Happy Passengers' },
+    { value: '15+', label: 'Intercity Routes' },
+    { value: '25+', label: 'Modern Coaches' },
+    { value: '5+', label: 'Years of Excellence' },
   ];
 
   return (

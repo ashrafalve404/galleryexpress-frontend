@@ -12,12 +12,16 @@ export function useLogin() {
   return useMutation({
     mutationFn: (dto: LoginDto) => login(dto),
     onSuccess: (data) => {
+      if (!data || !data.user) {
+        toast.error('Authentication response missing user data.');
+        return;
+      }
       setAuth(data.user, data.accessToken, data.refreshToken);
-      toast.success(`Welcome back, ${data.user.name}!`);
+      toast.success(`Welcome back, ${data.user.name || 'User'}!`);
 
       // Redirect admins to admin panel
       const isAdmin = ['SUPER_ADMIN', 'ADMIN', 'STAFF', 'COUNTER_MANAGER', 'COUNTER_AGENT'].includes(
-        data.user.role
+        data.user.role || ''
       );
       router.push(isAdmin ? ROUTES.ADMIN : ROUTES.HOME);
     },
@@ -34,6 +38,10 @@ export function useRegister() {
   return useMutation({
     mutationFn: (dto: RegisterDto) => register(dto),
     onSuccess: (data) => {
+      if (!data || !data.user) {
+        toast.error('Registration failed.');
+        return;
+      }
       setAuth(data.user, data.accessToken, data.refreshToken);
       toast.success('Account created successfully! Welcome to Gallery Express.');
       router.push(ROUTES.HOME);
