@@ -1,0 +1,180 @@
+'use client';
+
+import { useParams } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
+import { Printer, Download, ArrowLeft, CheckCircle2, XCircle, Bus } from 'lucide-react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
+import { getTicket } from '@/lib/api/tickets';
+import { formatDateTime, formatTime } from '@/lib/utils/date';
+import { formatCurrency } from '@/lib/utils/currency';
+import { ROUTES } from '@/lib/utils/constants';
+
+export default function TicketPage() {
+  const { ticketNumber } = useParams<{ ticketNumber: string }>();
+
+  const { data: ticket, isLoading, isError } = useQuery({
+    queryKey: ['ticket', ticketNumber],
+    queryFn: () => getTicket(ticketNumber),
+    enabled: !!ticketNumber,
+  });
+
+  if (isLoading) {
+    return (
+      <>
+        <Header />
+        <main className="flex-1 pt-20 min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-10 h-10 border-2 border-[#E31B23] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-gray-500 text-sm">Loading ticket...</p>
+          </div>
+        </main>
+        <Footer />
+      </>
+    );
+  }
+
+  if (isError || !ticket) {
+    return (
+      <>
+        <Header />
+        <main className="flex-1 pt-20 min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <XCircle size={48} className="text-red-400 mx-auto mb-4" />
+            <h2 className="font-bold text-gray-800 text-xl mb-2">Ticket Not Found</h2>
+            <p className="text-gray-500 text-sm mb-4">
+              We couldn't find this ticket. Please check the ticket number.
+            </p>
+            <Link href={ROUTES.MY_BOOKING} className="text-[#E31B23] text-sm font-semibold">
+              Look Up Booking
+            </Link>
+          </div>
+        </main>
+        <Footer />
+      </>
+    );
+  }
+
+  const booking = ticket.booking;
+  const schedule = booking?.schedule;
+  const passenger = booking?.passengers?.[0];
+
+  return (
+    <>
+      <Header />
+      <main className="flex-1 pt-20 pb-10 bg-gray-50 min-h-screen no-print">
+        <div className="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Back */}
+          <div className="flex items-center justify-between mb-6 no-print">
+            <Link href={ROUTES.MY_BOOKING} className="flex items-center gap-2 text-gray-600 hover:text-[#111111] text-sm">
+              <ArrowLeft size={16} />
+              Back
+            </Link>
+            <div className="flex gap-2">
+              <button
+                onClick={() => window.print()}
+                className="flex items-center gap-1.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 px-3 py-2 rounded-lg text-xs font-medium"
+              >
+                <Printer size={13} /> Print
+              </button>
+            </div>
+          </div>
+
+          {/* Ticket Card */}
+          <div className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100" id="ticket-card">
+            {/* Header */}
+            <div className="bg-[#E31B23] px-6 py-5">
+              <div className="flex items-center justify-between mb-3">
+                <img
+                  src="/galleryexplogo.png"
+                  alt="Gallery Express"
+                  className="h-8 w-auto object-contain"
+                />
+                <div className="flex items-center gap-1.5 bg-green-400 text-white px-2.5 py-1 rounded-full text-xs font-bold">
+                  <CheckCircle2 size={11} />
+                  CONFIRMED
+                </div>
+              </div>
+              <div className="text-white/80 text-xs">Ticket No.</div>
+              <div className="text-white font-black text-lg tracking-widest font-mono">{ticket.ticketNumber}</div>
+            </div>
+
+            {/* Journey */}
+            <div className="px-6 py-5">
+              <div className="flex items-center gap-4 mb-5">
+                <div>
+                  <div className="text-2xl font-black text-[#111111]">
+                    {schedule ? formatTime(schedule.departureTime) : '--'}
+                  </div>
+                  <div className="text-xs text-gray-500">{schedule?.route?.origin}</div>
+                </div>
+                <div className="flex-1 text-center">
+                  <Bus size={18} className="text-[#E31B23] mx-auto" />
+                  <div className="text-xs text-gray-400 mt-1">{schedule?.coach?.name}</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-black text-[#111111]">
+                    {schedule ? formatTime(schedule.arrivalTime) : '--'}
+                  </div>
+                  <div className="text-xs text-gray-500">{schedule?.route?.destination}</div>
+                </div>
+              </div>
+
+              {/* Passenger(s) */}
+              <div className="bg-gray-50 rounded-xl p-4 space-y-2">
+                {booking.seats?.map((seat, i) => (
+                  <div key={i} className="flex justify-between text-sm">
+                    <div>
+                      <span className="font-medium text-[#111111]">{booking.passengers?.[i]?.name || 'Passenger'}</span>
+                      <span className="text-gray-400 ml-2 text-xs">· Seat {seat.seatNumber} ({seat.seatType})</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex justify-between text-sm mt-3">
+                <span className="text-gray-500">Issued</span>
+                <span className="font-medium text-gray-700">{ticket.issuedAt ? formatDateTime(ticket.issuedAt) : '--'}</span>
+              </div>
+              <div className="flex justify-between text-sm mt-1">
+                <span className="text-gray-500">Booking Ref</span>
+                <span className="font-bold text-[#111111] font-mono">{booking.bookingRef}</span>
+              </div>
+              <div className="flex justify-between text-sm mt-1">
+                <span className="text-gray-500">Amount Paid</span>
+                <span className="font-bold text-[#E31B23]">{formatCurrency(booking.finalAmount)}</span>
+              </div>
+            </div>
+
+            {/* Tear line */}
+            <div className="flex items-center px-4">
+              <div className="w-6 h-6 rounded-full bg-gray-50 -ml-6 border border-gray-100" />
+              <div className="flex-1 border-t border-dashed border-gray-200" />
+              <div className="w-6 h-6 rounded-full bg-gray-50 -mr-6 border border-gray-100" />
+            </div>
+
+            {/* QR Code area */}
+            <div className="px-6 py-5 bg-gray-50 text-center">
+              <p className="text-xs text-gray-400 mb-3">Show this QR code at boarding</p>
+              <div className="w-32 h-32 bg-white border-2 border-gray-200 rounded-xl mx-auto flex items-center justify-center">
+                <div className="text-xs text-gray-300 text-center p-2">
+                  <div className="w-20 h-20 bg-gray-100 rounded-lg mx-auto flex items-center justify-center">
+                    <span className="text-[10px] text-gray-400 text-center leading-tight">QR Code<br />(scan at boarding)</span>
+                  </div>
+                </div>
+              </div>
+              <p className="text-[10px] text-gray-400 mt-2 font-mono">{ticket.ticketNumber}</p>
+            </div>
+          </div>
+
+          <p className="text-center text-xs text-gray-400 mt-6">
+            Present this ticket (digital or printed) at boarding. Keep your booking reference safe.
+          </p>
+        </div>
+      </main>
+      <Footer />
+    </>
+  );
+}
