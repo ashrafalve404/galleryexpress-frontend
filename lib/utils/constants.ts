@@ -11,6 +11,7 @@ export const ROUTES = {
   CHECKOUT_CONFIRMATION: '/checkout/confirmation',
   TICKET: (ticketNumber: string) => `/ticket/${ticketNumber}`,
   MY_BOOKING: '/my-booking',
+  DASHBOARD: '/dashboard',
   LOGIN: '/auth/login',
   REGISTER: '/auth/register',
   ABOUT: '/about',

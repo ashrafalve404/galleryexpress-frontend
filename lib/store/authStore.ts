@@ -51,15 +51,27 @@ export const useAuthStore = create<AuthState>()(
       },
 
       isAdmin: () => {
-        const { user } = get();
+        let u = get().user;
+        if (!u && typeof window !== 'undefined') {
+          try {
+            const raw = localStorage.getItem('user');
+            if (raw) u = JSON.parse(raw);
+          } catch {}
+        }
         return ['SUPER_ADMIN', 'ADMIN', 'STAFF', 'COUNTER_MANAGER', 'COUNTER_AGENT'].includes(
-          user?.role || ''
+          u?.role || ''
         );
       },
 
       isStaff: () => {
-        const { user } = get();
-        return ['SUPER_ADMIN', 'ADMIN', 'STAFF'].includes(user?.role || '');
+        let u = get().user;
+        if (!u && typeof window !== 'undefined') {
+          try {
+            const raw = localStorage.getItem('user');
+            if (raw) u = JSON.parse(raw);
+          } catch {}
+        }
+        return ['SUPER_ADMIN', 'ADMIN', 'STAFF'].includes(u?.role || '');
       },
     }),
     {

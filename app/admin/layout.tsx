@@ -1,22 +1,44 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { AdminSidebar } from '@/components/layout/AdminSidebar';
 import { useAuthStore } from '@/lib/store/authStore';
 import { ROUTES } from '@/lib/utils/constants';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isAdmin } = useAuthStore();
+  const { isAuthenticated, isAdmin, user } = useAuthStore();
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated || !isAdmin()) {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
+    // Check if authenticated from store or localStorage
+    const hasToken = typeof window !== 'undefined' ? !!localStorage.getItem('accessToken') : false;
+    const isUserAdmin = isAdmin();
+
+    if ((!isAuthenticated && !hasToken) || !isUserAdmin) {
       router.replace(ROUTES.LOGIN);
     }
-  }, [isAuthenticated, isAdmin, router]);
+  }, [mounted, isAuthenticated, isAdmin, router]);
 
-  if (!isAuthenticated) return null;
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="w-10 h-10 border-2 border-[#E31B23] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  const hasToken = typeof window !== 'undefined' ? !!localStorage.getItem('accessToken') : false;
+  if ((!isAuthenticated && !hasToken) || !isAdmin()) {
+    return null;
+  }
 
   return (
     <div className="flex min-h-screen bg-gray-50" suppressHydrationWarning>

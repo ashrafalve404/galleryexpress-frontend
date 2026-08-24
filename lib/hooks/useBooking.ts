@@ -5,6 +5,7 @@ import {
   cancelBooking,
   getBooking,
   getBookingByRef,
+  getUserBookings,
   type CreateBookingDto,
   type ConfirmBookingDto,
   type CancelBookingDto,
@@ -21,6 +22,7 @@ export const bookingKeys = {
   all: ['bookings'] as const,
   detail: (id: string) => ['bookings', 'detail', id] as const,
   byRef: (ref: string) => ['bookings', 'ref', ref] as const,
+  userBookings: () => ['bookings', 'user'] as const,
 };
 
 export function useBooking(id: string) {
@@ -36,6 +38,14 @@ export function useBookingByRef(ref: string) {
     queryKey: bookingKeys.byRef(ref),
     queryFn: () => getBookingByRef(ref),
     enabled: !!ref,
+  });
+}
+
+export function useUserBookings(enabled = true) {
+  return useQuery({
+    queryKey: bookingKeys.userBookings(),
+    queryFn: () => getUserBookings(),
+    enabled,
   });
 }
 

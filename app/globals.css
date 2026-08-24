@@ -22,13 +22,20 @@
   /* Typography */
   --font-sans: var(--font-inter);
 
-  /* Radius */
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
-  --radius-2xl: 1.25rem;
+  /* Radius (Slightly reduced for sleeker cards & buttons) */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.4rem;
+  --radius-xl: 0.5rem;
+  --radius-2xl: 0.625rem;
+  --radius-3xl: 0.875rem;
 }
+
+/* Reduced rounded corner overrides for cards and buttons site-wide */
+.rounded-3xl { border-radius: 0.875rem !important; }
+.rounded-2xl { border-radius: 0.625rem !important; }
+.rounded-xl  { border-radius: 0.5rem !important; }
+.rounded-lg  { border-radius: 0.4rem !important; }
 
 /* ===================================================
    Base Styles
@@ -38,7 +45,7 @@
   box-sizing: border-box;
 }
 
-html {
+html, html[data-scroll-behavior="smooth"] {
   scroll-behavior: smooth;
   -webkit-tap-highlight-color: transparent;
 }

@@ -35,6 +35,7 @@ export interface Booking {
   totalAmount: number;
   discountAmount: number;
   finalAmount: number;
+  netAmount?: number | string;
   scheduleId: string;
   userId: string;
   createdAt: string;
@@ -42,6 +43,7 @@ export interface Booking {
   passengers: PassengerInfo[];
   seats: Array<{ seatNumber: string; seatType: string }>;
   schedule?: {
+    departureDate?: string;
     departureTime: string;
     arrivalTime: string;
     route: { origin: string; destination: string };
@@ -99,6 +101,11 @@ export async function getBookingByRef(ref: string): Promise<Booking> {
   return data?.data || (data as unknown as Booking);
 }
 
+export async function getUserBookings(): Promise<Booking[]> {
+  const { data } = await client.get<{ data: Booking[] }>('/api/v1/user/my-bookings');
+  return data?.data || (data as unknown as Booking[]) || [];
+}
+
 // Admin
 export async function adminGetBookings(query?: Record<string, unknown>) {
   const { data } = await client.get('/api/v1/admin/bookings', { params: query });
@@ -107,5 +114,10 @@ export async function adminGetBookings(query?: Record<string, unknown>) {
 
 export async function adminCreateCounterBooking(dto: CreateBookingDto & { counterId?: string }) {
   const { data } = await client.post('/api/v1/admin/bookings', dto);
+  return data;
+}
+
+export async function adminDeleteBooking(id: string) {
+  const { data } = await client.delete(`/api/v1/admin/bookings/${id}`);
   return data;
 }

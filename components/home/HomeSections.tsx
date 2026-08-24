@@ -45,10 +45,10 @@ const destinations = [
 ];
 
 const features = [
-  { icon: HiShieldCheck, title: 'Safe & Trusted', desc: 'Professional licensed drivers, safety checks, and GPS-tracked vehicles.' },
-  { icon: HiClock, title: 'Always On Time', desc: 'Punctual departures and real-time tracking across all operational routes.' },
-  { icon: HiLocationMarker, title: 'Wide Coverage', desc: '50+ routes connecting all major divisional cities and districts.' },
-  { icon: HiCheckCircle, title: 'Easy Cancellation', desc: 'Instant online cancellation with structured transparent refund policies.' },
+  { icon: HiClock, title: 'Instant Booking', desc: 'Book your seat online in under 60 seconds with instant confirmation.' },
+  { icon: HiShieldCheck, title: 'Secure Payment', desc: '100% verified SSL payment with bKash, Nagad & Cards.' },
+  { icon: HiLocationMarker, title: 'Digital Ticket', desc: 'Instant QR code mobile boarding ticket sent to your phone.' },
+  { icon: HiCheckCircle, title: 'Easy Cancellation', desc: 'Instant online cancellation with transparent refund policies.' },
 ];
 
 const steps = [
@@ -129,7 +129,6 @@ export function PopularDestinations() {
                       fill
                       sizes="100vw"
                       className="object-cover"
-                      quality={90}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10" />
                   </div>
@@ -207,7 +206,6 @@ export function PopularDestinations() {
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                   className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-                  quality={90}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10 group-hover:from-black/95 transition-all" />
               </div>
@@ -330,17 +328,17 @@ export function WhyChooseUs() {
           <p className="text-gray-500 mt-2 text-sm font-medium">We deliver excellence across every single journey.</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           {features.map(({ icon: Icon, title, desc }) => (
             <div
               key={title}
-              className="text-center p-6 rounded-2xl border border-gray-100 hover:border-[#E31B23]/30 hover:shadow-lg transition-all group bg-white"
+              className="text-center p-4 sm:p-6 rounded-2xl border border-gray-100 hover:border-[#E31B23]/30 hover:shadow-lg transition-all group bg-white"
             >
-              <div className="w-14 h-14 bg-[#E31B23]/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-[#E31B23] transition-colors">
-                <Icon className="text-2xl text-[#E31B23] group-hover:text-white transition-colors" />
+              <div className="w-10 h-10 sm:w-14 sm:h-14 bg-[#E31B23]/10 rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 group-hover:bg-[#E31B23] transition-colors">
+                <Icon className="text-xl sm:text-2xl text-[#E31B23] group-hover:text-white transition-colors" />
               </div>
-              <h3 className="font-bold text-[#111111] mb-2">{title}</h3>
-              <p className="text-gray-500 text-sm leading-relaxed">{desc}</p>
+              <h3 className="font-bold text-[#111111] text-xs sm:text-base mb-1 sm:mb-2">{title}</h3>
+              <p className="text-gray-500 text-[11px] sm:text-sm leading-relaxed">{desc}</p>
             </div>
           ))}
         </div>
@@ -351,13 +349,13 @@ export function WhyChooseUs() {
 
 export function HowItWorks() {
   return (
-    <section className="py-20 bg-[#111111] text-white">
+    <section className="py-14 sm:py-20 bg-[#111111] text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-14">
+        <div className="text-center mb-10 sm:mb-14">
           <h2 className="text-2xl sm:text-3xl font-black">Book in 4 Simple Steps</h2>
-          <p className="text-gray-400 mt-2 text-sm font-medium">From search to digital ticket in under 3 minutes.</p>
+          <p className="text-gray-400 mt-2 text-xs sm:text-sm font-medium">From search to digital ticket in under 3 minutes.</p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
           {steps.map((s, i) => {
             const Icon = s.icon;
             return (

@@ -50,7 +50,8 @@ export interface Seat {
   id: string;
   seatNumber: string;
   seatType: 'REGULAR' | 'VIP' | 'LADIES' | 'DISABLED' | 'DRIVER' | 'HELPER' | 'BLOCKED';
-  status: 'AVAILABLE' | 'UNAVAILABLE' | 'MAINTENANCE';
+  status: string;
+  availability?: 'AVAILABLE' | 'BOOKED' | 'LOCKED';
   isBooked: boolean;
   isHeld: boolean;
   price: number;

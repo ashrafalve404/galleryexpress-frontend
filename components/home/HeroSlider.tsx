@@ -13,13 +13,13 @@ const slides = [
   },
   {
     image: '/hero_banner_2.png',
-    title: 'Scenic Green Journeys to Sylhet',
+    title: 'Scenic Green Journeys',
     subtitle: 'Punctual Departures & GPS-Tracked Fleet Across All Routes',
   },
   {
     image: '/hero_banner_3.png',
     title: 'Intercity Highway Express',
-    subtitle: 'Connecting Dhaka, Chittagong, Rajshahi & Khulna Daily',
+    subtitle: "Connecting Dhaka, Chittagong & Cox's Bazar Daily",
   },
 ];
 
@@ -54,7 +54,6 @@ export function HeroSlider() {
               sizes="100vw"
               priority={index === 0}
               className="object-cover object-center"
-              quality={90}
             />
             {/* Soft Overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-black/20" />

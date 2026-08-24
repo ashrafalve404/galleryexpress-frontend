@@ -54,7 +54,6 @@ export const LOCATION_OPTIONS: LocationOption[] = [
 const TRENDING_ROUTES = [
   { from: 'Dhaka', to: "Cox's Bazar" },
   { from: 'Dhaka', to: 'Chittagong' },
-  { from: 'Chittagong', to: "Cox's Bazar" },
   { from: "Cox's Bazar", to: 'Dhaka' },
   { from: 'Chittagong', to: 'Dhaka' },
 ];
@@ -285,7 +284,7 @@ export function SearchCard() {
   const router = useRouter();
   const { from, to, date, setSearch } = useBookingStore();
   const [localFrom, setLocalFrom] = useState(from || 'Dhaka');
-  const [localTo, setLocalTo] = useState(to || 'Chittagong');
+  const [localTo, setLocalTo] = useState(to || "Cox's Bazar");
   const [localDate, setLocalDate] = useState(date || '2026-08-25');
   const [error, setError] = useState('');
 

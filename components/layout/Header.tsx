@@ -44,14 +44,26 @@ export function Header() {
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
-          {/* Logo */}
-          <Link href={ROUTES.HOME} className="flex items-center shrink-0">
-            <img
-              src="/galleryexplogo.png"
-              alt="Gallery Express Limited"
-              className="h-10 sm:h-12 w-auto object-contain transition-transform hover:scale-105"
-            />
-          </Link>
+          {/* Left section (Mobile Menu Button + Logo) */}
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+            {/* Mobile menu button (Left side) */}
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="lg:hidden p-2 rounded-xl text-gray-700 hover:bg-gray-100 transition-colors"
+              aria-label="Toggle menu"
+            >
+              {menuOpen ? <HiX size={24} /> : <HiMenu size={24} />}
+            </button>
+
+            {/* Logo */}
+            <Link href={ROUTES.HOME} className="flex items-center shrink-0">
+              <img
+                src="/galleryexplogo.png"
+                alt="Gallery Express Limited"
+                className="h-[54px] sm:h-[64px] lg:h-[74px] w-auto object-contain py-0.5 transition-transform hover:scale-105"
+              />
+            </Link>
+          </div>
 
           {/* Desktop Nav */}
           <div className="hidden lg:flex items-center gap-1">
@@ -84,17 +96,24 @@ export function Header() {
               <div className="relative">
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="hidden lg:flex items-center gap-2.5 px-3.5 py-2 bg-gray-100 hover:bg-gray-200/80 rounded-xl text-sm font-semibold text-gray-800 transition-all"
+                  className="flex items-center gap-2 px-3 py-1.5 lg:px-3.5 lg:py-2 bg-gray-100 hover:bg-gray-200/80 rounded-xl text-xs sm:text-sm font-semibold text-gray-800 transition-all"
                 >
                   <div className="w-6 h-6 rounded-full bg-[#E31B23] flex items-center justify-center text-white text-xs font-bold shadow-sm">
                     {(user.name || user.email || 'U').charAt(0).toUpperCase()}
                   </div>
-                  <span className="max-w-[100px] truncate">{user.name || user.email || 'User'}</span>
+                  <span className="hidden sm:inline max-w-[100px] truncate">{user.name || user.email || 'User'}</span>
                   <HiChevronDown className={`transition-transform duration-200 ${userMenuOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 {userMenuOpen && (
                   <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 animate-fade-in z-50">
+                    <Link
+                      href={ROUTES.DASHBOARD}
+                      className="flex items-center gap-2.5 px-4 py-2 text-sm font-semibold text-gray-700 hover:text-[#E31B23] transition-colors group"
+                    >
+                      <HiViewGrid className="text-gray-400 group-hover:text-[#E31B23] transition-colors" />
+                      <span>My Dashboard</span>
+                    </Link>
                     {isAdmin() && (
                       <Link
                         href={ROUTES.ADMIN}
@@ -109,7 +128,7 @@ export function Header() {
                       className="flex items-center gap-2.5 px-4 py-2 text-sm font-semibold text-gray-700 hover:text-[#E31B23] transition-colors group"
                     >
                       <HiTicket className="text-gray-400 group-hover:text-[#E31B23] transition-colors" />
-                      <span>My Bookings</span>
+                      <span>Find Booking</span>
                     </Link>
                     <hr className="my-1.5 border-gray-100" />
                     <button
@@ -125,21 +144,12 @@ export function Header() {
             ) : (
               <Link
                 href={ROUTES.LOGIN}
-                className="hidden lg:flex items-center gap-2 bg-[#E31B23] hover:bg-[#C41920] text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm hover:shadow-md active:scale-[0.98]"
+                className="flex items-center gap-1.5 sm:gap-2 bg-[#E31B23] hover:bg-[#C41920] text-white px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm hover:shadow-md active:scale-[0.98]"
               >
-                <HiUser className="text-base" />
+                <HiUser className="text-sm sm:text-base" />
                 Sign In
               </Link>
             )}
-
-            {/* Mobile menu button */}
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="lg:hidden p-2 rounded-xl text-gray-700 hover:bg-gray-100 transition-colors"
-              aria-label="Toggle menu"
-            >
-              {menuOpen ? <HiX size={24} /> : <HiMenu size={24} />}
-            </button>
           </div>
         </div>
 
@@ -163,6 +173,13 @@ export function Header() {
               <div className="px-2 pt-3 border-t border-gray-100 mt-2 space-y-2">
                 {isAuthenticated && user ? (
                   <>
+                    <Link
+                      href={ROUTES.DASHBOARD}
+                      className="flex items-center gap-2.5 px-4 py-3 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                    >
+                      <HiViewGrid className="text-gray-500" />
+                      My Dashboard
+                    </Link>
                     {isAdmin() && (
                       <Link
                         href={ROUTES.ADMIN}

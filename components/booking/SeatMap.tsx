@@ -13,10 +13,11 @@ function SeatComponent({ seat, isSelected, onToggle }: SeatProps) {
   const isUnavailable =
     seat.isBooked ||
     seat.isHeld ||
-    seat.status !== 'AVAILABLE' ||
-    seat.seatType === 'DRIVER' ||
-    seat.seatType === 'HELPER' ||
-    seat.seatType === 'BLOCKED';
+    seat.availability === 'BOOKED' ||
+    seat.availability === 'LOCKED' ||
+    seat.status === 'BOOKED' ||
+    seat.status === 'LOCKED' ||
+    (seat.status && seat.status !== 'AVAILABLE' && seat.status !== 'ACTIVE');
 
   if (seat.seatType === 'DRIVER') {
     return (
@@ -48,10 +49,10 @@ function SeatComponent({ seat, isSelected, onToggle }: SeatProps) {
   const getStyles = () => {
     if (isUnavailable) {
       return {
-        outer: 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed',
-        headrest: 'bg-gray-300/60',
-        cushion: 'bg-gray-300/40',
-        badge: 'text-gray-400 font-semibold',
+        outer: 'bg-slate-200/90 border-slate-300 text-slate-500 cursor-not-allowed pointer-events-none opacity-90 shadow-2xs',
+        headrest: 'bg-slate-400/80',
+        cushion: 'bg-slate-300',
+        badge: 'text-slate-600 font-extrabold',
       };
     }
     if (isSelected) {

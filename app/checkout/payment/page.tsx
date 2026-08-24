@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { ArrowLeft, CheckCircle2, Timer, Shield, Smartphone, Wallet, CreditCard, Building2 } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Timer, Shield, Smartphone, Wallet, CreditCard, Building2, Ticket, ArrowRight, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -10,6 +10,8 @@ import { useBookingStore } from '@/lib/store/bookingStore';
 import { useConfirmBooking } from '@/lib/hooks/useBooking';
 import { formatCurrency } from '@/lib/utils/currency';
 import { PAYMENT_PROVIDERS, ROUTES } from '@/lib/utils/constants';
+import { toast } from 'sonner';
+import { RiCheckboxCircleFill, RiTicket2Fill } from 'react-icons/ri';
 
 const PROVIDER_ICONS: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
   Smartphone,
@@ -20,9 +22,10 @@ const PROVIDER_ICONS: Record<string, React.ComponentType<{ size?: number; classN
 
 export default function PaymentPage() {
   const router = useRouter();
-  const { bookingId, bookingRef, schedule, selectedSeats, getFinalAmount, setPaymentProvider, paymentProvider } = useBookingStore();
+  const { bookingId, bookingRef, schedule, selectedSeats, getFinalAmount, setPaymentProvider, paymentProvider, ticketNumber } = useBookingStore();
   const confirmBooking = useConfirmBooking();
-  const [selected, setSelected] = useState<string>(paymentProvider || '');
+  const [selected, setSelected] = useState<string>(paymentProvider || 'BKASH');
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => {
     if (!bookingId) {
@@ -43,13 +46,17 @@ export default function PaymentPage() {
         },
       });
 
-      router.push(ROUTES.CHECKOUT_CONFIRMATION);
-    } catch (err) {
+      toast.success('Payment completed successfully!');
+      setShowSuccessModal(true);
+    } catch (err: any) {
       console.error('Payment confirmation error:', err);
+      const msg = err?.response?.data?.message || 'Failed to confirm payment.';
+      toast.error(msg);
     }
   };
 
   const totalAmount = getFinalAmount();
+  const selectedProviderObj = PAYMENT_PROVIDERS.find((p) => p.id === selected);
 
   return (
     <>
@@ -77,7 +84,7 @@ export default function PaymentPage() {
             <div>
               <p className="text-sm font-semibold text-amber-800">Your seats are held</p>
               <p className="text-xs text-amber-600 mt-0.5">
-                Booking Ref: <strong>{bookingRef}</strong>. Complete payment within 10 minutes or your seats will be released.
+                Booking Ref: <strong className="font-mono">{bookingRef}</strong>. Complete payment within 10 minutes or your seats will be released.
               </p>
             </div>
           </div>
@@ -90,7 +97,7 @@ export default function PaymentPage() {
                 <span>{schedule?.origin} → {schedule?.destination}</span>
               </div>
               <div className="flex justify-between">
-                <span>{selectedSeats.length} seat(s)</span>
+                <span>{selectedSeats.length} seat(s) ({selectedSeats.map(s => s.seatNumber).join(', ')})</span>
                 <span>{formatCurrency(totalAmount)}</span>
               </div>
             </div>
@@ -137,13 +144,13 @@ export default function PaymentPage() {
           {/* Security note */}
           <div className="flex items-center gap-2 text-xs text-gray-400 mb-6">
             <Shield size={13} />
-            <span>Your payment information is encrypted and secure.</span>
+            <span>Your payment information is 100% encrypted and secure.</span>
           </div>
 
           <button
             onClick={handleConfirm}
             disabled={!selected || confirmBooking.isPending}
-            className="w-full bg-[#E31B23] disabled:opacity-70 disabled:cursor-not-allowed hover:bg-[#C41920] text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all hover:shadow-lg text-base"
+            className="w-full bg-[#E31B23] disabled:opacity-70 disabled:cursor-not-allowed hover:bg-[#C41920] text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all hover:shadow-lg text-base active:scale-98"
           >
             {confirmBooking.isPending ? (
               <>
@@ -159,6 +166,65 @@ export default function PaymentPage() {
           </button>
         </div>
       </main>
+
+      {/* Payment Success Popup Modal */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-fade-in">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl text-center relative overflow-hidden border border-emerald-100">
+            {/* Top decorative accent */}
+            <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-emerald-500 via-teal-500 to-green-500" />
+            
+            {/* Animated Checkmark Circle */}
+            <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-5 shadow-lg relative">
+              <div className="absolute inset-0 rounded-full bg-emerald-400/20 animate-ping" />
+              <RiCheckboxCircleFill size={48} className="relative z-10 text-emerald-600" />
+            </div>
+
+            <h2 className="text-2xl font-black text-[#111111] mb-1">Payment Successful!</h2>
+            <p className="text-gray-500 text-xs sm:text-sm font-medium mb-6">
+              Thank you for booking with Gallery Express. Your seats are confirmed.
+            </p>
+
+            {/* Payment Details Card */}
+            <div className="bg-gray-50 rounded-2xl p-4 text-left border border-gray-100 space-y-2.5 mb-6 text-xs sm:text-sm">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-500 font-medium">Booking Ref</span>
+                <span className="font-mono font-black text-[#111111]">{bookingRef}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-500 font-medium">Payment Method</span>
+                <span className="font-bold text-gray-800">{selectedProviderObj?.name || 'Mobile Banking'}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-500 font-medium">Route</span>
+                <span className="font-bold text-gray-800">{schedule?.origin} → {schedule?.destination}</span>
+              </div>
+              <hr className="border-gray-200" />
+              <div className="flex justify-between items-center pt-0.5">
+                <span className="font-bold text-gray-700">Total Paid</span>
+                <span className="font-black text-[#E31B23] text-base">{formatCurrency(totalAmount)}</span>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="space-y-2.5">
+              <button
+                onClick={() => router.push(ROUTES.CHECKOUT_CONFIRMATION)}
+                className="w-full bg-[#E31B23] hover:bg-[#C41920] text-[#FFFFFF] font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 text-sm shadow-md transition-all active:scale-98"
+              >
+                <RiTicket2Fill size={18} /> View Digital Boarding Pass
+              </button>
+              <button
+                onClick={() => router.push(ROUTES.DASHBOARD)}
+                className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-xl text-xs sm:text-sm transition-colors"
+              >
+                Go to Passenger Dashboard
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Footer />
     </>
   );

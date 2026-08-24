@@ -36,9 +36,9 @@ export default function LoginPage() {
             src="/hero_banner_1.png"
             alt="Gallery Express Bus Travel"
             fill
+            sizes="50vw"
             priority
             className="object-cover"
-            quality={90}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/40" />
         </div>
