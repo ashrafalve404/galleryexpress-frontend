@@ -12,6 +12,11 @@ import {
 import { useBookingStore } from '../store/bookingStore';
 import { toast } from 'sonner';
 
+// Extended booking type that includes tickets from GET /bookings/:id
+interface BookingWithTickets {
+  tickets?: Array<{ ticketNumber: string; status: string }>;
+}
+
 export const bookingKeys = {
   all: ['bookings'] as const,
   detail: (id: string) => ['bookings', 'detail', id] as const,
@@ -43,8 +48,23 @@ export function useCreateBooking() {
       setBookingResult(data.id, data.bookingRef);
       toast.success('Seats held! Please complete payment within 10 minutes.');
     },
-    onError: (err: Error) => {
-      toast.error(err.message || 'Failed to create booking. Please try again.');
+    onError: (err: any) => {
+      const isAuthErr =
+        err?.response?.status === 401 ||
+        err?.message?.includes('token') ||
+        err?.message?.includes('sign in') ||
+        err?.message?.includes('Unauthorized');
+
+      const rawMsg = Array.isArray(err?.response?.data?.message)
+        ? err.response.data.message.join(' | ')
+        : err?.response?.data?.message || err?.message;
+
+      const userMsg = isAuthErr
+        ? 'Please sign in to your account to complete your booking.'
+        : rawMsg || 'Failed to create booking. Please try again.';
+
+      console.error('Booking creation failed:', err?.response?.data || err);
+      toast.error(userMsg);
     },
   });
 }
@@ -56,17 +76,26 @@ export function useConfirmBooking() {
   return useMutation({
     mutationFn: ({ id, dto }: { id: string; dto: ConfirmBookingDto }) =>
       confirmBooking(id, dto),
-    onSuccess: (data, { id }) => {
-      qc.invalidateQueries({ queryKey: bookingKeys.detail(id) });
-      const ticketNumber = (data as unknown as { tickets?: Array<{ ticketNumber: string }> })
-        ?.tickets?.[0]?.ticketNumber;
-      if (ticketNumber) {
-        setTicketNumber(ticketNumber);
+    onSuccess: async (_, { id }) => {
+      // The confirm endpoint returns the raw booking without tickets.
+      // Fetch the booking detail which includes tickets[].
+      try {
+        const bookingDetail = await getBooking(id) as unknown as BookingWithTickets;
+        const ticketNumber = bookingDetail?.tickets?.[0]?.ticketNumber;
+        if (ticketNumber) {
+          setTicketNumber(ticketNumber);
+        }
+      } catch {
+        // ticket number fetch failed — confirmation still succeeded
       }
+      qc.invalidateQueries({ queryKey: bookingKeys.detail(id) });
       toast.success('Booking confirmed! Your tickets have been issued.');
     },
-    onError: (err: Error) => {
-      toast.error(err.message || 'Payment confirmation failed. Please contact support.');
+    onError: (err: any) => {
+      const rawMsg = Array.isArray(err?.response?.data?.message)
+        ? err.response.data.message.join(' | ')
+        : err?.response?.data?.message || err?.message;
+      toast.error(rawMsg || 'Payment confirmation failed. Please contact support.');
     },
   });
 }
@@ -81,8 +110,11 @@ export function useCancelBooking() {
       qc.invalidateQueries({ queryKey: bookingKeys.detail(id) });
       toast.success('Booking cancelled successfully.');
     },
-    onError: (err: Error) => {
-      toast.error(err.message || 'Failed to cancel booking.');
+    onError: (err: any) => {
+      const rawMsg = Array.isArray(err?.response?.data?.message)
+        ? err.response.data.message.join(' | ')
+        : err?.response?.data?.message || err?.message;
+      toast.error(rawMsg || 'Failed to cancel booking. Please try again.');
     },
   });
 }

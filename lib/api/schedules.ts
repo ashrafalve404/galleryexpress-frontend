@@ -60,12 +60,14 @@ export interface Seat {
 
 export async function searchSchedules(params: SearchScheduleParams): Promise<Schedule[]> {
   try {
+    const cleanFrom = (params.from || '').split(' - ')[0].trim();
+    const cleanTo = (params.to || '').split(' - ')[0].trim();
     const { data } = await client.get('/api/v1/schedules/search', {
       params: withCompany({
-        origin: params.from,
-        destination: params.to,
-        from: params.from,
-        to: params.to,
+        origin: cleanFrom,
+        destination: cleanTo,
+        from: cleanFrom,
+        to: cleanTo,
         date: params.date,
       }),
     });

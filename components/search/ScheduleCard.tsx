@@ -1,13 +1,16 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
 import { RiWindyFill, RiWifiFill, RiFlashlightFill, RiTvFill, RiDropFill, RiStarFill } from 'react-icons/ri';
 import { HiChevronRight } from 'react-icons/hi';
+import { Building2 } from 'lucide-react';
 import { type Schedule } from '@/lib/api/schedules';
 import { useBookingStore } from '@/lib/store/bookingStore';
 import { formatTime, getDuration } from '@/lib/utils/date';
 import { formatCurrency } from '@/lib/utils/currency';
 import { ROUTES } from '@/lib/utils/constants';
+import client from '@/lib/api/client';
 
 interface ScheduleCardProps {
   schedule: Schedule;
@@ -22,9 +25,21 @@ const AMENITY_MAP: Record<string, { icon: React.ComponentType<{ className?: stri
   ENTERTAINMENT: { icon: RiTvFill, label: 'TV' },
 };
 
+import { withCompany } from '@/lib/api/client';
+
 export function ScheduleCard({ schedule }: ScheduleCardProps) {
   const router = useRouter();
   const setSchedule = useBookingStore((s) => s.setSchedule);
+
+  // Fetch counters from public endpoint to show boarding counter per origin city
+  const { data: countersData } = useQuery({
+    queryKey: ['public', 'counters'],
+    queryFn: async () => {
+      const { data } = await client.get('/api/v1/counters', { params: withCompany() });
+      return data?.data || (Array.isArray(data) ? data : []);
+    },
+    staleTime: 5 * 60 * 1000,
+  });
 
   const sAny = schedule as unknown as Record<string, any>;
   const fAny = schedule?.fare as unknown as Record<string, any>;
@@ -83,6 +98,15 @@ export function ScheduleCard({ schedule }: ScheduleCardProps) {
       ? coach.coachType
       : '';
 
+  // Match counter to route origin city
+  const originCity = route?.origin || '';
+  const boardingCounter = Array.isArray(countersData)
+    ? countersData.find((c: any) =>
+        (c.name || '').toLowerCase().includes(originCity.toLowerCase()) ||
+        (c.location || '').toLowerCase().includes(originCity.toLowerCase())
+      )
+    : null;
+
   return (
     <div className="bg-white border border-gray-100 rounded-2xl p-5 hover:shadow-lg hover:border-gray-200 transition-all group">
       {/* Coach name & type */}
@@ -140,6 +164,18 @@ export function ScheduleCard({ schedule }: ScheduleCardProps) {
         </div>
       )}
 
+      {/* Boarding Counter */}
+      <div className="flex items-start gap-2 mb-4 bg-blue-50/60 border border-blue-100 rounded-xl px-3 py-2">
+        <Building2 size={14} className="text-blue-500 shrink-0 mt-0.5" />
+        <div className="text-xs font-semibold text-blue-800 leading-snug">
+          <span className="font-bold">Boarding Counter: </span>
+          {boardingCounter
+            ? <>{boardingCounter.name}<span className="text-blue-500 font-medium"> · {boardingCounter.location}</span></>
+            : <span className="text-blue-600">{originCity} Terminal Counter</span>
+          }
+        </div>
+      </div>
+
       {/* Footer: Seats + Price + Button */}
       <div className="flex items-center justify-between pt-4 border-t border-gray-50">
         <div>
@@ -171,21 +207,21 @@ export function ScheduleCard({ schedule }: ScheduleCardProps) {
 
 export function ScheduleCardSkeleton() {
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-5">
-      <div className="flex justify-between mb-4">
+    <div className="bg-white border border-gray-100 rounded-2xl p-5" suppressHydrationWarning>
+      <div className="flex justify-between mb-4" suppressHydrationWarning>
         <div className="skeleton h-4 w-32 rounded" />
         <div className="skeleton h-4 w-12 rounded" />
       </div>
-      <div className="flex items-center gap-4 mb-4">
+      <div className="flex items-center gap-4 mb-4" suppressHydrationWarning>
         <div className="skeleton h-8 w-20 rounded" />
         <div className="flex-1 skeleton h-px" />
         <div className="skeleton h-8 w-20 rounded" />
       </div>
-      <div className="flex gap-2 mb-4">
+      <div className="flex gap-2 mb-4" suppressHydrationWarning>
         <div className="skeleton h-6 w-14 rounded-lg" />
         <div className="skeleton h-6 w-14 rounded-lg" />
       </div>
-      <div className="flex justify-between items-center pt-4 border-t border-gray-50">
+      <div className="flex justify-between items-center pt-4 border-t border-gray-50" suppressHydrationWarning>
         <div className="skeleton h-4 w-20 rounded" />
         <div className="skeleton h-10 w-28 rounded-xl" />
       </div>

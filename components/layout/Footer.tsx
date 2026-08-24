@@ -43,11 +43,11 @@ export function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
           <div>
-            <Link href={ROUTES.HOME} className="inline-block bg-white p-4 sm:p-5 rounded-2xl shadow-xl mb-5 border border-white/10 hover:scale-105 transition-transform">
+            <Link href={ROUTES.HOME} className="inline-block bg-white p-3 sm:p-3.5 rounded-2xl shadow-lg mb-5 border border-white/10 hover:scale-105 transition-transform">
               <img
                 src="/galleryexplogo.png"
                 alt="Gallery Express Limited"
-                className="h-14 sm:h-18 md:h-22 w-auto object-contain"
+                className="h-10 sm:h-12 md:h-14 w-auto object-contain"
               />
             </Link>
             <h3 className="text-white font-black text-lg sm:text-xl mb-1.5 tracking-tight">

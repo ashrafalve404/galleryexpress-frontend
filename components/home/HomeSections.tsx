@@ -20,12 +20,11 @@ interface BackendRoute {
 }
 
 const DEFAULT_POPULAR_ROUTES = [
-  { from: 'Dhaka', to: 'Chittagong', duration: '4h 30m', fare: '৳550', departures: '12+ daily' },
-  { from: 'Dhaka', to: "Cox's Bazar", duration: '8h', fare: '৳900', departures: '8+ daily' },
-  { from: 'Dhaka', to: 'Sylhet', duration: '6h', fare: '৳500', departures: '10+ daily' },
-  { from: 'Dhaka', to: 'Rajshahi', duration: '5h 30m', fare: '৳600', departures: '8+ daily' },
-  { from: 'Dhaka', to: 'Khulna', duration: '6h 30m', fare: '৳650', departures: '6+ daily' },
-  { from: 'Chittagong', to: "Cox's Bazar", duration: '2h 30m', fare: '৳300', departures: '15+ daily' },
+  { from: 'Dhaka', to: "Cox's Bazar", duration: '8h', fare: '৳1,250', departures: '4 daily' },
+  { from: 'Dhaka', to: 'Chittagong', duration: '5h', fare: '৳900', departures: '3 daily' },
+  { from: 'Chittagong', to: "Cox's Bazar", duration: '3h', fare: '৳500', departures: '2 daily' },
+  { from: "Cox's Bazar", to: 'Dhaka', duration: '8h', fare: '৳1,250', departures: '3 daily' },
+  { from: 'Chittagong', to: 'Dhaka', duration: '5h', fare: '৳900', departures: '2 daily' },
 ];
 
 const destinations = [
@@ -34,28 +33,14 @@ const destinations = [
     tag: 'Beach & Ocean',
     desc: "World's longest natural sandy sea beach & scenic marine drive highway.",
     image: '/dest_coxsbazar.png',
-    fare: 'From ৳900',
+    fare: 'From ৳1,250',
   },
   {
     name: 'Chittagong',
-    tag: 'Port & Hill Tracts',
-    desc: 'Commercial hub, Patenga sea beach & lush green hill tracts scenery.',
+    tag: 'Port City',
+    desc: "Bangladesh's major port city — Patenga sea beach & lush hill tracts scenery.",
     image: '/dest_chittagong.png',
-    fare: 'From ৳550',
-  },
-  {
-    name: 'Sylhet',
-    tag: 'Tea Capital',
-    desc: 'Lush green tea estates, natural springs & serene hill landscapes.',
-    image: '/dest_sylhet.png',
-    fare: 'From ৳500',
-  },
-  {
-    name: 'Rajshahi',
-    tag: 'Silk & Heritage',
-    desc: 'Padma riverfront, ancient silk heritage & clean divisional capital.',
-    image: '/dest_rajshahi.png',
-    fare: 'From ৳600',
+    fare: 'From ৳900',
   },
 ];
 
@@ -266,16 +251,26 @@ export function PopularRoutes() {
     },
   });
 
+  // Fare lookup based on known corridor prices
+  const fareLookup: Record<string, string> = {
+    "Dhaka→Cox's Bazar": '৳1,250',
+    "Cox's Bazar→Dhaka": '৳1,250',
+    'Dhaka→Chittagong': '৳900',
+    'Chittagong→Dhaka': '৳900',
+    "Chittagong→Cox's Bazar": '৳500',
+    "Cox's Bazar→Chittagong": '৳500',
+  };
+
   const activeRoutes = Array.isArray(apiRoutes) && apiRoutes.length > 0
     ? apiRoutes
-        .filter((r: BackendRoute) => r.status === 'ACTIVE')
+        .filter((r: BackendRoute) => r.status === 'ACTIVE' && r.origin !== 'Comilla' && r.destination !== 'Comilla')
         .slice(0, 6)
         .map((r: BackendRoute) => ({
           from: r.origin,
           to: r.destination,
           duration: formatMinutes(r.durationMins),
-          fare: 'From ৳500',
-          departures: 'Daily Daily',
+          fare: `From ${fareLookup[`${r.origin}→${r.destination}`] || '৳350'}`,
+          departures: 'Daily',
         }))
     : DEFAULT_POPULAR_ROUTES;
 

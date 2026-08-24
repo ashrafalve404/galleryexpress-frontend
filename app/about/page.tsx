@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { RiCheckboxCircleFill, RiAwardFill, RiShieldCheckFill } from 'react-icons/ri';
@@ -15,28 +14,10 @@ export default function AboutPage() {
       <Header />
       <main className="flex-1 pt-20 pb-16 min-h-screen bg-gray-50/50">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-          {/* Hero Banner with Professional Background Photograph */}
-          <div className="relative w-full bg-[#111111] text-white py-16 sm:py-24 px-4 overflow-hidden mb-12 rounded-3xl shadow-xl border border-gray-100">
-            <Image
-              src="/about_hero.png"
-              alt="About Gallery Express Limited Intercity Travel"
-              fill
-              sizes="(max-width: 1024px) 100vw, 1024px"
-              priority
-              className="object-cover object-center"
-              quality={90}
-            />
-            {/* Rich Dark Overlay Gradient */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/35 z-10" />
-
-            <div className="relative z-20 max-w-3xl mx-auto text-center">
-              <h1 className="text-3xl sm:text-5xl font-black text-white mb-4 leading-tight drop-shadow-md">
-                About Gallery Express Limited
-              </h1>
-              <p className="text-white/90 text-sm sm:text-base max-w-xl mx-auto font-medium leading-relaxed drop-shadow-xs">
-                Over a decade of connecting Bangladesh with safe, comfortable, and reliable bus travel.
-              </p>
-            </div>
+          {/* Plain text header — matches Contact page style */}
+          <div className="text-center mb-12">
+            <h1 className="text-3xl sm:text-4xl font-black text-[#111111] mb-3">About Gallery Express Limited</h1>
+            <p className="text-gray-500 text-sm">Over a decade of connecting Bangladesh with safe, comfortable, and reliable bus travel.</p>
           </div>
 
           <div className="space-y-6 text-gray-600 leading-relaxed">

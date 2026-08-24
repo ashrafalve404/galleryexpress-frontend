@@ -6,22 +6,41 @@ export interface Ticket {
   qrToken: string;
   status: string;
   issuedAt: string;
+  passenger: {
+    name: string;
+    phone: string;
+    gender?: string;
+  };
   booking: {
+    id: string;
     bookingRef: string;
-    passengers: Array<{ name: string; phone: string; gender?: string }>;
-    seats: Array<{ seatNumber: string; seatType: string }>;
+    netAmount: string | number;
+    paymentStatus: string;
     schedule: {
       departureTime: string;
       arrivalTime: string;
-      coach: { name: string; registrationNo: string };
+      departureDate: string;
+      coach: {
+        name: string;
+        registrationNumber?: string;
+        isAC?: boolean;
+      };
       route: {
         origin: string;
         destination: string;
-        stops: Array<{ name: string }>;
       };
     };
-    finalAmount: number;
-    payment?: { provider: string; paidAt?: string };
+    bookingSeats: Array<{
+      seat: {
+        seatNumber: string;
+        seatType: string;
+      };
+      passenger?: {
+        name: string;
+        phone: string;
+        gender?: string;
+      };
+    }>;
   };
 }
 

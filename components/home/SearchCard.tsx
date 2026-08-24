@@ -8,27 +8,55 @@ import { useBookingStore } from '@/lib/store/bookingStore';
 import { today, tomorrow, formatDate } from '@/lib/utils/date';
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay, isBefore, startOfDay, parseISO } from 'date-fns';
 
-const POPULAR_CITIES = [
-  'Dhaka',
-  'Chittagong',
-  'Sylhet',
-  'Rajshahi',
-  'Khulna',
-  "Cox's Bazar",
-  'Comilla',
-  'Mymensingh',
-  'Barishal',
-  'Rangpur',
-  'Jessore',
-  'Bogra',
+import { Building2 } from 'lucide-react';
+
+export interface LocationOption {
+  city: string;
+  name: string;
+  sub: string;
+  type: 'city' | 'counter';
+}
+
+export const LOCATION_OPTIONS: LocationOption[] = [
+  // Dhaka — city header
+  { city: 'Dhaka', name: 'Dhaka', sub: 'All Dhaka Counters', type: 'city' },
+  // 20 Dhaka boarding counters (north to south)
+  { city: 'Dhaka', name: 'Dhaka - Abdullahpur',      sub: 'Abdullahpur Bus Stop, Uttara',          type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Uttara Azampur',   sub: 'Azampur Bus Stop, Uttara',              type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Uttara Jasimuddin',sub: 'Jasimuddin Road, Uttara',               type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Uttara Airport',   sub: 'Airport Road, Uttara',                  type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Bashundhara',      sub: 'Bashundhara R/A Gate',                  type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Nadda',            sub: 'Nadda Bus Stop, Badda',                 type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Notun Bazar',      sub: 'Notun Bazar Bus Stop, Badda',           type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Uttar Badda',      sub: 'Uttar Badda Bus Stop',                  type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Moddho Badda',     sub: 'Moddho Badda Bus Stop',                 type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Rampura',          sub: 'Rampura Bus Stop, DIT Road',            type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Malibagh',         sub: 'Malibagh Chowdhurypara',                type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Fakirerpool',      sub: 'Fakirerpool Bus Stop, Motijheel',       type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Arambagh',         sub: 'Arambagh Bus Stop, Motijheel',          type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Sayedabad',        sub: 'Sayedabad Bus Terminal, Gate 7',        type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Soniakora',        sub: 'Soniakora Bus Stop, Jatrabari',         type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Matuail',          sub: 'Matuail Bus Stop, Jatrabari',           type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Signboard',        sub: 'Signboard Bus Stop, Demra',             type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Chittagong Road',  sub: 'Chittagong Road, Demra',                type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Kanchpur',         sub: 'Kanchpur Bridge, Dhaka Highway',        type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Madanpur',         sub: 'Madanpur Bus Stop, Dhaka Highway',      type: 'counter' },
+
+  // Chittagong
+  { city: 'Chittagong', name: 'Chittagong',             sub: 'All Terminals & Counters',           type: 'city' },
+  { city: 'Chittagong', name: 'Chittagong - Dampara',   sub: 'Dampara Bus Terminal, Station Road', type: 'counter' },
+
+  // Cox's Bazar
+  { city: "Cox's Bazar", name: "Cox's Bazar",            sub: 'All Terminals & Counters',          type: 'city' },
+  { city: "Cox's Bazar", name: "Cox's Bazar - Kolatoli", sub: 'Kolatoli Road, Near Sea Beach',     type: 'counter' },
 ];
 
 const TRENDING_ROUTES = [
   { from: 'Dhaka', to: "Cox's Bazar" },
   { from: 'Dhaka', to: 'Chittagong' },
-  { from: 'Dhaka', to: 'Sylhet' },
-  { from: 'Dhaka', to: 'Rajshahi' },
   { from: 'Chittagong', to: "Cox's Bazar" },
+  { from: "Cox's Bazar", to: 'Dhaka' },
+  { from: 'Chittagong', to: 'Dhaka' },
 ];
 
 interface CityInputProps {
@@ -41,9 +69,16 @@ interface CityInputProps {
 
 function CityInput({ id, label, placeholder, value, onChange }: CityInputProps) {
   const [open, setOpen] = useState(false);
-  const filtered = POPULAR_CITIES.filter((c) =>
-    c.toLowerCase().includes(value.toLowerCase()) && c !== value
-  );
+
+  const valLower = value.toLowerCase().trim();
+  const filtered = LOCATION_OPTIONS.filter((loc) => {
+    if (!valLower) return true;
+    return (
+      loc.name.toLowerCase().includes(valLower) ||
+      loc.city.toLowerCase().includes(valLower) ||
+      loc.sub.toLowerCase().includes(valLower)
+    );
+  });
 
   return (
     <div className="relative flex-1">
@@ -65,16 +100,32 @@ function CityInput({ id, label, placeholder, value, onChange }: CityInputProps) 
         />
       </div>
       {open && filtered.length > 0 && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-100 rounded-xl shadow-xl z-50 overflow-hidden animate-fade-in py-1">
-          {filtered.slice(0, 6).map((city) => (
+        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-100 rounded-2xl shadow-2xl z-50 overflow-hidden animate-fade-in py-1 max-h-64 overflow-y-auto">
+          {filtered.map((item) => (
             <button
-              key={city}
+              key={item.name}
               type="button"
-              onMouseDown={() => { onChange(city); setOpen(false); }}
-              className="w-full text-left px-3.5 py-2 text-xs sm:text-sm text-gray-700 hover:bg-[#E31B23]/5 hover:text-[#E31B23] flex items-center gap-2 font-medium transition-colors"
+              onMouseDown={() => { onChange(item.name); setOpen(false); }}
+              className="w-full text-left px-3.5 py-2.5 hover:bg-gray-50 flex items-center justify-between gap-2 transition-colors border-b border-gray-50 last:border-0 group"
             >
-              <RiMapPin2Fill className="text-gray-400 text-sm" />
-              {city}
+              <div className="flex items-center gap-2.5 min-w-0">
+                {item.type === 'counter' ? (
+                  <Building2 size={15} className="text-blue-500 shrink-0 group-hover:scale-110 transition-transform" />
+                ) : (
+                  <RiMapPin2Fill size={15} className="text-[#E31B23] shrink-0 group-hover:scale-110 transition-transform" />
+                )}
+                <div className="truncate">
+                  <div className="text-xs sm:text-sm font-bold text-[#111111] group-hover:text-[#E31B23] transition-colors truncate">
+                    {item.name}
+                  </div>
+                  <div className="text-[10px] text-gray-400 font-medium truncate">{item.sub}</div>
+                </div>
+              </div>
+              <span className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wider shrink-0 ${
+                item.type === 'counter' ? 'bg-blue-50 text-blue-600' : 'bg-red-50 text-[#E31B23]'
+              }`}>
+                {item.type}
+              </span>
             </button>
           ))}
         </div>
@@ -121,7 +172,7 @@ function ProfessionalDatePicker({ value, onChange }: ProfessionalDatePickerProps
   const formattedDisplay = value ? formatDate(value, 'EEE, dd MMM yyyy') : 'Select Date';
 
   return (
-    <div className="relative flex-1" ref={containerRef}>
+    <div className="relative flex-1" ref={containerRef} suppressHydrationWarning>
       <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wide mb-1">
         Journey Date
       </label>
@@ -235,8 +286,14 @@ export function SearchCard() {
   const { from, to, date, setSearch } = useBookingStore();
   const [localFrom, setLocalFrom] = useState(from || 'Dhaka');
   const [localTo, setLocalTo] = useState(to || 'Chittagong');
-  const [localDate, setLocalDate] = useState(date || today());
+  const [localDate, setLocalDate] = useState(date || '2026-08-25');
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (!date) {
+      setLocalDate(today());
+    }
+  }, [date]);
 
   const handleSwap = () => {
     setLocalFrom(localTo);

@@ -34,15 +34,19 @@ export default function PaymentPage() {
     if (!selected || !bookingId) return;
     setPaymentProvider(selected);
 
-    await confirmBooking.mutateAsync({
-      id: bookingId,
-      dto: {
-        paymentProvider: selected,
-        paymentReference: `SIM-${Date.now()}`,
-      },
-    });
+    try {
+      await confirmBooking.mutateAsync({
+        id: bookingId,
+        dto: {
+          paymentProvider: selected,
+          providerRef: `SIM-${Date.now()}`,
+        },
+      });
 
-    router.push(ROUTES.CHECKOUT_CONFIRMATION);
+      router.push(ROUTES.CHECKOUT_CONFIRMATION);
+    } catch (err) {
+      console.error('Payment confirmation error:', err);
+    }
   };
 
   const totalAmount = getFinalAmount();

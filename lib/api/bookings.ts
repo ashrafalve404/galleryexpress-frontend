@@ -20,8 +20,8 @@ export interface CreateBookingDto {
 
 export interface ConfirmBookingDto {
   paymentProvider: string;
-  paymentReference?: string;
-  notes?: string;
+  providerRef?: string;
+  paymentMetadata?: Record<string, unknown>;
 }
 
 export interface CancelBookingDto {
@@ -55,7 +55,27 @@ export interface Booking {
 }
 
 export async function createBooking(dto: CreateBookingDto): Promise<Booking> {
-  const { data } = await client.post<{ data: Booking }>('/api/v1/bookings', dto);
+  const seatsPayload = (dto.seatIds || []).map((seatId, idx) => {
+    const p = dto.passengers?.[idx] || dto.passengers?.[0] || { name: 'Passenger', phone: '01700000000' };
+    return {
+      seatId,
+      passenger: {
+        name: p.name || 'Passenger',
+        phone: p.phone || '01700000000',
+        ...(p.email ? { email: p.email } : {}),
+        gender: p.gender || 'MALE',
+      },
+    };
+  });
+
+  const payload = {
+    scheduleId: dto.scheduleId,
+    seats: seatsPayload,
+    ...(dto.discountCode ? { couponCode: dto.discountCode } : {}),
+    source: 'ONLINE',
+  };
+
+  const { data } = await client.post<{ data: Booking }>('/api/v1/bookings', payload);
   return data?.data || (data as unknown as Booking);
 }
 

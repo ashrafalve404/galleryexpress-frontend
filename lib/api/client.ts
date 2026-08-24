@@ -74,7 +74,8 @@ client.interceptors.response.use(
             : null;
 
         if (!refreshToken) {
-          throw new Error('No refresh token');
+          const authError = new Error('Please sign in to your account to continue.');
+          throw authError;
         }
 
         const response = await axios.post(`${API_URL}/api/v1/auth/refresh`, {
@@ -88,16 +89,23 @@ client.interceptors.response.use(
         processQueue(null, accessToken);
         originalRequest.headers!.Authorization = `Bearer ${accessToken}`;
         return client(originalRequest);
-      } catch (err) {
-        processQueue(err, null);
+      } catch (err: any) {
+        const cleanErr = (err?.message === 'No refresh token' || err?.response?.status === 401)
+          ? new Error('Please sign in to your account to continue.')
+          : err;
+        processQueue(cleanErr, null);
         // Clear auth state on refresh failure
         if (typeof window !== 'undefined') {
           localStorage.removeItem('accessToken');
           localStorage.removeItem('refreshToken');
           localStorage.removeItem('user');
-          window.location.href = '/auth/login';
+          const isUrlAdmin = originalRequest?.url?.includes('/admin/');
+          const isPageAdmin = window.location.pathname.startsWith('/admin');
+          if (isUrlAdmin || isPageAdmin) {
+            window.location.href = '/auth/login';
+          }
         }
-        return Promise.reject(err);
+        return Promise.reject(cleanErr);
       } finally {
         isRefreshing = false;
       }

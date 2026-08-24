@@ -52,18 +52,30 @@ export default function PassengerPage() {
   const onSubmit = async (data: FormData) => {
     setPassengers(data.passengers);
 
-    // Create booking via API
-    await createBooking.mutateAsync({
-      scheduleId: scheduleId!,
-      seatIds: selectedSeats.map((s) => s.id),
-      passengers: data.passengers,
-      boardingStopId: boardingStopId ?? undefined,
-      droppingStopId: droppingStopId ?? undefined,
-      discountCode: discountCode || undefined,
-    });
+    try {
+      // Create booking via API
+      await createBooking.mutateAsync({
+        scheduleId: scheduleId!,
+        seatIds: selectedSeats.map((s) => s.id),
+        passengers: data.passengers,
+        boardingStopId: boardingStopId ?? undefined,
+        droppingStopId: droppingStopId ?? undefined,
+        discountCode: discountCode || undefined,
+      });
 
-    // Navigate to payment
-    router.push(ROUTES.CHECKOUT_PAYMENT);
+      // Navigate to payment
+      router.push(ROUTES.CHECKOUT_PAYMENT);
+    } catch (err: any) {
+      const isAuthErr =
+        err?.response?.status === 401 ||
+        err?.message?.includes('token') ||
+        err?.message?.includes('sign in') ||
+        err?.message?.includes('Unauthorized');
+
+      if (isAuthErr) {
+        router.push(ROUTES.LOGIN);
+      }
+    }
   };
 
   const totalAmount = getFinalAmount();

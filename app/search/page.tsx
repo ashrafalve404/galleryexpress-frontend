@@ -28,11 +28,11 @@ function SearchResults() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8" suppressHydrationWarning>
       {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex items-center gap-3 mb-6" suppressHydrationWarning>
         <Link href={ROUTES.HOME} className="p-2 rounded-xl hover:bg-gray-100 transition-colors">
           <ArrowLeft size={20} className="text-gray-600" />
         </Link>
-        <div>
+        <div suppressHydrationWarning>
           <h1 className="text-xl font-bold text-[#111111]">
             {from} → {to}
           </h1>
@@ -42,14 +42,14 @@ function SearchResults() {
 
       {/* Loading */}
       {isLoading && (
-        <div className="space-y-4">
+        <div className="space-y-4" suppressHydrationWarning>
           {[1, 2, 3, 4].map((i) => <ScheduleCardSkeleton key={i} />)}
         </div>
       )}
 
       {/* Error */}
       {isError && !isLoading && (
-        <div className="bg-amber-50/80 border border-amber-200/80 rounded-2xl p-8 text-center max-w-xl mx-auto shadow-xs">
+        <div className="bg-amber-50/80 border border-amber-200/80 rounded-2xl p-8 text-center max-w-xl mx-auto shadow-xs" suppressHydrationWarning>
           <AlertCircle size={36} className="text-amber-500 mx-auto mb-3" />
           <h3 className="font-bold text-gray-900 text-lg mb-1">No schedules currently available</h3>
           <p className="text-gray-600 text-sm mb-5 leading-relaxed">
@@ -74,7 +74,7 @@ function SearchResults() {
 
       {/* Empty */}
       {!isLoading && !isError && (!schedules || schedules.length === 0) && (
-        <div className="bg-gray-50 border border-gray-100 rounded-2xl p-12 text-center">
+        <div className="bg-gray-50 border border-gray-100 rounded-2xl p-12 text-center" suppressHydrationWarning>
           <Bus size={48} className="text-gray-300 mx-auto mb-4" />
           <h3 className="font-bold text-gray-700 text-lg mb-2">No buses found</h3>
           <p className="text-gray-500 text-sm mb-6">
