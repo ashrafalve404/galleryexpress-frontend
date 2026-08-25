@@ -53,13 +53,13 @@ export function HeroSlider() {
               fill
               sizes="100vw"
               priority={index === 0}
-              className="object-cover object-center"
+              className="object-cover object-bottom"
             />
             {/* Soft Overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-black/20" />
 
             {/* Slide Overlay Text */}
-            <div className="absolute bottom-8 sm:bottom-12 lg:bottom-16 left-4 sm:left-10 right-4 max-w-xl text-white z-20">
+            <div className="absolute bottom-10 sm:bottom-14 lg:bottom-18 left-4 sm:left-10 right-4 max-w-xl text-white z-20">
               <h1 className="text-lg sm:text-3xl lg:text-4xl font-black text-white leading-tight drop-shadow-md">
                 {s.title}
               </h1>
@@ -102,8 +102,8 @@ export function HeroSlider() {
         </div>
       </div>
 
-      {/* 2. Search Booking Widget Container - Positioned Under the Banner Section */}
-      <div className="relative z-30 max-w-4xl mx-auto px-4 -mt-8 sm:-mt-12 lg:-mt-16 pb-8 sm:pb-12">
+      {/* 2. Search Booking Widget Container - Positioned Slightly Below with Subtle Overlap */}
+      <div className="relative z-30 max-w-4xl mx-auto px-4 -mt-4 sm:-mt-6 lg:-mt-8 pb-8 sm:pb-12">
         <SearchCard />
       </div>
     </section>
