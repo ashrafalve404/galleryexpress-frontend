@@ -11,9 +11,28 @@ import { formatCurrency } from '@/lib/utils/currency';
 import { BOOKING_STATUS_COLORS, BOOKING_STATUS_LABELS, ROUTES } from '@/lib/utils/constants';
 import type { Booking } from '@/lib/api/bookings';
 import { toast } from 'sonner';
+import { RiErrorWarningFill } from 'react-icons/ri';
 
 interface BookingWithTickets extends Booking {
   tickets?: Array<{ ticketNumber: string; status: string }>;
+}
+
+function getBookingDisplayAmount(b: BookingWithTickets | null): number {
+  if (!b) return 0;
+  const raw = Number(b.netAmount) || Number(b.totalAmount) || Number(b.finalAmount) || 0;
+  if (raw > 0) return raw;
+
+  const destLower = (b.schedule?.route?.destination || '').toLowerCase();
+  const routeFallbackFare = destLower.includes('cox')
+    ? 1250
+    : destLower.includes('chittagong')
+    ? 900
+    : destLower.includes('sylhet')
+    ? 850
+    : 900;
+
+  const seatCount = b.seats?.length || b.passengers?.length || 1;
+  return seatCount * routeFallbackFare;
 }
 
 export default function MyBookingPage() {
@@ -77,6 +96,7 @@ export default function MyBookingPage() {
   const statusClass = booking ? BOOKING_STATUS_COLORS[booking.status] || 'bg-gray-100 text-gray-700' : '';
   const statusLabel = booking ? BOOKING_STATUS_LABELS[booking.status] || booking.status : '';
   const ticketNumber = booking?.tickets?.[0]?.ticketNumber;
+  const displayAmount = getBookingDisplayAmount(booking);
 
   return (
     <>
@@ -165,7 +185,7 @@ export default function MyBookingPage() {
                   </div>
                   <div>
                     <div className="text-xs text-gray-400">Amount</div>
-                    <div className="font-bold text-[#E31B23]">{formatCurrency(booking.finalAmount)}</div>
+                    <div className="font-bold text-[#E31B23]">{formatCurrency(displayAmount)}</div>
                   </div>
                   <div>
                     <div className="text-xs text-gray-400">Booked On</div>
@@ -204,9 +224,9 @@ export default function MyBookingPage() {
                 {['CONFIRMED', 'HELD'].includes(booking.status) && (
                   <button
                     onClick={() => setShowCancelConfirm(true)}
-                    className="flex-1 bg-white border border-red-200 hover:bg-red-50 text-red-500 py-2.5 rounded-xl text-sm font-semibold transition-colors"
+                    className="flex-1 bg-rose-50 border border-rose-200 hover:bg-rose-100 text-rose-600 font-bold py-2.5 rounded-xl text-sm transition-colors text-center"
                   >
-                    Cancel Booking
+                    Resell Ticket to Admin
                   </button>
                 )}
               </div>
@@ -219,37 +239,48 @@ export default function MyBookingPage() {
         </div>
       </main>
 
-      {/* Cancel Confirmation Modal */}
+      {/* Resell Ticket to Admin Modal */}
       {showCancelConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                <AlertTriangle size={20} className="text-red-500" />
+              <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <RiErrorWarningFill size={22} className="text-amber-600" />
               </div>
               <div>
-                <h2 className="font-black text-[#111111] text-base">Cancel Booking?</h2>
-                <p className="text-gray-500 text-xs mt-0.5">This action cannot be undone.</p>
+                <h2 className="font-black text-[#111111] text-base">Resell Ticket to Admin?</h2>
+                <p className="text-gray-500 text-xs mt-0.5">Ref #: {booking?.bookingRef}</p>
               </div>
             </div>
-            <p className="text-sm text-gray-600 mb-5">
-              Are you sure you want to cancel booking <span className="font-mono font-bold">{booking?.bookingRef}</span>?
-              Refunds are subject to our cancellation policy.
-            </p>
+
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-4 text-xs space-y-2">
+              <div className="flex justify-between text-gray-600 font-medium">
+                <span>Original Ticket Amount:</span>
+                <span className="font-bold text-gray-900">{formatCurrency(displayAmount)}</span>
+              </div>
+              <div className="flex justify-between text-gray-600 font-medium">
+                <span>Resell Policy Rate:</span>
+                <span className="font-bold text-amber-700">100% (&gt;24h) / 80% (≤24h)</span>
+              </div>
+              <p className="text-[11px] text-gray-500 pt-1 border-t border-slate-200 leading-relaxed">
+                Tickets for today’s departure date cannot be resold. Reselling &gt; 24 hours prior to departure receives 100% full refund, while reselling within 24 hours incurs a 20% service fee.
+              </p>
+            </div>
+
             <div className="flex gap-3">
               <button
                 onClick={() => setShowCancelConfirm(false)}
                 disabled={cancelling}
                 className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-xl text-sm font-semibold transition-colors disabled:opacity-60"
               >
-                Keep Booking
+                Keep Ticket
               </button>
               <button
                 onClick={handleCancelConfirm}
                 disabled={cancelling}
-                className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2.5 rounded-xl text-sm font-semibold transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+                className="flex-1 bg-[#E31B23] hover:bg-[#C41920] text-white py-2.5 rounded-xl text-sm font-semibold transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
               >
-                {cancelling ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : 'Yes, Cancel'}
+                {cancelling ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : 'Confirm Resell'}
               </button>
             </div>
           </div>

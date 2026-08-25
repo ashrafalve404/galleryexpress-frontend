@@ -38,18 +38,38 @@ export default function AdminTicketsPage() {
                   <tr key={i}>{[1, 2, 3, 4, 5, 6].map((j) => (<td key={j} className="px-5 py-4"><div className="skeleton h-4 rounded w-20" /></td>))}</tr>
                 ))
               ) : tickets.map((t) => {
+                const passenger = t.passenger as Record<string, unknown> | undefined;
                 const booking = t.booking as Record<string, unknown> | undefined;
-                const passengers = booking?.passengers as Record<string, unknown>[] | undefined;
-                const seats = booking?.seats as Record<string, unknown>[] | undefined;
+                const bookingPassengers = booking?.passengers as Record<string, unknown>[] | undefined;
+                const bookingSeats = (booking?.bookingSeats as Record<string, unknown>[]) || (booking?.seats as Record<string, unknown>[]) || [];
+
+                const passengerName = (passenger?.name as string) || (bookingPassengers?.[0]?.name as string) || 'Passenger';
+                const passengerPhone = (passenger?.phone as string) || (bookingPassengers?.[0]?.phone as string) || '';
+
+                const seatNumbers = bookingSeats
+                  .map((bs) => (bs.seat as Record<string, unknown>)?.seatNumber || bs.seatNumber)
+                  .filter(Boolean)
+                  .join(', ');
+
+                const status = (t.status as string) || '--';
+                const statusColor = status === 'ACTIVE' || status === 'VALID' || status === 'CONFIRMED'
+                  ? 'bg-emerald-100 text-emerald-800'
+                  : status === 'CANCELLED'
+                  ? 'bg-rose-100 text-rose-700'
+                  : 'bg-gray-100 text-gray-700';
+
                 return (
                   <tr key={t.id as string} className="hover:bg-gray-50 transition-colors">
                     <td className="px-5 py-4 font-mono font-bold text-[#111111]">{t.ticketNumber as string}</td>
                     <td className="px-5 py-4 font-mono text-gray-600 font-semibold">{booking?.bookingRef as string || '--'}</td>
-                    <td className="px-5 py-4 text-gray-800 font-semibold">{passengers?.[0]?.name as string || '--'}</td>
-                    <td className="px-5 py-4 text-gray-600 font-semibold">{seats?.[0]?.seatNumber as string || '--'}</td>
                     <td className="px-5 py-4">
-                      <span className={`text-xs px-2.5 py-0.5 rounded-full font-bold ${t.status === 'VALID' ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-700'}`}>
-                        {t.status as string || '--'}
+                      <div className="font-semibold text-gray-900">{passengerName}</div>
+                      {passengerPhone && <div className="text-xs text-gray-400 font-medium">{passengerPhone}</div>}
+                    </td>
+                    <td className="px-5 py-4 text-gray-800 font-bold">{seatNumbers || '--'}</td>
+                    <td className="px-5 py-4">
+                      <span className={`text-xs px-2.5 py-0.5 rounded-full font-bold ${statusColor}`}>
+                        {status}
                       </span>
                     </td>
                     <td className="px-5 py-4 text-gray-500 font-medium whitespace-nowrap">{t.issuedAt ? formatDateTime(t.issuedAt as string) : '--'}</td>

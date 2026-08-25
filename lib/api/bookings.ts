@@ -64,14 +64,23 @@ export async function createBooking(dto: CreateBookingDto): Promise<Booking> {
       passenger: {
         name: p.name || 'Passenger',
         phone: p.phone || '01700000000',
-        ...(p.email ? { email: p.email } : {}),
+        ...(p.email && p.email.trim() ? { email: p.email.trim() } : {}),
         gender: p.gender || 'MALE',
       },
     };
   });
 
+  const cleanScheduleId = (dto.scheduleId || '').trim();
+  const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  console.log('[createBooking] scheduleId raw:', JSON.stringify(dto.scheduleId), '| clean:', JSON.stringify(cleanScheduleId), '| valid:', uuidRe.test(cleanScheduleId));
+  console.log('[createBooking] seatIds:', dto.seatIds);
+
+  if (!cleanScheduleId || !uuidRe.test(cleanScheduleId)) {
+    throw new Error(`Invalid scheduleId: "${cleanScheduleId}". Please go back and select your bus again.`);
+  }
+
   const payload = {
-    scheduleId: dto.scheduleId,
+    scheduleId: cleanScheduleId,
     seats: seatsPayload,
     ...(dto.discountCode ? { couponCode: dto.discountCode } : {}),
     source: 'ONLINE',

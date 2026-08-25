@@ -35,6 +35,7 @@ export const ROUTES = {
   ADMIN_CMS: '/admin/cms',
   ADMIN_SLIDERS: '/admin/sliders',
   ADMIN_TICKETS: '/admin/tickets',
+  ADMIN_MESSAGES: '/admin/messages',
 } as const;
 
 export const SEAT_TYPE_LABELS: Record<string, string> = {

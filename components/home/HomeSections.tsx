@@ -135,21 +135,21 @@ export function PopularDestinations() {
 
                   {/* Content overlay */}
                   <div className="relative z-10 text-white">
-                    <span className="inline-block bg-[#E31B23] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full mb-2 uppercase tracking-wide shadow-sm">
+                    <span className="inline-block bg-[#E31B23] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full mb-1.5 uppercase tracking-wide shadow-xs">
                       {d.tag}
                     </span>
 
-                    <h3 className="text-2xl font-black text-white mb-1">
+                    <h3 className="text-xl sm:text-2xl font-black text-white mb-1 leading-tight">
                       {d.name}
                     </h3>
 
-                    <p className="text-white/85 text-xs line-clamp-2 mb-4 leading-relaxed font-medium">
+                    <p className="text-white/85 text-[11px] sm:text-xs line-clamp-2 mb-2.5 leading-relaxed font-medium">
                       {d.desc}
                     </p>
 
-                    <div className="flex items-center justify-between text-xs pt-3 border-t border-white/20 font-semibold text-white/90">
-                      <span>{d.fare}</span>
-                      <span className="text-[#E31B23] font-bold flex items-center gap-1 bg-white text-[#E31B23] px-3 py-1 rounded-xl shadow-sm">
+                    <div className="flex items-center justify-between text-xs pt-2.5 border-t border-white/20 font-semibold text-white/90">
+                      <span className="font-bold text-white text-xs">{d.fare}</span>
+                      <span className="bg-[#E31B23] hover:bg-[#C41920] text-white font-bold flex items-center gap-1 px-3 py-1 rounded-xl shadow-md transition-all">
                         Book <ArrowRight size={12} />
                       </span>
                     </div>
@@ -196,7 +196,7 @@ export function PopularDestinations() {
             <Link
               key={d.name}
               href={`/search?from=Dhaka&to=${encodeURIComponent(d.name)}&date=${today()}`}
-              className="group relative h-80 rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 flex flex-col justify-end p-6 border border-gray-100"
+              className="group relative h-80 rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 flex flex-col justify-end p-5 border border-gray-100"
             >
               {/* Image poster background */}
               <div className="absolute inset-0 z-0">
@@ -212,21 +212,21 @@ export function PopularDestinations() {
 
               {/* Content overlay */}
               <div className="relative z-10 text-white">
-                <span className="inline-block bg-[#E31B23] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full mb-2 uppercase tracking-wide shadow-sm">
+                <span className="inline-block bg-[#E31B23] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full mb-1.5 uppercase tracking-wide shadow-xs">
                   {d.tag}
                 </span>
 
-                <h3 className="text-xl font-black text-white mb-1 group-hover:text-red-400 transition-colors">
+                <h3 className="text-xl font-black text-white mb-1 group-hover:text-[#E31B23] transition-colors">
                   {d.name}
                 </h3>
 
-                <p className="text-white/80 text-xs line-clamp-2 mb-4 leading-relaxed font-medium">
+                <p className="text-white/80 text-[11px] sm:text-xs line-clamp-2 mb-2.5 leading-relaxed font-medium">
                   {d.desc}
                 </p>
 
-                <div className="flex items-center justify-between text-xs pt-3 border-t border-white/20 font-semibold text-white/90">
-                  <span>{d.fare}</span>
-                  <span className="text-[#E31B23] font-bold group-hover:translate-x-1 transition-transform flex items-center gap-1 bg-white text-[#E31B23] px-3 py-1 rounded-xl shadow-sm">
+                <div className="flex items-center justify-between text-xs pt-2.5 border-t border-white/20 font-semibold text-white/90">
+                  <span className="font-bold text-white text-xs">{d.fare}</span>
+                  <span className="bg-[#E31B23] group-hover:bg-[#C41920] text-white font-bold group-hover:translate-x-0.5 transition-all flex items-center gap-1.5 px-3.5 py-1 rounded-xl shadow-md">
                     Book <ArrowRight size={12} />
                   </span>
                 </div>
@@ -361,17 +361,17 @@ export function HowItWorks() {
             return (
               <div key={s.step} className="relative">
                 {i < steps.length - 1 && (
-                  <div className="hidden lg:block absolute top-8 left-full w-full h-px bg-white/15 z-0" />
+                  <div className="hidden lg:block absolute top-6 sm:top-8 left-[calc(50%+2.5rem)] w-[calc(100%-5rem)] border-t-2 border-dashed border-[#E31B23]/40 z-0" />
                 )}
-                <div className="relative z-10">
-                  <div className="w-16 h-16 rounded-2xl bg-[#E31B23] flex items-center justify-center mb-4 shadow-lg text-white">
-                    <Icon size={28} />
+                <div className="relative z-10 text-center">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-[#E31B23] flex items-center justify-center mb-3 sm:mb-4 shadow-lg text-white mx-auto">
+                    <Icon className="text-xl sm:text-2xl" />
                   </div>
-                  <div className="text-sm font-black text-[#E31B23] uppercase tracking-wider mb-1">
+                  <div className="text-xs sm:text-sm font-black text-[#E31B23] uppercase tracking-wider mb-1">
                     STEP {s.step}
                   </div>
-                  <h3 className="font-bold text-lg mb-2">{s.title}</h3>
-                  <p className="text-gray-400 text-sm leading-relaxed">{s.desc}</p>
+                  <h3 className="font-bold text-base sm:text-lg mb-1.5">{s.title}</h3>
+                  <p className="text-gray-400 text-xs sm:text-sm leading-relaxed max-w-xs mx-auto">{s.desc}</p>
                 </div>
               </div>
             );

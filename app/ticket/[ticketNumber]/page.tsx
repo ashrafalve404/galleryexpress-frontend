@@ -10,6 +10,7 @@ import { getTicket } from '@/lib/api/tickets';
 import { formatDateTime, formatTime } from '@/lib/utils/date';
 import { formatCurrency } from '@/lib/utils/currency';
 import { ROUTES } from '@/lib/utils/constants';
+import { QRCodeSVG } from 'qrcode.react';
 
 export default function TicketPage() {
   const { ticketNumber } = useParams<{ ticketNumber: string }>();
@@ -61,6 +62,19 @@ export default function TicketPage() {
   const schedule = booking?.schedule;
   const seats = booking?.bookingSeats || [];
 
+  const destLower = (schedule?.route?.destination || '').toLowerCase();
+  const routeFallbackFare = destLower.includes('cox')
+    ? 1250
+    : destLower.includes('chittagong')
+    ? 900
+    : destLower.includes('sylhet')
+    ? 850
+    : 900;
+
+  const rawAmount = Number(booking.netAmount) || Number(booking.totalAmount) || Number(booking.finalAmount) || 0;
+  const seatCount = seats.length || 1;
+  const displayAmount = rawAmount > 0 ? rawAmount : seatCount * routeFallbackFare;
+
   return (
     <>
       <Header />
@@ -86,11 +100,13 @@ export default function TicketPage() {
             {/* Red Header */}
             <div className="bg-[#E31B23] px-6 py-5">
               <div className="flex items-center justify-between mb-3">
-                <img
-                  src="/galleryexplogo.png"
-                  alt="Gallery Express"
-                  className="h-8 w-auto object-contain"
-                />
+                <div className="bg-white rounded-xl px-3 py-1.5 shadow-sm">
+                  <img
+                    src="/galleryexplogo.png"
+                    alt="Gallery Express"
+                    className="h-7 w-auto object-contain"
+                  />
+                </div>
                 <div className="flex items-center gap-1.5 bg-green-400 text-white px-2.5 py-1 rounded-full text-xs font-bold">
                   <CheckCircle2 size={11} />
                   CONFIRMED
@@ -139,19 +155,22 @@ export default function TicketPage() {
 
               {/* Passengers & Seats */}
               <div className="bg-gray-50 rounded-xl p-4 space-y-2">
-                {seats.length > 0 ? seats.map((bs, i) => (
-                  <div key={i} className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2">
-                      <User size={13} className="text-gray-400" />
-                      <span className="font-medium text-[#111111]">
-                        {bs.passenger?.name || ticket.passenger?.name || 'Passenger'}
+                {seats.length > 0 ? seats.map((bs, i) => {
+                  const seatAmt = Number((bs as any).amount) || (displayAmount / seatCount);
+                  return (
+                    <div key={i} className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2">
+                        <User size={13} className="text-gray-400" />
+                        <span className="font-medium text-[#111111]">
+                          {bs.passenger?.name || ticket.passenger?.name || 'Passenger'}
+                        </span>
+                      </div>
+                      <span className="text-gray-500 text-xs font-medium bg-white px-2 py-0.5 rounded-lg border border-gray-200">
+                        Seat {bs.seat?.seatNumber} · {formatCurrency(seatAmt)}
                       </span>
                     </div>
-                    <span className="text-gray-500 text-xs font-medium bg-white px-2 py-0.5 rounded-lg border border-gray-200">
-                      Seat {bs.seat?.seatNumber} · {bs.seat?.seatType}
-                    </span>
-                  </div>
-                )) : (
+                  );
+                }) : (
                   <div className="flex items-center justify-between text-sm">
                     <div className="flex items-center gap-2">
                       <User size={13} className="text-gray-400" />
@@ -173,7 +192,7 @@ export default function TicketPage() {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">Amount Paid</span>
-                  <span className="font-bold text-[#E31B23]">{formatCurrency(Number(booking.netAmount) || 0)}</span>
+                  <span className="font-bold text-[#E31B23]">{formatCurrency(displayAmount)}</span>
                 </div>
               </div>
             </div>
@@ -187,13 +206,16 @@ export default function TicketPage() {
 
             {/* QR Code area */}
             <div className="px-6 py-5 bg-gray-50 text-center">
-              <p className="text-xs text-gray-400 mb-3">Show this QR code at boarding</p>
-              <div className="w-32 h-32 bg-white border-2 border-gray-200 rounded-xl mx-auto flex items-center justify-center">
-                <div className="w-20 h-20 bg-gray-100 rounded-lg mx-auto flex items-center justify-center">
-                  <span className="text-[10px] text-gray-400 text-center leading-tight">QR Code<br />(scan at boarding)</span>
-                </div>
+              <p className="text-xs text-gray-500 font-medium mb-3">Show this QR code at boarding</p>
+              <div className="w-36 h-36 bg-white border-2 border-gray-200 rounded-2xl mx-auto flex items-center justify-center p-3 shadow-xs">
+                <QRCodeSVG
+                  value={ticket.ticketNumber || booking.bookingRef}
+                  size={120}
+                  level="H"
+                  includeMargin={false}
+                />
               </div>
-              <p className="text-[10px] text-gray-400 mt-2 font-mono">{ticket.ticketNumber}</p>
+              <p className="text-xs text-gray-500 mt-2.5 font-mono font-bold">{ticket.ticketNumber}</p>
             </div>
           </div>
 

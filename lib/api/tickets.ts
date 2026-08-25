@@ -15,6 +15,8 @@ export interface Ticket {
     id: string;
     bookingRef: string;
     netAmount: string | number;
+    totalAmount?: string | number;
+    finalAmount?: string | number;
     paymentStatus: string;
     schedule: {
       departureTime: string;
@@ -31,6 +33,7 @@ export interface Ticket {
       };
     };
     bookingSeats: Array<{
+      amount?: string | number;
       seat: {
         seatNumber: string;
         seatType: string;

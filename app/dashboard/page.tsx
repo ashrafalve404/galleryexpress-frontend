@@ -19,7 +19,7 @@ import {
   ChevronRight,
   LogOut,
 } from 'lucide-react';
-import { RiBusFill, RiTicket2Fill, RiCloseCircleFill, RiCheckboxCircleFill } from 'react-icons/ri';
+import { RiBusFill, RiTicket2Fill, RiCloseCircleFill, RiCheckboxCircleFill, RiErrorWarningFill } from 'react-icons/ri';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { useAuthStore } from '@/lib/store/authStore';
@@ -35,6 +35,24 @@ import { toast } from 'sonner';
 interface BookingWithTickets extends Booking {
   tickets?: Array<{ ticketNumber: string; status: string }>;
   bookingSeats?: Array<{ seat?: { seatNumber: string; seatType: string } }>;
+}
+
+function getDashboardBookingAmount(b: any): number {
+  if (!b) return 0;
+  const raw = Number(b.netAmount) || Number(b.totalAmount) || Number(b.finalAmount) || 0;
+  if (raw > 0) return raw;
+
+  const destLower = (b.schedule?.route?.destination || '').toLowerCase();
+  const routeFallbackFare = destLower.includes('cox')
+    ? 1250
+    : destLower.includes('chittagong')
+    ? 900
+    : destLower.includes('sylhet')
+    ? 850
+    : 900;
+
+  const seatCount = (b.bookingSeats || b.seats || []).length || 1;
+  return seatCount * routeFallbackFare;
 }
 
 export default function DashboardPage() {
@@ -408,7 +426,7 @@ export default function DashboardPage() {
                             </div>
                           </div>
                           <div className="text-sm font-bold text-[#E31B23]">
-                            {formatCurrency(Number(b.finalAmount || b.netAmount) || 0)}
+                            {formatCurrency(getDashboardBookingAmount(b))}
                           </div>
                         </div>
 
@@ -423,13 +441,13 @@ export default function DashboardPage() {
                             </button>
                           )}
                           {['CONFIRMED', 'HELD'].includes(b.status) && (
-                            <button
-                              onClick={() => setSelectedCancelBooking(b)}
-                              className="w-full bg-white border border-red-200 hover:bg-red-50 text-red-500 font-bold py-2.5 rounded-xl text-xs transition-colors active:scale-98"
-                            >
-                              Cancel Booking
-                            </button>
-                          )}
+                              <button
+                                onClick={() => setSelectedCancelBooking(b)}
+                                className="w-full sm:w-auto bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-3.5 py-2 rounded-xl text-xs font-bold transition-colors active:scale-95 flex items-center justify-center gap-1.5"
+                              >
+                                Resell Ticket to Admin
+                              </button>
+                            )}
                         </div>
                       </div>
                     </div>
@@ -441,40 +459,55 @@ export default function DashboardPage() {
         </div>
       </main>
 
-      {/* Cancel Confirmation Modal */}
+      {/* Resell Ticket to Admin Modal */}
       {selectedCancelBooking && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white rounded-2xl p-5 sm:p-6 max-w-sm w-full shadow-2xl animate-fade-in-up">
+          <div className="bg-white rounded-2xl p-5 sm:p-6 max-w-md w-full shadow-2xl animate-fade-in-up">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                <AlertTriangle size={20} className="text-red-500" />
+              <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <RiErrorWarningFill size={22} className="text-amber-600" />
               </div>
               <div>
-                <h3 className="font-black text-[#111111] text-base">Cancel Booking?</h3>
-                <p className="text-gray-500 text-xs mt-0.5">This action cannot be undone.</p>
+                <h3 className="font-black text-[#111111] text-base">Resell Ticket to Admin?</h3>
+                <p className="text-gray-500 text-xs mt-0.5">Ref #: {selectedCancelBooking.bookingRef}</p>
               </div>
             </div>
-            <p className="text-xs sm:text-sm text-gray-600 mb-5">
-              Are you sure you want to cancel booking{' '}
-              <span className="font-mono font-bold text-[#111111]">{selectedCancelBooking.bookingRef}</span>?
-            </p>
+
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-4 text-xs space-y-2">
+              <div className="flex justify-between text-gray-600 font-medium">
+                <span>Original Ticket Price:</span>
+                <span className="font-bold text-gray-900">{formatCurrency(getDashboardBookingAmount(selectedCancelBooking))}</span>
+              </div>
+              <div className="flex justify-between text-gray-600 font-medium">
+                <span>Resell Policy Rate:</span>
+                <span className="font-bold text-amber-700">
+                  {new Date(selectedCancelBooking.schedule?.departureDate || '').toDateString() === new Date().toDateString()
+                    ? 'Non-resellable (Today\'s departure)'
+                    : '100% Refund (>24h) / 80% Refund (≤24h)'}
+                </span>
+              </div>
+              <p className="text-[11px] text-gray-500 pt-1 border-t border-slate-200 leading-relaxed">
+                Tickets for today’s departure cannot be resold. Tickets resold more than 24h prior to departure get a 100% refund, while tickets resold within 24h incur a 20% service fee.
+              </p>
+            </div>
+
             <div className="flex gap-3">
               <button
                 onClick={() => setSelectedCancelBooking(null)}
                 disabled={!!cancellingId}
                 className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-colors disabled:opacity-60"
               >
-                Keep Booking
+                Keep Ticket
               </button>
               <button
                 onClick={handleCancelBooking}
                 disabled={!!cancellingId}
-                className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+                className="flex-1 bg-[#E31B23] hover:bg-[#C41920] text-white py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
               >
                 {cancellingId ? (
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 ) : (
-                  'Yes, Cancel'
+                  'Confirm Resell'
                 )}
               </button>
             </div>

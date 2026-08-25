@@ -98,7 +98,7 @@ export function ScheduleCard({ schedule }: ScheduleCardProps) {
       ? coach.coachType
       : '';
 
-  // Match counter to route origin city
+  // Match main counter to route origin city
   const originCity = route?.origin || '';
   const boardingCounter = Array.isArray(countersData)
     ? countersData.find((c: any) =>
@@ -168,10 +168,10 @@ export function ScheduleCard({ schedule }: ScheduleCardProps) {
       <div className="flex items-start gap-2 mb-4 bg-blue-50/60 border border-blue-100 rounded-xl px-3 py-2">
         <Building2 size={14} className="text-blue-500 shrink-0 mt-0.5" />
         <div className="text-xs font-semibold text-blue-800 leading-snug">
-          <span className="font-bold">Boarding Counter: </span>
+          <span className="font-bold">Main Boarding Counter: </span>
           {boardingCounter
-            ? <>{boardingCounter.name}<span className="text-blue-500 font-medium"> · {boardingCounter.location}</span></>
-            : <span className="text-blue-600">{originCity} Terminal Counter</span>
+            ? <>{boardingCounter.name}<span className="text-blue-600 font-medium"> · All {originCity} Pickup Counters Available</span></>
+            : <span className="text-blue-600">{originCity} Main Terminal</span>
           }
         </div>
       </div>

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { MapPin, Phone, Mail, MessageCircle, Bus, Globe } from 'lucide-react';
+import { MessageCircle, Globe } from 'lucide-react';
+import { RiMapPinFill, RiPhoneFill, RiMailFill, RiBusFill } from 'react-icons/ri';
 import { ROUTES } from '@/lib/utils/constants';
 
 const quickLinks = [
@@ -113,17 +114,17 @@ export function Footer() {
             <h4 className="font-semibold text-sm uppercase tracking-wider text-gray-400 mb-5">Contact Us</h4>
             <ul className="space-y-4">
               <li className="flex gap-3 text-sm text-gray-300">
-                <MapPin size={16} className="text-[#E31B23] shrink-0 mt-0.5" />
+                <RiMapPinFill size={18} className="text-[#E31B23] shrink-0 mt-0.5" />
                 <span>Navana Shopping Centre, Gulshan Avenue 01, Gulshan, Dhaka, Bangladesh</span>
               </li>
               <li className="flex gap-3 text-sm text-gray-300">
-                <Phone size={16} className="text-[#E31B23] shrink-0 mt-0.5" />
+                <RiPhoneFill size={18} className="text-[#E31B23] shrink-0 mt-0.5" />
                 <a href="tel:01826110036" className="hover:text-white transition-colors">
                   01826-110036
                 </a>
               </li>
               <li className="flex gap-3 text-sm text-gray-300">
-                <Mail size={16} className="text-[#E31B23] shrink-0 mt-0.5" />
+                <RiMailFill size={18} className="text-[#E31B23] shrink-0 mt-0.5" />
                 <a href="mailto:galleryexpresslimited@gmail.com" className="hover:text-white transition-colors">
                   galleryexpresslimited@gmail.com
                 </a>
@@ -137,8 +138,8 @@ export function Footer() {
       <div className="border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-500">
           <span>&copy; {year} Gallery Express Limited. All rights reserved.</span>
-          <span className="flex items-center gap-1">
-            <Bus size={14} className="text-[#E31B23]" />
+          <span className="flex items-center gap-1.5 font-medium">
+            <RiBusFill className="text-[#E31B23] text-base" />
             Safe &amp; Comfortable Journeys
           </span>
         </div>

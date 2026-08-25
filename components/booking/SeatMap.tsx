@@ -63,22 +63,6 @@ function SeatComponent({ seat, isSelected, onToggle }: SeatProps) {
         badge: 'text-white font-black',
       };
     }
-    if (seat.seatType === 'LADIES') {
-      return {
-        outer: 'bg-pink-50 border-pink-200 text-pink-700 hover:bg-pink-100 hover:border-pink-300 cursor-pointer shadow-xs',
-        headrest: 'bg-pink-300/70',
-        cushion: 'bg-pink-200/50',
-        badge: 'text-pink-800 font-bold',
-      };
-    }
-    if (seat.seatType === 'VIP') {
-      return {
-        outer: 'bg-amber-50 border-amber-300 text-amber-800 hover:bg-amber-100 hover:border-amber-400 cursor-pointer shadow-xs',
-        headrest: 'bg-amber-300/80',
-        cushion: 'bg-amber-200/60',
-        badge: 'text-amber-900 font-bold',
-      };
-    }
     // Available regular seat
     return {
       outer: 'bg-sky-50 border-sky-200 text-sky-800 hover:bg-sky-100 hover:border-sky-300 hover:-translate-y-0.5 cursor-pointer shadow-xs',
@@ -99,7 +83,7 @@ function SeatComponent({ seat, isSelected, onToggle }: SeatProps) {
           ? seat.isBooked || seat.isHeld
             ? 'Already booked'
             : `Not available (${seat.status})`
-          : `Seat ${seat.seatNumber} (${seat.seatType})`
+          : `Seat ${seat.seatNumber}`
       }
       role="button"
       tabIndex={isUnavailable ? -1 : 0}
@@ -190,22 +174,6 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 4 }: SeatMa
             <div className="w-4 h-1 rounded-xs bg-gray-200" />
           </div>
           <span className="text-gray-700 font-bold">Booked</span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="w-5 h-6 rounded-t-lg rounded-b-xs bg-pink-50 border border-pink-200 flex flex-col justify-between items-center p-0.5">
-            <div className="w-3.5 h-1 rounded-full bg-pink-300" />
-            <div className="w-4 h-1 rounded-xs bg-pink-200" />
-          </div>
-          <span className="text-gray-700 font-bold">Ladies</span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="w-5 h-6 rounded-t-lg rounded-b-xs bg-amber-50 border border-amber-300 flex flex-col justify-between items-center p-0.5">
-            <div className="w-3.5 h-1 rounded-full bg-amber-300" />
-            <div className="w-4 h-1 rounded-xs bg-amber-200" />
-          </div>
-          <span className="text-gray-700 font-bold">VIP</span>
         </div>
       </div>
 

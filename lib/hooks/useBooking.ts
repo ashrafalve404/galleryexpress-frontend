@@ -65,7 +65,10 @@ export function useCreateBooking() {
         err?.message?.includes('sign in') ||
         err?.message?.includes('Unauthorized');
 
-      const rawMsg = Array.isArray(err?.response?.data?.message)
+      const errors = err?.response?.data?.errors;
+      const rawMsg = Array.isArray(errors) && errors.length > 0
+        ? errors.join(' | ')
+        : Array.isArray(err?.response?.data?.message)
         ? err.response.data.message.join(' | ')
         : err?.response?.data?.message || err?.message;
 
@@ -73,7 +76,7 @@ export function useCreateBooking() {
         ? 'Please sign in to your account to complete your booking.'
         : rawMsg || 'Failed to create booking. Please try again.';
 
-      console.error('Booking creation failed:', err?.response?.data || err);
+      console.error('Booking creation failed:', rawMsg || err?.message || err);
       toast.error(userMsg);
     },
   });

@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { ContactForm } from '@/components/contact/ContactForm';
-import { Phone, Mail, MapPin, Clock } from 'lucide-react';
+import { RiPhoneFill, RiMailFill, RiMapPinFill, RiTimeFill } from 'react-icons/ri';
 
 export const metadata: Metadata = {
   title: 'Contact Us',
@@ -24,21 +24,21 @@ export default function ContactPage() {
             {/* Contact Info */}
             <div className="space-y-5">
               {[
-                { icon: Phone, label: 'Customer Support', value: '01826-110036', sub: 'Available 7 days a week', href: 'tel:01826110036' },
-                { icon: Mail, label: 'Email', value: 'galleryexpresslimited@gmail.com', sub: 'We reply within 24 hours', href: 'mailto:galleryexpresslimited@gmail.com' },
-                { icon: MapPin, label: 'Head Office', value: 'Gulshan, Dhaka', sub: 'Navana Shopping Centre, Gulshan Avenue 01, Gulshan, Dhaka, Bangladesh' },
-                { icon: Clock, label: 'Business Hours', value: '6:00 AM – 10:00 PM', sub: 'All days including holidays' },
+                { icon: RiPhoneFill, label: 'Customer Support', value: '01826-110036', sub: 'Available 7 days a week', href: 'tel:01826110036' },
+                { icon: RiMailFill, label: 'Email', value: 'galleryexpresslimited@gmail.com', sub: 'We reply within 24 hours', href: 'mailto:galleryexpresslimited@gmail.com' },
+                { icon: RiMapPinFill, label: 'Head Office', value: 'Gulshan, Dhaka', sub: 'Navana Shopping Centre, Gulshan Avenue 01, Gulshan, Dhaka, Bangladesh' },
+                { icon: RiTimeFill, label: 'Business Hours', value: '6:00 AM – 10:00 PM', sub: 'All days including holidays' },
               ].map(({ icon: Icon, label, value, sub, href }) => (
-                <div key={label} className="bg-white rounded-2xl border border-gray-100 p-5 flex gap-4">
-                  <div className="w-11 h-11 bg-[#E31B23]/10 rounded-xl flex items-center justify-center shrink-0">
-                    <Icon size={18} className="text-[#E31B23]" />
+                <div key={label} className="bg-white rounded-2xl border border-gray-100 p-5 flex gap-4 shadow-2xs hover:shadow-md transition-all">
+                  <div className="w-12 h-12 bg-[#E31B23]/10 rounded-xl flex items-center justify-center shrink-0">
+                    <Icon className="text-xl text-[#E31B23]" />
                   </div>
                   <div>
-                    <div className="text-xs text-gray-400 font-medium uppercase tracking-wide">{label}</div>
+                    <div className="text-xs text-gray-400 font-medium uppercase tracking-wide mb-0.5">{label}</div>
                     {href ? (
-                      <a href={href} className="font-bold text-[#111111] hover:text-[#E31B23] transition-colors">{value}</a>
+                      <a href={href} className="font-bold text-[#111111] text-base hover:text-[#E31B23] transition-colors">{value}</a>
                     ) : (
-                      <div className="font-bold text-[#111111]">{value}</div>
+                      <div className="font-bold text-[#111111] text-base">{value}</div>
                     )}
                     <div className="text-xs text-gray-500 mt-0.5">{sub}</div>
                   </div>

@@ -62,7 +62,8 @@ export default function BookingPage() {
 
   const handleContinue = () => {
     if (selectedSeats.length === 0) return;
-    setSchedule(scheduleId, {
+    const targetScheduleId = schedule?.id || scheduleId;
+    setSchedule(targetScheduleId, {
       departureTime: schedule?.departureTime || storeSchedule?.departureTime || '08:00',
       arrivalTime: schedule?.arrivalTime || storeSchedule?.arrivalTime || '13:00',
       origin: schedule?.route?.origin || storeSchedule?.origin || 'Dhaka',

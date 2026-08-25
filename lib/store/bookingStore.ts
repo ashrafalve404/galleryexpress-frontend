@@ -116,12 +116,15 @@ export const useBookingStore = create<BookingState>()(
       },
 
       toggleSeat: (seat) => {
-        const { selectedSeats } = get();
+        const { selectedSeats, schedule } = get();
+        const fallbackFare = schedule?.fare || 1250;
+        const validPrice = seat.price && seat.price > 0 ? seat.price : fallbackFare;
+        const cleanSeat = { ...seat, price: validPrice };
         const exists = selectedSeats.find((s) => s.id === seat.id);
         if (exists) {
           set({ selectedSeats: selectedSeats.filter((s) => s.id !== seat.id) });
         } else {
-          set({ selectedSeats: [...selectedSeats, seat] });
+          set({ selectedSeats: [...selectedSeats, cleanSeat] });
         }
       },
 
@@ -146,8 +149,8 @@ export const useBookingStore = create<BookingState>()(
 
       getTotalAmount: () => {
         const { selectedSeats, schedule } = get();
-        const fallbackFare = schedule?.fare || 0;
-        return selectedSeats.reduce((sum, seat) => sum + (seat.price || fallbackFare), 0);
+        const fallbackFare = schedule?.fare || 1250;
+        return selectedSeats.reduce((sum, seat) => sum + (seat.price && seat.price > 0 ? seat.price : fallbackFare), 0);
       },
 
       getFinalAmount: () => {
