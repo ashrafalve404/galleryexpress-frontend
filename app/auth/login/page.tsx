@@ -33,7 +33,7 @@ export default function LoginPage() {
         {/* Background Image Layer */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/hero_banner_1.png"
+            src="/signin-image.webp"
             alt="Gallery Express Bus Travel"
             fill
             sizes="50vw"

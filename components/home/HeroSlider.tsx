@@ -7,17 +7,17 @@ import { SearchCard } from './SearchCard';
 
 const slides = [
   {
-    image: '/hero_banner_1.png',
+    image: '/hero-image1.webp',
     title: "Explore Cox's Bazar Coastal Highway",
     subtitle: 'Daily Scania & Volvo AC Express Coaches with Deluxe Seat Comfort',
   },
   {
-    image: '/hero_banner_2.png',
+    image: '/hero-image2.webp',
     title: 'Scenic Green Journeys',
     subtitle: 'Punctual Departures & GPS-Tracked Fleet Across All Routes',
   },
   {
-    image: '/hero_banner_3.png',
+    image: '/hero-image3.webp',
     title: 'Intercity Highway Express',
     subtitle: "Connecting Dhaka, Chittagong & Cox's Bazar Daily",
   },
