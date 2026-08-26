@@ -25,6 +25,7 @@ export default function AdminSchedulesPage() {
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<Schedule | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const [form, setForm] = useState({
     coachId: '',
@@ -86,13 +87,22 @@ export default function AdminSchedulesPage() {
     onError: (err: Error) => toast.error(err.message || 'Failed to update schedule'),
   });
 
-  const deleteMutation = useMutation({
+  const cancelMutation = useMutation({
     mutationFn: (id: string) => client.delete(`/api/v1/admin/schedules/${id}`),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['admin', 'schedules'] });
-      toast.success('Schedule deleted.');
+      toast.success('Schedule status set to CANCELLED');
     },
-    onError: (err: Error) => toast.error(err.message || 'Failed to delete schedule'),
+    onError: (err: Error) => toast.error(err.message || 'Failed to cancel schedule'),
+  });
+
+  const permanentDeleteMutation = useMutation({
+    mutationFn: (id: string) => client.delete(`/api/v1/admin/schedules/${id}/permanent`),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['admin', 'schedules'] });
+      toast.success('Schedule permanently deleted from database!');
+    },
+    onError: (err: Error) => toast.error(err.message || 'Failed to permanently delete schedule'),
   });
 
   const resetForm = () => {
@@ -146,6 +156,58 @@ export default function AdminSchedulesPage() {
       dest.toLowerCase().includes(search.toLowerCase())
     );
   });
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedIds(filtered.map((s) => s.id));
+    } else {
+      setSelectedIds([]);
+    }
+  };
+
+  const handleSelectRow = (id: string, checked: boolean) => {
+    if (checked) {
+      setSelectedIds((prev) => [...prev, id]);
+    } else {
+      setSelectedIds((prev) => prev.filter((item) => item !== id));
+    }
+  };
+
+  const handleBulkStatus = async (status: 'ACTIVE' | 'CANCELLED') => {
+    if (selectedIds.length === 0) return;
+    if (!confirm(`Are you sure you want to mark ${selectedIds.length} selected schedule(s) as ${status}?`)) return;
+
+    const toastId = toast.loading(`Updating ${selectedIds.length} schedule(s)...`);
+    try {
+      await Promise.all(
+        selectedIds.map((id) =>
+          status === 'CANCELLED'
+            ? client.delete(`/api/v1/admin/schedules/${id}`)
+            : client.patch(`/api/v1/admin/schedules/${id}`, { status: 'ACTIVE' })
+        )
+      );
+      qc.invalidateQueries({ queryKey: ['admin', 'schedules'] });
+      toast.success(`Updated ${selectedIds.length} schedule(s) to ${status}`, { id: toastId });
+      setSelectedIds([]);
+    } catch (err: any) {
+      toast.error(err?.message || 'Failed to update selected schedules', { id: toastId });
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedIds.length === 0) return;
+    if (!confirm(`PERMANENT DELETE WARNING:\nThis will permanently delete ${selectedIds.length} selected schedule(s) from database. Proceed?`)) return;
+
+    const toastId = toast.loading(`Deleting ${selectedIds.length} schedule(s)...`);
+    try {
+      await Promise.all(selectedIds.map((id) => client.delete(`/api/v1/admin/schedules/${id}/permanent`)));
+      qc.invalidateQueries({ queryKey: ['admin', 'schedules'] });
+      toast.success(`Permanently deleted ${selectedIds.length} schedule(s)`, { id: toastId });
+      setSelectedIds([]);
+    } catch (err: any) {
+      toast.error(err?.message || 'Failed to delete selected schedules', { id: toastId });
+    }
+  };
 
   return (
     <div>
@@ -292,12 +354,58 @@ export default function AdminSchedulesPage() {
         </div>
       )}
 
+      {/* Bulk Action Bar */}
+      {selectedIds.length > 0 && (
+        <div className="bg-[#111111] text-white px-5 py-3.5 rounded-2xl mb-4 flex flex-wrap items-center justify-between gap-4 shadow-lg animate-fade-in">
+          <div className="flex items-center gap-3">
+            <span className="bg-[#E31B23] text-white text-xs font-extrabold px-2.5 py-1 rounded-lg">
+              {selectedIds.length} Selected
+            </span>
+            <button
+              onClick={() => setSelectedIds([])}
+              className="text-xs text-gray-400 hover:text-white underline font-semibold"
+            >
+              Clear Selection
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => handleBulkStatus('ACTIVE')}
+              className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold transition-all shadow-xs"
+            >
+              Set Active
+            </button>
+            <button
+              onClick={() => handleBulkStatus('CANCELLED')}
+              className="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-extrabold transition-all shadow-xs"
+            >
+              Cancel Selected
+            </button>
+            <button
+              onClick={handleBulkDelete}
+              className="px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-extrabold transition-all shadow-xs"
+            >
+              Delete Permanently
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Table */}
       <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-xs sm:text-sm min-w-[700px]">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-100">
+                <th className="px-5 py-3.5 w-10 text-center">
+                  <input
+                    type="checkbox"
+                    checked={filtered.length > 0 && selectedIds.length === filtered.length}
+                    onChange={(e) => handleSelectAll(e.target.checked)}
+                    className="w-4 h-4 rounded text-[#E31B23] focus:ring-[#E31B23] cursor-pointer"
+                  />
+                </th>
                 {['Route', 'Coach', 'Date', 'Dep — Arr', 'Status', 'Actions'].map((h) => (
                   <th key={h} className="text-left px-5 py-3.5 font-bold text-gray-500 uppercase tracking-wider text-xs">{h}</th>
                 ))}
@@ -307,13 +415,26 @@ export default function AdminSchedulesPage() {
               {isLoading ? (
                 [1, 2, 3, 4].map((i) => (
                   <tr key={i}>
-                    {[1, 2, 3, 4, 5, 6].map((j) => (
+                    {[1, 2, 3, 4, 5, 6, 7].map((j) => (
                       <td key={j} className="px-5 py-4"><div className="skeleton h-4 rounded w-20" /></td>
                     ))}
                   </tr>
                 ))
               ) : filtered.map((s) => (
-                <tr key={s.id} className="hover:bg-gray-50 transition-colors">
+                <tr
+                  key={s.id}
+                  className={`hover:bg-gray-50 transition-colors ${
+                    selectedIds.includes(s.id) ? 'bg-red-50/40' : ''
+                  }`}
+                >
+                  <td className="px-5 py-4 text-center">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.includes(s.id)}
+                      onChange={(e) => handleSelectRow(s.id, e.target.checked)}
+                      className="w-4 h-4 rounded text-[#E31B23] focus:ring-[#E31B23] cursor-pointer"
+                    />
+                  </td>
                   <td className="px-5 py-4 font-bold text-[#111111]">
                     {s.route ? `${s.route.origin} → ${s.route.destination}` : 'Standard Route'}
                   </td>
@@ -328,11 +449,40 @@ export default function AdminSchedulesPage() {
                     </span>
                   </td>
                   <td className="px-5 py-4">
-                    <div className="flex gap-2">
-                      <button onClick={() => startEdit(s)} className="p-2 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors" title="Edit">
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => startEdit(s)} className="p-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors" title="Edit Schedule">
                         <Pencil size={14} />
                       </button>
-                      <button onClick={() => { if (confirm('Delete schedule?')) deleteMutation.mutate(s.id); }} className="p-2 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 transition-colors" title="Delete">
+                      <button
+                        onClick={() => {
+                          const isCancelled = s.status === 'CANCELLED';
+                          const newStatus = isCancelled ? 'ACTIVE' : 'CANCELLED';
+                          if (confirm(`Change trip status to ${newStatus}?`)) {
+                            if (isCancelled) {
+                              updateMutation.mutate({ id: s.id, dto: { status: 'ACTIVE' } as any });
+                            } else {
+                              cancelMutation.mutate(s.id);
+                            }
+                          }
+                        }}
+                        className={`px-2 py-1 rounded-lg text-xs font-bold transition-colors ${
+                          s.status === 'CANCELLED'
+                            ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                            : 'bg-amber-50 text-amber-700 hover:bg-amber-100'
+                        }`}
+                        title={s.status === 'CANCELLED' ? 'Re-activate Trip' : 'Cancel Trip'}
+                      >
+                        {s.status === 'CANCELLED' ? 'Activate Trip' : 'Cancel Trip'}
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (confirm('PERMANENT DELETE WARNING:\nThis will permanently delete this schedule and associated seat locks from database. Proceed?')) {
+                            permanentDeleteMutation.mutate(s.id);
+                          }
+                        }}
+                        className="p-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 transition-colors"
+                        title="Delete Permanently"
+                      >
                         <Trash2 size={14} />
                       </button>
                     </div>

@@ -25,6 +25,8 @@ export default function AdminFaresPage() {
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<Fare | null>(null);
 
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
   const [form, setForm] = useState({
     routeId: '',
     coachTypeId: '',
@@ -88,9 +90,18 @@ export default function AdminFaresPage() {
     mutationFn: (id: string) => client.delete(`/api/v1/admin/fares/${id}`),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['admin', 'fares'] });
-      toast.success('Fare deleted.');
+      toast.success('Fare status updated.');
     },
-    onError: (err: Error) => toast.error(err.message || 'Failed to delete fare'),
+    onError: (err: Error) => toast.error(err.message || 'Failed to update fare status'),
+  });
+
+  const permanentDeleteMutation = useMutation({
+    mutationFn: (id: string) => client.delete(`/api/v1/admin/fares/${id}/permanent`),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['admin', 'fares'] });
+      toast.success('Fare permanently deleted from database!');
+    },
+    onError: (err: Error) => toast.error(err.message || 'Failed to permanently delete fare'),
   });
 
   const resetForm = () => {
@@ -118,15 +129,17 @@ export default function AdminFaresPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const payload = {
-      ...form,
       routeId: form.routeId || routes[0]?.id || '',
-      coachTypeId: form.coachTypeId || undefined,
+      coachTypeId: form.coachTypeId ? form.coachTypeId : undefined,
+      baseAmount: String(form.baseAmount || '850.00'),
+      effectiveFrom: form.effectiveFrom ? new Date(form.effectiveFrom).toISOString() : new Date().toISOString(),
+      isActive: form.isActive ?? true,
     };
 
     if (editing) {
-      updateMutation.mutate({ id: editing.id, dto: payload as typeof form });
+      updateMutation.mutate({ id: editing.id, dto: payload as any });
     } else {
-      createMutation.mutate(payload as typeof form);
+      createMutation.mutate(payload as any);
     }
   };
 
@@ -137,6 +150,55 @@ export default function AdminFaresPage() {
     const dest = f.route?.destination || '';
     return origin.toLowerCase().includes(search.toLowerCase()) || dest.toLowerCase().includes(search.toLowerCase());
   });
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedIds(filtered.map((f) => f.id));
+    } else {
+      setSelectedIds([]);
+    }
+  };
+
+  const handleSelectRow = (id: string, checked: boolean) => {
+    if (checked) {
+      setSelectedIds((prev) => [...prev, id]);
+    } else {
+      setSelectedIds((prev) => prev.filter((item) => item !== id));
+    }
+  };
+
+  const handleBulkStatus = async (isActive: boolean) => {
+    if (selectedIds.length === 0) return;
+    const label = isActive ? 'ACTIVE' : 'INACTIVE';
+    if (!confirm(`Are you sure you want to mark ${selectedIds.length} selected fare(s) as ${label}?`)) return;
+
+    const toastId = toast.loading(`Updating ${selectedIds.length} fare(s)...`);
+    try {
+      await Promise.all(
+        selectedIds.map((id) => client.patch(`/api/v1/admin/fares/${id}`, { isActive }))
+      );
+      qc.invalidateQueries({ queryKey: ['admin', 'fares'] });
+      toast.success(`Updated ${selectedIds.length} fare(s) to ${label}`, { id: toastId });
+      setSelectedIds([]);
+    } catch (err: any) {
+      toast.error(err?.message || 'Failed to update selected fares', { id: toastId });
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedIds.length === 0) return;
+    if (!confirm(`PERMANENT DELETE WARNING:\nThis will permanently delete ${selectedIds.length} selected fare(s) from database. Proceed?`)) return;
+
+    const toastId = toast.loading(`Deleting ${selectedIds.length} fare(s)...`);
+    try {
+      await Promise.all(selectedIds.map((id) => client.delete(`/api/v1/admin/fares/${id}/permanent`)));
+      qc.invalidateQueries({ queryKey: ['admin', 'fares'] });
+      toast.success(`Permanently deleted ${selectedIds.length} fare(s)`, { id: toastId });
+      setSelectedIds([]);
+    } catch (err: any) {
+      toast.error(err?.message || 'Failed to delete selected fares', { id: toastId });
+    }
+  };
 
   return (
     <div>
@@ -267,12 +329,58 @@ export default function AdminFaresPage() {
         </div>
       )}
 
+      {/* Bulk Action Bar */}
+      {selectedIds.length > 0 && (
+        <div className="bg-[#111111] text-white px-5 py-3.5 rounded-2xl mb-4 flex flex-wrap items-center justify-between gap-4 shadow-lg animate-fade-in">
+          <div className="flex items-center gap-3">
+            <span className="bg-[#E31B23] text-white text-xs font-extrabold px-2.5 py-1 rounded-lg">
+              {selectedIds.length} Selected
+            </span>
+            <button
+              onClick={() => setSelectedIds([])}
+              className="text-xs text-gray-400 hover:text-white underline font-semibold"
+            >
+              Clear Selection
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => handleBulkStatus(true)}
+              className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold transition-all shadow-xs"
+            >
+              Set Active
+            </button>
+            <button
+              onClick={() => handleBulkStatus(false)}
+              className="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-extrabold transition-all shadow-xs"
+            >
+              Set Inactive
+            </button>
+            <button
+              onClick={handleBulkDelete}
+              className="px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-extrabold transition-all shadow-xs"
+            >
+              Delete Permanently
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Table */}
       <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-xs sm:text-sm min-w-[650px]">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-100">
+                <th className="px-5 py-3.5 w-10 text-center">
+                  <input
+                    type="checkbox"
+                    checked={filtered.length > 0 && selectedIds.length === filtered.length}
+                    onChange={(e) => handleSelectAll(e.target.checked)}
+                    className="w-4 h-4 rounded text-[#E31B23] focus:ring-[#E31B23] cursor-pointer"
+                  />
+                </th>
                 {['Route', 'Coach Type', 'Base Price', 'Effective Date', 'Status', 'Actions'].map((h) => (
                   <th key={h} className="text-left px-5 py-3.5 font-bold text-gray-500 uppercase tracking-wider text-xs">{h}</th>
                 ))}
@@ -282,13 +390,26 @@ export default function AdminFaresPage() {
               {isLoading ? (
                 [1, 2, 3, 4].map((i) => (
                   <tr key={i}>
-                    {[1, 2, 3, 4, 5, 6].map((j) => (
+                    {[1, 2, 3, 4, 5, 6, 7].map((j) => (
                       <td key={j} className="px-5 py-4"><div className="skeleton h-4 rounded w-20" /></td>
                     ))}
                   </tr>
                 ))
               ) : filtered.map((f) => (
-                <tr key={f.id} className="hover:bg-gray-50 transition-colors">
+                <tr
+                  key={f.id}
+                  className={`hover:bg-gray-50 transition-colors ${
+                    selectedIds.includes(f.id) ? 'bg-red-50/40' : ''
+                  }`}
+                >
+                  <td className="px-5 py-4 text-center">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.includes(f.id)}
+                      onChange={(e) => handleSelectRow(f.id, e.target.checked)}
+                      className="w-4 h-4 rounded text-[#E31B23] focus:ring-[#E31B23] cursor-pointer"
+                    />
+                  </td>
                   <td className="px-5 py-4 font-bold text-[#111111]">
                     {f.route ? `${f.route.origin} → ${f.route.destination}` : 'All Routes'}
                   </td>
@@ -301,11 +422,39 @@ export default function AdminFaresPage() {
                     </span>
                   </td>
                   <td className="px-5 py-4">
-                    <div className="flex gap-2">
-                      <button onClick={() => startEdit(f)} className="p-2 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors" title="Edit">
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => startEdit(f)} className="p-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors" title="Edit Fare">
                         <Pencil size={14} />
                       </button>
-                      <button onClick={() => { if (confirm('Delete fare?')) deleteMutation.mutate(f.id); }} className="p-2 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 transition-colors" title="Delete">
+                      <button
+                        onClick={() => {
+                          const newActive = !f.isActive;
+                          if (confirm(`Change status to ${newActive ? 'Active' : 'Inactive'}?`)) {
+                            if (!newActive) {
+                              deleteMutation.mutate(f.id);
+                            } else {
+                              updateMutation.mutate({ id: f.id, dto: { isActive: true } as any });
+                            }
+                          }
+                        }}
+                        className={`px-2 py-1 rounded-lg text-xs font-bold transition-colors ${
+                          f.isActive
+                            ? 'bg-amber-50 text-amber-700 hover:bg-amber-100'
+                            : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                        }`}
+                        title="Toggle Active/Inactive"
+                      >
+                        {f.isActive ? 'Deactivate' : 'Activate'}
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (confirm('PERMANENT DELETE WARNING:\nThis will permanently delete this fare from database. Proceed?')) {
+                            permanentDeleteMutation.mutate(f.id);
+                          }
+                        }}
+                        className="p-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 transition-colors"
+                        title="Delete Permanently"
+                      >
                         <Trash2 size={14} />
                       </button>
                     </div>
@@ -314,7 +463,7 @@ export default function AdminFaresPage() {
               ))}
               {!isLoading && filtered.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-5 py-12 text-center text-gray-400 text-sm font-medium">No fares found</td>
+                  <td colSpan={7} className="px-5 py-12 text-center text-gray-400 text-sm font-medium">No fares found</td>
                 </tr>
               )}
             </tbody>

@@ -7,19 +7,28 @@ import { SearchCard } from './SearchCard';
 
 const slides = [
   {
+    image: '/herro-image0.webp',
+    title: 'Premium Executive Coach Travel',
+    subtitle: 'Experience Unmatched Comfort & Luxury Intercity Journeys Across Bangladesh',
+    position: 'object-top',
+  },
+  {
     image: '/hero-image1.webp',
     title: "Explore Cox's Bazar Coastal Highway",
     subtitle: 'Daily Scania & Volvo AC Express Coaches with Deluxe Seat Comfort',
+    position: 'object-bottom',
   },
   {
     image: '/hero-image2.webp',
     title: 'Scenic Green Journeys',
     subtitle: 'Punctual Departures & GPS-Tracked Fleet Across All Routes',
+    position: 'object-bottom',
   },
   {
     image: '/hero-image3.webp',
     title: 'Intercity Highway Express',
     subtitle: "Connecting Dhaka, Chittagong & Cox's Bazar Daily",
+    position: 'object-bottom',
   },
 ];
 
@@ -38,8 +47,8 @@ export function HeroSlider() {
 
   return (
     <section className="relative z-20 pt-16 sm:pt-20 bg-gray-50">
-      {/* 1. Dedicated Banner Carousel Block (100% Fully Visible on Mobile & PC) */}
-      <div className="relative w-full h-[230px] xs:h-[270px] sm:h-[350px] md:h-[440px] lg:h-[500px] xl:h-[540px] overflow-hidden">
+      {/* 1. Dedicated Banner Carousel Block (Seamless 16:7 Mobile Aspect Ratio & Increased PC Height) */}
+      <div className="relative w-full aspect-[16/7] sm:aspect-auto sm:h-[400px] md:h-[520px] lg:h-[600px] xl:h-[680px] 2xl:h-[740px] overflow-hidden">
         {slides.map((s, index) => (
           <div
             key={index}
@@ -53,13 +62,13 @@ export function HeroSlider() {
               fill
               sizes="100vw"
               priority={index === 0}
-              className="object-cover object-bottom"
+              className={`object-cover ${s.position}`}
             />
             {/* Soft Overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-black/20" />
 
             {/* Slide Overlay Text */}
-            <div className="absolute bottom-10 sm:bottom-14 lg:bottom-18 left-4 sm:left-10 right-4 max-w-xl text-white z-20">
+            <div className="absolute bottom-6 sm:bottom-12 lg:bottom-18 xl:bottom-22 left-4 sm:left-10 right-4 max-w-xl text-white z-20">
               <h1 className="text-lg sm:text-3xl lg:text-4xl font-black text-white leading-tight drop-shadow-md">
                 {s.title}
               </h1>
@@ -102,8 +111,8 @@ export function HeroSlider() {
         </div>
       </div>
 
-      {/* 2. Search Booking Widget Container - Positioned Slightly Below with Subtle Overlap */}
-      <div className="relative z-30 max-w-4xl mx-auto px-4 -mt-4 sm:-mt-6 lg:-mt-8 pb-8 sm:pb-12">
+      {/* 2. Search Booking Widget Container - Positioned Slightly Higher in PC Mode */}
+      <div className="relative z-30 max-w-4xl mx-auto px-4 -mt-4 sm:-mt-10 lg:-mt-16 xl:-mt-20 pb-8 sm:pb-12">
         <SearchCard />
       </div>
     </section>

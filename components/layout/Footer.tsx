@@ -22,7 +22,7 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-[#111111] text-white">
+    <footer className="bg-[#111111] text-white" suppressHydrationWarning>
       {/* Top CTA Band */}
       <div className="bg-[#E31B23]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-14 flex flex-col md:flex-row items-center justify-between gap-6">

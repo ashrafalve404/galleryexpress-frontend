@@ -63,9 +63,18 @@ export default function AdminCountersPage() {
     mutationFn: (id: string) => client.delete(`/api/v1/admin/counters/${id}`),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['admin', 'counters'] });
-      toast.success('Counter removed.');
+      toast.success('Counter status set to INACTIVE');
     },
-    onError: (err: Error) => toast.error(err.message || 'Failed to remove counter'),
+    onError: (err: Error) => toast.error(err.message || 'Failed to deactivate counter'),
+  });
+
+  const permanentDeleteMutation = useMutation({
+    mutationFn: (id: string) => client.delete(`/api/v1/admin/counters/${id}/permanent`),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['admin', 'counters'] });
+      toast.success('Counter permanently deleted from database!');
+    },
+    onError: (err: Error) => toast.error(err.message || 'Failed to permanently delete counter'),
   });
 
   const resetForm = () => {
@@ -203,12 +212,45 @@ export default function AdminCountersPage() {
         ) : filtered.map((c) => (
           <div key={c.id} className="bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-md transition-shadow relative">
             <div className="flex items-start justify-between mb-3">
-              <h3 className="font-bold text-[#111111] text-base">{c.name}</h3>
-              <div className="flex items-center gap-1">
-                <button onClick={() => startEdit(c)} className="p-1 rounded text-gray-400 hover:text-blue-600 transition-colors">
+              <div className="flex items-center gap-2">
+                <h3 className="font-bold text-[#111111] text-base">{c.name}</h3>
+                <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${c.status === 'ACTIVE' ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-700'}`}>
+                  {c.status}
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <button onClick={() => startEdit(c)} className="p-1 rounded text-gray-400 hover:text-blue-600 transition-colors" title="Edit Counter">
                   <Pencil size={14} />
                 </button>
-                <button onClick={() => { if (confirm('Delete counter?')) deleteMutation.mutate(c.id); }} className="p-1 rounded text-gray-400 hover:text-rose-600 transition-colors">
+                <button
+                  onClick={() => {
+                    const newStatus = c.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+                    if (confirm(`Change counter status to ${newStatus}?`)) {
+                      if (c.status === 'ACTIVE') {
+                        deleteMutation.mutate(c.id);
+                      } else {
+                        updateMutation.mutate({ id: c.id, dto: { status: 'ACTIVE' } as any });
+                      }
+                    }
+                  }}
+                  className={`px-2 py-1 rounded-lg text-xs font-bold transition-colors ${
+                    c.status === 'ACTIVE'
+                      ? 'bg-amber-50 text-amber-700 hover:bg-amber-100'
+                      : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                  }`}
+                  title="Toggle Active/Inactive"
+                >
+                  {c.status === 'ACTIVE' ? 'Deactivate' : 'Activate'}
+                </button>
+                <button
+                  onClick={() => {
+                    if (confirm('PERMANENT DELETE WARNING:\nThis will permanently delete this counter from database. Proceed?')) {
+                      permanentDeleteMutation.mutate(c.id);
+                    }
+                  }}
+                  className="p-1 rounded text-gray-400 hover:text-rose-600 transition-colors"
+                  title="Delete Permanently"
+                >
                   <Trash2 size={14} />
                 </button>
               </div>

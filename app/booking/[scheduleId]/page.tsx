@@ -79,7 +79,7 @@ export default function BookingPage() {
     return (
       <>
         <Header />
-        <main className="flex-1 pt-20 min-h-screen bg-gray-50">
+        <main className="flex-1 pt-20 min-h-screen bg-gray-50" suppressHydrationWarning>
           <div className="max-w-4xl mx-auto px-4 py-8">
             <div className="skeleton h-6 w-48 rounded mb-8" />
             <div className="grid lg:grid-cols-3 gap-6">
@@ -120,7 +120,7 @@ export default function BookingPage() {
   return (
     <>
       <Header />
-      <main className="flex-1 pt-20 pb-10 bg-gray-50 min-h-screen">
+      <main className="flex-1 pt-20 pb-10 bg-gray-50 min-h-screen" suppressHydrationWarning>
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 mb-6">
