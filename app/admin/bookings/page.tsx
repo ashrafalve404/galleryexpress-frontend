@@ -20,12 +20,10 @@ function getAdminBookingAmount(b: Record<string, unknown>): number {
   const route = schedule?.route as Record<string, unknown> | undefined;
   const destLower = ((route?.destination as string) || '').toLowerCase();
   const routeFallbackFare = destLower.includes('cox')
-    ? 1250
+    ? 2000
     : destLower.includes('chittagong')
-    ? 900
-    : destLower.includes('sylhet')
-    ? 850
-    : 900;
+    ? 1200
+    : 800;
 
   const seats = (b.bookingSeats as unknown[]) || (b.seats as unknown[]) || (b.passengers as unknown[]) || [];
   const seatCount = seats.length || 1;

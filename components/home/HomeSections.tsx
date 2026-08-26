@@ -20,11 +20,11 @@ interface BackendRoute {
 }
 
 const DEFAULT_POPULAR_ROUTES = [
-  { from: 'Dhaka', to: "Cox's Bazar", duration: '8h', fare: '৳1,250', departures: '4 daily' },
-  { from: 'Dhaka', to: 'Chittagong', duration: '5h', fare: '৳900', departures: '3 daily' },
-  { from: 'Chittagong', to: "Cox's Bazar", duration: '3h', fare: '৳500', departures: '2 daily' },
-  { from: "Cox's Bazar", to: 'Dhaka', duration: '8h', fare: '৳1,250', departures: '3 daily' },
-  { from: 'Chittagong', to: 'Dhaka', duration: '5h', fare: '৳900', departures: '2 daily' },
+  { from: 'Dhaka', to: "Cox's Bazar", duration: '8h', fare: '৳2,000', departures: '4 daily' },
+  { from: 'Dhaka', to: 'Chittagong', duration: '5h', fare: '৳1,200', departures: '3 daily' },
+  { from: 'Chittagong', to: "Cox's Bazar", duration: '3h', fare: '৳800', departures: '2 daily' },
+  { from: "Cox's Bazar", to: 'Dhaka', duration: '8h', fare: '৳2,000', departures: '3 daily' },
+  { from: 'Chittagong', to: 'Dhaka', duration: '5h', fare: '৳1,200', departures: '2 daily' },
 ];
 
 const destinations = [
@@ -33,14 +33,14 @@ const destinations = [
     tag: 'Beach & Ocean',
     desc: "World's longest natural sandy sea beach & scenic marine drive highway.",
     image: '/dest_coxsbazar.png',
-    fare: 'From ৳1,250',
+    fare: 'From ৳2,000',
   },
   {
     name: 'Chittagong',
     tag: 'Port City',
     desc: "Bangladesh's major port city — Patenga sea beach & lush hill tracts scenery.",
     image: '/dest_chittagong.png',
-    fare: 'From ৳900',
+    fare: 'From ৳1,200',
   },
 ];
 
@@ -100,7 +100,7 @@ export function PopularDestinations() {
   const nextSlide = () => setCurrent((prev) => (prev + 1) % destinations.length);
 
   return (
-    <section className="py-16 bg-white">
+    <section className="py-16 bg-white" suppressHydrationWarning>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 sm:mb-10">
           <div>
@@ -251,12 +251,12 @@ export function PopularRoutes() {
 
   // Fare lookup based on known corridor prices
   const fareLookup: Record<string, string> = {
-    "Dhaka→Cox's Bazar": '৳1,250',
-    "Cox's Bazar→Dhaka": '৳1,250',
-    'Dhaka→Chittagong': '৳900',
-    'Chittagong→Dhaka': '৳900',
-    "Chittagong→Cox's Bazar": '৳500',
-    "Cox's Bazar→Chittagong": '৳500',
+    "Dhaka→Cox's Bazar": '৳2,000',
+    "Cox's Bazar→Dhaka": '৳2,000',
+    'Dhaka→Chittagong': '৳1,200',
+    'Chittagong→Dhaka': '৳1,200',
+    "Chittagong→Cox's Bazar": '৳800',
+    "Cox's Bazar→Chittagong": '৳800',
   };
 
   const activeRoutes = Array.isArray(apiRoutes) && apiRoutes.length > 0
@@ -273,7 +273,7 @@ export function PopularRoutes() {
     : DEFAULT_POPULAR_ROUTES;
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-16 bg-gray-50" suppressHydrationWarning>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-10">
           <div>

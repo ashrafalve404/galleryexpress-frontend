@@ -2,6 +2,7 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { HeroSlider } from '@/components/home/HeroSlider';
 import { PopularDestinations, PopularRoutes, WhyChooseUs, HowItWorks, FAQSection, TrustSection } from '@/components/home/HomeSections';
+import { OffersSection } from '@/components/home/OffersSection';
 import { CheckCircle2, ShieldCheck, Ticket, RotateCcw } from 'lucide-react';
 
 const trustBadges = [
@@ -36,6 +37,9 @@ export default function HomePage() {
 
         {/* ========== POPULAR ROUTES ========== */}
         <PopularRoutes />
+
+        {/* ========== PROMOTIONAL OFFERS (1:1 POSTERS) ========== */}
+        <OffersSection />
 
         {/* ========== TRUST STATS ========== */}
         <TrustSection />

@@ -24,12 +24,10 @@ function getBookingDisplayAmount(b: BookingWithTickets | null): number {
 
   const destLower = (b.schedule?.route?.destination || '').toLowerCase();
   const routeFallbackFare = destLower.includes('cox')
-    ? 1250
+    ? 2000
     : destLower.includes('chittagong')
-    ? 900
-    : destLower.includes('sylhet')
-    ? 850
-    : 900;
+    ? 1200
+    : 800;
 
   const seatCount = b.seats?.length || b.passengers?.length || 1;
   return seatCount * routeFallbackFare;

@@ -1,5 +1,5 @@
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-export const COMPANY_ID = process.env.NEXT_PUBLIC_COMPANY_ID || '';
+export const COMPANY_ID = process.env.NEXT_PUBLIC_COMPANY_ID || '00000000-0000-4000-a000-000000000001';
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001';
 
 export const ROUTES = {
@@ -34,6 +34,7 @@ export const ROUTES = {
   ADMIN_SETTINGS: '/admin/settings',
   ADMIN_CMS: '/admin/cms',
   ADMIN_SLIDERS: '/admin/sliders',
+  ADMIN_OFFERS: '/admin/offers',
   ADMIN_TICKETS: '/admin/tickets',
   ADMIN_MESSAGES: '/admin/messages',
 } as const;

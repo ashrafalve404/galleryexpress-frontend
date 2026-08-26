@@ -40,14 +40,10 @@ export default function BookingPage() {
 
   const destLower = (schedule?.route?.destination || storeSchedule?.destination || '').toLowerCase();
   const fallbackFare = destLower.includes('cox')
-    ? 1250
+    ? 2000
     : destLower.includes('chittagong')
-    ? 900
-    : destLower.includes('sylhet')
-    ? 850
-    : destLower.includes('rajshahi')
-    ? 750
-    : 900;
+    ? 1200
+    : 800;
 
   const effectiveFare = rawScheduleFare > 0 ? rawScheduleFare : fallbackFare;
 

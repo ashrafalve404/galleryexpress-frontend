@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, Ticket, Bus, MapPin, Calendar, BadgeDollarSign,
   Tag, Building2, Users, BarChart3, Settings, ChevronLeft, ChevronRight,
-  FileText, Image as ImageIcon, LogOut, Menu, X, Globe, ExternalLink, Mail
+  FileText, Image as ImageIcon, LogOut, Menu, X, Globe, ExternalLink, Mail, Sparkles
 } from 'lucide-react';
 import { useAuthStore } from '@/lib/store/authStore';
 import { useLogout } from '@/lib/hooks/useAuth';
@@ -34,6 +34,7 @@ const navGroups = [
     items: [
       { href: ROUTES.ADMIN_FARES, label: 'Fares', icon: BadgeDollarSign },
       { href: ROUTES.ADMIN_DISCOUNTS, label: 'Discounts', icon: Tag },
+      { href: ROUTES.ADMIN_OFFERS, label: 'Offer Posters', icon: Sparkles },
       { href: ROUTES.ADMIN_COUNTERS, label: 'Counters', icon: Building2 },
     ],
   },

@@ -4,7 +4,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Phone, Lock, Eye, EyeOff, Bus, ShieldCheck, Ticket, ArrowLeft } from 'lucide-react';
+import { Phone, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { RiShieldCheckFill, RiTicket2Fill, RiBusFill } from 'react-icons/ri';
 import { useState } from 'react';
 import { useLogin } from '@/lib/hooks/useAuth';
 import { loginSchema, type LoginFormData } from '@/lib/validations/authSchema';
@@ -69,13 +70,13 @@ export default function LoginPage() {
 
           <div className="space-y-3 border-t border-white/15 pt-6">
             {[
-              { icon: ShieldCheck, label: 'Verified & Secure Online Payment Options' },
-              { icon: Ticket, label: 'Instant Mobile QR Boarding Ticket' },
-              { icon: Bus, label: 'Modern Fleet with Premium AC Comfort' },
+              { icon: RiShieldCheckFill, label: 'Verified & Secure Online Payment Options' },
+              { icon: RiTicket2Fill,     label: 'Instant Mobile QR Boarding Ticket' },
+              { icon: RiBusFill,         label: 'Modern Fleet with Premium AC Comfort' },
             ].map(({ icon: Icon, label }) => (
               <div key={label} className="flex items-center gap-3 text-xs text-white/90 font-semibold">
                 <div className="w-7 h-7 rounded-xl bg-[#E31B23]/20 flex items-center justify-center text-[#E31B23] shrink-0">
-                  <Icon size={14} />
+                  <Icon size={15} />
                 </div>
                 <span>{label}</span>
               </div>

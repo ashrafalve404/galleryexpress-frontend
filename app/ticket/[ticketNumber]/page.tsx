@@ -64,12 +64,10 @@ export default function TicketPage() {
 
   const destLower = (schedule?.route?.destination || '').toLowerCase();
   const routeFallbackFare = destLower.includes('cox')
-    ? 1250
+    ? 2000
     : destLower.includes('chittagong')
-    ? 900
-    : destLower.includes('sylhet')
-    ? 850
-    : 900;
+    ? 1200
+    : 800;
 
   const rawAmount = Number(booking.netAmount) || Number(booking.totalAmount) || Number(booking.finalAmount) || 0;
   const seatCount = seats.length || 1;

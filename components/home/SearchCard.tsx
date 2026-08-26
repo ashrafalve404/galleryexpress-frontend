@@ -223,8 +223,8 @@ function ProfessionalDatePicker({ value, onChange }: ProfessionalDatePickerProps
           <div className="grid grid-cols-7 gap-1 text-center">
             {days.map((d, idx) => {
               const isPast = isBefore(d, todayStart);
-              const maxDate = addDays(todayStart, 10);
-              const isBeyond10Days = isAfter(d, maxDate);
+              const maxDate = addDays(todayStart, 7);
+              const isBeyond7Days = isAfter(d, maxDate);
               const isSelected = isSameDay(d, selectedDate);
               const isCurrentMonth = isSameMonth(d, currentMonth);
 
@@ -232,7 +232,7 @@ function ProfessionalDatePicker({ value, onChange }: ProfessionalDatePickerProps
                 <button
                   key={idx}
                   type="button"
-                  disabled={isPast || isBeyond10Days}
+                  disabled={isPast || isBeyond7Days}
                   onClick={() => {
                     onChange(format(d, 'yyyy-MM-dd'));
                     setOpen(false);
@@ -240,13 +240,13 @@ function ProfessionalDatePicker({ value, onChange }: ProfessionalDatePickerProps
                   className={`h-8 w-8 sm:h-9 sm:w-9 rounded-xl flex items-center justify-center text-xs font-bold transition-all mx-auto ${
                     isSelected
                       ? 'bg-[#E31B23] text-white shadow-md scale-105'
-                      : isPast || isBeyond10Days
+                      : isPast || isBeyond7Days
                       ? 'text-gray-300 cursor-not-allowed opacity-40'
                       : !isCurrentMonth
                       ? 'text-gray-300 hover:bg-gray-50'
                       : 'text-gray-800 hover:bg-[#E31B23]/10 hover:text-[#E31B23]'
                   }`}
-                  title={isBeyond10Days ? 'Booking is open up to 10 days in advance' : undefined}
+                  title={isBeyond7Days ? 'Booking is open up to 7 days in advance' : undefined}
                 >
                   {format(d, 'd')}
                 </button>

@@ -58,14 +58,10 @@ export function ScheduleCard({ schedule }: ScheduleCardProps) {
 
   const destLower = (schedule?.route?.destination || '').toLowerCase();
   const fallbackPrice = destLower.includes('cox')
-    ? 1250
+    ? 2000
     : destLower.includes('chittagong')
-    ? 900
-    : destLower.includes('sylhet')
-    ? 850
-    : destLower.includes('rajshahi')
-    ? 750
-    : 850;
+    ? 1200
+    : 800;
 
   const price = rawPrice > 0 ? rawPrice : fallbackPrice;
   const totalCoachSeats = schedule?.coach?.totalSeats || schedule?.coach?._count?.seats || 36;
@@ -209,21 +205,21 @@ export function ScheduleCardSkeleton() {
   return (
     <div className="bg-white border border-gray-100 rounded-2xl p-5" suppressHydrationWarning>
       <div className="flex justify-between mb-4" suppressHydrationWarning>
-        <div className="skeleton h-4 w-32 rounded" />
-        <div className="skeleton h-4 w-12 rounded" />
+        <div className="skeleton h-4 w-32 rounded" suppressHydrationWarning />
+        <div className="skeleton h-4 w-12 rounded" suppressHydrationWarning />
       </div>
       <div className="flex items-center gap-4 mb-4" suppressHydrationWarning>
-        <div className="skeleton h-8 w-20 rounded" />
-        <div className="flex-1 skeleton h-px" />
-        <div className="skeleton h-8 w-20 rounded" />
+        <div className="skeleton h-8 w-20 rounded" suppressHydrationWarning />
+        <div className="flex-1 skeleton h-px" suppressHydrationWarning />
+        <div className="skeleton h-8 w-20 rounded" suppressHydrationWarning />
       </div>
       <div className="flex gap-2 mb-4" suppressHydrationWarning>
-        <div className="skeleton h-6 w-14 rounded-lg" />
-        <div className="skeleton h-6 w-14 rounded-lg" />
+        <div className="skeleton h-6 w-14 rounded-lg" suppressHydrationWarning />
+        <div className="skeleton h-6 w-14 rounded-lg" suppressHydrationWarning />
       </div>
       <div className="flex justify-between items-center pt-4 border-t border-gray-50" suppressHydrationWarning>
-        <div className="skeleton h-4 w-20 rounded" />
-        <div className="skeleton h-10 w-28 rounded-xl" />
+        <div className="skeleton h-4 w-20 rounded" suppressHydrationWarning />
+        <div className="skeleton h-10 w-28 rounded-xl" suppressHydrationWarning />
       </div>
     </div>
   );
