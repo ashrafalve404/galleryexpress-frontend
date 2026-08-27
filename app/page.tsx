@@ -21,10 +21,10 @@ export default function HomePage() {
         <HeroSlider />
 
         {/* ========== TRUST BADGES BAND ========== */}
-        <div className="bg-[#111111] py-3.5 sm:py-4 border-t border-b border-white/10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 lg:flex lg:items-center lg:justify-around gap-3 sm:gap-4 text-white/90 text-xs sm:text-sm">
+        <div className="bg-[#111111] py-3 sm:py-4 border-t border-b border-white/10">
+          <div className="max-w-xs sm:max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 grid grid-cols-2 lg:flex lg:items-center lg:justify-around gap-x-4 gap-y-2.5 text-white/90 text-xs sm:text-sm">
             {trustBadges.map(({ icon: Icon, label }) => (
-              <div key={label} className="flex items-center justify-center gap-2 font-bold px-1">
+              <div key={label} className="flex items-center justify-start sm:justify-center gap-2 font-bold">
                 <Icon size={16} className="text-[#E31B23] shrink-0" />
                 <span className="whitespace-nowrap">{label}</span>
               </div>

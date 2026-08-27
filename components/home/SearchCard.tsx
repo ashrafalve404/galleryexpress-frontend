@@ -3,12 +3,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { HiSearch, HiExclamationCircle, HiSwitchHorizontal, HiChevronLeft, HiChevronRight, HiFire } from 'react-icons/hi';
-import { RiMapPin2Fill, RiCalendarEventFill, RiBusFill } from 'react-icons/ri';
+import { RiMapPin2Fill, RiCalendarEventFill, RiBusFill, RiBuilding2Fill } from 'react-icons/ri';
 import { useBookingStore } from '@/lib/store/bookingStore';
 import { today, tomorrow, formatDate } from '@/lib/utils/date';
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay, isBefore, isAfter, startOfDay, parseISO } from 'date-fns';
-
-import { Building2 } from 'lucide-react';
 
 export interface LocationOption {
   city: string;
@@ -109,7 +107,7 @@ function CityInput({ id, label, placeholder, value, onChange }: CityInputProps) 
             >
               <div className="flex items-center gap-2.5 min-w-0">
                 {item.type === 'counter' ? (
-                  <Building2 size={15} className="text-blue-500 shrink-0 group-hover:scale-110 transition-transform" />
+                  <RiBuilding2Fill size={16} className="text-blue-500 shrink-0 group-hover:scale-110 transition-transform" />
                 ) : (
                   <RiMapPin2Fill size={15} className="text-[#E31B23] shrink-0 group-hover:scale-110 transition-transform" />
                 )}
