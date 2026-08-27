@@ -32,14 +32,14 @@ const destinations = [
     name: "Cox's Bazar",
     tag: 'Beach & Ocean',
     desc: "World's longest natural sandy sea beach & scenic marine drive highway.",
-    image: '/dest_coxsbazar.png',
+    image: '/coxbazar.webp',
     fare: 'From ৳2,000',
   },
   {
     name: 'Chittagong',
     tag: 'Port City',
     desc: "Bangladesh's major port city — Patenga sea beach & lush hill tracts scenery.",
-    image: '/dest_chittagong.png',
+    image: '/chittagong.webp',
     fare: 'From ৳1,200',
   },
 ];
@@ -437,8 +437,8 @@ export function FAQSection() {
 export function TrustSection() {
   const stats = [
     { value: '50K+', label: 'Happy Passengers' },
-    { value: '15+', label: 'Intercity Routes' },
-    { value: '25+', label: 'Modern Coaches' },
+    { value: '6+', label: 'Express Routes' },
+    { value: '10+', label: 'Luxury AC Coaches' },
     { value: '5+', label: 'Years of Excellence' },
   ];
 

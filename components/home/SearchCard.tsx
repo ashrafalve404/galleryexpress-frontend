@@ -297,28 +297,39 @@ export function SearchCard() {
     }
   }, [date]);
 
+  const triggerSearch = (nFrom: string, nTo: string, nDate: string) => {
+    if (!nFrom.trim() || !nTo.trim() || !nDate) return;
+    if (nFrom.toLowerCase() === nTo.toLowerCase()) return;
+
+    setError('');
+    setSearch(nFrom.trim(), nTo.trim(), nDate);
+    router.push(`/search?from=${encodeURIComponent(nFrom.trim())}&to=${encodeURIComponent(nTo.trim())}&date=${nDate}`);
+  };
+
+  const handleDateSelect = (newDateStr: string) => {
+    setLocalDate(newDateStr);
+    triggerSearch(localFrom, localTo, newDateStr);
+  };
+
   const handleSwap = () => {
-    setLocalFrom(localTo);
-    setLocalTo(localFrom);
+    const newFrom = localTo;
+    const newTo = localFrom;
+    setLocalFrom(newFrom);
+    setLocalTo(newTo);
+    triggerSearch(newFrom, newTo, localDate);
   };
 
   const handleTrendingClick = (rFrom: string, rTo: string) => {
     setLocalFrom(rFrom);
     setLocalTo(rTo);
-    setLocalDate(today());
+    const d = today();
+    setLocalDate(d);
+    triggerSearch(rFrom, rTo, d);
   };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-
-    if (!localFrom.trim()) { setError('Please select an origin city.'); return; }
-    if (!localTo.trim()) { setError('Please select a destination city.'); return; }
-    if (localFrom.toLowerCase() === localTo.toLowerCase()) { setError('Origin and destination cannot be the same.'); return; }
-    if (!localDate) { setError('Please select a journey date.'); return; }
-
-    setSearch(localFrom.trim(), localTo.trim(), localDate);
-    router.push(`/search?from=${encodeURIComponent(localFrom)}&to=${encodeURIComponent(localTo)}&date=${localDate}`);
+    triggerSearch(localFrom, localTo, localDate);
   };
 
   return (
@@ -365,7 +376,7 @@ export function SearchCard() {
           <div className="flex flex-col sm:flex-row sm:items-end gap-3">
             <ProfessionalDatePicker
               value={localDate}
-              onChange={setLocalDate}
+              onChange={handleDateSelect}
             />
 
             <div className="flex gap-1.5 shrink-0 pb-[1px]">
@@ -375,7 +386,7 @@ export function SearchCard() {
                   <button
                     key={label}
                     type="button"
-                    onClick={() => setLocalDate(d)}
+                    onClick={() => handleDateSelect(d)}
                     className={`px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
                       localDate === d
                         ? 'bg-[#E31B23] text-white shadow-xs'

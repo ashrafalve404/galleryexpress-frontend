@@ -28,7 +28,7 @@ export default function AboutPage() {
                 </div>
                 <h2 className="text-xl font-black text-[#111111] mb-3">Our Story</h2>
                 <p className="text-sm leading-relaxed text-gray-600">
-                  Gallery Express Limited has been one of Bangladesh's leading intercity bus operators for over 10 years. Founded with a simple mission — to make intercity travel comfortable, affordable, and safe — we have grown to operate modern coaches across 50+ routes nationwide.
+                  Gallery Express Limited is one of Bangladesh's premier intercity bus operators. Founded with a simple mission — to make intercity travel comfortable, affordable, and safe — we operate modern Scania & Volvo AC double-deck coaches on key express routes connecting Dhaka, Chittagong, and Cox's Bazar.
                 </p>
               </div>
 
@@ -47,8 +47,8 @@ export default function AboutPage() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-2">
               {[
                 { value: '50K+', label: 'Passengers Served', desc: 'Happy travellers who choose Gallery Express' },
-                { value: '15+', label: 'Intercity Routes', desc: 'Connecting major divisional capitals' },
-                { value: '25+', label: 'Luxury Coaches', desc: 'Modern Scania & Volvo AC coaches' },
+                { value: '6+', label: 'Express Routes', desc: 'Connecting Dhaka, Chittagong & Cox\'s Bazar' },
+                { value: '10+', label: 'Luxury AC Coaches', desc: 'Modern Scania & Volvo AC coaches' },
               ].map((stat) => (
                 <div key={stat.label} className="bg-white border border-gray-100 rounded-2xl p-6 text-center shadow-xs">
                   <div className="text-3xl font-black text-[#E31B23] mb-1">{stat.value}</div>

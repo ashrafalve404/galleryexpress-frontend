@@ -69,10 +69,10 @@ export function HeroSlider() {
 
             {/* Slide Overlay Text */}
             <div className="absolute bottom-6 sm:bottom-12 lg:bottom-18 xl:bottom-22 left-4 sm:left-10 right-4 max-w-xl text-white z-20">
-              <h1 className="text-lg sm:text-3xl lg:text-4xl font-black text-white leading-tight drop-shadow-md">
+              <h1 className="text-sm sm:text-3xl lg:text-4xl font-extrabold text-white leading-tight drop-shadow-md">
                 {s.title}
               </h1>
-              <p className="text-white/85 text-xs sm:text-sm font-medium mt-1 drop-shadow-xs line-clamp-2">
+              <p className="text-white/85 text-[11px] sm:text-sm font-medium mt-0.5 drop-shadow-xs line-clamp-2">
                 {s.subtitle}
               </p>
             </div>
