@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { agentGetBulkOrders, agentIssueTicket, type BulkOrder } from '@/lib/api/agent';
@@ -11,7 +11,7 @@ import { SeatMap } from '@/components/booking/SeatMap';
 import { RiTicket2Fill, RiUser3Fill, RiPhoneFill, RiCalendarCheckFill, RiBusFill } from 'react-icons/ri';
 import { HiExclamationCircle, HiCheckCircle } from 'react-icons/hi';
 
-export default function AgentIssueTicketPage() {
+function IssueTicketContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -324,5 +324,13 @@ export default function AgentIssueTicketPage() {
         )}
       </form>
     </div>
+  );
+}
+
+export default function AgentIssueTicketPage() {
+  return (
+    <Suspense fallback={<div className="text-xs text-gray-400 font-semibold py-10 text-center">Loading ticket issuing portal...</div>}>
+      <IssueTicketContent />
+    </Suspense>
   );
 }
