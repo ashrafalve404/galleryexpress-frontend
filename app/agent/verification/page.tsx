@@ -22,6 +22,7 @@ export default function AgentVerificationPage() {
   const [nidNumber, setNidNumber] = useState('');
   const [nidFrontDocUrl, setNidFrontDocUrl] = useState('');
   const [nidBackDocUrl, setNidBackDocUrl] = useState('');
+  const [otherDocUrl, setOtherDocUrl] = useState('');
   const [counterName, setCounterName] = useState('');
   const [counterAddress, setCounterAddress] = useState('');
   const [tradeLicenseNo, setTradeLicenseNo] = useState('');
@@ -40,6 +41,7 @@ export default function AgentVerificationPage() {
       else if (kycData.nidDocUrl) setNidFrontDocUrl(kycData.nidDocUrl);
       if (kycData.nidBackDocUrl) setNidBackDocUrl(kycData.nidBackDocUrl);
       else if (kycData.nidDocUrl) setNidBackDocUrl(kycData.nidDocUrl);
+      if (kycData.otherDocUrl) setOtherDocUrl(kycData.otherDocUrl);
       if (kycData.counterName) setCounterName(kycData.counterName);
       if (kycData.counterAddress) setCounterAddress(kycData.counterAddress);
       if (kycData.tradeLicenseNo) setTradeLicenseNo(kycData.tradeLicenseNo);
@@ -50,7 +52,7 @@ export default function AgentVerificationPage() {
     mutationFn: agentSubmitKyc,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['agent-kyc-details'] });
-      setSuccess('Your NID Front & Back photos and Counter details have been submitted for admin approval!');
+      setSuccess('Your NID photos, counter details, and documents have been submitted for admin approval!');
       setError('');
     },
     onError: (err: any) => {
@@ -75,6 +77,7 @@ export default function AgentVerificationPage() {
       nidFrontDocUrl: nidFrontDocUrl.trim(),
       nidBackDocUrl: nidBackDocUrl.trim(),
       nidDocUrl: nidFrontDocUrl.trim(),
+      otherDocUrl: otherDocUrl.trim() || undefined,
       counterName: counterName.trim(),
       counterAddress: counterAddress.trim(),
       tradeLicenseNo: tradeLicenseNo.trim() || undefined,
@@ -89,6 +92,11 @@ export default function AgentVerificationPage() {
   const handleBackUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) setNidBackDocUrl(URL.createObjectURL(file));
+  };
+
+  const handleOtherUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) setOtherDocUrl(URL.createObjectURL(file));
   };
 
   if (isLoading) {
@@ -320,7 +328,7 @@ export default function AgentVerificationPage() {
                   disabled={kycStatus === 'VERIFIED'}
                   value={nidFrontDocUrl}
                   onChange={(e) => setNidFrontDocUrl(e.target.value)}
-                  placeholder="Or Front Image Link (https://.../front.jpg)"
+                  placeholder="Or Front Image Link (https://...)"
                   className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-[#111111] text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23] disabled:opacity-75"
                 />
 
@@ -372,7 +380,7 @@ export default function AgentVerificationPage() {
                   disabled={kycStatus === 'VERIFIED'}
                   value={nidBackDocUrl}
                   onChange={(e) => setNidBackDocUrl(e.target.value)}
-                  placeholder="Or Back Image Link (https://.../back.jpg)"
+                  placeholder="Or Back Image Link (https://...)"
                   className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-[#111111] text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23] disabled:opacity-75"
                 />
 
@@ -390,6 +398,58 @@ export default function AgentVerificationPage() {
                   </div>
                 )}
               </div>
+            </div>
+          </div>
+
+          {/* Other Document / Image (Optional) Section Below */}
+          <div className="pt-2 border-t border-gray-100 space-y-3">
+            <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wide">
+              Other Document / Image (Optional)
+            </label>
+
+            <div className="p-4 bg-gray-50 border border-gray-200 rounded-2xl space-y-3">
+              {kycStatus !== 'VERIFIED' && (
+                <div className="border-2 border-dashed border-gray-300 rounded-xl p-4 bg-white text-center space-y-2 hover:border-[#E31B23] transition-colors">
+                  <RiUpload2Fill className="mx-auto text-gray-400" size={24} />
+                  <div className="text-[11px] font-bold text-gray-700">Select Other Document</div>
+                  <input
+                    type="file"
+                    accept="image/*,.pdf,.doc,.docx"
+                    onChange={handleOtherUpload}
+                    className="hidden"
+                    id="other-doc-input"
+                  />
+                  <label
+                    htmlFor="other-doc-input"
+                    className="inline-block bg-gray-50 border border-gray-200 px-4 py-1.5 rounded-xl text-[11px] font-bold text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors"
+                  >
+                    Browse Document
+                  </label>
+                </div>
+              )}
+
+              <input
+                type="text"
+                disabled={kycStatus === 'VERIFIED'}
+                value={otherDocUrl}
+                onChange={(e) => setOtherDocUrl(e.target.value)}
+                placeholder="Or File / Image Link (Optional)"
+                className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-[#111111] text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23] disabled:opacity-75"
+              />
+
+              {otherDocUrl && (
+                <div className="p-2.5 bg-white border border-gray-200 rounded-xl flex items-center gap-3">
+                  <img
+                    src={otherDocUrl}
+                    alt="Other Document Preview"
+                    className="w-16 h-12 object-cover rounded-lg border border-gray-300"
+                    onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
+                  />
+                  <div className="text-[10px] text-gray-500 font-bold truncate">
+                    Other Document Preview
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

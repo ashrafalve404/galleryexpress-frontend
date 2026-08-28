@@ -20,6 +20,7 @@ export const ROUTES = {
   TERMS: '/terms',
   PRIVACY: '/privacy',
   CANCELLATION_POLICY: '/cancellation-policy',
+  AGENT_LOGIN: '/agent/login',
   // Admin
   ADMIN: '/admin',
   ADMIN_BOOKINGS: '/admin/bookings',

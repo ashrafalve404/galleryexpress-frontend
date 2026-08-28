@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/lib/store/authStore';
@@ -22,6 +22,19 @@ export default function AgentLayout({ children }: { children: React.ReactNode })
   const router = useRouter();
   const { user, clearAuth } = useAuthStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted || pathname === '/agent/login') return;
+    const ALLOWED_ROLES = ['COUNTER_AGENT', 'COUNTER_MANAGER', 'ADMIN', 'SUPER_ADMIN'];
+    if (!user || !ALLOWED_ROLES.includes(user.role)) {
+      router.push('/agent/login');
+    }
+  }, [mounted, user, pathname, router]);
 
   if (pathname === '/agent/login') {
     return <>{children}</>;

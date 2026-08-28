@@ -80,6 +80,7 @@ export interface AgentKycDetails {
   nidDocUrl?: string;
   nidFrontDocUrl?: string;
   nidBackDocUrl?: string;
+  otherDocUrl?: string;
   counterName?: string;
   counterAddress?: string;
   tradeLicenseNo?: string;
@@ -93,6 +94,7 @@ export interface SubmitKycPayload {
   nidFrontDocUrl: string;
   nidBackDocUrl: string;
   nidDocUrl?: string;
+  otherDocUrl?: string;
   counterName: string;
   counterAddress: string;
   tradeLicenseNo?: string;

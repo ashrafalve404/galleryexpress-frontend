@@ -37,6 +37,13 @@ export default function AgentLoginPage() {
         throw new Error('Invalid authentication response');
       }
 
+      const ALLOWED_AGENT_ROLES = ['COUNTER_AGENT', 'COUNTER_MANAGER', 'ADMIN', 'SUPER_ADMIN'];
+      if (!ALLOWED_AGENT_ROLES.includes(user.role)) {
+        setError('Access Denied: Only authorized Counter Agents can log in to this portal. Passenger accounts cannot access the Agent Portal.');
+        setLoading(false);
+        return;
+      }
+
       setAuth(
         {
           id: user.id,
@@ -61,9 +68,6 @@ export default function AgentLoginPage() {
   return (
     <div className="min-h-screen bg-[#111111] flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-white rounded-3xl p-8 sm:p-10 border border-gray-100 relative overflow-hidden">
-        {/* Top Decorative Brand Stripe */}
-        <div className="absolute top-0 left-0 right-0 h-2 bg-[#E31B23]" />
-
         {/* Logo & Header */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 rounded-2xl bg-[#E31B23] text-white flex items-center justify-center mx-auto mb-4 font-black">
@@ -85,7 +89,7 @@ export default function AgentLoginPage() {
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wide mb-1.5">
-              Agent ID / Email / Phone
+              Email or Phone Number
             </label>
             <div className="relative">
               <RiUserFill className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
@@ -94,7 +98,7 @@ export default function AgentLoginPage() {
                 required
                 value={loginIdentifier}
                 onChange={(e) => setLoginIdentifier(e.target.value)}
-                placeholder="agent@abctravels.com or phone"
+                placeholder="Enter email or phone number"
                 className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[#111111] text-sm font-bold focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23] transition-all"
               />
             </div>
