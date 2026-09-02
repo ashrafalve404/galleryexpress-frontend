@@ -57,7 +57,7 @@ export function Footer() {
               <img
                 src="/ticketdorkarlogo.png"
                 alt="Ticket Dorkar"
-                className="h-10 sm:h-12 md:h-14 w-auto object-contain"
+                className="h-12 sm:h-14 md:h-16 w-auto object-contain"
               />
             </Link>
             <h3 className="text-white font-black text-lg sm:text-xl mb-1.5 tracking-tight">

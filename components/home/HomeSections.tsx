@@ -102,7 +102,7 @@ export function PopularDestinations() {
   return (
     <section className="py-16 bg-white" suppressHydrationWarning>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 sm:mb-10">
+        <div className="flex flex-col sm:flex-row items-center sm:items-end justify-between mb-8 sm:mb-10 text-center sm:text-left">
           <div>
             <h2 className="text-2xl sm:text-3xl font-black text-[#111111]">Popular Destinations</h2>
             <p className="text-gray-500 mt-1 text-sm font-medium">Explore Bangladesh's most iconic travel hubs</p>
@@ -275,7 +275,7 @@ export function PopularRoutes() {
   return (
     <section className="py-16 bg-gray-50" suppressHydrationWarning>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-10">
+        <div className="flex flex-col sm:flex-row items-center sm:items-end justify-between mb-10 text-center sm:text-left">
           <div>
             <h2 className="text-2xl sm:text-3xl font-black text-[#111111]">Popular Routes</h2>
             <p className="text-gray-500 mt-1 text-sm font-medium">Most frequented intercity bus trips across Bangladesh</p>

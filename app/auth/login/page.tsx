@@ -50,7 +50,7 @@ export default function LoginPage() {
             <img
               src="/ticketdorkarlogo.png"
               alt="Ticket Dorkar"
-              className="h-10 sm:h-12 w-auto object-contain"
+              className="h-14 sm:h-16 w-auto object-contain"
             />
           </Link>
         </div>
@@ -99,7 +99,7 @@ export default function LoginPage() {
               <img
                 src="/ticketdorkarlogo.png"
                 alt="Ticket Dorkar"
-                className="h-11 w-auto object-contain mx-auto"
+                className="h-16 sm:h-20 w-auto object-contain mx-auto transition-transform hover:scale-105"
               />
             </Link>
             <h1 className="text-2xl font-black text-[#111111] mb-1">Welcome back</h1>

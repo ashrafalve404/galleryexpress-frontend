@@ -74,7 +74,7 @@ export default function AgentLoginPage() {
             <img
               src="/ticketdorkarlogo.png"
               alt="Ticket Dorkar Logo"
-              className="h-12 w-auto mx-auto object-contain"
+              className="h-16 sm:h-20 w-auto mx-auto object-contain transition-transform hover:scale-105"
             />
           </Link>
           <h1 className="text-2xl font-black text-[#111111]">Counter Agent Portal</h1>
