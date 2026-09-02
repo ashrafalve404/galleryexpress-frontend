@@ -9,15 +9,45 @@ const inter = Inter({
   display: 'swap',
 });
 
+const SITE_URL = 'https://www.ticketdorkar.xyz';
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Ticket Dorkar — Bus Tickets Online',
-    template: '%s | Ticket Dorkar',
+    default: 'Ticket Dorkar — #1 Online Bus Ticket Booking in Bangladesh',
+    template: '%s | Ticket Dorkar Bus Ticket',
   },
   description:
-    'Book bus tickets online with Ticket Dorkar. Safe, comfortable, and on-time intercity bus service across Bangladesh. Easy booking, instant tickets.',
-  keywords: ['bus ticket', 'online booking', 'Bangladesh bus', 'Ticket Dorkar', 'intercity bus', 'ticketdorkar.xyz'],
-  authors: [{ name: 'Ticket Dorkar' }],
+    'Book intercity bus tickets online in Bangladesh with Ticket Dorkar (ticketdorkar.xyz). Travel to Dhaka, Cox\'s Bazar, Chittagong, Sylhet & Rajshahi. Easy seat selection, instant QR digital tickets, and 100% secure payment via bKash, Nagad & Cards.',
+  keywords: [
+    'Ticket Dorkar',
+    'Ticket Dorkar Bus',
+    'Ticket Dorkar Bus Ticket',
+    'ticketdorkar.xyz',
+    'online bus ticket booking bangladesh',
+    'bus ticket bd',
+    'buy bus ticket online',
+    'dhaka to cox bazar bus ticket',
+    'dhaka to chittagong bus ticket',
+    'dhaka to sylhet bus ticket',
+    'ac bus ticket booking',
+    'intercity bus ticket bangladesh',
+    'বাস টিকিট বুকিং',
+    'অনলাইন বাস টিকিট',
+    'টিকেট দরকার বাস',
+    'টিকেট দরকার অনলাইন টিকিট'
+  ],
+  authors: [{ name: 'Ticket Dorkar Limited', url: SITE_URL }],
+  creator: 'Ticket Dorkar Limited',
+  publisher: 'Ticket Dorkar Limited',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  alternates: {
+    canonical: SITE_URL,
+  },
   icons: {
     icon: [
       { url: '/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
@@ -30,16 +60,82 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_BD',
-    url: 'https://www.ticketdorkar.xyz',
-    siteName: 'Ticket Dorkar',
-    title: 'Ticket Dorkar — Bus Tickets Online',
+    url: SITE_URL,
+    siteName: 'Ticket Dorkar Limited',
+    title: 'Ticket Dorkar — #1 Online Bus Ticket Booking in Bangladesh',
     description:
-      'Book bus tickets online with Ticket Dorkar. Safe, comfortable, and on-time intercity bus service across Bangladesh.',
+      'Book intercity AC & Non-AC bus tickets online across Bangladesh with Ticket Dorkar Limited. Instant E-Tickets, instant seat confirmation, 24/7 customer support.',
+    images: [
+      {
+        url: `${SITE_URL}/ticketdorkarlogo.png`,
+        width: 1200,
+        height: 630,
+        alt: 'Ticket Dorkar Limited - Online Bus Ticket Booking Bangladesh',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Ticket Dorkar Limited — Online Bus Ticket Booking Bangladesh',
+    description:
+      'Book bus tickets online to Cox\'s Bazar, Chittagong, Sylhet, Dhaka & Rajshahi. Secure E-tickets on Ticket Dorkar Limited.',
+    images: [`${SITE_URL}/ticketdorkarlogo.png`],
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
+};
+
+const jsonLdWebsite = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Ticket Dorkar',
+  alternateName: ['Ticket Dorkar Limited', 'Ticket Dorkar Bus', 'TicketDorkar', 'ticketdorkar.xyz'],
+  url: SITE_URL,
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: {
+      '@type': 'EntryPoint',
+      urlTemplate: `${SITE_URL}/search?from={search_term_from}&to={search_term_to}`,
+    },
+    'query-input': 'required name=search_term_from',
+  },
+};
+
+const jsonLdOrganization = {
+  '@context': 'https://schema.org',
+  '@type': 'TravelAgency',
+  name: 'Ticket Dorkar Limited',
+  legalName: 'Ticket Dorkar Limited',
+  alternateName: ['Ticket Dorkar', 'Ticket Dorkar Bus Ticket Booking'],
+  url: SITE_URL,
+  logo: `${SITE_URL}/ticketdorkarlogo.png`,
+  image: `${SITE_URL}/ticketdorkarlogo.png`,
+  description:
+    'Ticket Dorkar Limited (ticketdorkar.xyz) is Bangladesh\'s premier intercity bus ticket booking platform offering online AC and Non-AC bus tickets.',
+  telephone: '01826-110036',
+  email: 'galleryexpresslimited@gmail.com',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Navana Shopping Centre, Gulshan Avenue 01',
+    addressLocality: 'Gulshan',
+    addressRegion: 'Dhaka',
+    postalCode: '1212',
+    addressCountry: 'BD',
+  },
+  areaServed: {
+    '@type': 'Country',
+    name: 'Bangladesh',
+  },
+  priceRange: '৳৳',
 };
 
 export default function RootLayout({
@@ -49,9 +145,20 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={inter.variable} data-scroll-behavior="smooth" suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebsite) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdOrganization) }}
+        />
+      </head>
       <body className="min-h-screen flex flex-col antialiased" suppressHydrationWarning>
         <Providers>{children}</Providers>
       </body>
     </html>
   );
 }
+

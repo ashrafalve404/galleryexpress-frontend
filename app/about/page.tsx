@@ -4,8 +4,11 @@ import { Footer } from '@/components/layout/Footer';
 import { RiCheckboxCircleFill, RiAwardFill, RiShieldCheckFill } from 'react-icons/ri';
 
 export const metadata: Metadata = {
-  title: 'About Ticket Dorkar',
-  description: 'Learn about Ticket Dorkar — Bangladesh\'s trusted intercity bus service with a commitment to safety, comfort, and punctuality.',
+  title: 'About Ticket Dorkar Limited — Premier Bus Service in Bangladesh',
+  description: 'Learn about Ticket Dorkar Limited (ticketdorkar.xyz) — Bangladesh\'s trusted intercity AC & Non-AC bus ticket booking platform connecting Dhaka, Cox\'s Bazar, Chittagong, Sylhet, and Rajshahi.',
+  alternates: {
+    canonical: 'https://www.ticketdorkar.xyz/about',
+  },
 };
 
 export default function AboutPage() {
@@ -16,7 +19,7 @@ export default function AboutPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
           {/* Plain text header — matches Contact page style */}
           <div className="text-center mb-12">
-            <h1 className="text-3xl sm:text-4xl font-black text-[#111111] mb-3">About Ticket Dorkar</h1>
+            <h1 className="text-3xl sm:text-4xl font-black text-[#111111] mb-3">About Ticket Dorkar Limited</h1>
             <p className="text-gray-500 text-sm">Over a decade of connecting Bangladesh with safe, comfortable, and reliable bus travel.</p>
           </div>
 
@@ -28,7 +31,7 @@ export default function AboutPage() {
                 </div>
                 <h2 className="text-xl font-black text-[#111111] mb-3">Our Story</h2>
                 <p className="text-sm leading-relaxed text-gray-600">
-                  Ticket Dorkar is one of Bangladesh's premier intercity bus operators. Founded with a simple mission — to make intercity travel comfortable, affordable, and safe — we operate modern Scania & Volvo AC double-deck coaches on key express routes connecting Dhaka, Chittagong, and Cox's Bazar.
+                  Ticket Dorkar Limited is one of Bangladesh's premier intercity bus operators. Founded with a simple mission — to make intercity travel comfortable, affordable, and safe — we operate modern Scania & Volvo AC double-deck coaches on key express routes connecting Dhaka, Chittagong, and Cox's Bazar.
                 </p>
               </div>
 

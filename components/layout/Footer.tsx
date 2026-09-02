@@ -53,7 +53,7 @@ export function Footer() {
               />
             </Link>
             <h3 className="text-white font-black text-lg sm:text-xl mb-1.5 tracking-tight">
-              Ticket Dorkar
+              Ticket Dorkar Limited
             </h3>
             <p className="text-gray-400 text-sm leading-relaxed">
               Bangladesh's trusted intercity bus service. Safe, comfortable, and always on time.
@@ -140,7 +140,7 @@ export function Footer() {
       {/* Bottom Bar */}
       <div className="border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-500">
-          <span>&copy; {year} Ticket Dorkar. All rights reserved.</span>
+          <span>&copy; {year} Ticket Dorkar Limited. All rights reserved.</span>
           <span className="flex items-center gap-1.5 font-medium">
             <RiBusFill className="text-[#E31B23] text-base" />
             Safe &amp; Comfortable Journeys

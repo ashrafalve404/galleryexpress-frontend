@@ -2,7 +2,13 @@ import type { Metadata } from 'next';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 
-export const metadata: Metadata = { title: 'Terms & Conditions', description: 'Read the terms and conditions for using Ticket Dorkar bus ticketing services.' };
+export const metadata: Metadata = {
+  title: 'Terms & Conditions — Ticket Dorkar Limited',
+  description: 'Read the official terms and conditions for booking intercity bus tickets online with Ticket Dorkar Limited (ticketdorkar.xyz).',
+  alternates: {
+    canonical: 'https://www.ticketdorkar.xyz/terms',
+  },
+};
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -22,22 +28,22 @@ export default function TermsPage() {
           <h1 className="text-3xl font-black text-[#111111] mb-2">Terms &amp; Conditions</h1>
           <p className="text-gray-400 text-sm mb-8">Last updated: August 2026</p>
           <Section title="1. Acceptance of Terms">
-            <p>By booking tickets through Ticket Dorkar, you agree to these terms and conditions. Please read them carefully before proceeding with a booking.</p>
+            <p>By booking tickets through Ticket Dorkar Limited, you agree to these terms and conditions. Please read them carefully before proceeding with a booking.</p>
           </Section>
           <Section title="2. Booking and Tickets">
             <p>All bookings are subject to seat availability. A booking is confirmed only after successful payment. Your digital ticket constitutes a valid boarding pass.</p>
           </Section>
           <Section title="3. Passenger Responsibilities">
-            <p>Passengers must arrive at the boarding point at least 15 minutes before departure. Ticket Dorkar is not liable for missed journeys due to late arrival.</p>
+            <p>Passengers must arrive at the boarding point at least 15 minutes before departure. Ticket Dorkar Limited is not liable for missed journeys due to late arrival.</p>
           </Section>
           <Section title="4. Cancellation and Refund">
             <p>Cancellations made 24 hours before departure are eligible for a full refund minus processing fees. Late cancellations may incur charges. See our Cancellation Policy for details.</p>
           </Section>
           <Section title="5. Conduct on Board">
-            <p>Passengers are expected to maintain decorum and follow crew instructions. Ticket Dorkar reserves the right to refuse travel to passengers who are disruptive.</p>
+            <p>Passengers are expected to maintain decorum and follow crew instructions. Ticket Dorkar Limited reserves the right to refuse travel to passengers who are disruptive.</p>
           </Section>
           <Section title="6. Liability">
-            <p>Ticket Dorkar is not liable for delays caused by traffic, weather, or unforeseen events. We will, however, always strive to minimize inconvenience.</p>
+            <p>Ticket Dorkar Limited is not liable for delays caused by traffic, weather, or unforeseen events. We will, however, always strive to minimize inconvenience.</p>
           </Section>
           <Section title="7. Contact">
             <p>For queries regarding these terms, contact us at info@ticketdorkar.xyz or call 01826-110036.</p>

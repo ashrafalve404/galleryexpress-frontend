@@ -5,8 +5,11 @@ import { ContactForm } from '@/components/contact/ContactForm';
 import { RiPhoneFill, RiMailFill, RiMapPinFill, RiTimeFill } from 'react-icons/ri';
 
 export const metadata: Metadata = {
-  title: 'Contact Us',
-  description: 'Get in touch with Ticket Dorkar. We are here to help with bookings, cancellations, and any queries.',
+  title: 'Contact Us — Ticket Dorkar Limited',
+  description: 'Get in touch with Ticket Dorkar Limited customer support for bus ticket bookings, counter locations, cancellations, and inquiries. Hotline: 01826-110036.',
+  alternates: {
+    canonical: 'https://www.ticketdorkar.xyz/contact',
+  },
 };
 
 export default function ContactPage() {

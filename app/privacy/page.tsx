@@ -2,7 +2,13 @@ import type { Metadata } from 'next';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 
-export const metadata: Metadata = { title: 'Privacy Policy', description: 'Ticket Dorkar privacy policy — how we collect, use, and protect your personal information.' };
+export const metadata: Metadata = {
+  title: 'Privacy Policy — Ticket Dorkar Limited',
+  description: 'Learn how Ticket Dorkar Limited (ticketdorkar.xyz) protects your personal information and payment privacy when booking bus tickets online.',
+  alternates: {
+    canonical: 'https://www.ticketdorkar.xyz/privacy',
+  },
+};
 
 export default function PrivacyPage() {
   return (
