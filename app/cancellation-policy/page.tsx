@@ -5,7 +5,7 @@ import { AlertTriangle } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Ticket Resell & Cancellation Policy',
-  description: 'Gallery Express ticket resell and refund policy.',
+  description: 'Ticket Dorkar ticket resell and refund policy.',
 };
 
 export default function CancellationPolicyPage() {
@@ -20,7 +20,7 @@ export default function CancellationPolicyPage() {
           <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 mb-6 flex items-center gap-3">
             <AlertTriangle size={18} className="text-amber-600 shrink-0" />
             <p className="text-amber-800 text-sm font-medium">
-              Gallery Express handles ticket cancellations as a <strong>Ticket Resell to Admin</strong>. Please review the terms below.
+              Ticket Dorkar handles ticket cancellations as a <strong>Ticket Resell to Admin</strong>. Please review the terms below.
             </p>
           </div>
 
@@ -57,7 +57,7 @@ export default function CancellationPolicyPage() {
           {[
             {
               title: 'Reselling Tickets to Admin',
-              content: 'There is no traditional instant cancellation option. Instead, passengers can resell their confirmed tickets back to Gallery Express Admin directly from their Dashboard or My Booking page.'
+              content: 'There is no traditional instant cancellation option. Instead, passengers can resell their confirmed tickets back to Ticket Dorkar Admin directly from their Dashboard or My Booking page.'
             },
             {
               title: 'Same-Day Departure Restriction',

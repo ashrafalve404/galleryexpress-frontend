@@ -23,7 +23,7 @@ export default function FAQPage() {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <h1 className="text-3xl font-black text-[#111111] mb-2">Frequently Asked Questions</h1>
-            <p className="text-gray-500 text-sm">Everything you need to know about travelling with Gallery Express.</p>
+            <p className="text-gray-500 text-sm">Everything you need to know about travelling with Ticket Dorkar.</p>
           </div>
           <div className="space-y-3">
             {faqs.map((faq, i) => (

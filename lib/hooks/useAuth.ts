@@ -43,7 +43,7 @@ export function useRegister() {
         return;
       }
       setAuth(data.user, data.accessToken, data.refreshToken);
-      toast.success('Account created successfully! Welcome to Gallery Express.');
+      toast.success('Account created successfully! Welcome to Ticket Dorkar.');
       router.push(ROUTES.HOME);
     },
     onError: (err: Error) => {

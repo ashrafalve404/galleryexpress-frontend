@@ -32,8 +32,8 @@ export default function RegisterPage() {
         <div className="text-center mb-8">
           <Link href={ROUTES.HOME} className="inline-flex items-center justify-center mb-6">
             <img
-              src="/galleryexplogo.png"
-              alt="Gallery Express"
+              src="/ticketdorkarlogo.png"
+              alt="Ticket Dorkar"
               className="h-11 w-auto object-contain"
             />
           </Link>

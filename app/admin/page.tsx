@@ -110,7 +110,7 @@ export default function AdminDashboard() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-black text-[#111111]">Dashboard</h1>
-          <p className="text-gray-500 text-sm mt-0.5 font-medium">Gallery Express operations overview</p>
+          <p className="text-gray-500 text-sm mt-0.5 font-medium">Ticket Dorkar operations overview</p>
         </div>
         <div className="text-sm font-semibold text-gray-500 bg-white px-3.5 py-1.5 rounded-xl border border-gray-100">
           {formatDate(new Date())}

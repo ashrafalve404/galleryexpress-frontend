@@ -48,8 +48,8 @@ export default function LoginPage() {
         <div className="relative z-10">
           <Link href={ROUTES.HOME} className="inline-block hover:scale-105 transition-transform">
             <img
-              src="/galleryexplogo.png"
-              alt="Gallery Express"
+              src="/ticketdorkarlogo.png"
+              alt="Ticket Dorkar"
               className="h-10 sm:h-12 w-auto object-contain"
             />
           </Link>
@@ -86,7 +86,7 @@ export default function LoginPage() {
 
         {/* Footer info */}
         <div className="relative z-10 text-white/60 text-xs font-medium">
-          &copy; {new Date().getFullYear()} Gallery Express. All rights reserved.
+          &copy; {new Date().getFullYear()} Ticket Dorkar. All rights reserved.
         </div>
       </div>
 
@@ -97,8 +97,8 @@ export default function LoginPage() {
           <div className="text-center mb-8">
             <Link href={ROUTES.HOME} className="inline-flex items-center justify-center mb-6">
               <img
-                src="/galleryexplogo.png"
-                alt="Gallery Express"
+                src="/ticketdorkarlogo.png"
+                alt="Ticket Dorkar"
                 className="h-11 w-auto object-contain mx-auto"
               />
             </Link>

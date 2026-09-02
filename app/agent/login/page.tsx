@@ -72,14 +72,14 @@ export default function AgentLoginPage() {
         <div className="text-center mb-8">
           <Link href="/" className="inline-block mb-4 hover:opacity-90 transition-opacity">
             <img
-              src="/galleryexplogo.png"
-              alt="Gallery Express Logo"
+              src="/ticketdorkarlogo.png"
+              alt="Ticket Dorkar Logo"
               className="h-12 w-auto mx-auto object-contain"
             />
           </Link>
           <h1 className="text-2xl font-black text-[#111111]">Counter Agent Portal</h1>
           <p className="text-xs font-semibold text-gray-500 mt-1">
-            Gallery Express Limited · Bulk Ticket Management
+            Ticket Dorkar · Bulk Ticket Management
           </p>
         </div>
 

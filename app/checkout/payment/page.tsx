@@ -182,7 +182,7 @@ export default function PaymentPage() {
 
             <h2 className="text-2xl font-black text-[#111111] mb-1">Payment Successful!</h2>
             <p className="text-gray-500 text-xs sm:text-sm font-medium mb-6">
-              Thank you for booking with Gallery Express. Your seats are confirmed.
+              Thank you for booking with Ticket Dorkar. Your seats are confirmed.
             </p>
 
             {/* Payment Details Card */}

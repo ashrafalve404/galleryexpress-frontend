@@ -88,8 +88,8 @@ export function AdminSidebar() {
         {(!collapsed || isMobile) && (
           <Link href={ROUTES.HOME} title="Go to Public Website" className="flex items-center group">
             <img
-              src="/galleryexplogo.png"
-              alt="Gallery Express Public Site"
+              src="/ticketdorkarlogo.png"
+              alt="Ticket Dorkar"
               className="h-8 sm:h-9 w-auto object-contain transition-transform group-hover:scale-105"
             />
           </Link>
@@ -195,7 +195,7 @@ export function AdminSidebar() {
             <Menu size={20} />
           </button>
           <Link href={ROUTES.HOME} title="Go to Public Website" className="flex items-center">
-            <img src="/galleryexplogo.png" alt="Gallery Express Public Site" className="h-7 w-auto object-contain" />
+            <img src="/ticketdorkarlogo.png" alt="Ticket Dorkar" className="h-7 w-auto object-contain" />
           </Link>
         </div>
         <Link

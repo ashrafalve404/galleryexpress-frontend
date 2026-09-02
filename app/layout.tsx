@@ -11,13 +11,13 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: 'Gallery Express Limited — Bus Tickets Online',
-    template: '%s | Gallery Express Limited',
+    default: 'Ticket Dorkar — Bus Tickets Online',
+    template: '%s | Ticket Dorkar',
   },
   description:
-    'Book bus tickets online with Gallery Express Limited. Safe, comfortable, and on-time intercity bus service across Bangladesh. Easy booking, instant tickets.',
-  keywords: ['bus ticket', 'online booking', 'Bangladesh bus', 'Gallery Express Limited', 'intercity bus'],
-  authors: [{ name: 'Gallery Express Limited' }],
+    'Book bus tickets online with Ticket Dorkar. Safe, comfortable, and on-time intercity bus service across Bangladesh. Easy booking, instant tickets.',
+  keywords: ['bus ticket', 'online booking', 'Bangladesh bus', 'Ticket Dorkar', 'intercity bus', 'ticketdorkar.xyz'],
+  authors: [{ name: 'Ticket Dorkar' }],
   icons: {
     icon: [
       { url: '/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
@@ -30,10 +30,11 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_BD',
-    siteName: 'Gallery Express Limited',
-    title: 'Gallery Express Limited — Bus Tickets Online',
+    url: 'https://www.ticketdorkar.xyz',
+    siteName: 'Ticket Dorkar',
+    title: 'Ticket Dorkar — Bus Tickets Online',
     description:
-      'Book bus tickets online with Gallery Express Limited. Safe, comfortable, and on-time intercity bus service across Bangladesh.',
+      'Book bus tickets online with Ticket Dorkar. Safe, comfortable, and on-time intercity bus service across Bangladesh.',
   },
   robots: {
     index: true,

@@ -324,7 +324,7 @@ export function WhyChooseUs() {
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
-          <h2 className="text-2xl sm:text-3xl font-black text-[#111111]">Why Choose Gallery Express Limited?</h2>
+          <h2 className="text-2xl sm:text-3xl font-black text-[#111111]">Why Choose Ticket Dorkar?</h2>
           <p className="text-gray-500 mt-2 text-sm font-medium">We deliver excellence across every single journey.</p>
         </div>
 

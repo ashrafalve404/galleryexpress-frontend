@@ -15,11 +15,11 @@ export default function AdminSettingsPage() {
   const isAdmin = user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN';
 
   const [form, setForm] = useState({
-    companyName: 'Gallery Express Limited',
+    companyName: 'Ticket Dorkar',
     companyPhone: '01826-110036',
-    companyEmail: 'galleryexpresslimited@gmail.com',
+    companyEmail: 'info@ticketdorkar.xyz',
     companyAddress: 'Navana Shopping Centre, Gulshan Avenue 01, Gulshan, Dhaka, Bangladesh',
-    websiteUrl: 'https://galleryexpress.com',
+    websiteUrl: 'https://www.ticketdorkar.xyz',
     currency: 'BDT',
     timezone: 'Asia/Dhaka',
   });

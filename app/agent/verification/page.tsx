@@ -152,7 +152,7 @@ export default function AgentVerificationPage() {
           <div className="text-xs space-y-1">
             <div className="font-black text-emerald-900 text-sm">Verified Counter Agent Account</div>
             <p className="text-emerald-700 font-medium">
-              Your NID and counter credentials have been verified by Gallery Express administration. You have full authorized access to purchase bulk ticket quotas and issue passenger tickets.
+              Your NID and counter credentials have been verified by Ticket Dorkar administration. You have full authorized access to purchase bulk ticket quotas and issue passenger tickets.
             </p>
           </div>
         </div>

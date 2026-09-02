@@ -47,13 +47,13 @@ export function Footer() {
           <div>
             <Link href={ROUTES.HOME} className="inline-block bg-white p-3 sm:p-3.5 rounded-2xl shadow-lg mb-5 border border-white/10 hover:scale-105 transition-transform">
               <img
-                src="/galleryexplogo.png"
-                alt="Gallery Express Limited"
+                src="/ticketdorkarlogo.png"
+                alt="Ticket Dorkar"
                 className="h-10 sm:h-12 md:h-14 w-auto object-contain"
               />
             </Link>
             <h3 className="text-white font-black text-lg sm:text-xl mb-1.5 tracking-tight">
-              Gallery Express Limited
+              Ticket Dorkar
             </h3>
             <p className="text-gray-400 text-sm leading-relaxed">
               Bangladesh's trusted intercity bus service. Safe, comfortable, and always on time.
@@ -67,7 +67,9 @@ export function Footer() {
                 <MessageCircle size={16} />
               </a>
               <a
-                href="#"
+                href="https://www.ticketdorkar.xyz"
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label="Website"
                 className="w-9 h-9 rounded-full bg-white/10 hover:bg-[#E31B23] flex items-center justify-center transition-colors text-white font-bold text-xs"
               >
@@ -126,8 +128,8 @@ export function Footer() {
               </li>
               <li className="flex gap-3 text-sm text-gray-300">
                 <RiMailFill size={18} className="text-[#E31B23] shrink-0 mt-0.5" />
-                <a href="mailto:galleryexpresslimited@gmail.com" className="hover:text-white transition-colors">
-                  galleryexpresslimited@gmail.com
+                <a href="mailto:info@ticketdorkar.xyz" className="hover:text-white transition-colors">
+                  info@ticketdorkar.xyz
                 </a>
               </li>
             </ul>
@@ -138,7 +140,7 @@ export function Footer() {
       {/* Bottom Bar */}
       <div className="border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-500">
-          <span>&copy; {year} Gallery Express Limited. All rights reserved.</span>
+          <span>&copy; {year} Ticket Dorkar. All rights reserved.</span>
           <span className="flex items-center gap-1.5 font-medium">
             <RiBusFill className="text-[#E31B23] text-base" />
             Safe &amp; Comfortable Journeys

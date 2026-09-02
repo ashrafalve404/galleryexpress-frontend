@@ -4,8 +4,8 @@ import { Footer } from '@/components/layout/Footer';
 import { RiCheckboxCircleFill, RiAwardFill, RiShieldCheckFill } from 'react-icons/ri';
 
 export const metadata: Metadata = {
-  title: 'About Gallery Express Limited',
-  description: 'Learn about Gallery Express Limited — Bangladesh\'s trusted intercity bus service with a commitment to safety, comfort, and punctuality.',
+  title: 'About Ticket Dorkar',
+  description: 'Learn about Ticket Dorkar — Bangladesh\'s trusted intercity bus service with a commitment to safety, comfort, and punctuality.',
 };
 
 export default function AboutPage() {
@@ -16,7 +16,7 @@ export default function AboutPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
           {/* Plain text header — matches Contact page style */}
           <div className="text-center mb-12">
-            <h1 className="text-3xl sm:text-4xl font-black text-[#111111] mb-3">About Gallery Express Limited</h1>
+            <h1 className="text-3xl sm:text-4xl font-black text-[#111111] mb-3">About Ticket Dorkar</h1>
             <p className="text-gray-500 text-sm">Over a decade of connecting Bangladesh with safe, comfortable, and reliable bus travel.</p>
           </div>
 
@@ -28,7 +28,7 @@ export default function AboutPage() {
                 </div>
                 <h2 className="text-xl font-black text-[#111111] mb-3">Our Story</h2>
                 <p className="text-sm leading-relaxed text-gray-600">
-                  Gallery Express Limited is one of Bangladesh's premier intercity bus operators. Founded with a simple mission — to make intercity travel comfortable, affordable, and safe — we operate modern Scania & Volvo AC double-deck coaches on key express routes connecting Dhaka, Chittagong, and Cox's Bazar.
+                  Ticket Dorkar is one of Bangladesh's premier intercity bus operators. Founded with a simple mission — to make intercity travel comfortable, affordable, and safe — we operate modern Scania & Volvo AC double-deck coaches on key express routes connecting Dhaka, Chittagong, and Cox's Bazar.
                 </p>
               </div>
 
@@ -46,7 +46,7 @@ export default function AboutPage() {
             {/* Stat Counters */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-2">
               {[
-                { value: '50K+', label: 'Passengers Served', desc: 'Happy travellers who choose Gallery Express' },
+                { value: '50K+', label: 'Passengers Served', desc: 'Happy travellers who choose Ticket Dorkar' },
                 { value: '6+', label: 'Express Routes', desc: 'Connecting Dhaka, Chittagong & Cox\'s Bazar' },
                 { value: '10+', label: 'Luxury AC Coaches', desc: 'Modern Scania & Volvo AC coaches' },
               ].map((stat) => (

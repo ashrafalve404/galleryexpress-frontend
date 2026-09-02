@@ -63,7 +63,7 @@ export default function AgentLayout({ children }: { children: React.ReactNode })
             <RiBusFill size={18} />
           </div>
           <div>
-            <div className="font-black text-xs text-white">Gallery Express</div>
+            <div className="font-black text-xs text-white">Ticket Dorkar</div>
             <div className="text-[10px] text-gray-400 font-medium truncate max-w-[120px]">
               Agent: {user?.name || 'Counter Agent'}
             </div>
@@ -102,7 +102,7 @@ export default function AgentLayout({ children }: { children: React.ReactNode })
                 <RiBusFill size={22} />
               </div>
               <div>
-                <div className="font-extrabold text-sm text-white">Gallery Express</div>
+                <div className="font-extrabold text-sm text-white">Ticket Dorkar</div>
                 <div className="text-[11px] text-gray-400 font-medium truncate max-w-[140px]">
                   Agent: {user?.name || 'Counter Agent'}
                 </div>

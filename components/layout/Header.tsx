@@ -59,8 +59,8 @@ export function Header() {
             {/* Logo */}
             <Link href={ROUTES.HOME} className="flex items-center shrink-0">
               <img
-                src="/galleryexplogo.png"
-                alt="Gallery Express Limited"
+                src="/ticketdorkarlogo.png"
+                alt="Ticket Dorkar"
                 className="h-[54px] sm:h-[64px] lg:h-[74px] w-auto object-contain py-0.5 transition-transform hover:scale-105"
               />
             </Link>

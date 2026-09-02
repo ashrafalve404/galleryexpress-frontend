@@ -100,8 +100,8 @@ export default function TicketPage() {
               <div className="flex items-center justify-between mb-3">
                 <div className="bg-white rounded-xl px-3 py-1.5 shadow-sm">
                   <img
-                    src="/galleryexplogo.png"
-                    alt="Gallery Express"
+                    src="/ticketdorkarlogo.png"
+                    alt="Ticket Dorkar"
                     className="h-7 w-auto object-contain"
                   />
                 </div>

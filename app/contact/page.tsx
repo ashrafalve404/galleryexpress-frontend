@@ -6,7 +6,7 @@ import { RiPhoneFill, RiMailFill, RiMapPinFill, RiTimeFill } from 'react-icons/r
 
 export const metadata: Metadata = {
   title: 'Contact Us',
-  description: 'Get in touch with Gallery Express. We are here to help with bookings, cancellations, and any queries.',
+  description: 'Get in touch with Ticket Dorkar. We are here to help with bookings, cancellations, and any queries.',
 };
 
 export default function ContactPage() {
