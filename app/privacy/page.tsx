@@ -23,7 +23,7 @@ export default function PrivacyPage() {
             { title: '2. How We Use Your Information', content: 'Your information is used to process bookings, send ticket confirmations, provide customer support, and improve our services. We do not sell your personal data to third parties.' },
             { title: '3. Data Security', content: 'We implement industry-standard security measures to protect your personal information. All payment data is encrypted using SSL technology.' },
             { title: '4. Cookies', content: 'We use cookies to improve your browsing experience and analyze website traffic. You can disable cookies in your browser settings.' },
-            { title: '5. Your Rights', content: 'You have the right to access, correct, or delete your personal data. Contact us at info@ticketdorkar.xyz to exercise these rights.' },
+            { title: '5. Your Rights', content: 'You have the right to access, correct, or delete your personal data. Contact us at ticketdorkarltd@gmail.com to exercise these rights.' },
             { title: '6. Changes to This Policy', content: 'We may update this privacy policy periodically. Changes will be posted on this page with an updated date.' },
           ].map(({ title, content }) => (
             <div key={title} className="bg-white rounded-2xl border border-gray-100 p-6 mb-4">

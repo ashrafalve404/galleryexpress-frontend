@@ -17,7 +17,7 @@ export default function AdminSettingsPage() {
   const [form, setForm] = useState({
     companyName: 'Ticket Dorkar',
     companyPhone: '01826-110036',
-    companyEmail: 'info@ticketdorkar.xyz',
+    companyEmail: 'ticketdorkarltd@gmail.com',
     companyAddress: 'Navana Shopping Centre, Gulshan Avenue 01, Gulshan, Dhaka, Bangladesh',
     websiteUrl: 'https://www.ticketdorkar.xyz',
     currency: 'BDT',

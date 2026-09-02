@@ -46,7 +46,7 @@ export default function TermsPage() {
             <p>Ticket Dorkar Limited is not liable for delays caused by traffic, weather, or unforeseen events. We will, however, always strive to minimize inconvenience.</p>
           </Section>
           <Section title="7. Contact">
-            <p>For queries regarding these terms, contact us at info@ticketdorkar.xyz or call 01826-110036.</p>
+            <p>For queries regarding these terms, contact us at ticketdorkarltd@gmail.com or call 01826-110036.</p>
           </Section>
         </div>
       </main>

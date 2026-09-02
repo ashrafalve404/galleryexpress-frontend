@@ -153,8 +153,8 @@ export function Footer() {
               </li>
               <li className="flex gap-2.5 text-xs sm:text-sm text-gray-300">
                 <RiMailFill size={18} className="text-[#E31B23] shrink-0 mt-0.5" />
-                <a href="mailto:info@ticketdorkar.xyz" className="hover:text-white transition-colors">
-                  info@ticketdorkar.xyz
+                <a href="mailto:ticketdorkarltd@gmail.com" className="hover:text-white transition-colors">
+                  ticketdorkarltd@gmail.com
                 </a>
               </li>
             </ul>

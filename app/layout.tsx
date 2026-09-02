@@ -21,6 +21,10 @@ export const metadata: Metadata = {
     'Book intercity bus tickets online in Bangladesh with Ticket Dorkar Limited (ticketdorkar.xyz). Travel between Dhaka, Chittagong & Cox\'s Bazar. Easy seat selection, instant QR digital tickets, and 100% secure payment via bKash, Nagad & Cards.',
   keywords: [
     'Ticket Dorkar',
+    'Ticket Dorkar Limited',
+    'Ticket Dorkar Ltd',
+    'ticketdorkar',
+    'ticketdorkarltd',
     'Ticket Dorkar Bus',
     'Ticket Dorkar Bus Ticket',
     'ticketdorkar.xyz',
@@ -116,14 +120,14 @@ const jsonLdOrganization = {
   '@type': 'TravelAgency',
   name: 'Ticket Dorkar Limited',
   legalName: 'Ticket Dorkar Limited',
-  alternateName: ['Ticket Dorkar', 'Ticket Dorkar Bus Ticket Booking'],
+  alternateName: ['Ticket Dorkar', 'Ticket Dorkar Ltd', 'ticketdorkar', 'ticketdorkarltd', 'Ticket Dorkar Limited'],
   url: SITE_URL,
   logo: `${SITE_URL}/ticketdorkarlogo.png`,
   image: `${SITE_URL}/ticketdorkarlogo.png`,
   description:
     'Ticket Dorkar Limited (ticketdorkar.xyz) is Bangladesh\'s premier intercity bus ticket booking platform offering online AC and Non-AC bus tickets.',
   telephone: '01826-110036',
-  email: 'galleryexpresslimited@gmail.com',
+  email: 'ticketdorkarltd@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: 'Navana Shopping Centre, Gulshan Avenue 01',

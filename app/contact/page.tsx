@@ -28,7 +28,7 @@ export default function ContactPage() {
             <div className="space-y-5">
               {[
                 { icon: RiPhoneFill, label: 'Customer Support', value: '01826-110036', sub: 'Available 7 days a week', href: 'tel:01826110036' },
-                { icon: RiMailFill, label: 'Email', value: 'galleryexpresslimited@gmail.com', sub: 'We reply within 24 hours', href: 'mailto:galleryexpresslimited@gmail.com' },
+                { icon: RiMailFill, label: 'Email', value: 'ticketdorkarltd@gmail.com', sub: 'We reply within 24 hours', href: 'mailto:ticketdorkarltd@gmail.com' },
                 { icon: RiMapPinFill, label: 'Head Office', value: 'Gulshan, Dhaka', sub: 'Navana Shopping Centre, Gulshan Avenue 01, Gulshan, Dhaka, Bangladesh' },
                 { icon: RiTimeFill, label: 'Business Hours', value: '6:00 AM – 10:00 PM', sub: 'All days including holidays' },
               ].map(({ icon: Icon, label, value, sub, href }) => (
