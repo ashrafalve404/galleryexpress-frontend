@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     template: '%s | Ticket Dorkar Bus Ticket',
   },
   description:
-    'Book intercity bus tickets online in Bangladesh with Ticket Dorkar (ticketdorkar.xyz). Travel to Dhaka, Cox\'s Bazar, Chittagong, Sylhet & Rajshahi. Easy seat selection, instant QR digital tickets, and 100% secure payment via bKash, Nagad & Cards.',
+    'Book intercity bus tickets online in Bangladesh with Ticket Dorkar Limited (ticketdorkar.xyz). Travel between Dhaka, Chittagong & Cox\'s Bazar. Easy seat selection, instant QR digital tickets, and 100% secure payment via bKash, Nagad & Cards.',
   keywords: [
     'Ticket Dorkar',
     'Ticket Dorkar Bus',
@@ -29,7 +29,8 @@ export const metadata: Metadata = {
     'buy bus ticket online',
     'dhaka to cox bazar bus ticket',
     'dhaka to chittagong bus ticket',
-    'dhaka to sylhet bus ticket',
+    'cox bazar to dhaka bus ticket',
+    'chittagong to cox bazar bus',
     'ac bus ticket booking',
     'intercity bus ticket bangladesh',
     'বাস টিকিট বুকিং',
@@ -78,7 +79,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Ticket Dorkar Limited — Online Bus Ticket Booking Bangladesh',
     description:
-      'Book bus tickets online to Cox\'s Bazar, Chittagong, Sylhet, Dhaka & Rajshahi. Secure E-tickets on Ticket Dorkar Limited.',
+      'Book bus tickets online between Dhaka, Chittagong & Cox\'s Bazar. Secure E-tickets on Ticket Dorkar Limited.',
     images: [`${SITE_URL}/ticketdorkarlogo.png`],
   },
   robots: {

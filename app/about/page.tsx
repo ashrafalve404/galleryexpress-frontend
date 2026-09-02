@@ -5,7 +5,7 @@ import { RiCheckboxCircleFill, RiAwardFill, RiShieldCheckFill } from 'react-icon
 
 export const metadata: Metadata = {
   title: 'About Ticket Dorkar Limited — Premier Bus Service in Bangladesh',
-  description: 'Learn about Ticket Dorkar Limited (ticketdorkar.xyz) — Bangladesh\'s trusted intercity AC & Non-AC bus ticket booking platform connecting Dhaka, Cox\'s Bazar, Chittagong, Sylhet, and Rajshahi.',
+  description: 'Learn about Ticket Dorkar Limited (ticketdorkar.xyz) — Bangladesh\'s trusted intercity AC & Non-AC bus ticket booking platform connecting Dhaka, Chittagong, and Cox\'s Bazar.',
   alternates: {
     canonical: 'https://www.ticketdorkar.xyz/about',
   },
