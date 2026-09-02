@@ -82,6 +82,7 @@ export async function createBooking(dto: CreateBookingDto): Promise<Booking> {
   const payload = {
     scheduleId: cleanScheduleId,
     seats: seatsPayload,
+    ...(dto.boardingStopId ? { boardingStopId: dto.boardingStopId, counterId: dto.boardingStopId } : {}),
     ...(dto.discountCode ? { couponCode: dto.discountCode } : {}),
     source: 'ONLINE',
   };

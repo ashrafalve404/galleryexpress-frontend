@@ -8,13 +8,15 @@ import { Footer } from '@/components/layout/Footer';
 import { getBookingByRef, getBooking, cancelBooking } from '@/lib/api/bookings';
 import { formatDateTime, formatTime } from '@/lib/utils/date';
 import { formatCurrency } from '@/lib/utils/currency';
-import { BOOKING_STATUS_COLORS, BOOKING_STATUS_LABELS, ROUTES } from '@/lib/utils/constants';
+import { BOOKING_STATUS_COLORS, BOOKING_STATUS_LABELS, ROUTES, getOriginDisplayName } from '@/lib/utils/constants';
 import type { Booking } from '@/lib/api/bookings';
 import { toast } from 'sonner';
 import { RiErrorWarningFill } from 'react-icons/ri';
+import { useAuthStore } from '@/lib/store/authStore';
 
 interface BookingWithTickets extends Booking {
   tickets?: Array<{ ticketNumber: string; status: string }>;
+  counter?: { id: string; name: string; location?: string } | null;
 }
 
 function getBookingDisplayAmount(b: BookingWithTickets | null): number {
@@ -35,12 +37,21 @@ function getBookingDisplayAmount(b: BookingWithTickets | null): number {
 
 export default function MyBookingPage() {
   const router = useRouter();
+  const { user } = useAuthStore();
   const [ref, setRef] = useState('');
   const [booking, setBooking] = useState<BookingWithTickets | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [cancelling, setCancelling] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+
+  const isOwner = Boolean(
+    booking && (
+      (user?.id && booking.userId === user.id) ||
+      (user?.phone && (booking as any).passengers?.some((p: any) => p.phone === user.phone)) ||
+      (user?.email && (booking as any).passengers?.some((p: any) => p.email === user.email))
+    )
+  );
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -162,7 +173,9 @@ export default function MyBookingPage() {
                     <div className="text-xl font-black text-[#111111]">
                       {booking.schedule ? formatTime(booking.schedule.departureTime) : '--'}
                     </div>
-                    <div className="text-xs text-gray-500">{booking.schedule?.route?.origin}</div>
+                    <div className="text-xs text-gray-500">
+                      {getOriginDisplayName(booking.schedule?.route?.origin, booking.counter)}
+                    </div>
                   </div>
                   <div className="flex-1 flex items-center justify-center">
                     <ArrowRight size={16} className="text-[#E31B23]" />
@@ -210,24 +223,16 @@ export default function MyBookingPage() {
               </div>
 
               {/* Actions */}
-              <div className="px-6 pb-5 flex gap-3">
-                {booking.status === 'CONFIRMED' && ticketNumber && (
+              {booking.status === 'CONFIRMED' && ticketNumber && (
+                <div className="px-6 pb-5">
                   <button
                     onClick={handleViewTicket}
-                    className="flex-1 bg-[#111111] hover:bg-gray-800 text-white py-2.5 rounded-xl text-sm font-semibold text-center transition-colors"
+                    className="w-full bg-[#111111] hover:bg-gray-800 text-white py-2.5 rounded-xl text-sm font-semibold text-center transition-colors"
                   >
                     View Ticket
                   </button>
-                )}
-                {['CONFIRMED', 'HELD'].includes(booking.status) && (
-                  <button
-                    onClick={() => setShowCancelConfirm(true)}
-                    className="flex-1 bg-rose-50 border border-rose-200 hover:bg-rose-100 text-rose-600 font-bold py-2.5 rounded-xl text-sm transition-colors text-center"
-                  >
-                    Resell Ticket to Admin
-                  </button>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -237,53 +242,7 @@ export default function MyBookingPage() {
         </div>
       </main>
 
-      {/* Resell Ticket to Admin Modal */}
-      {showCancelConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                <RiErrorWarningFill size={22} className="text-amber-600" />
-              </div>
-              <div>
-                <h2 className="font-black text-[#111111] text-base">Resell Ticket to Admin?</h2>
-                <p className="text-gray-500 text-xs mt-0.5">Ref #: {booking?.bookingRef}</p>
-              </div>
-            </div>
 
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-4 text-xs space-y-2">
-              <div className="flex justify-between text-gray-600 font-medium">
-                <span>Original Ticket Amount:</span>
-                <span className="font-bold text-gray-900">{formatCurrency(displayAmount)}</span>
-              </div>
-              <div className="flex justify-between text-gray-600 font-medium">
-                <span>Resell Policy Rate:</span>
-                <span className="font-bold text-amber-700">100% (&gt;24h) / 80% (≤24h)</span>
-              </div>
-              <p className="text-[11px] text-gray-500 pt-1 border-t border-slate-200 leading-relaxed">
-                Tickets for today’s departure date cannot be resold. Reselling &gt; 24 hours prior to departure receives 100% full refund, while reselling within 24 hours incurs a 20% service fee.
-              </p>
-            </div>
-
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowCancelConfirm(false)}
-                disabled={cancelling}
-                className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-xl text-sm font-semibold transition-colors disabled:opacity-60"
-              >
-                Keep Ticket
-              </button>
-              <button
-                onClick={handleCancelConfirm}
-                disabled={cancelling}
-                className="flex-1 bg-[#E31B23] hover:bg-[#C41920] text-white py-2.5 rounded-xl text-sm font-semibold transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
-              >
-                {cancelling ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : 'Confirm Resell'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       <Footer />
     </>

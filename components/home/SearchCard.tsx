@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { HiSearch, HiExclamationCircle, HiSwitchHorizontal, HiChevronLeft, HiChevronRight, HiFire } from 'react-icons/hi';
+import { HiSearch, HiExclamationCircle, HiSwitchHorizontal, HiChevronLeft, HiChevronRight } from 'react-icons/hi';
 import { RiMapPin2Fill, RiCalendarEventFill, RiBusFill, RiBuilding2Fill } from 'react-icons/ri';
 import { useBookingStore } from '@/lib/store/bookingStore';
 import { today, tomorrow, formatDate } from '@/lib/utils/date';
@@ -49,12 +49,6 @@ export const LOCATION_OPTIONS: LocationOption[] = [
   { city: "Cox's Bazar", name: "Cox's Bazar - Kolatoli", sub: 'Kolatoli Road, Near Sea Beach',     type: 'counter' },
 ];
 
-const TRENDING_ROUTES = [
-  { from: 'Dhaka', to: "Cox's Bazar" },
-  { from: 'Dhaka', to: 'Chittagong' },
-  { from: "Cox's Bazar", to: 'Dhaka' },
-  { from: 'Chittagong', to: 'Dhaka' },
-];
 
 interface CityInputProps {
   id: string;
@@ -79,7 +73,7 @@ function CityInput({ id, label, placeholder, value, onChange }: CityInputProps) 
 
   return (
     <div className="relative flex-1">
-      <label htmlFor={id} className="block text-[11px] font-bold text-gray-500 uppercase tracking-wide mb-1">
+      <label htmlFor={id} className="block text-[11px] font-bold text-gray-500 uppercase tracking-wide mb-0.5 sm:mb-1">
         {label}
       </label>
       <div className="relative">
@@ -93,7 +87,7 @@ function CityInput({ id, label, placeholder, value, onChange }: CityInputProps) 
           onBlur={() => setTimeout(() => setOpen(false), 200)}
           placeholder={placeholder}
           autoComplete="off"
-          className="w-full pl-9 pr-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-[#111111] font-bold placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23] transition-all text-xs sm:text-sm"
+          className="w-full pl-9 pr-3 py-2 sm:py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-[#111111] font-bold placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23] transition-all text-xs sm:text-sm"
         />
       </div>
       {open && filtered.length > 0 && (
@@ -170,7 +164,7 @@ function ProfessionalDatePicker({ value, onChange }: ProfessionalDatePickerProps
 
   return (
     <div className="relative flex-1" ref={containerRef} suppressHydrationWarning>
-      <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wide mb-1">
+      <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wide mb-0.5 sm:mb-1">
         Journey Date
       </label>
       
@@ -178,7 +172,7 @@ function ProfessionalDatePicker({ value, onChange }: ProfessionalDatePickerProps
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center gap-3 pl-3 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-[#111111] font-bold hover:bg-gray-100/80 focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23] transition-all text-xs sm:text-sm text-left group"
+        className="w-full flex items-center gap-3 pl-3 pr-4 py-2 sm:py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-[#111111] font-bold hover:bg-gray-100/80 focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23] transition-all text-xs sm:text-sm text-left group"
       >
         <RiCalendarEventFill className="text-[#E31B23] text-base shrink-0 group-hover:scale-110 transition-transform" />
         <span className="truncate">{formattedDisplay}</span>
@@ -317,14 +311,6 @@ export function SearchCard() {
     triggerSearch(newFrom, newTo, localDate);
   };
 
-  const handleTrendingClick = (rFrom: string, rTo: string) => {
-    setLocalFrom(rFrom);
-    setLocalTo(rTo);
-    const d = today();
-    setLocalDate(d);
-    triggerSearch(rFrom, rTo, d);
-  };
-
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     triggerSearch(localFrom, localTo, localDate);
@@ -333,17 +319,17 @@ export function SearchCard() {
   return (
     <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 text-left relative z-30">
       {/* Search Header */}
-      <div className="flex items-center justify-between px-4 sm:px-6 pt-5 pb-1">
+      <div className="flex items-center justify-between px-3.5 sm:px-6 pt-3.5 sm:pt-5 pb-0.5 sm:pb-1">
         <h2 className="text-[#111111] font-black text-sm sm:text-base flex items-center gap-2">
           <RiBusFill className="text-[#E31B23] text-lg" />
           Find Your Bus
         </h2>
       </div>
 
-      <div className="p-4 sm:p-6 space-y-4">
-        <form onSubmit={handleSearch} className="space-y-3">
+      <div className="p-3 sm:p-6 space-y-2.5 sm:space-y-4">
+        <form onSubmit={handleSearch} className="space-y-2.5 sm:space-y-3">
           {/* From / Swap / To */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-2">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-1.5 sm:gap-2">
             <CityInput
               id="from"
               label="Depart From"
@@ -355,10 +341,10 @@ export function SearchCard() {
             <button
               type="button"
               onClick={handleSwap}
-              className="shrink-0 self-center sm:self-end mb-[1px] w-10 h-[40px] flex items-center justify-center rounded-xl border border-gray-200 bg-gray-50 hover:bg-[#E31B23] hover:text-white hover:border-[#E31B23] transition-all group"
+              className="shrink-0 self-center sm:self-end mb-[1px] w-8 h-8 sm:w-10 sm:h-[40px] flex items-center justify-center rounded-xl border border-gray-200 bg-gray-50 hover:bg-[#E31B23] hover:text-white hover:border-[#E31B23] transition-all group"
               aria-label="Swap cities"
             >
-              <HiSwitchHorizontal className="text-gray-600 text-lg group-hover:text-white transition-colors" />
+              <HiSwitchHorizontal className="text-gray-600 text-base sm:text-lg group-hover:text-white transition-colors" />
             </button>
 
             <CityInput
@@ -371,7 +357,7 @@ export function SearchCard() {
           </div>
 
           {/* Date & Date Shortcuts */}
-          <div className="flex flex-col sm:flex-row sm:items-end gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-end gap-2.5 sm:gap-3">
             <ProfessionalDatePicker
               value={localDate}
               onChange={handleDateSelect}
@@ -385,7 +371,7 @@ export function SearchCard() {
                     key={label}
                     type="button"
                     onClick={() => handleDateSelect(d)}
-                    className={`px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                    className={`flex-1 sm:flex-initial px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-xl text-xs font-bold transition-all ${
                       localDate === d
                         ? 'bg-[#E31B23] text-white shadow-xs'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -399,7 +385,7 @@ export function SearchCard() {
           </div>
 
           {error && (
-            <div className="text-rose-600 text-xs font-semibold flex items-center gap-2 bg-rose-50 border border-rose-100 p-2.5 rounded-xl">
+            <div className="text-rose-600 text-xs font-semibold flex items-center gap-2 bg-rose-50 border border-rose-100 p-2 sm:p-2.5 rounded-xl">
               <HiExclamationCircle className="text-base shrink-0" />
               <span>{error}</span>
             </div>
@@ -407,31 +393,13 @@ export function SearchCard() {
 
           <button
             type="submit"
-            className="w-full bg-[#E31B23] hover:bg-[#C41920] text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg active:scale-[0.99] text-sm sm:text-base mt-1"
+            className="w-full bg-[#E31B23] hover:bg-[#C41920] text-white font-bold py-2.5 sm:py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg active:scale-[0.99] text-sm sm:text-base mt-1"
           >
             <HiSearch className="text-base sm:text-lg" />
             Search Buses
           </button>
         </form>
 
-        {/* Trending Searches Section (bdtickets inspired) */}
-        <div className="pt-3 border-t border-gray-100 flex flex-wrap items-center gap-2 text-xs">
-          <span className="font-bold text-gray-400 flex items-center gap-1 shrink-0">
-            <HiFire className="text-[#E31B23]" /> Trending:
-          </span>
-          <div className="flex flex-wrap gap-1.5">
-            {TRENDING_ROUTES.map((r) => (
-              <button
-                key={`${r.from}-${r.to}`}
-                type="button"
-                onClick={() => handleTrendingClick(r.from, r.to)}
-                className="px-2.5 py-1 rounded-lg bg-gray-100 hover:bg-[#E31B23]/10 hover:text-[#E31B23] text-gray-700 font-semibold transition-colors text-[11px]"
-              >
-                {r.from} → {r.to}
-              </button>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   );

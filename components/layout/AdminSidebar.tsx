@@ -41,8 +41,9 @@ const navGroups = [
   {
     label: 'Management',
     items: [
+      { href: '/admin/counter-agents', label: 'Counter Agent Activity', icon: Building2 },
       { href: ROUTES.ADMIN_MESSAGES, label: 'Messages', icon: Mail },
-      { href: ROUTES.ADMIN_USERS, label: 'Counter Agents & Users', icon: Users },
+      { href: ROUTES.ADMIN_USERS, label: 'Users & Staff', icon: Users },
       { href: ROUTES.ADMIN_REPORTS, label: 'Reports', icon: BarChart3 },
       { href: ROUTES.ADMIN_CMS, label: 'CMS Pages', icon: FileText },
       { href: ROUTES.ADMIN_SLIDERS, label: 'Sliders', icon: ImageIcon },

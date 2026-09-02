@@ -7,10 +7,10 @@ import { ROUTES } from '@/lib/utils/constants';
 const quickLinks = [
   { href: ROUTES.SEARCH, label: 'Book Ticket' },
   { href: ROUTES.MY_BOOKING, label: 'My Booking' },
-  { href: ROUTES.AGENT_LOGIN, label: 'Agent Portal' },
   { href: ROUTES.ABOUT, label: 'About Us' },
   { href: ROUTES.CONTACT, label: 'Contact' },
   { href: ROUTES.FAQ, label: 'FAQ' },
+  { href: '/counter-agent/login', label: 'Counter Agent Login' },
 ];
 
 const legalLinks = [

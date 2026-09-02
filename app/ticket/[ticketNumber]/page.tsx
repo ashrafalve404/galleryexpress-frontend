@@ -9,7 +9,7 @@ import { Footer } from '@/components/layout/Footer';
 import { getTicket } from '@/lib/api/tickets';
 import { formatDateTime, formatTime } from '@/lib/utils/date';
 import { formatCurrency } from '@/lib/utils/currency';
-import { ROUTES } from '@/lib/utils/constants';
+import { ROUTES, getOriginDisplayName } from '@/lib/utils/constants';
 import { QRCodeSVG } from 'qrcode.react';
 
 export default function TicketPage() {
@@ -123,7 +123,7 @@ export default function TicketPage() {
                   </div>
                   <div className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
                     <MapPin size={10} />
-                    {schedule?.route?.origin || '--'}
+                    {getOriginDisplayName(schedule?.route?.origin, (booking as any)?.counter)}
                   </div>
                 </div>
                 <div className="flex-1 text-center">

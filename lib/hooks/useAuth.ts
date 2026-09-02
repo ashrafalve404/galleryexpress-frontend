@@ -20,7 +20,7 @@ export function useLogin() {
       toast.success(`Welcome back, ${data.user.name || 'User'}!`);
 
       // Redirect admins to admin panel
-      const isAdmin = ['SUPER_ADMIN', 'ADMIN', 'STAFF', 'COUNTER_MANAGER', 'COUNTER_AGENT'].includes(
+      const isAdmin = ['SUPER_ADMIN', 'ADMIN', 'STAFF', 'COUNTER_MANAGER'].includes(
         data.user.role || ''
       );
       router.push(isAdmin ? ROUTES.ADMIN : ROUTES.HOME);

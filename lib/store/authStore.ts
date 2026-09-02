@@ -21,6 +21,7 @@ interface AuthState {
   clearAuth: () => void;
   isAdmin: () => boolean;
   isStaff: () => boolean;
+  isCounterAgent: () => boolean;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -58,7 +59,7 @@ export const useAuthStore = create<AuthState>()(
             if (raw) u = JSON.parse(raw);
           } catch {}
         }
-        return ['SUPER_ADMIN', 'ADMIN', 'STAFF', 'COUNTER_MANAGER', 'COUNTER_AGENT'].includes(
+        return ['SUPER_ADMIN', 'ADMIN', 'STAFF', 'COUNTER_MANAGER'].includes(
           u?.role || ''
         );
       },
@@ -72,6 +73,17 @@ export const useAuthStore = create<AuthState>()(
           } catch {}
         }
         return ['SUPER_ADMIN', 'ADMIN', 'STAFF'].includes(u?.role || '');
+      },
+
+      isCounterAgent: () => {
+        let u = get().user;
+        if (!u && typeof window !== 'undefined') {
+          try {
+            const raw = localStorage.getItem('user');
+            if (raw) u = JSON.parse(raw);
+          } catch {}
+        }
+        return u?.role === 'COUNTER_AGENT';
       },
     }),
     {

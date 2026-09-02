@@ -11,11 +11,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: [
           '/admin/',
           '/admin/*',
-          '/agent/dashboard',
-          '/agent/issue-ticket',
-          '/agent/issued-tickets',
-          '/agent/my-quotas',
-          '/agent/verification',
           '/dashboard',
           '/checkout/',
           '/checkout/*',

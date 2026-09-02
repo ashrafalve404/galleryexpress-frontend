@@ -27,7 +27,7 @@ import { useUserBookings } from '@/lib/hooks/useBooking';
 import { cancelBooking } from '@/lib/api/bookings';
 import { formatDateTime, formatTime, formatDate } from '@/lib/utils/date';
 import { formatCurrency } from '@/lib/utils/currency';
-import { BOOKING_STATUS_COLORS, BOOKING_STATUS_LABELS, ROUTES } from '@/lib/utils/constants';
+import { BOOKING_STATUS_COLORS, BOOKING_STATUS_LABELS, ROUTES, getOriginDisplayName } from '@/lib/utils/constants';
 import { useLogout } from '@/lib/hooks/useAuth';
 import type { Booking } from '@/lib/api/bookings';
 import { toast } from 'sonner';
@@ -35,6 +35,7 @@ import { toast } from 'sonner';
 interface BookingWithTickets extends Booking {
   tickets?: Array<{ ticketNumber: string; status: string }>;
   bookingSeats?: Array<{ seat?: { seatNumber: string; seatType: string } }>;
+  counter?: { id: string; name: string; location?: string } | null;
 }
 
 function getDashboardBookingAmount(b: any): number {
@@ -254,7 +255,7 @@ export default function DashboardPage() {
                       </div>
                       <div className="text-[11px] sm:text-xs font-semibold text-gray-500 flex items-center gap-1">
                         <MapPin size={12} className="text-[#E31B23]" />
-                        {upcomingTrip.schedule?.route?.origin || 'Dhaka'}
+                        {getOriginDisplayName(upcomingTrip.schedule?.route?.origin, upcomingTrip.counter)}
                       </div>
                     </div>
 
@@ -390,7 +391,9 @@ export default function DashboardPage() {
                               <div className="text-lg sm:text-xl font-black text-[#111111]">
                                 {b.schedule ? formatTime(b.schedule.departureTime) : '--'}
                               </div>
-                              <div className="text-xs font-semibold text-gray-500">{b.schedule?.route?.origin || 'Dhaka'}</div>
+                              <div className="text-xs font-semibold text-gray-500">
+                                {getOriginDisplayName(b.schedule?.route?.origin, b.counter)}
+                              </div>
                             </div>
                             <div className="flex-1 flex items-center justify-center px-2">
                               <ArrowRight size={16} className="text-[#E31B23]" />

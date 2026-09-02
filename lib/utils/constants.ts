@@ -20,7 +20,6 @@ export const ROUTES = {
   TERMS: '/terms',
   PRIVACY: '/privacy',
   CANCELLATION_POLICY: '/cancellation-policy',
-  AGENT_LOGIN: '/agent/login',
   // Admin
   ADMIN: '/admin',
   ADMIN_BOOKINGS: '/admin/bookings',
@@ -63,10 +62,24 @@ export const BOOKING_STATUS_COLORS: Record<string, string> = {
   PENDING: 'bg-amber-100 text-amber-800',
   HELD: 'bg-blue-100 text-blue-800',
   CONFIRMED: 'bg-emerald-100 text-emerald-800',
-  CANCELLED: 'bg-slate-100 text-slate-800',
-  EXPIRED: 'bg-orange-100 text-orange-800',
-  FAILED: 'bg-rose-100 text-rose-800',
+  CANCELLED: 'bg-rose-100 text-rose-800',
+  EXPIRED: 'bg-gray-100 text-gray-700',
+  FAILED: 'bg-red-100 text-red-800',
 };
+
+export function getOriginDisplayName(
+  origin: string | undefined,
+  counter: { name?: string; location?: string } | null | undefined
+): string {
+  const baseOrigin = origin || 'Dhaka';
+  if (!counter?.name) return baseOrigin;
+
+  const cName = counter.name.trim();
+  if (cName.toLowerCase().startsWith(baseOrigin.toLowerCase())) {
+    return cName;
+  }
+  return `${baseOrigin} (${cName})`;
+}
 
 export const PAYMENT_PROVIDERS = [
   { id: 'BKASH', name: 'bKash', iconName: 'Smartphone', description: 'Pay via bKash mobile banking' },
