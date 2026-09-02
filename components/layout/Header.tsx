@@ -81,11 +81,11 @@ export function Header() {
               </button>
 
               {/* Logo */}
-              <Link href={ROUTES.HOME} className="flex items-center shrink-0 h-full py-0.5">
+              <Link href={ROUTES.HOME} className="flex items-center shrink-0 py-1">
                 <img
-                  src="/ticketdorkarlogo.png"
+                  src="/ticketdrkrlogo.png"
                   alt="Ticket Dorkar"
-                  className="h-15 sm:h-[70px] lg:h-[76px] w-auto max-h-full object-contain transition-transform hover:scale-105"
+                  className="h-12 sm:h-[60px] lg:h-[66px] w-auto object-contain transition-transform hover:scale-105"
                 />
               </Link>
             </div>
@@ -195,7 +195,7 @@ export function Header() {
             <div className="flex items-center justify-between p-4 border-b border-gray-100 bg-gray-50/50">
               <Link href={ROUTES.HOME} onClick={() => setMenuOpen(false)} className="flex items-center">
                 <img
-                  src="/ticketdorkarlogo.png"
+                  src="/ticketdrkrlogo.png"
                   alt="Ticket Dorkar"
                   className="h-12 w-auto object-contain"
                 />

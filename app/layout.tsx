@@ -72,7 +72,7 @@ export const metadata: Metadata = {
       'Book intercity AC & Non-AC bus tickets online across Bangladesh with Ticket Dorkar Limited. Instant E-Tickets, instant seat confirmation, 24/7 customer support.',
     images: [
       {
-        url: `${SITE_URL}/ticketdorkarlogo.png`,
+        url: `${SITE_URL}/ticketdrkrlogo.png`,
         width: 1200,
         height: 630,
         alt: 'Ticket Dorkar Limited - Online Bus Ticket Booking Bangladesh',
@@ -84,7 +84,7 @@ export const metadata: Metadata = {
     title: 'Ticket Dorkar Limited — Online Bus Ticket Booking Bangladesh',
     description:
       'Book bus tickets online between Dhaka, Chittagong & Cox\'s Bazar. Secure E-tickets on Ticket Dorkar Limited.',
-    images: [`${SITE_URL}/ticketdorkarlogo.png`],
+    images: [`${SITE_URL}/ticketdrkrlogo.png`],
   },
   robots: {
     index: true,
@@ -122,8 +122,8 @@ const jsonLdOrganization = {
   legalName: 'Ticket Dorkar Limited',
   alternateName: ['Ticket Dorkar', 'Ticket Dorkar Ltd', 'ticketdorkar', 'ticketdorkarltd', 'Ticket Dorkar Limited'],
   url: SITE_URL,
-  logo: `${SITE_URL}/ticketdorkarlogo.png`,
-  image: `${SITE_URL}/ticketdorkarlogo.png`,
+  logo: `${SITE_URL}/ticketdrkrlogo.png`,
+  image: `${SITE_URL}/ticketdrkrlogo.png`,
   description:
     'Ticket Dorkar Limited (ticketdorkar.xyz) is Bangladesh\'s premier intercity bus ticket booking platform offering online AC and Non-AC bus tickets.',
   telephone: '01826-110036',

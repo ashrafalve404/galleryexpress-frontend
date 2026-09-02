@@ -32,9 +32,9 @@ export default function RegisterPage() {
         <div className="text-center mb-8">
           <Link href={ROUTES.HOME} className="inline-flex items-center justify-center mb-6">
             <img
-              src="/ticketdorkarlogo.png"
+              src="/ticketdrkrlogo.png"
               alt="Ticket Dorkar"
-              className="h-16 sm:h-20 w-auto object-contain mx-auto transition-transform hover:scale-105"
+              className="h-12 sm:h-16 w-auto object-contain mx-auto transition-transform hover:scale-105"
             />
           </Link>
           <h1 className="text-2xl font-black text-[#111111] mb-1">Create your account</h1>

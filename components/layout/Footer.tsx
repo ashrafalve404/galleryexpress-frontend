@@ -55,7 +55,7 @@ export function Footer() {
           <div className="lg:col-span-1">
             <Link href={ROUTES.HOME} className="inline-block bg-white p-3 sm:p-3.5 rounded-2xl shadow-lg mb-5 border border-white/10 hover:scale-105 transition-transform">
               <img
-                src="/ticketdorkarlogo.png"
+                src="/ticketdrkrlogo.png"
                 alt="Ticket Dorkar"
                 className="h-12 sm:h-14 md:h-16 w-auto object-contain"
               />

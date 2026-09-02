@@ -48,9 +48,9 @@ export default function LoginPage() {
         <div className="relative z-10">
           <Link href={ROUTES.HOME} className="inline-block hover:scale-105 transition-transform">
             <img
-              src="/ticketdorkarlogo.png"
+              src="/ticketdrkrlogo.png"
               alt="Ticket Dorkar"
-              className="h-14 sm:h-16 w-auto object-contain"
+              className="h-11 sm:h-13 w-auto object-contain"
             />
           </Link>
         </div>
@@ -97,9 +97,9 @@ export default function LoginPage() {
           <div className="text-center mb-8">
             <Link href={ROUTES.HOME} className="inline-flex items-center justify-center mb-6">
               <img
-                src="/ticketdorkarlogo.png"
+                src="/ticketdrkrlogo.png"
                 alt="Ticket Dorkar"
-                className="h-16 sm:h-20 w-auto object-contain mx-auto transition-transform hover:scale-105"
+                className="h-12 sm:h-16 w-auto object-contain mx-auto transition-transform hover:scale-105"
               />
             </Link>
             <h1 className="text-2xl font-black text-[#111111] mb-1">Welcome back</h1>

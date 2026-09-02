@@ -72,9 +72,9 @@ export default function AgentLoginPage() {
         <div className="text-center mb-8">
           <Link href="/" className="inline-block mb-4 hover:opacity-90 transition-opacity">
             <img
-              src="/ticketdorkarlogo.png"
+              src="/ticketdrkrlogo.png"
               alt="Ticket Dorkar Logo"
-              className="h-16 sm:h-20 w-auto mx-auto object-contain transition-transform hover:scale-105"
+              className="h-12 sm:h-16 w-auto mx-auto object-contain transition-transform hover:scale-105"
             />
           </Link>
           <h1 className="text-2xl font-black text-[#111111]">Counter Agent Portal</h1>
