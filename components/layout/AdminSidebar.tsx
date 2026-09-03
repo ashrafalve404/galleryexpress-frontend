@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, Ticket, Bus, MapPin, Calendar, BadgeDollarSign,
   Tag, Building2, Users, BarChart3, Settings, ChevronLeft, ChevronRight,
-  FileText, Image as ImageIcon, LogOut, Menu, X, Globe, ExternalLink, Mail, Sparkles, Bell
+  FileText, Image as ImageIcon, LogOut, Menu, X, Globe, ExternalLink, Mail, Sparkles, Bell, ShieldCheck
 } from 'lucide-react';
 import { useAuthStore } from '@/lib/store/authStore';
 import { useLogout } from '@/lib/hooks/useAuth';
@@ -43,6 +43,7 @@ const navGroups = [
     label: 'Management',
     items: [
       { href: '/admin/counter-agents', label: 'Counter Agent Activity', icon: Building2 },
+      { href: '/admin/kyc', label: 'Agent KYC Requests', icon: ShieldCheck },
       { href: ROUTES.ADMIN_MESSAGES, label: 'Messages', icon: Mail },
       { href: ROUTES.ADMIN_USERS, label: 'Users & Staff', icon: Users },
       { href: ROUTES.ADMIN_REPORTS, label: 'Reports', icon: BarChart3 },

@@ -70,6 +70,22 @@ export interface AllowedRoute {
   destination: string;
 }
 
+export interface AgentKycStatus {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  kycStatus: 'NOT_SUBMITTED' | 'PENDING' | 'VERIFIED' | 'REJECTED';
+  nidNumber?: string;
+  nidFrontDocUrl?: string;
+  nidBackDocUrl?: string;
+  kycSubmittedAt?: string;
+  kycVerifiedAt?: string;
+  kycRejectReason?: string;
+  counter?: { name: string; location: string };
+}
+
 export const counterAgentApi = {
   async getDashboardStats(): Promise<DashboardStats> {
     const res = await apiClient.get(`${BASE}/dashboard-stats`);
@@ -110,6 +126,35 @@ export const counterAgentApi = {
 
   async getAllowedRoutes(): Promise<AllowedRoute[]> {
     const res = await apiClient.get(`${BASE}/allowed-routes`);
+    return res.data?.data ?? res.data;
+  },
+
+  async submitKyc(payload: {
+    nidNumber: string;
+    nidFrontDocUrl: string;
+    nidBackDocUrl: string;
+  }): Promise<AgentKycStatus> {
+    const res = await apiClient.post(`${BASE}/kyc/submit`, payload);
+    return res.data?.data ?? res.data;
+  },
+
+  async getKycStatus(): Promise<AgentKycStatus> {
+    const res = await apiClient.get(`${BASE}/kyc/status`);
+    return res.data?.data ?? res.data;
+  },
+
+  async getAdminKycRequests(): Promise<AgentKycStatus[]> {
+    const res = await apiClient.get(`${BASE}/admin/kyc/requests`);
+    return res.data?.data ?? res.data;
+  },
+
+  async approveKyc(agentId: string): Promise<AgentKycStatus> {
+    const res = await apiClient.post(`${BASE}/admin/kyc/${agentId}/approve`);
+    return res.data?.data ?? res.data;
+  },
+
+  async rejectKyc(agentId: string, reason?: string): Promise<AgentKycStatus> {
+    const res = await apiClient.post(`${BASE}/admin/kyc/${agentId}/reject`, { reason });
     return res.data?.data ?? res.data;
   },
 

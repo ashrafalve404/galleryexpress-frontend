@@ -14,7 +14,7 @@ import {
   RiInformationFill,
 } from 'react-icons/ri';
 import { Loader2, Minus, Plus, ArrowRight } from 'lucide-react';
-import { counterAgentApi, type AllowedRoute } from '@/lib/api/counterAgent';
+import { counterAgentApi, type AllowedRoute, type AgentKycStatus } from '@/lib/api/counterAgent';
 import { useAuthStore } from '@/lib/store/authStore';
 
 function formatTk(n: number) {
@@ -31,8 +31,10 @@ export default function BuyBulkPage() {
   const [routesLoading, setRoutesLoading] = useState(true);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+  const [kycData, setKycData] = useState<AgentKycStatus | null>(null);
 
   useEffect(() => {
+    counterAgentApi.getKycStatus().then(setKycData).catch(() => {});
     counterAgentApi
       .getAllowedRoutes()
       .then((r) => {
@@ -55,6 +57,10 @@ export default function BuyBulkPage() {
 
   const handleOpenPaymentModal = (e: React.FormEvent) => {
     e.preventDefault();
+    if (kycData?.kycStatus !== 'VERIFIED') {
+      setError('KYC Verification Required before purchasing bulk tickets.');
+      return;
+    }
     if (quantity < 10) {
       setError('Minimum bulk order quantity is 10 tickets.');
       return;
@@ -66,6 +72,8 @@ export default function BuyBulkPage() {
     setError('');
     setShowPaymentModal(true);
   };
+
+  const isKycVerified = kycData?.kycStatus === 'VERIFIED';
 
   const handleFinalPaymentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

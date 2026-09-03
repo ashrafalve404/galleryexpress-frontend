@@ -13,6 +13,7 @@ import {
   RiMenu3Fill,
   RiCloseFill,
   RiArrowRightSLine,
+  RiShieldCheckFill,
 } from 'react-icons/ri';
 import { Loader2, LogOut } from 'lucide-react';
 import { useAuthStore } from '@/lib/store/authStore';
@@ -86,6 +87,12 @@ export default function CounterAgentLayout({
       href: '/counter-agent/buy-bulk',
       icon: RiTicketFill,
       shortLabel: 'Buy Bulk',
+    },
+    {
+      label: 'KYC Verification',
+      href: '/counter-agent/kyc',
+      icon: RiShieldCheckFill,
+      shortLabel: 'KYC',
     },
     {
       label: 'Select Counter',
