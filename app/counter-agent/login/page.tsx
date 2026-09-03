@@ -10,6 +10,8 @@ import {
   AlertCircle,
   Loader2,
   Store,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import apiClient from '@/lib/api/client';
 import { useAuthStore } from '@/lib/store/authStore';
@@ -19,6 +21,7 @@ export default function CounterAgentLoginPage() {
   const { setAuth } = useAuthStore();
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -136,13 +139,21 @@ export default function CounterAgentLoginPage() {
                   className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"
                 />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 text-sm focus:bg-white focus:border-[#E31B23] focus:ring-2 focus:ring-[#E31B23]/20 outline-none transition-all"
+                  className="w-full pl-11 pr-11 py-3.5 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 text-sm focus:bg-white focus:border-[#E31B23] focus:ring-2 focus:ring-[#E31B23]/20 outline-none transition-all"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1"
+                  title={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
             </div>
 

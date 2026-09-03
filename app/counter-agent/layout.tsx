@@ -83,16 +83,16 @@ export default function CounterAgentLayout({
       shortLabel: 'Dashboard',
     },
     {
-      label: 'Buy Bulk Tickets',
-      href: '/counter-agent/buy-bulk',
-      icon: RiTicketFill,
-      shortLabel: 'Buy Bulk',
-    },
-    {
       label: 'KYC Verification',
       href: '/counter-agent/kyc',
       icon: RiShieldCheckFill,
       shortLabel: 'KYC',
+    },
+    {
+      label: 'Buy Bulk Tickets',
+      href: '/counter-agent/buy-bulk',
+      icon: RiTicketFill,
+      shortLabel: 'Buy Bulk',
     },
     {
       label: 'Select Counter',
@@ -313,6 +313,23 @@ export default function CounterAgentLayout({
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;
+          const isMiddleBuyBulk = item.href === '/counter-agent/buy-bulk';
+
+          if (isMiddleBuyBulk) {
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="flex flex-col items-center gap-0.5 -mt-4"
+              >
+                <div className="w-12 h-12 rounded-full bg-[#E31B23] text-white flex items-center justify-center shadow-lg shadow-[#E31B23]/40 border-2 border-[#111111] transition-transform active:scale-95">
+                  <Icon size={24} />
+                </div>
+                <span className="text-[10px] font-black text-white tracking-tight">{item.shortLabel}</span>
+              </Link>
+            );
+          }
+
           return (
             <Link
               key={item.href}
