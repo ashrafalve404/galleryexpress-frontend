@@ -17,16 +17,32 @@ import { useAuthStore } from '@/lib/store/authStore';
 export default function CounterAgentLoginPage() {
   const router = useRouter();
   const { setAuth } = useAuthStore();
-  const [form, setForm] = useState({ email: '', password: '' });
+  const [identifier, setIdentifier] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!identifier.trim()) {
+      setError('Please enter your phone number or email address.');
+      return;
+    }
     setError('');
     setLoading(true);
+
+    const cleanedId = identifier.trim();
+    const isPhone = /^[0-9+\s-]{8,}$/.test(cleanedId);
+
     try {
-      const res = await apiClient.post('/api/v1/auth/login', form);
+      const payload = {
+        loginIdentifier: cleanedId,
+        email: isPhone ? undefined : cleanedId,
+        phone: isPhone ? cleanedId : undefined,
+        password,
+      };
+
+      const res = await apiClient.post('/api/v1/auth/login', payload);
       const data = res.data?.data ?? res.data;
       const { user, accessToken, refreshToken } = data;
 
@@ -52,7 +68,7 @@ export default function CounterAgentLoginPage() {
     } catch (err: any) {
       setError(
         err?.response?.data?.message ||
-          'Invalid login credentials. Please try again.',
+          'Invalid credentials. Please enter a valid phone number or email and password.',
       );
     } finally {
       setLoading(false);
@@ -78,7 +94,7 @@ export default function CounterAgentLoginPage() {
               Counter Agent Portal
             </h1>
             <p className="text-xs sm:text-sm text-gray-500 mt-1">
-              Enter your agent account details to continue
+              Enter your agent account phone number or email to continue
             </p>
           </div>
 
@@ -92,7 +108,7 @@ export default function CounterAgentLoginPage() {
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
-                Agent Email Address
+                Mobile Number or Email Address
               </label>
               <div className="relative">
                 <Mail
@@ -100,14 +116,12 @@ export default function CounterAgentLoginPage() {
                   className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"
                 />
                 <input
-                  type="email"
+                  type="text"
                   required
-                  value={form.email}
-                  onChange={(e) =>
-                    setForm({ ...form, email: e.target.value })
-                  }
-                  placeholder="agent@example.com"
-                  className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 text-sm focus:bg-white focus:border-[#E31B23] focus:ring-2 focus:ring-[#E31B23]/20 outline-none transition-all"
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
+                  placeholder="01700000010 or rashid@galleryexpress.com"
+                  className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 text-sm focus:bg-white focus:border-[#E31B23] focus:ring-2 focus:ring-[#E31B23]/20 outline-none transition-all font-medium"
                 />
               </div>
             </div>
@@ -124,10 +138,8 @@ export default function CounterAgentLoginPage() {
                 <input
                   type="password"
                   required
-                  value={form.password}
-                  onChange={(e) =>
-                    setForm({ ...form, password: e.target.value })
-                  }
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 text-sm focus:bg-white focus:border-[#E31B23] focus:ring-2 focus:ring-[#E31B23]/20 outline-none transition-all"
                 />
