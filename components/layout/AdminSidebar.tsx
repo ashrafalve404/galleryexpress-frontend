@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, Ticket, Bus, MapPin, Calendar, BadgeDollarSign,
   Tag, Building2, Users, BarChart3, Settings, ChevronLeft, ChevronRight,
-  FileText, Image as ImageIcon, LogOut, Menu, X, Globe, ExternalLink, Mail, Sparkles
+  FileText, Image as ImageIcon, LogOut, Menu, X, Globe, ExternalLink, Mail, Sparkles, Bell
 } from 'lucide-react';
 import { useAuthStore } from '@/lib/store/authStore';
 import { useLogout } from '@/lib/hooks/useAuth';
@@ -17,6 +17,7 @@ const navGroups = [
     label: 'Overview',
     items: [
       { href: ROUTES.ADMIN, label: 'Dashboard', icon: LayoutDashboard, exact: true },
+      { href: ROUTES.ADMIN_NOTIFICATIONS, label: 'Notifications', icon: Bell },
     ],
   },
   {

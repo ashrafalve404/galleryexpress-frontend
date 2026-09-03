@@ -131,3 +131,13 @@ export async function adminDeleteBooking(id: string) {
   const { data } = await client.delete(`/api/v1/admin/bookings/${id}`);
   return data;
 }
+
+export async function adminApproveBookingPayment(id: string) {
+  const { data } = await client.post(`/api/v1/admin/bookings/${id}/approve-payment`);
+  return data;
+}
+
+export async function adminRejectBookingPayment(id: string, reason?: string) {
+  const { data } = await client.post(`/api/v1/admin/bookings/${id}/reject-payment`, { reason });
+  return data;
+}

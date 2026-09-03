@@ -60,45 +60,19 @@ export default function CounterAgentLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] flex flex-col justify-between font-sans">
-      {/* Top Brand Header */}
-      <header className="bg-[#111111] text-white py-4 px-6 border-b border-white/10 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-3">
-          <div className="bg-white p-2 rounded-xl shadow-sm border border-white/20">
-            <img
-              src="/ticketdrkrlogo.png"
-              alt="Ticket Dorkar"
-              className="h-9 w-auto object-contain"
-            />
-          </div>
-          <div className="hidden sm:block">
-            <span className="text-xs uppercase tracking-wider text-red-500 font-bold block">
-              Official Portal
-            </span>
-            <span className="text-sm font-extrabold text-white">
-              Ticket Dorkar Limited
-            </span>
-          </div>
-        </Link>
-
-        <Link
-          href="/"
-          className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-gray-300 hover:text-white transition-colors bg-white/10 px-3.5 py-2 rounded-lg"
-        >
-          <ArrowLeft size={16} /> Back to Website
-        </Link>
-      </header>
-
+    <div className="min-h-screen bg-[#f8fafc] flex flex-col justify-center items-center p-4 font-sans">
       {/* Main Login Card (Clean Centered) */}
-      <main className="flex-1 flex items-center justify-center p-4 sm:p-8 my-auto">
-        <div className="w-full max-w-md bg-white rounded-3xl shadow-xl border border-gray-200/80 p-8 sm:p-10">
+      <main className="w-full max-w-md my-auto">
+        <div className="w-full bg-white rounded-3xl shadow-xl border border-gray-200/80 p-8 sm:p-10">
           <div className="text-center mb-8">
             <div className="flex justify-center mb-4">
-              <img
-                src="/ticketdrkrlogo.png"
-                alt="Ticket Dorkar"
-                className="h-11 w-auto object-contain"
-              />
+              <Link href="/" title="Go to Website" className="inline-block hover:opacity-80 transition-opacity">
+                <img
+                  src="/ticketdrkrlogo.png"
+                  alt="Ticket Dorkar"
+                  className="h-11 w-auto object-contain"
+                />
+              </Link>
             </div>
             <h1 className="text-2xl font-black text-gray-900 tracking-tight">
               Counter Agent Portal
@@ -188,11 +162,6 @@ export default function CounterAgentLoginPage() {
           </div>
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="bg-[#111111] text-gray-400 text-xs py-4 px-6 text-center border-t border-white/10">
-        &copy; {new Date().getFullYear()} Ticket Dorkar Limited. All rights reserved.
-      </footer>
     </div>
   );
 }

@@ -187,18 +187,9 @@ export default function CounterAgentLayout({
             <RiMenu3Fill size={22} />
           </button>
 
-          <Link href="/" className="flex items-center gap-2">
-            <div className="bg-white p-1 rounded-lg">
-              <img
-                src="/ticketdrkrlogo.png"
-                alt="Ticket Dorkar"
-                className="h-6 w-auto object-contain"
-              />
-            </div>
-            <span className="bg-[#E31B23] text-white text-[9px] font-black uppercase px-2 py-0.5 rounded">
-              Agent Portal
-            </span>
-          </Link>
+          <span className="text-sm font-black text-white tracking-wide">
+            Agent Portal
+          </span>
         </div>
 
         <button

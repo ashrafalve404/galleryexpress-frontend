@@ -14,11 +14,13 @@ import {
   RiLayoutGridFill, 
   RiShieldUserFill, 
   RiLogoutBoxRFill, 
-  RiUser3Fill 
+  RiUser3Fill,
+  RiMenu3Fill
 } from 'react-icons/ri';
 import { useAuthStore } from '@/lib/store/authStore';
 import { useLogout } from '@/lib/hooks/useAuth';
 import { ROUTES } from '@/lib/utils/constants';
+import { UserNotificationBell } from './UserNotificationBell';
 
 const navLinks = [
   { href: ROUTES.HOME, label: 'Home', icon: RiHome5Fill },
@@ -73,11 +75,11 @@ export function Header() {
             <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
               {/* Mobile menu button (Left side) */}
               <button
-                onClick={() => setMenuOpen(!menuOpen)}
+                onClick={() => setMenuOpen(true)}
                 className="lg:hidden p-2 rounded-xl text-gray-700 hover:bg-gray-100 transition-colors"
-                aria-label="Toggle menu"
+                aria-label="Open Navigation Drawer"
               >
-                <HiMenu size={24} />
+                <RiMenu3Fill size={22} />
               </button>
 
               {/* Logo */}

@@ -19,9 +19,22 @@ import {
   ChevronRight,
   LogOut,
 } from 'lucide-react';
-import { RiBusFill, RiTicket2Fill, RiCloseCircleFill, RiCheckboxCircleFill, RiErrorWarningFill } from 'react-icons/ri';
+import {
+  RiBusFill,
+  RiTicket2Fill,
+  RiCloseCircleFill,
+  RiCheckboxCircleFill,
+  RiErrorWarningFill,
+  RiHome5Fill,
+  RiSearchFill,
+  RiPhoneFill,
+  RiTicketFill,
+  RiUser3Fill,
+  RiNotification3Fill,
+} from 'react-icons/ri';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+import { UserNotificationBell } from '@/components/layout/UserNotificationBell';
 import { useAuthStore } from '@/lib/store/authStore';
 import { useUserBookings } from '@/lib/hooks/useBooking';
 import { cancelBooking } from '@/lib/api/bookings';
@@ -157,11 +170,11 @@ export default function DashboardPage() {
   return (
     <>
       <Header />
-      <main className="flex-1 pt-20 pb-12 bg-gray-50 min-h-screen">
+      <main className="flex-1 pt-20 pb-24 sm:pb-12 bg-gray-50 min-h-screen">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           
           {/* Header Greeting Banner */}
-          <div className="bg-[#111111] text-white rounded-2xl p-5 sm:p-8 mb-6 sm:mb-8 relative overflow-hidden shadow-lg">
+          <div className="bg-[#111111] text-white rounded-2xl p-5 sm:p-8 mb-6 sm:mb-8 relative z-20 shadow-lg">
             <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
               <div className="flex items-center gap-3.5 sm:gap-4 min-w-0">
                 <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-[#E31B23] flex items-center justify-center text-white font-black text-xl sm:text-2xl shadow-md shrink-0">
@@ -189,6 +202,7 @@ export default function DashboardPage() {
               </div>
 
               <div className="flex items-center gap-3 shrink-0">
+                <UserNotificationBell />
                 <Link
                   href={ROUTES.HOME}
                   className="w-full sm:w-auto bg-[#E31B23] hover:bg-[#C41920] text-white px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-md active:scale-95"
@@ -441,14 +455,20 @@ export default function DashboardPage() {
                               <Ticket size={14} /> View Ticket
                             </button>
                           )}
-                          {['CONFIRMED', 'HELD'].includes(b.status) && (
-                              <button
-                                onClick={() => setSelectedCancelBooking(b)}
-                                className="w-full sm:w-auto bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-3.5 py-2 rounded-xl text-xs font-bold transition-colors active:scale-95 flex items-center justify-center gap-1.5"
-                              >
-                                Resell Ticket to Admin
-                              </button>
-                            )}
+                          {(b.status === 'HELD' || b.status === 'PENDING') && (
+                            <div className="bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-bold p-2.5 rounded-xl text-center flex items-center justify-center gap-1.5 shadow-2xs">
+                              <Clock size={14} className="text-amber-600 shrink-0" />
+                              <span>Awaiting Admin Payment Approval</span>
+                            </div>
+                          )}
+                          {b.status === 'CONFIRMED' && (
+                            <button
+                              onClick={() => setSelectedCancelBooking(b)}
+                              className="w-full sm:w-auto bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-3.5 py-2 rounded-xl text-xs font-bold transition-colors active:scale-95 flex items-center justify-center gap-1.5"
+                            >
+                              Resell Ticket to Admin
+                            </button>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -515,6 +535,41 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
+
+      {/* Native App-Style Fixed Bottom Navbar for Mobile */}
+      <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#111111]/95 backdrop-blur-md border-t border-white/10 flex items-center justify-around py-2 px-2 shadow-2xl">
+        <Link
+          href="/"
+          className="flex flex-col items-center gap-0.5 py-1 px-3 text-gray-400 hover:text-white transition-all"
+        >
+          <RiHome5Fill size={20} />
+          <span className="text-[10px] font-bold">Home</span>
+        </Link>
+        
+        <Link
+          href="/"
+          className="flex flex-col items-center gap-0.5 py-1 px-3 text-gray-400 hover:text-white transition-all"
+        >
+          <RiBusFill size={20} />
+          <span className="text-[10px] font-bold">Book Bus</span>
+        </Link>
+
+        <Link
+          href="/dashboard"
+          className="flex flex-col items-center gap-0.5 py-1 px-3 text-[#E31B23] font-black"
+        >
+          <RiTicket2Fill size={20} className="text-[#E31B23]" />
+          <span className="text-[10px] font-black">My Trips</span>
+        </Link>
+
+        <Link
+          href="/user-notifications"
+          className="flex flex-col items-center gap-0.5 py-1 px-3 text-gray-400 hover:text-white transition-all"
+        >
+          <RiNotification3Fill size={20} />
+          <span className="text-[10px] font-bold">Notifications</span>
+        </Link>
+      </nav>
 
       <Footer />
     </>

@@ -4,18 +4,14 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
-  Store,
-  LayoutDashboard,
-  Ticket,
-  Wallet,
-  LogOut,
-  MapPin,
-  Phone,
-  CheckCircle2,
-  AlertCircle,
-  Loader2,
-  Search,
-} from 'lucide-react';
+  RiStore3Fill,
+  RiMapPinFill,
+  RiPhoneFill,
+  RiCheckboxCircleFill,
+  RiErrorWarningFill,
+  RiSearchLine,
+} from 'react-icons/ri';
+import { Loader2 } from 'lucide-react';
 import { counterAgentApi, type Counter, type DashboardStats } from '@/lib/api/counterAgent';
 import { useAuthStore } from '@/lib/store/authStore';
 
@@ -72,7 +68,7 @@ export default function SelectCounterPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-3xl font-black text-gray-900 tracking-tight flex items-center gap-2">
-            <Store className="text-[#E31B23]" size={26} /> Select Counter Assignment
+            <RiStore3Fill className="text-[#E31B23]" size={28} /> Select Counter Assignment
           </h1>
           <p className="text-xs sm:text-sm text-gray-500 mt-1">
             {currentCounterId
@@ -83,7 +79,7 @@ export default function SelectCounterPage() {
 
         {/* Search Bar */}
         <div className="relative w-full md:w-72">
-          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+          <RiSearchLine size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
             value={search}
@@ -96,14 +92,14 @@ export default function SelectCounterPage() {
 
       {success && (
         <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm flex items-center gap-3">
-          <CheckCircle2 size={18} className="text-emerald-600 shrink-0" />
+          <RiCheckboxCircleFill size={18} className="text-emerald-600 shrink-0" />
           <span>{success} Redirecting to dashboard…</span>
         </div>
       )}
 
       {error && (
         <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-xs sm:text-sm flex items-center gap-3">
-          <AlertCircle size={18} className="text-red-600 shrink-0" />
+          <RiErrorWarningFill size={18} className="text-red-600 shrink-0" />
           <span>{error}</span>
         </div>
       )}
@@ -114,13 +110,13 @@ export default function SelectCounterPage() {
         </div>
       ) : filteredCounters.length === 0 ? (
         <div className="py-16 text-center text-gray-500 bg-white rounded-3xl border border-gray-200/80 p-8 space-y-2">
-          <Store className="w-12 h-12 text-gray-300 mx-auto" />
+          <RiStore3Fill className="w-12 h-12 text-gray-300 mx-auto" />
           <h3 className="text-base font-bold text-gray-800">No Matching Counters</h3>
           <p className="text-xs text-gray-500">Try searching for another counter name or location.</p>
         </div>
       ) : (
-        /* 2-column layout on mobile, 3-column on large screens */
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+        /* 2-column layout on mobile, 4-column layout on PC / desktop */
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
           {filteredCounters.map((c) => {
             const isActive = c.id === currentCounterId;
             return (
@@ -135,7 +131,7 @@ export default function SelectCounterPage() {
                 <div className="space-y-1.5 sm:space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="p-1.5 sm:p-2.5 bg-red-50 text-[#E31B23] rounded-xl sm:rounded-2xl">
-                      <Store size={18} className="sm:w-5 sm:h-5" />
+                      <RiStore3Fill size={18} className="sm:w-5 sm:h-5" />
                     </div>
                     {isActive && (
                       <span className="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider bg-[#E31B23] text-white px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full">
@@ -148,13 +144,13 @@ export default function SelectCounterPage() {
                   </h3>
                   {c.location && (
                     <p className="text-[10px] sm:text-xs text-gray-500 flex items-start gap-1 font-medium line-clamp-2">
-                      <MapPin size={12} className="shrink-0 text-gray-400 mt-0.5" />
+                      <RiMapPinFill size={13} className="shrink-0 text-gray-400 mt-0.5" />
                       {c.location}
                     </p>
                   )}
                   {c.phone && (
                     <p className="text-[10px] sm:text-xs text-gray-500 flex items-center gap-1 font-medium truncate">
-                      <Phone size={12} className="shrink-0 text-gray-400" />
+                      <RiPhoneFill size={13} className="shrink-0 text-gray-400" />
                       {c.phone}
                     </p>
                   )}

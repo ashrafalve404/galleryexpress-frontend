@@ -55,7 +55,7 @@ export default function AdminUsersPage() {
       setShowForm(false);
       resetForm();
     },
-    onError: (err: Error) => toast.error(err.message || 'Failed to create user'),
+    onError: (err: any) => toast.error(err?.response?.data?.message || err?.message || 'Failed to create user'),
   });
 
   const updateMutation = useMutation({
@@ -68,7 +68,7 @@ export default function AdminUsersPage() {
       setEditing(null);
       resetForm();
     },
-    onError: (err: Error) => toast.error(err.message || 'Failed to update user'),
+    onError: (err: any) => toast.error(err?.response?.data?.message || err?.message || 'Failed to update user'),
   });
 
   const deleteMutation = useMutation({
@@ -77,7 +77,7 @@ export default function AdminUsersPage() {
       qc.invalidateQueries({ queryKey: ['admin', 'users'] });
       toast.success('User deleted.');
     },
-    onError: (err: Error) => toast.error(err.message || 'Failed to delete user'),
+    onError: (err: any) => toast.error(err?.response?.data?.message || err?.message || 'Failed to delete user'),
   });
 
   const resetForm = () => {

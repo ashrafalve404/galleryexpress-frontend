@@ -17,8 +17,10 @@ import {
   ArrowUpRight,
   DollarSign,
   Loader2,
+  Trash2,
 } from 'lucide-react';
 import apiClient from '@/lib/api/client';
+import { toast } from 'sonner';
 
 function formatTk(amount: number) {
   return '৳' + Number(amount).toLocaleString('en-BD');
@@ -31,9 +33,20 @@ export default function AdminCounterAgentsPage() {
   const [bulkOrders, setBulkOrders] = useState<any[]>([]);
   const [commissions, setCommissions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
-  const [actionLoading, setActionLoading] = useState('');
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
+
+  const handleDeleteAgent = async (agentId: string, name: string) => {
+    if (!confirm(`Are you sure you want to delete Counter Agent "${name}"? This action cannot be undone.`)) return;
+    try {
+      await apiClient.delete(`/api/v1/admin/users/${agentId}`);
+      toast.success(`Agent "${name}" deleted successfully.`);
+      loadData();
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || 'Failed to delete agent.');
+    }
+  };
 
   const loadData = useCallback(async () => {
     try {
@@ -67,6 +80,32 @@ export default function AdminCounterAgentsPage() {
       await loadData();
     } catch (err: any) {
       alert(err?.response?.data?.message || 'Failed to mark commission paid.');
+    } finally {
+      setActionLoading('');
+    }
+  };
+
+  const handleApproveOrder = async (orderId: string) => {
+    setActionLoading(orderId);
+    try {
+      await apiClient.post(`/api/v1/counter-agent/admin/bulk-orders/${orderId}/approve`);
+      await loadData();
+    } catch (err: any) {
+      alert(err?.response?.data?.message || 'Failed to approve bulk ticket order.');
+    } finally {
+      setActionLoading('');
+    }
+  };
+
+  const handleRejectOrder = async (orderId: string) => {
+    const reason = prompt('Please enter rejection reason (optional):');
+    if (reason === null) return;
+    setActionLoading(orderId);
+    try {
+      await apiClient.post(`/api/v1/counter-agent/admin/bulk-orders/${orderId}/reject`, { reason });
+      await loadData();
+    } catch (err: any) {
+      alert(err?.response?.data?.message || 'Failed to reject bulk ticket order.');
     } finally {
       setActionLoading('');
     }
@@ -273,12 +312,13 @@ export default function AdminCounterAgentsPage() {
                   <th className="py-3.5 px-4">Earned</th>
                   <th className="py-3.5 px-4">Tickets Left</th>
                   <th className="py-3.5 px-4">Status</th>
+                  <th className="py-3.5 px-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 text-gray-700">
                 {filteredAgents.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="text-center py-8 text-gray-400">
+                    <td colSpan={8} className="text-center py-8 text-gray-400">
                       No counter agents found matching search.
                     </td>
                   </tr>
@@ -316,6 +356,16 @@ export default function AdminCounterAgentsPage() {
                           {ag.status || 'ACTIVE'}
                         </span>
                       </td>
+                      <td className="py-4 px-4 text-right">
+                        <button
+                          onClick={() => handleDeleteAgent(ag.id, `${ag.firstName} ${ag.lastName}`)}
+                          className="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 border border-rose-100 transition-colors inline-flex items-center gap-1 font-bold text-xs"
+                          title="Delete Agent"
+                        >
+                          <Trash2 size={14} />
+                          <span className="hidden sm:inline">Delete</span>
+                        </button>
+                      </td>
                     </tr>
                   ))
                 )}
@@ -331,20 +381,19 @@ export default function AdminCounterAgentsPage() {
               <thead className="bg-gray-50 text-gray-500 font-bold uppercase text-[11px] border-b border-gray-200">
                 <tr>
                   <th className="py-3.5 px-4">Agent Name</th>
-                  <th className="py-3.5 px-4">Route</th>
-                  <th className="py-3.5 px-4">Counter</th>
+                  <th className="py-3.5 px-4">Route & Counter</th>
                   <th className="py-3.5 px-4">Qty</th>
-                  <th className="py-3.5 px-4">Remaining</th>
-                  <th className="py-3.5 px-4">Invested</th>
-                  <th className="py-3.5 px-4">Earned</th>
+                  <th className="py-3.5 px-4">Total Amount</th>
+                  <th className="py-3.5 px-4">Payment Details</th>
                   <th className="py-3.5 px-4">Status</th>
                   <th className="py-3.5 px-4">Date</th>
+                  <th className="py-3.5 px-4 text-right">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 text-gray-700">
                 {filteredOrders.length === 0 ? (
                   <tr>
-                    <td colSpan={9} className="text-center py-8 text-gray-400">
+                    <td colSpan={8} className="text-center py-8 text-gray-400">
                       No bulk orders recorded.
                     </td>
                   </tr>
@@ -353,30 +402,78 @@ export default function AdminCounterAgentsPage() {
                     <tr key={o.id} className="hover:bg-gray-50/80 transition-colors">
                       <td className="py-4 px-4 font-bold text-gray-900">
                         {o.agent?.firstName} {o.agent?.lastName}
+                        <div className="text-[11px] text-gray-400 font-normal">{o.agent?.phone || o.agent?.email}</div>
                       </td>
-                      <td className="py-4 px-4 font-bold text-gray-900">
-                        {o.route?.origin} → {o.route?.destination}
+                      <td className="py-4 px-4">
+                        <div className="font-bold text-gray-900">{o.route?.origin} → {o.route?.destination}</div>
+                        <div className="text-[11px] text-gray-500">{o.counter?.name ?? 'No counter assigned'}</div>
                       </td>
-                      <td className="py-4 px-4 text-xs text-gray-600">
-                        {o.counter?.name ?? '—'}
+                      <td className="py-4 px-4 font-bold">
+                        {o.quantity} tickets
+                        <div className="text-[11px] text-purple-700 font-semibold">{o.remainingQuantity} remaining</div>
                       </td>
-                      <td className="py-4 px-4 font-bold">{o.quantity}</td>
-                      <td className="py-4 px-4 font-semibold text-purple-700">{o.remainingQuantity}</td>
-                      <td className="py-4 px-4 font-bold text-gray-900">{formatTk(o.totalAmount)}</td>
-                      <td className="py-4 px-4 font-bold text-emerald-600">{formatTk(o.commissionEarned ?? 0)}</td>
+                      <td className="py-4 px-4 font-black text-gray-900">{formatTk(o.totalAmount)}</td>
+                      <td className="py-4 px-4">
+                        <div className="font-extrabold text-[#E31B23] text-xs">
+                          {o.paymentMethod || 'DIRECT_CASH'}
+                        </div>
+                        {o.senderPhone && (
+                          <div className="text-[11px] text-gray-600 font-medium">
+                            Sender: <span className="font-bold text-gray-900">{o.senderPhone}</span>
+                          </div>
+                        )}
+                        {o.trxId && (
+                          <div className="text-[11px] text-gray-600 font-mono font-bold">
+                            TrxID: <span className="text-blue-700">{o.trxId}</span>
+                          </div>
+                        )}
+                        {o.paymentNotes && (
+                          <div className="text-[11px] text-gray-500 italic max-w-xs truncate">
+                            &quot;{o.paymentNotes}&quot;
+                          </div>
+                        )}
+                      </td>
                       <td className="py-4 px-4">
                         <span
                           className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase ${
                             o.status === 'ACTIVE'
                               ? 'bg-emerald-100 text-emerald-800'
+                              : o.status === 'PENDING_APPROVAL'
+                              ? 'bg-amber-100 text-amber-800 animate-pulse'
+                              : o.status === 'REJECTED'
+                              ? 'bg-rose-100 text-rose-800'
                               : 'bg-gray-100 text-gray-600'
                           }`}
                         >
-                          {o.status}
+                          {o.status === 'PENDING_APPROVAL' ? 'Pending Approval' : o.status}
                         </span>
                       </td>
                       <td className="py-4 px-4 text-gray-400 text-xs">
                         {new Date(o.createdAt).toLocaleDateString('en-GB')}
+                      </td>
+                      <td className="py-4 px-4 text-right">
+                        {o.status === 'PENDING_APPROVAL' && (
+                          <div className="flex justify-end gap-1.5">
+                            <button
+                              onClick={() => handleApproveOrder(o.id)}
+                              disabled={actionLoading === o.id}
+                              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-all shadow-2xs flex items-center gap-1 disabled:opacity-60"
+                            >
+                              {actionLoading === o.id ? (
+                                <Loader2 size={12} className="animate-spin" />
+                              ) : (
+                                'Approve'
+                              )}
+                            </button>
+                            <button
+                              onClick={() => handleRejectOrder(o.id)}
+                              disabled={actionLoading === o.id}
+                              className="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-lg text-xs font-bold transition-all disabled:opacity-60"
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        )}
                       </td>
                     </tr>
                   ))
@@ -432,10 +529,14 @@ export default function AdminCounterAgentsPage() {
                           className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase ${
                             c.status === 'PAID'
                               ? 'bg-blue-100 text-blue-800'
-                              : 'bg-amber-100 text-amber-800'
+                              : c.status === 'PENDING'
+                              ? 'bg-emerald-100 text-emerald-800'
+                              : c.status === 'HELD_UNTIL_DEPARTURE'
+                              ? 'bg-purple-100 text-purple-800'
+                              : 'bg-rose-100 text-rose-800'
                           }`}
                         >
-                          {c.status}
+                          {c.status === 'HELD_UNTIL_DEPARTURE' ? 'Awaiting Departure' : c.status}
                         </span>
                       </td>
                       <td className="py-4 px-4 text-gray-400 text-xs">

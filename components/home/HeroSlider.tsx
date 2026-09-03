@@ -64,8 +64,8 @@ export function HeroSlider() {
               priority={index === 0}
               className={`object-cover ${s.position}`}
             />
-            {/* Soft Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-black/20" />
+            {/* Soft Overlay - Top 100% clear */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
 
             {/* Slide Overlay Text */}
             <div className="absolute bottom-3 sm:bottom-12 lg:bottom-18 xl:bottom-22 left-3 sm:left-10 right-3 max-w-xl text-white z-20">

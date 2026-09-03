@@ -37,6 +37,7 @@ export const ROUTES = {
   ADMIN_OFFERS: '/admin/offers',
   ADMIN_TICKETS: '/admin/tickets',
   ADMIN_MESSAGES: '/admin/messages',
+  ADMIN_NOTIFICATIONS: '/admin/notifications',
 } as const;
 
 export const SEAT_TYPE_LABELS: Record<string, string> = {
@@ -50,8 +51,8 @@ export const SEAT_TYPE_LABELS: Record<string, string> = {
 };
 
 export const BOOKING_STATUS_LABELS: Record<string, string> = {
-  PENDING: 'Pending',
-  HELD: 'Held',
+  PENDING: 'Pending Approval',
+  HELD: 'Pending Approval',
   CONFIRMED: 'Confirmed',
   CANCELLED: 'Cancelled',
   EXPIRED: 'Expired',
@@ -59,8 +60,8 @@ export const BOOKING_STATUS_LABELS: Record<string, string> = {
 };
 
 export const BOOKING_STATUS_COLORS: Record<string, string> = {
-  PENDING: 'bg-amber-100 text-amber-800',
-  HELD: 'bg-blue-100 text-blue-800',
+  PENDING: 'bg-amber-100 text-amber-800 animate-pulse',
+  HELD: 'bg-amber-100 text-amber-800 animate-pulse',
   CONFIRMED: 'bg-emerald-100 text-emerald-800',
   CANCELLED: 'bg-rose-100 text-rose-800',
   EXPIRED: 'bg-gray-100 text-gray-700',

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { RiUserFill, RiBusFill, RiSubtractLine, RiCheckLine } from 'react-icons/ri';
+import { RiUserFill, RiBusFill, RiSubtractLine, RiCheckLine, RiSteering2Fill } from 'react-icons/ri';
 import { type Seat } from '@/lib/api/schedules';
 
 interface SeatProps {
@@ -24,7 +24,7 @@ function SeatComponent({ seat, displayLabel, isSelected, onToggle }: SeatProps) 
   if (seat.seatType === 'DRIVER') {
     return (
       <div className="w-12 h-14 rounded-t-xl rounded-b-md bg-slate-100 border border-slate-200 flex flex-col items-center justify-center text-slate-500 shadow-2xs">
-        <RiBusFill size={18} className="text-[#E31B23]" />
+        <RiSteering2Fill size={20} className="text-[#E31B23]" />
         <span className="text-[9px] font-black uppercase mt-0.5 tracking-wider">Driver</span>
       </div>
     );
@@ -218,7 +218,7 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 4 }: SeatMa
         </div>
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full bg-slate-200 border border-slate-300 flex items-center justify-center text-[#E31B23] shadow-2xs">
-            <RiBusFill size={16} />
+            <RiSteering2Fill size={18} />
           </div>
           <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Driver</span>
         </div>

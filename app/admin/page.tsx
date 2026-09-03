@@ -8,6 +8,7 @@ import client from '@/lib/api/client';
 import { formatCurrency } from '@/lib/utils/currency';
 import { formatDate, formatDateTime } from '@/lib/utils/date';
 import { BOOKING_STATUS_COLORS, BOOKING_STATUS_LABELS, ROUTES } from '@/lib/utils/constants';
+import { AdminHeader } from '@/components/layout/AdminHeader';
 
 function StatCard({
   title, value, sub, icon: Icon, color, trend,
@@ -106,16 +107,10 @@ export default function AdminDashboard() {
 
   return (
     <div>
-      {/* Page Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-black text-[#111111]">Dashboard</h1>
-          <p className="text-gray-500 text-sm mt-0.5 font-medium">Ticket Dorkar operations overview</p>
-        </div>
-        <div className="text-sm font-semibold text-gray-500 bg-white px-3.5 py-1.5 rounded-xl border border-gray-100">
-          {formatDate(new Date())}
-        </div>
-      </div>
+      <AdminHeader
+        title="Dashboard Overview"
+        description="Monitor real-time sales, bookings, agent activities, and pending actions."
+      />
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">

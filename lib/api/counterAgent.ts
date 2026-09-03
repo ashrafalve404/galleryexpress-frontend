@@ -14,7 +14,13 @@ export interface BulkOrder {
   commissionEarned: number;
   commissionEligible: boolean;
   status: string;
+  paymentMethod?: string;
+  senderPhone?: string;
+  trxId?: string;
+  paymentNotes?: string;
+  rejectionReason?: string;
   createdAt: string;
+  agent?: { firstName: string; lastName: string; email: string; phone?: string };
   route?: { origin: string; destination: string };
   counter?: { name: string; location: string };
 }
@@ -70,8 +76,15 @@ export const counterAgentApi = {
     return res.data?.data ?? res.data;
   },
 
-  async buyBulkTickets(routeId: string, quantity: number): Promise<BulkOrder> {
-    const res = await apiClient.post(`${BASE}/buy-bulk`, { routeId, quantity });
+  async buyBulkTickets(payload: {
+    routeId: string;
+    quantity: number;
+    paymentMethod?: string;
+    senderPhone?: string;
+    trxId?: string;
+    paymentNotes?: string;
+  }): Promise<BulkOrder> {
+    const res = await apiClient.post(`${BASE}/buy-bulk`, payload);
     return res.data?.data ?? res.data;
   },
 
@@ -97,6 +110,21 @@ export const counterAgentApi = {
 
   async getAllowedRoutes(): Promise<AllowedRoute[]> {
     const res = await apiClient.get(`${BASE}/allowed-routes`);
+    return res.data?.data ?? res.data;
+  },
+
+  async getAdminBulkOrders(): Promise<BulkOrder[]> {
+    const res = await apiClient.get(`${BASE}/admin/bulk-orders`);
+    return res.data?.data ?? res.data;
+  },
+
+  async approveBulkOrder(id: string): Promise<{ message: string }> {
+    const res = await apiClient.post(`${BASE}/admin/bulk-orders/${id}/approve`);
+    return res.data?.data ?? res.data;
+  },
+
+  async rejectBulkOrder(id: string, reason?: string): Promise<{ message: string }> {
+    const res = await apiClient.post(`${BASE}/admin/bulk-orders/${id}/reject`, { reason });
     return res.data?.data ?? res.data;
   },
 };

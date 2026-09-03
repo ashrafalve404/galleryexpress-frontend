@@ -4,22 +4,21 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
-  LayoutDashboard,
-  Ticket,
-  Store,
-  Wallet,
-  TrendingUp,
-  Package,
-  LogOut,
-  AlertCircle,
-  CheckCircle2,
-  Clock,
-  ArrowRight,
-  PlusCircle,
-  Loader2,
-  RefreshCw,
-  Building2,
-} from 'lucide-react';
+  RiDashboardFill,
+  RiTicket2Fill,
+  RiTicketFill,
+  RiStore3Fill,
+  RiWallet3Fill,
+  RiFundsFill,
+  RiShoppingBag3Fill,
+  RiAddCircleFill,
+  RiErrorWarningFill,
+  RiCheckboxCircleFill,
+  RiTimeFill,
+  RiRefreshLine,
+  RiBuilding2Fill,
+} from 'react-icons/ri';
+import { Loader2 } from 'lucide-react';
 import { counterAgentApi, type DashboardStats } from '@/lib/api/counterAgent';
 import { useAuthStore } from '@/lib/store/authStore';
 
@@ -70,14 +69,14 @@ export default function CounterAgentDashboard() {
     return (
       <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center font-sans p-4 text-center">
         <div className="bg-red-50 border border-red-200 text-red-700 p-6 rounded-2xl max-w-md w-full">
-          <AlertCircle className="w-10 h-10 text-[#E31B23] mx-auto mb-3" />
+          <RiErrorWarningFill className="w-10 h-10 text-[#E31B23] mx-auto mb-3" />
           <h3 className="text-lg font-bold mb-1">Unable to Load Dashboard</h3>
           <p className="text-xs text-red-600 mb-4">{error || 'Something went wrong.'}</p>
           <button
             onClick={loadStats}
             className="w-full py-2.5 bg-[#E31B23] hover:bg-[#c9121a] text-white text-xs font-bold rounded-xl transition-all shadow-md flex items-center justify-center gap-2"
           >
-            <RefreshCw size={14} /> Retry Loading
+            <RiRefreshLine size={15} /> Retry Loading
           </button>
         </div>
       </div>
@@ -102,106 +101,113 @@ export default function CounterAgentDashboard() {
     <div className="p-6 sm:p-8 space-y-8">
 
         {/* Welcome Header Banner */}
-        <div className="bg-gradient-to-r from-[#111111] via-[#1a1a1a] to-[#222222] text-white p-6 sm:p-8 rounded-3xl border border-gray-800 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden">
+        <div className="bg-gradient-to-r from-[#111111] via-[#1a1a1a] to-[#222222] text-white p-5 sm:p-8 rounded-3xl border border-gray-800 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-5 relative overflow-hidden">
           <div className="absolute right-0 top-0 w-80 h-80 bg-[#E31B23]/10 rounded-full blur-3xl pointer-events-none" />
           
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white mb-2">
+          <div className="space-y-3 z-10">
+            <h1 className="text-xl sm:text-3xl font-black tracking-tight text-white">
               Welcome, {agent.firstName}! 👋
             </h1>
-            <p className="text-xs sm:text-sm text-gray-300 max-w-xl">
-              {counter ? (
-                <span className="flex items-center gap-1.5 text-gray-300 font-medium">
-                  <Store size={15} className="text-[#E31B23]" /> Assigned Counter:{' '}
-                  <strong className="text-white">{counter.name}</strong>
-                  {counter.location && ` (${counter.location})`}
-                </span>
-              ) : (
-                <span className="text-amber-400 font-bold flex items-center gap-1.5">
-                  <AlertCircle size={15} /> You have not selected a counter yet —{' '}
-                  <Link href="/counter-agent/select-counter" className="underline hover:text-amber-300">
-                    Select Counter Now
-                  </Link>
-                </span>
-              )}
-            </p>
+
+            {counter ? (
+              <div className="inline-flex items-start gap-2.5 bg-white/5 border border-white/10 px-3.5 py-2.5 rounded-2xl text-xs text-gray-200">
+                <RiStore3Fill size={17} className="text-[#E31B23] shrink-0 mt-0.5" />
+                <div className="leading-snug">
+                  <span className="text-gray-400 font-semibold block sm:inline">Assigned Counter: </span>
+                  <strong className="text-white font-extrabold">{counter.name}</strong>
+                  {counter.location && (
+                    <span className="text-gray-300 block sm:inline sm:ml-1 text-[11px] sm:text-xs">
+                      ({counter.location})
+                    </span>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 text-amber-300 px-3.5 py-2 rounded-xl text-xs font-bold">
+                <RiErrorWarningFill size={16} className="shrink-0 text-amber-400" />
+                <span>You have not selected a counter yet — </span>
+                <Link href="/counter-agent/select-counter" className="underline hover:text-amber-200">
+                  Select Counter
+                </Link>
+              </div>
+            )}
           </div>
 
           <Link
             href="/counter-agent/buy-bulk"
-            className="shrink-0 px-6 py-3.5 bg-[#E31B23] hover:bg-[#c9121a] text-white font-extrabold text-sm rounded-2xl transition-all shadow-lg hover:shadow-red-600/30 flex items-center gap-2"
+            className="w-full sm:w-auto shrink-0 px-5 py-3 bg-[#E31B23] hover:bg-[#c9121a] text-white font-extrabold text-xs sm:text-sm rounded-xl sm:rounded-2xl transition-all shadow-md flex items-center justify-center gap-2 z-10"
           >
-            <PlusCircle size={18} /> Buy Bulk Tickets
+            <RiAddCircleFill size={19} /> Buy Bulk Tickets
           </Link>
         </div>
 
         {/* 4 Stat Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          <div className="bg-white p-5 sm:p-6 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
+          <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-gray-500">
+              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-500">
                 Total Tickets Bought
               </span>
-              <div className="p-2 bg-blue-50 text-blue-600 rounded-xl">
-                <Ticket size={18} />
+              <div className="p-1.5 sm:p-2 bg-blue-50 text-blue-600 rounded-xl">
+                <RiTicket2Fill size={19} />
               </div>
             </div>
             <div>
-              <div className="text-2xl sm:text-3xl font-black text-gray-900">
+              <div className="text-xl sm:text-3xl font-black text-gray-900">
                 {totalTicketsBought}
               </div>
-              <p className="text-[11px] text-gray-400 mt-1">Cumulative bulk quantity</p>
+              <p className="text-[10px] sm:text-[11px] text-gray-400 mt-1">Cumulative bulk quantity</p>
             </div>
           </div>
 
-          <div className="bg-white p-5 sm:p-6 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
+          <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-gray-500">
+              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-500">
                 Remaining Tickets
               </span>
-              <div className="p-2 bg-purple-50 text-purple-600 rounded-xl">
-                <Package size={18} />
+              <div className="p-1.5 sm:p-2 bg-purple-50 text-purple-600 rounded-xl">
+                <RiShoppingBag3Fill size={19} />
               </div>
             </div>
             <div>
-              <div className="text-2xl sm:text-3xl font-black text-purple-700">
+              <div className="text-xl sm:text-3xl font-black text-purple-700">
                 {totalTicketsRemaining}
               </div>
-              <p className="text-[11px] text-gray-400 mt-1">Active bulk allocation</p>
+              <p className="text-[10px] sm:text-[11px] text-gray-400 mt-1">Active bulk allocation</p>
             </div>
           </div>
 
-          <div className="bg-white p-5 sm:p-6 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
+          <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-gray-500">
+              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-500">
                 Commission Earned
               </span>
-              <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
-                <TrendingUp size={18} />
+              <div className="p-1.5 sm:p-2 bg-emerald-50 text-emerald-600 rounded-xl">
+                <RiFundsFill size={19} />
               </div>
             </div>
             <div>
-              <div className="text-2xl sm:text-3xl font-black text-emerald-600">
+              <div className="text-xl sm:text-3xl font-black text-emerald-600">
                 {formatTk(commissionStats.totalEarned)}
               </div>
-              <p className="text-[11px] text-gray-400 mt-1">Total revenue generated</p>
+              <p className="text-[10px] sm:text-[11px] text-gray-400 mt-1">Total revenue generated</p>
             </div>
           </div>
 
-          <div className="bg-white p-5 sm:p-6 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
+          <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-gray-500">
+              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-500">
                 Total Invested
               </span>
-              <div className="p-2 bg-red-50 text-[#E31B23] rounded-xl">
-                <Wallet size={18} />
+              <div className="p-1.5 sm:p-2 bg-red-50 text-[#E31B23] rounded-xl">
+                <RiWallet3Fill size={19} />
               </div>
             </div>
             <div>
-              <div className="text-2xl sm:text-3xl font-black text-gray-900">
+              <div className="text-xl sm:text-3xl font-black text-gray-900">
                 {formatTk(totalInvested)}
               </div>
-              <p className="text-[11px] text-gray-400 mt-1">Max commission cap limit</p>
+              <p className="text-[10px] sm:text-[11px] text-gray-400 mt-1">Max commission cap limit</p>
             </div>
           </div>
         </div>
@@ -211,7 +217,7 @@ export default function CounterAgentDashboard() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-4">
             <div>
               <h2 className="text-lg font-black text-gray-900 tracking-tight flex items-center gap-2">
-                <Wallet className="text-[#E31B23]" size={20} /> Commission Capacity Tracker
+                <RiWallet3Fill className="text-[#E31B23]" size={22} /> Commission Capacity Tracker
               </h2>
               <p className="text-xs text-gray-500 mt-0.5">
                 Commission is capped at your cumulative bulk ticket investment amount.
@@ -226,11 +232,11 @@ export default function CounterAgentDashboard() {
             >
               {commissionStats.capReached ? (
                 <>
-                  <AlertCircle size={14} /> Capacity Cap Reached
+                  <RiErrorWarningFill size={15} /> Capacity Cap Reached
                 </>
               ) : (
                 <>
-                  <CheckCircle2 size={14} /> Commission Active
+                  <RiCheckboxCircleFill size={15} /> Commission Active
                 </>
               )}
             </span>
@@ -277,7 +283,7 @@ export default function CounterAgentDashboard() {
 
           {commissionStats.capReached && (
             <div className="p-4 bg-amber-50 border border-amber-200 text-amber-800 rounded-2xl text-xs flex items-start gap-3">
-              <AlertCircle size={18} className="shrink-0 text-amber-600 mt-0.5" />
+              <RiErrorWarningFill size={18} className="shrink-0 text-amber-600 mt-0.5" />
               <div>
                 <strong>Action Required:</strong> Your commission capacity limit has been reached. Purchase more bulk tickets to increase your investment cap and continue earning ৳200 commissions on bookings.
               </div>
@@ -289,20 +295,20 @@ export default function CounterAgentDashboard() {
         <div className="bg-white rounded-3xl border border-gray-200/80 shadow-sm overflow-hidden space-y-4">
           <div className="p-6 pb-2 border-b border-gray-100 flex items-center justify-between">
             <h2 className="text-lg font-black text-gray-900 tracking-tight flex items-center gap-2">
-              <Ticket className="text-[#E31B23]" size={20} /> My Bulk Orders
+              <RiTicket2Fill className="text-[#E31B23]" size={22} /> My Bulk Orders
             </h2>
             <span className="text-xs text-gray-500 font-bold">{bulkOrders.length} total orders</span>
           </div>
 
           {bulkOrders.length === 0 ? (
             <div className="p-12 text-center text-gray-500 space-y-3">
-              <Ticket className="w-12 h-12 text-gray-300 mx-auto" />
+              <RiTicket2Fill className="w-12 h-12 text-gray-300 mx-auto" />
               <p className="text-sm font-medium">No bulk ticket orders found.</p>
               <Link
                 href="/counter-agent/buy-bulk"
                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#E31B23] text-white text-xs font-bold rounded-xl"
               >
-                <PlusCircle size={15} /> Buy First Bulk Batch
+                <RiAddCircleFill size={16} /> Buy First Bulk Batch
               </Link>
             </div>
           ) : (

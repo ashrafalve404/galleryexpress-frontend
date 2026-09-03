@@ -4,13 +4,14 @@ import { useQuery } from '@tanstack/react-query';
 import { Search, RefreshCw, ChevronLeft, ChevronRight, Trash2, AlertTriangle } from 'lucide-react';
 import { useState } from 'react';
 import client from '@/lib/api/client';
-import { adminDeleteBooking } from '@/lib/api/bookings';
+import { adminDeleteBooking, adminApproveBookingPayment, adminRejectBookingPayment } from '@/lib/api/bookings';
 import { formatCurrency } from '@/lib/utils/currency';
 import { formatDateTime } from '@/lib/utils/date';
 import { BOOKING_STATUS_COLORS, BOOKING_STATUS_LABELS } from '@/lib/utils/constants';
 import { useAuthStore } from '@/lib/store/authStore';
 import { toast } from 'sonner';
 import { RiErrorWarningFill } from 'react-icons/ri';
+import { AdminHeader } from '@/components/layout/AdminHeader';
 
 function getAdminBookingAmount(b: Record<string, unknown>): number {
   const raw = Number(b.netAmount) || Number(b.totalAmount) || Number(b.finalAmount) || 0;
@@ -53,6 +54,36 @@ export default function AdminBookingsPage() {
     },
   });
 
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
+
+  const handleApprovePayment = async (id: string) => {
+    setActionLoading(id);
+    try {
+      await adminApproveBookingPayment(id);
+      toast.success('User ticket payment approved successfully!');
+      refetch();
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || 'Failed to approve payment.');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleRejectPayment = async (id: string) => {
+    const reason = prompt('Please enter rejection reason (optional):');
+    if (reason === null) return;
+    setActionLoading(id);
+    try {
+      await adminRejectBookingPayment(id, reason);
+      toast.success('Ticket payment rejected and seats released.');
+      refetch();
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || 'Failed to reject payment.');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   const handleDelete = async () => {
     if (!deleteTarget) return;
     setDeletingId(deleteTarget.id);
@@ -77,20 +108,10 @@ export default function AdminBookingsPage() {
 
   return (
     <div>
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-black text-[#111111]">Bookings</h1>
-          <p className="text-gray-500 text-xs sm:text-sm mt-0.5 font-medium">{total} total bookings recorded</p>
-        </div>
-        <button
-          onClick={() => refetch()}
-          className="flex items-center justify-center gap-2 bg-white border border-gray-200 hover:bg-gray-50 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-gray-700 transition-colors shadow-xs w-full sm:w-auto"
-        >
-          <RefreshCw size={14} className={isLoading ? 'animate-spin' : ''} />
-          Refresh
-        </button>
-      </div>
+      <AdminHeader
+        title="Bookings Management"
+        description={`${total} total bookings recorded. Manage payments, approvals, and ticket statuses.`}
+      />
 
       {/* Filters Bar */}
       <div className="bg-white rounded-2xl border border-gray-100 p-4 mb-6 flex flex-col sm:flex-row gap-3">
@@ -111,8 +132,7 @@ export default function AdminBookingsPage() {
         >
           <option value="">All Statuses</option>
           <option value="CONFIRMED">Confirmed</option>
-          <option value="HELD">Held</option>
-          <option value="PENDING">Pending</option>
+          <option value="HELD">Pending / Held</option>
           <option value="CANCELLED">Cancelled</option>
           <option value="EXPIRED">Expired</option>
         </select>
@@ -121,10 +141,10 @@ export default function AdminBookingsPage() {
       {/* Smooth Horizontally Scrollable Data Table */}
       <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-xs">
         <div className="overflow-x-auto">
-          <table className="w-full text-xs sm:text-sm min-w-[750px]">
+          <table className="w-full text-xs sm:text-sm min-w-[850px]">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-100">
-                {['Ref #', 'Passenger', 'Route', 'Amount', 'Status', 'Date', 'Actions'].map((h) => (
+                {['Ref #', 'Passenger', 'Route', 'Amount', 'Payment Info', 'Status', 'Date', 'Actions'].map((h) => (
                   <th key={h} className="text-left px-5 py-3.5 font-bold text-gray-500 text-xs uppercase tracking-wider">{h}</th>
                 ))}
               </tr>
@@ -133,7 +153,7 @@ export default function AdminBookingsPage() {
               {isLoading ? (
                 [1, 2, 3, 4, 5].map((i) => (
                   <tr key={i}>
-                    {[1, 2, 3, 4, 5, 6, 7].map((j) => (
+                    {[1, 2, 3, 4, 5, 6, 7, 8].map((j) => (
                       <td key={j} className="px-5 py-4"><div className="skeleton h-4 rounded w-20" /></td>
                     ))}
                   </tr>
@@ -143,6 +163,7 @@ export default function AdminBookingsPage() {
                 const schedule = b.schedule as Record<string, unknown>;
                 const route = schedule?.route as Record<string, unknown>;
                 const firstPassenger = passengers[0];
+                const isPending = b.status === 'HELD' || b.status === 'PENDING';
 
                 return (
                   <tr key={b.id as string} className="hover:bg-gray-50/80 transition-colors">
@@ -160,24 +181,69 @@ export default function AdminBookingsPage() {
                       {formatCurrency(getAdminBookingAmount(b))}
                     </td>
                     <td className="px-5 py-4">
-                      <span className={`text-xs px-2.5 py-0.5 rounded-full font-bold ${BOOKING_STATUS_COLORS[b.status as string] || 'bg-gray-100 text-gray-700'}`}>
-                        {BOOKING_STATUS_LABELS[b.status as string] || b.status as string}
+                      <div className="font-extrabold text-xs text-[#E31B23]">
+                        {(b.paymentMethod as string) || (b.payment as any)?.provider || 'CASH'}
+                      </div>
+                      {b.senderPhone ? (
+                        <div className="text-[11px] text-gray-600 font-medium">
+                          Sender: <span className="font-bold text-gray-900">{b.senderPhone as string}</span>
+                        </div>
+                      ) : null}
+                      {b.trxId ? (
+                        <div className="text-[11px] text-gray-600 font-mono font-bold">
+                          TrxID: <span className="text-blue-700">{b.trxId as string}</span>
+                        </div>
+                      ) : null}
+                      {b.paymentNotes ? (
+                        <div className="text-[11px] text-gray-500 italic max-w-xs truncate">
+                          &quot;{b.paymentNotes as string}&quot;
+                        </div>
+                      ) : null}
+                    </td>
+                    <td className="px-5 py-4">
+                      <span className={`text-xs px-2.5 py-0.5 rounded-full font-bold ${
+                        b.status === 'CONFIRMED'
+                          ? 'bg-emerald-100 text-emerald-800'
+                          : isPending
+                          ? 'bg-amber-100 text-amber-800 animate-pulse'
+                          : 'bg-gray-100 text-gray-700'
+                      }`}>
+                        {isPending ? 'Pending Approval' : (BOOKING_STATUS_LABELS[b.status as string] || b.status as string)}
                       </span>
                     </td>
                     <td className="px-5 py-4 text-gray-500 text-xs font-medium whitespace-nowrap">
                       {b.createdAt ? formatDateTime(b.createdAt as string) : '--'}
                     </td>
                     <td className="px-5 py-4 whitespace-nowrap">
-                      {isAdmin() && (
-                        <button
-                          onClick={() => setDeleteTarget({ id: b.id as string, ref: b.bookingRef as string })}
-                          className="p-2 rounded-xl text-rose-600 hover:bg-rose-50 border border-rose-100 transition-colors flex items-center gap-1 font-bold text-xs"
-                          title="Delete Booking"
-                        >
-                          <Trash2 size={15} />
-                          <span className="hidden sm:inline">Delete</span>
-                        </button>
-                      )}
+                      <div className="flex items-center gap-2">
+                        {isPending && (
+                          <>
+                            <button
+                              onClick={() => handleApprovePayment(b.id as string)}
+                              disabled={actionLoading === (b.id as string)}
+                              className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-all flex items-center gap-1 shadow-2xs disabled:opacity-60"
+                            >
+                              Approve
+                            </button>
+                            <button
+                              onClick={() => handleRejectPayment(b.id as string)}
+                              disabled={actionLoading === (b.id as string)}
+                              className="px-2 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-lg text-xs font-bold transition-all disabled:opacity-60"
+                            >
+                              Reject
+                            </button>
+                          </>
+                        )}
+                        {isAdmin() && (
+                          <button
+                            onClick={() => setDeleteTarget({ id: b.id as string, ref: b.bookingRef as string })}
+                            className="p-1.5 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                            title="Delete Booking"
+                          >
+                            <Trash2 size={15} />
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 );

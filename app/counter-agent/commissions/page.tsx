@@ -3,18 +3,13 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
-  Wallet,
-  LayoutDashboard,
-  Ticket,
-  Store,
-  LogOut,
-  TrendingUp,
-  Clock,
-  CheckCircle2,
-  AlertCircle,
-  Loader2,
-  Building2,
-} from 'lucide-react';
+  RiWallet3Fill,
+  RiFundsFill,
+  RiErrorWarningFill,
+  RiCheckboxCircleFill,
+  RiTimeFill,
+} from 'react-icons/ri';
+import { Loader2 } from 'lucide-react';
 import { counterAgentApi, type Commission } from '@/lib/api/counterAgent';
 import { useAuthStore } from '@/lib/store/authStore';
 
@@ -41,7 +36,9 @@ export default function CommissionsPage() {
     window.location.href = '/counter-agent/login';
   };
 
-  const totalEarned = commissions.reduce((s, c) => s + Number(c.agentShare), 0);
+  const totalEarned = commissions
+    .filter((c) => c.status === 'PENDING' || c.status === 'PAID')
+    .reduce((s, c) => s + Number(c.agentShare), 0);
   const pendingCount = commissions.filter((c) => c.status === 'PENDING').length;
   const paidTotal = commissions
     .filter((c) => c.status === 'PAID')
@@ -52,7 +49,7 @@ export default function CommissionsPage() {
 
         <div>
           <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight flex items-center gap-2">
-            <Wallet className="text-[#E31B23]" size={28} /> Commission Ledger
+            <RiWallet3Fill className="text-[#E31B23]" size={28} /> Commission Ledger
           </h1>
           <p className="text-xs sm:text-sm text-gray-500 mt-1">
             Complete record of your earned split commissions from user ticket bookings
@@ -97,7 +94,7 @@ export default function CommissionsPage() {
 
         {error && (
           <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-sm flex items-center gap-3">
-            <AlertCircle size={20} className="text-red-600 shrink-0" />
+            <RiErrorWarningFill size={20} className="text-red-600 shrink-0" />
             <span>{error}</span>
           </div>
         )}
@@ -106,7 +103,7 @@ export default function CommissionsPage() {
         <div className="bg-white rounded-3xl border border-gray-200/80 shadow-sm overflow-hidden space-y-4">
           <div className="p-6 pb-2 border-b border-gray-100 flex items-center justify-between">
             <h2 className="text-base font-black text-gray-900 tracking-tight flex items-center gap-2">
-              <TrendingUp className="text-[#E31B23]" size={18} /> Transaction History
+              <RiFundsFill className="text-[#E31B23]" size={20} /> Transaction History
             </h2>
           </div>
 
@@ -116,7 +113,7 @@ export default function CommissionsPage() {
             </div>
           ) : commissions.length === 0 ? (
             <div className="py-16 text-center text-gray-500 space-y-2">
-              <Wallet className="w-12 h-12 text-gray-300 mx-auto" />
+              <RiWallet3Fill className="w-12 h-12 text-gray-300 mx-auto" />
               <p className="text-sm font-medium">No commission records recorded yet.</p>
               <p className="text-xs text-gray-400 max-w-sm mx-auto">
                 Commissions trigger automatically when customers book tickets from your assigned counter.
@@ -152,11 +149,13 @@ export default function CommissionsPage() {
                             c.status === 'PAID'
                               ? 'bg-blue-100 text-blue-800'
                               : c.status === 'PENDING'
-                              ? 'bg-amber-100 text-amber-800'
-                              : 'bg-gray-100 text-gray-600'
+                              ? 'bg-emerald-100 text-emerald-800'
+                              : c.status === 'HELD_UNTIL_DEPARTURE'
+                              ? 'bg-purple-100 text-purple-800'
+                              : 'bg-rose-100 text-rose-800'
                           }`}
                         >
-                          {c.status}
+                          {c.status === 'HELD_UNTIL_DEPARTURE' ? 'Awaiting Departure' : c.status}
                         </span>
                       </td>
                       <td className="py-4 px-6 text-gray-400 text-xs">
