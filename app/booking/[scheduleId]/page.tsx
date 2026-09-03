@@ -177,7 +177,7 @@ export default function BookingPage() {
               <div className="bg-white rounded-2xl p-5 border border-gray-100">
                 <div className="flex items-center justify-between mb-5">
                   <h2 className="font-bold text-[#111111]">Select Your Seat</h2>
-                  <span className="text-sm text-gray-500">Up to 4 seats</span>
+                  <span className="text-sm text-gray-500">Select any available seats</span>
                 </div>
                 {seats && seats.length > 0 ? (
                   <SeatMap
@@ -194,7 +194,6 @@ export default function BookingPage() {
                       column: 0,
                     }))}
                     onToggle={handleToggle}
-                    maxSeats={4}
                   />
                 ) : (
                   <div className="text-center py-10 text-gray-400">
