@@ -173,6 +173,16 @@ export default function DashboardPage() {
       <main className="flex-1 pt-20 pb-24 sm:pb-12 bg-gray-50 min-h-screen">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           
+          {/* Top Bar Actions (Before Welcome Card) */}
+          <div className="flex items-center justify-between mb-3 px-1">
+            <span className="text-xs font-extrabold uppercase tracking-wider text-gray-500">
+              Passenger Account Overview
+            </span>
+            <div className="flex items-center gap-2">
+              <UserNotificationBell />
+            </div>
+          </div>
+
           {/* Header Greeting Banner */}
           <div className="bg-[#111111] text-white rounded-2xl p-5 sm:p-8 mb-6 sm:mb-8 relative z-20 shadow-lg">
             <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
@@ -202,7 +212,6 @@ export default function DashboardPage() {
               </div>
 
               <div className="flex items-center gap-3 shrink-0">
-                <UserNotificationBell />
                 <Link
                   href={ROUTES.HOME}
                   className="w-full sm:w-auto bg-[#E31B23] hover:bg-[#C41920] text-white px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-md active:scale-95"

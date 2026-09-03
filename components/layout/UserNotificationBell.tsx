@@ -114,7 +114,7 @@ export function UserNotificationBell() {
         className="relative p-2 sm:p-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 transition-all shadow-2xs group flex items-center justify-center"
         title="My Notifications"
       >
-        <RiNotification3Fill size={19} className="group-hover:scale-105 transition-transform text-[#E31B23]" />
+        <RiNotification3Fill size={19} className="group-hover:scale-105 transition-transform text-gray-500 hover:text-gray-700" />
         {unreadCount > 0 && (
           <span className="absolute -top-1 -right-1 bg-[#E31B23] text-white text-[9px] font-black w-4 h-4 sm:w-4.5 sm:h-4.5 rounded-full flex items-center justify-center border-2 border-white shadow-xs animate-pulse">
             {unreadCount > 9 ? '9+' : unreadCount}
