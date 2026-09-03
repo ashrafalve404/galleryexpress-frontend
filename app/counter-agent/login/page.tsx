@@ -120,7 +120,7 @@ export default function CounterAgentLoginPage() {
                   required
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
-                  placeholder="01700000010 or rashid@galleryexpress.com"
+                  placeholder="017XXXXXXXX"
                   className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 text-sm focus:bg-white focus:border-[#E31B23] focus:ring-2 focus:ring-[#E31B23]/20 outline-none transition-all font-medium"
                 />
               </div>
