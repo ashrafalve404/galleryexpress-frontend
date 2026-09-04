@@ -56,12 +56,11 @@ export function ScheduleCard({ schedule }: ScheduleCardProps) {
     sAny?.price ||
     0;
 
+  const originLower = (schedule?.route?.origin || '').toLowerCase();
   const destLower = (schedule?.route?.destination || '').toLowerCase();
-  const fallbackPrice = destLower.includes('cox')
-    ? 2000
-    : destLower.includes('chittagong')
-    ? 1200
-    : 800;
+  const isCoxRoute = originLower.includes('cox') || destLower.includes('cox');
+  const isCtgRoute = originLower.includes('chittagong') || destLower.includes('chittagong');
+  const fallbackPrice = isCoxRoute ? 2000 : isCtgRoute ? 1200 : 800;
 
   const price = rawPrice > 0 ? rawPrice : fallbackPrice;
   const totalCoachSeats = schedule?.coach?.totalSeats || schedule?.coach?._count?.seats || 36;
@@ -94,14 +93,21 @@ export function ScheduleCard({ schedule }: ScheduleCardProps) {
       ? coach.coachType
       : '';
 
-  // Match main counter to route origin city
+  // Match main counter to route origin city (Prefer Arambagh for Dhaka)
   const originCity = route?.origin || '';
+  const isDhaka = originCity.toLowerCase().includes('dhaka');
   const boardingCounter = Array.isArray(countersData)
-    ? countersData.find((c: any) =>
+    ? (
+        isDhaka
+          ? countersData.find((c: any) => (c.name || '').toLowerCase().includes('arambagh'))
+          : null
+      ) ||
+      countersData.find((c: any) =>
         (c.name || '').toLowerCase().includes(originCity.toLowerCase()) ||
         (c.location || '').toLowerCase().includes(originCity.toLowerCase())
-      )
-    : null;
+      ) ||
+      (isDhaka ? { name: 'Dhaka - Arambagh' } : null)
+    : (isDhaka ? { name: 'Dhaka - Arambagh' } : null);
 
   return (
     <div className="bg-white border border-gray-100 rounded-2xl p-5 hover:shadow-lg hover:border-gray-200 transition-all group">
