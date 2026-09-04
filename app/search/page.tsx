@@ -108,7 +108,7 @@ export default function SearchPage() {
       <Header />
       <main className="flex-1 pt-20 pb-10 bg-gray-50 min-h-screen">
         {/* Compact search bar at top */}
-        <div className="bg-white border-b border-gray-100 py-4 mb-4 relative z-40">
+        <div className="bg-white border-b border-gray-100 py-4 mb-4 relative z-20">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <SearchCard />
           </div>

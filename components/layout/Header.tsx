@@ -65,7 +65,7 @@ export function Header() {
     <>
       <header
         suppressHydrationWarning
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 bg-white ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white ${
           scrolled ? 'shadow-md border-b border-gray-100' : 'border-b border-gray-100/80 shadow-xs'
         }`}
       >
@@ -133,7 +133,7 @@ export function Header() {
                   </button>
 
                   {userMenuOpen && (
-                    <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 animate-fade-in z-50">
+                    <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-2xl shadow-2xl border border-gray-100 py-2 animate-fade-in z-[9999]">
                       <Link
                         href={ROUTES.DASHBOARD}
                         className="flex items-center gap-2.5 px-4 py-2 text-sm font-semibold text-gray-700 hover:text-[#E31B23] transition-colors group"

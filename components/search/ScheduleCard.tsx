@@ -110,7 +110,7 @@ export function ScheduleCard({ schedule }: ScheduleCardProps) {
         <div className="flex items-center gap-2">
           <span className="font-bold text-[#111111] text-sm">{coach?.name || 'Gallery Express Limited'}</span>
           {coachTypeLabel && (
-            <span className="text-[10px] sm:text-[11px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full font-semibold">
+            <span className="text-[9px] sm:text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full font-semibold">
               {coachTypeLabel}
             </span>
           )}
