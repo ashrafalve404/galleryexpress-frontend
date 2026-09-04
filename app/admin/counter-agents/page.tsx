@@ -18,6 +18,7 @@ import {
   DollarSign,
   Loader2,
   Trash2,
+  Power,
 } from 'lucide-react';
 import apiClient from '@/lib/api/client';
 import { toast } from 'sonner';
@@ -37,6 +38,22 @@ export default function AdminCounterAgentsPage() {
   const [search, setSearch] = useState('');
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
+  const handleToggleAgentStatus = async (agentId: string, name: string, currentStatus: string) => {
+    const newStatus = currentStatus === 'INACTIVE' ? 'ACTIVE' : 'INACTIVE';
+    const actionName = newStatus === 'INACTIVE' ? 'deactivate' : 'activate';
+    if (!confirm(`Are you sure you want to ${actionName} Counter Agent "${name}"?`)) return;
+    setActionLoading(agentId);
+    try {
+      await apiClient.patch(`/api/v1/admin/users/${agentId}`, { status: newStatus });
+      toast.success(`Agent "${name}" updated to ${newStatus}.`);
+      await loadData();
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || `Failed to ${actionName} agent.`);
+    } finally {
+      setActionLoading('');
+    }
+  };
+
   const handleDeleteAgent = async (agentId: string, name: string) => {
     if (!confirm(`Are you sure you want to delete Counter Agent "${name}"? This action cannot be undone.`)) return;
     try {
@@ -45,6 +62,20 @@ export default function AdminCounterAgentsPage() {
       loadData();
     } catch (err: any) {
       toast.error(err?.response?.data?.message || 'Failed to delete agent.');
+    }
+  };
+
+  const handleDeleteOrder = async (orderId: string, qty: number, amount: number) => {
+    if (!confirm(`Are you sure you want to delete this bulk order of ${qty} tickets (৳${amount})? This will remove the remaining tickets from the agent's quota.`)) return;
+    setActionLoading(orderId);
+    try {
+      await apiClient.delete(`/api/v1/counter-agent/admin/bulk-orders/${orderId}`);
+      toast.success('Bulk ticket order deleted successfully.');
+      await loadData();
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || 'Failed to delete bulk ticket order.');
+    } finally {
+      setActionLoading('');
     }
   };
 
@@ -352,19 +383,43 @@ export default function AdminCounterAgentsPage() {
                         {ag.totalRemainingTickets} / {ag.totalTicketsBought}
                       </td>
                       <td className="py-4 px-4">
-                        <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-emerald-100 text-emerald-800">
+                        <span
+                          className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase ${
+                            ag.status === 'INACTIVE'
+                              ? 'bg-rose-100 text-rose-800'
+                              : 'bg-emerald-100 text-emerald-800'
+                          }`}
+                        >
                           {ag.status || 'ACTIVE'}
                         </span>
                       </td>
                       <td className="py-4 px-4 text-right">
-                        <button
-                          onClick={() => handleDeleteAgent(ag.id, `${ag.firstName} ${ag.lastName}`)}
-                          className="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 border border-rose-100 transition-colors inline-flex items-center gap-1 font-bold text-xs"
-                          title="Delete Agent"
-                        >
-                          <Trash2 size={14} />
-                          <span className="hidden sm:inline">Delete</span>
-                        </button>
+                        <div className="flex justify-end items-center gap-1.5">
+                          <button
+                            onClick={() => handleToggleAgentStatus(ag.id, `${ag.firstName} ${ag.lastName}`, ag.status || 'ACTIVE')}
+                            disabled={actionLoading === ag.id}
+                            className={`p-1.5 rounded-lg border transition-colors inline-flex items-center gap-1 font-bold text-xs ${
+                              ag.status === 'INACTIVE'
+                                ? 'text-emerald-600 hover:bg-emerald-50 border-emerald-200'
+                                : 'text-amber-600 hover:bg-amber-50 border-amber-200'
+                            }`}
+                            title={ag.status === 'INACTIVE' ? 'Activate Agent Account' : 'Deactivate Agent Account'}
+                          >
+                            <Power size={13} />
+                            <span className="hidden sm:inline">
+                              {ag.status === 'INACTIVE' ? 'Activate' : 'Deactivate'}
+                            </span>
+                          </button>
+                          <button
+                            onClick={() => handleDeleteAgent(ag.id, `${ag.firstName} ${ag.lastName}`)}
+                            disabled={actionLoading === ag.id}
+                            className="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 border border-rose-100 transition-colors inline-flex items-center gap-1 font-bold text-xs"
+                            title="Delete Agent Account"
+                          >
+                            <Trash2 size={13} />
+                            <span className="hidden sm:inline">Delete</span>
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -452,28 +507,39 @@ export default function AdminCounterAgentsPage() {
                         {new Date(o.createdAt).toLocaleDateString('en-GB')}
                       </td>
                       <td className="py-4 px-4 text-right">
-                        {o.status === 'PENDING_APPROVAL' && (
-                          <div className="flex justify-end gap-1.5">
-                            <button
-                              onClick={() => handleApproveOrder(o.id)}
-                              disabled={actionLoading === o.id}
-                              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-all shadow-2xs flex items-center gap-1 disabled:opacity-60"
-                            >
-                              {actionLoading === o.id ? (
-                                <Loader2 size={12} className="animate-spin" />
-                              ) : (
-                                'Approve'
-                              )}
-                            </button>
-                            <button
-                              onClick={() => handleRejectOrder(o.id)}
-                              disabled={actionLoading === o.id}
-                              className="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-lg text-xs font-bold transition-all disabled:opacity-60"
-                            >
-                              Reject
-                            </button>
-                          </div>
-                        )}
+                        <div className="flex justify-end items-center gap-1.5">
+                          {o.status === 'PENDING_APPROVAL' && (
+                            <>
+                              <button
+                                onClick={() => handleApproveOrder(o.id)}
+                                disabled={actionLoading === o.id}
+                                className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-all shadow-2xs flex items-center gap-1 disabled:opacity-60"
+                              >
+                                {actionLoading === o.id ? (
+                                  <Loader2 size={12} className="animate-spin" />
+                                ) : (
+                                  'Approve'
+                                )}
+                              </button>
+                              <button
+                                onClick={() => handleRejectOrder(o.id)}
+                                disabled={actionLoading === o.id}
+                                className="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-lg text-xs font-bold transition-all disabled:opacity-60"
+                              >
+                                Reject
+                              </button>
+                            </>
+                          )}
+                          <button
+                            onClick={() => handleDeleteOrder(o.id, o.quantity, Number(o.totalAmount || 0))}
+                            disabled={actionLoading === o.id}
+                            className="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 border border-rose-100 transition-colors inline-flex items-center gap-1 font-bold text-xs"
+                            title="Delete / Cancel Bulk Order"
+                          >
+                            <Trash2 size={13} />
+                            <span className="hidden sm:inline">Delete</span>
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
