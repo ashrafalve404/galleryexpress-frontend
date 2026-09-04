@@ -182,30 +182,79 @@ export default function BuyBulkPage() {
                 <label className="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5 sm:mb-2">
                   Ticket Quantity <span className="text-red-500 font-normal">(Minimum 10 tickets)</span>
                 </label>
-                <div className="flex items-center gap-2.5 sm:gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setQuantity((q) => Math.max(10, q - 10))}
-                    className="p-2.5 sm:p-3 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-xl text-gray-700 font-bold transition-all"
-                  >
-                    <Minus size={16} />
-                  </button>
-                  <input
-                    type="number"
-                    min={10}
-                    value={quantity}
-                    onChange={(e) =>
-                      setQuantity(Math.max(10, parseInt(e.target.value) || 10))
-                    }
-                    className="w-24 sm:w-32 py-2 sm:py-3 bg-gray-50 border border-gray-300 rounded-xl text-center text-base sm:text-lg font-black text-gray-900 focus:border-[#E31B23] outline-none"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setQuantity((q) => q + 10)}
-                    className="p-2.5 sm:p-3 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-xl text-gray-700 font-bold transition-all"
-                  >
-                    <Plus size={16} />
-                  </button>
+                <div className="space-y-2.5">
+                  <div className="flex items-center gap-1.5 sm:gap-2">
+                    {/* -10 Step */}
+                    <button
+                      type="button"
+                      onClick={() => setQuantity((q) => Math.max(10, q - 10))}
+                      className="px-2.5 sm:px-3 py-2.5 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-xl text-xs font-black text-gray-700 transition-all shrink-0 active:scale-95"
+                      title="Decrease by 10"
+                    >
+                      -10
+                    </button>
+                    {/* -1 Step */}
+                    <button
+                      type="button"
+                      onClick={() => setQuantity((q) => Math.max(10, q - 1))}
+                      className="p-2.5 sm:p-3 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-xl text-gray-700 font-bold transition-all shrink-0 active:scale-95"
+                      title="Decrease by 1"
+                    >
+                      <Minus size={16} />
+                    </button>
+
+                    {/* Numeric Input */}
+                    <div className="relative flex-1 max-w-[120px]">
+                      <input
+                        type="number"
+                        min={10}
+                        value={quantity}
+                        onChange={(e) => {
+                          const val = parseInt(e.target.value);
+                          setQuantity(isNaN(val) ? 10 : Math.max(10, val));
+                        }}
+                        className="w-full py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-center text-base sm:text-lg font-black text-gray-900 focus:bg-white focus:border-[#E31B23] focus:ring-2 focus:ring-[#E31B23]/20 outline-none transition-all"
+                      />
+                    </div>
+
+                    {/* +1 Step */}
+                    <button
+                      type="button"
+                      onClick={() => setQuantity((q) => Math.max(10, q + 1))}
+                      className="p-2.5 sm:p-3 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-xl text-gray-700 font-bold transition-all shrink-0 active:scale-95"
+                      title="Increase by 1"
+                    >
+                      <Plus size={16} />
+                    </button>
+                    {/* +10 Step */}
+                    <button
+                      type="button"
+                      onClick={() => setQuantity((q) => q + 10)}
+                      className="px-2.5 sm:px-3 py-2.5 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-xl text-xs font-black text-gray-700 transition-all shrink-0 active:scale-95"
+                      title="Increase by 10"
+                    >
+                      +10
+                    </button>
+                  </div>
+
+                  {/* Quick Selector Pills */}
+                  <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mr-1">Quick Select:</span>
+                    {[10, 12, 15, 20, 25, 50, 100].map((num) => (
+                      <button
+                        key={num}
+                        type="button"
+                        onClick={() => setQuantity(num)}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                          quantity === num
+                            ? 'bg-[#E31B23] text-white shadow-xs'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border border-gray-200'
+                        }`}
+                      >
+                        {num}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
@@ -309,7 +358,7 @@ export default function BuyBulkPage() {
                     <span className="font-bold text-gray-700 block">Admin Send Money Numbers:</span>
                     <div className="flex justify-between items-center text-gray-800 font-mono font-bold bg-white p-2 rounded-xl border border-gray-200">
                       <span>bKash / Nagad / Rocket:</span>
-                      <span className="text-[#E31B23] text-sm">01826-110036</span>
+                      <span className="text-[#E31B23] text-sm">01739-142959</span>
                     </div>
                     <p className="text-[11px] text-gray-500">
                       Please send <strong>{formatTk(total)}</strong> to the Admin Send Money number above, then enter your details below.

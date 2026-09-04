@@ -166,7 +166,7 @@ export default function PaymentPage() {
                     <span className="font-bold text-gray-800 block">Admin Send Money Numbers:</span>
                     <div className="flex justify-between items-center text-gray-900 font-mono font-bold bg-white p-2.5 rounded-xl border border-gray-200">
                       <span>bKash / Nagad / Rocket:</span>
-                      <span className="text-[#E31B23] text-sm">01826-110036</span>
+                      <span className="text-[#E31B23] text-sm">01739-142959</span>
                     </div>
                     <p className="text-[11px] text-gray-500">
                       Send <strong>{formatCurrency(totalAmount)}</strong> to the Admin Send Money number above, then submit your details below.
