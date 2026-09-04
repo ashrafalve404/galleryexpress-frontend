@@ -13,7 +13,7 @@ import {
   RiShieldCheckFill,
   RiInformationFill,
 } from 'react-icons/ri';
-import { Loader2, Minus, Plus, ArrowRight } from 'lucide-react';
+import { Loader2, Minus, Plus, ArrowRight, ChevronUp, ChevronDown } from 'lucide-react';
 import { counterAgentApi, type AllowedRoute, type AgentKycStatus } from '@/lib/api/counterAgent';
 import { useAuthStore } from '@/lib/store/authStore';
 
@@ -182,79 +182,59 @@ export default function BuyBulkPage() {
                 <label className="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5 sm:mb-2">
                   Ticket Quantity <span className="text-red-500 font-normal">(Minimum 10 tickets)</span>
                 </label>
-                <div className="space-y-2.5">
-                  <div className="flex items-center gap-1.5 sm:gap-2">
-                    {/* -10 Step */}
-                    <button
-                      type="button"
-                      onClick={() => setQuantity((q) => Math.max(10, q - 10))}
-                      className="px-2.5 sm:px-3 py-2.5 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-xl text-xs font-black text-gray-700 transition-all shrink-0 active:scale-95"
-                      title="Decrease by 10"
-                    >
-                      -10
-                    </button>
-                    {/* -1 Step */}
-                    <button
-                      type="button"
-                      onClick={() => setQuantity((q) => Math.max(10, q - 1))}
-                      className="p-2.5 sm:p-3 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-xl text-gray-700 font-bold transition-all shrink-0 active:scale-95"
-                      title="Decrease by 1"
-                    >
-                      <Minus size={16} />
-                    </button>
+                <div className="flex items-center gap-2.5 sm:gap-3">
+                  {/* Decrease 10 tickets */}
+                  <button
+                    type="button"
+                    onClick={() => setQuantity((q) => Math.max(10, q - 10))}
+                    className="p-2.5 sm:p-3 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-xl text-gray-700 font-bold transition-all active:scale-95 shrink-0"
+                    title="Decrease by 10 tickets"
+                  >
+                    <Minus size={18} />
+                  </button>
 
-                    {/* Numeric Input */}
-                    <div className="relative flex-1 max-w-[120px]">
-                      <input
-                        type="number"
-                        min={10}
-                        value={quantity}
-                        onChange={(e) => {
-                          const val = parseInt(e.target.value);
-                          setQuantity(isNaN(val) ? 10 : Math.max(10, val));
-                        }}
-                        className="w-full py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-center text-base sm:text-lg font-black text-gray-900 focus:bg-white focus:border-[#E31B23] focus:ring-2 focus:ring-[#E31B23]/20 outline-none transition-all"
-                      />
-                    </div>
-
-                    {/* +1 Step */}
-                    <button
-                      type="button"
-                      onClick={() => setQuantity((q) => Math.max(10, q + 1))}
-                      className="p-2.5 sm:p-3 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-xl text-gray-700 font-bold transition-all shrink-0 active:scale-95"
-                      title="Increase by 1"
-                    >
-                      <Plus size={16} />
-                    </button>
-                    {/* +10 Step */}
-                    <button
-                      type="button"
-                      onClick={() => setQuantity((q) => q + 10)}
-                      className="px-2.5 sm:px-3 py-2.5 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-xl text-xs font-black text-gray-700 transition-all shrink-0 active:scale-95"
-                      title="Increase by 10"
-                    >
-                      +10
-                    </button>
-                  </div>
-
-                  {/* Quick Selector Pills */}
-                  <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mr-1">Quick Select:</span>
-                    {[10, 12, 15, 20, 25, 50, 100].map((num) => (
+                  {/* Quantity input box with always-visible single ticket Up/Down stepper arrows */}
+                  <div className="relative flex items-center w-32 sm:w-36">
+                    <input
+                      type="number"
+                      min={10}
+                      value={quantity}
+                      onChange={(e) => {
+                        const val = parseInt(e.target.value);
+                        setQuantity(isNaN(val) ? 10 : Math.max(10, val));
+                      }}
+                      className="w-full py-2.5 sm:py-3 pl-3 pr-8 bg-gray-50 border border-gray-300 rounded-xl text-center text-base sm:text-lg font-black text-gray-900 focus:bg-white focus:border-[#E31B23] outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    />
+                    {/* Always-visible single-ticket Up/Down stepper arrows */}
+                    <div className="absolute right-1.5 inset-y-0 flex flex-col justify-center gap-0.5">
                       <button
-                        key={num}
                         type="button"
-                        onClick={() => setQuantity(num)}
-                        className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
-                          quantity === num
-                            ? 'bg-[#E31B23] text-white shadow-xs'
-                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border border-gray-200'
-                        }`}
+                        onClick={() => setQuantity((q) => q + 1)}
+                        className="p-0.5 hover:bg-gray-200 rounded text-gray-600 hover:text-gray-900 transition-colors"
+                        title="Increase 1 ticket"
                       >
-                        {num}
+                        <ChevronUp size={14} className="stroke-[3]" />
                       </button>
-                    ))}
+                      <button
+                        type="button"
+                        onClick={() => setQuantity((q) => Math.max(10, q - 1))}
+                        className="p-0.5 hover:bg-gray-200 rounded text-gray-600 hover:text-gray-900 transition-colors"
+                        title="Decrease 1 ticket"
+                      >
+                        <ChevronDown size={14} className="stroke-[3]" />
+                      </button>
+                    </div>
                   </div>
+
+                  {/* Increase 10 tickets */}
+                  <button
+                    type="button"
+                    onClick={() => setQuantity((q) => q + 10)}
+                    className="p-2.5 sm:p-3 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-xl text-gray-700 font-bold transition-all active:scale-95 shrink-0"
+                    title="Increase by 10 tickets"
+                  >
+                    <Plus size={18} />
+                  </button>
                 </div>
               </div>
 
