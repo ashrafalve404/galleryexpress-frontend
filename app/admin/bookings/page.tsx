@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { Search, RefreshCw, ChevronLeft, ChevronRight, Trash2, AlertTriangle } from 'lucide-react';
+import { Search, RefreshCw, ChevronLeft, ChevronRight, Trash2, AlertTriangle, MapPin } from 'lucide-react';
 import { useState } from 'react';
 import client from '@/lib/api/client';
 import { adminDeleteBooking, adminApproveBookingPayment, adminRejectBookingPayment } from '@/lib/api/bookings';
@@ -162,6 +162,11 @@ export default function AdminBookingsPage() {
                 const passengers = (b.passengers as Record<string, unknown>[]) || [];
                 const schedule = b.schedule as Record<string, unknown>;
                 const route = schedule?.route as Record<string, unknown>;
+                const counter = b.counter as Record<string, unknown> | undefined;
+                const counterName = (counter?.name as string) || (counter?.location as string);
+                const notes = (b.notes as string) || '';
+                const boardingStop = counterName || (notes.startsWith('Boarding:') ? notes.replace('Boarding:', '').trim() : null);
+
                 const firstPassenger = passengers[0];
                 const isPending = b.status === 'HELD' || b.status === 'PENDING';
 
@@ -175,7 +180,13 @@ export default function AdminBookingsPage() {
                       <div className="text-xs text-gray-400 font-medium">{firstPassenger?.phone as string || '--'}</div>
                     </td>
                     <td className="px-5 py-4 text-gray-700 font-medium whitespace-nowrap">
-                      {route ? `${route.origin} → ${route.destination}` : '--'}
+                      <div className="font-semibold text-gray-900">{route ? `${route.origin} → ${route.destination}` : '--'}</div>
+                      {boardingStop && (
+                        <div className="text-[11px] text-[#E31B23] font-bold flex items-center gap-1 mt-0.5">
+                          <MapPin size={11} className="shrink-0 text-[#E31B23]" />
+                          <span>Counter: {boardingStop}</span>
+                        </div>
+                      )}
                     </td>
                     <td className="px-5 py-4 font-bold text-[#E31B23]">
                       {formatCurrency(getAdminBookingAmount(b))}
