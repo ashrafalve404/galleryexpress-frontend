@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { BsFillTicketPerforatedFill } from 'react-icons/bs';
 import { counterAgentApi } from '@/lib/api/counterAgent';
+import { formatDate } from '@/lib/utils/date';
 import { toast } from 'sonner';
 
 export default function CounterAgentSoldTicketsPage() {
@@ -28,7 +29,9 @@ export default function CounterAgentSoldTicketsPage() {
         const data = await counterAgentApi.getMySoldTickets();
         setTickets(Array.isArray(data) ? data : []);
       } catch (e: any) {
+        console.error('Failed to load sold tickets:', e);
         toast.error('Failed to load sold tickets.');
+        setTickets([]);
       } finally {
         setLoading(false);
       }
@@ -36,7 +39,10 @@ export default function CounterAgentSoldTicketsPage() {
     loadData();
   }, []);
 
-  const filtered = tickets.filter((t) => {
+  const safeTickets = Array.isArray(tickets) ? tickets : [];
+
+  const filtered = safeTickets.filter((t) => {
+    if (!t) return false;
     const q = search.toLowerCase().trim();
     if (!q) return true;
     const ref = (t.bookingRef || '').toLowerCase();
@@ -117,14 +123,19 @@ export default function CounterAgentSoldTicketsPage() {
                 </thead>
                 <tbody className="divide-y divide-gray-100 text-gray-700">
                   {filtered.map((ticket) => {
-                    const passenger = ticket.passengers?.[0];
-                    const seats = ticket.bookingSeats?.map((s: any) => s.seat?.seatNumber || s.seatId).join(', ') || '—';
+                    if (!ticket) return null;
+                    const passenger = Array.isArray(ticket.passengers) ? ticket.passengers[0] : null;
+                    const seats = Array.isArray(ticket.bookingSeats) && ticket.bookingSeats.length > 0
+                      ? ticket.bookingSeats.map((s: any) => s?.seat?.seatNumber || s?.seatId || '').filter(Boolean).join(', ')
+                      : '—';
                     const route = ticket.schedule?.route;
+                    const coachType = ticket.schedule?.coach?.coachType || 'AC';
+                    const dateStr = ticket.createdAt ? formatDate(ticket.createdAt, 'dd MMM yyyy') : '—';
 
                     return (
-                      <tr key={ticket.id} className="hover:bg-gray-50/80 transition-colors">
+                      <tr key={ticket.id || Math.random()} className="hover:bg-gray-50/80 transition-colors">
                         <td className="py-4 px-4 font-mono font-black text-gray-900">
-                          {ticket.bookingRef}
+                          {ticket.bookingRef || '—'}
                         </td>
                         <td className="py-4 px-4 font-bold text-gray-900">
                           {passenger?.name || 'Passenger'}
@@ -133,20 +144,20 @@ export default function CounterAgentSoldTicketsPage() {
                           {passenger?.phone || '—'}
                         </td>
                         <td className="py-4 px-4 font-bold text-[#E31B23]">
-                          {seats}
+                          {seats || '—'}
                         </td>
                         <td className="py-4 px-4 font-medium text-gray-800">
-                          <div>{route?.origin} ➔ {route?.destination}</div>
-                          <div className="text-[10px] text-gray-400">{ticket.schedule?.coach?.coachType || 'AC'}</div>
+                          <div>{route?.origin || 'Dhaka'} ➔ {route?.destination || "Cox's Bazar"}</div>
+                          <div className="text-[10px] text-gray-400 font-semibold">{coachType}</div>
                         </td>
-                        <td className="py-4 px-4 text-xs text-gray-500">
-                          {new Date(ticket.createdAt).toLocaleDateString('en-GB')}
+                        <td className="py-4 px-4 text-xs text-gray-500 font-semibold">
+                          {dateStr}
                         </td>
                         <td className="py-4 px-4 text-right">
                           <Link
-                            href={`/ticket/${ticket.bookingRef}`}
+                            href={`/ticket/${ticket.bookingRef || ticket.id}`}
                             target="_blank"
-                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-100 hover:bg-[#E31B23] hover:text-white text-gray-700 font-bold text-xs rounded-lg transition-colors"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-[#E31B23] hover:text-white text-gray-700 font-bold text-xs rounded-lg transition-colors shadow-2xs"
                           >
                             <Printer size={14} /> Print Ticket <ExternalLink size={12} />
                           </Link>
