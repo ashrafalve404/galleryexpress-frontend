@@ -31,6 +31,7 @@ function formatTk(amount: number) {
 export default function CounterAgentDashboard() {
   const router = useRouter();
   const { clearAuth } = useAuthStore();
+  const { lang } = useLanguageStore();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -93,7 +94,6 @@ export default function CounterAgentDashboard() {
     );
   }
 
-  const { lang } = useLanguageStore();
 
   const agent = stats?.agent || { id: '', firstName: 'Agent', lastName: '', email: '' };
   const counter = stats?.counter || null;
