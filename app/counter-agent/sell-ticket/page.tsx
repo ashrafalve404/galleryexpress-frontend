@@ -288,13 +288,6 @@ export default function CounterAgentSellTicketPage() {
           </div>
         </div>
 
-        <div className="bg-white p-6 sm:p-8 rounded-3xl border border-gray-200/80 shadow-sm space-y-2">
-          <h1 className="text-2xl font-black text-gray-900">Sell Ticket to Passenger</h1>
-          <p className="text-xs text-gray-500">
-            Issue passenger tickets directly from your active bulk ticket package. Passenger pays you cash directly.
-          </p>
-        </div>
-
         {remainingBulk <= 0 ? (
           <div className="bg-amber-50 border border-amber-200 text-amber-800 p-6 rounded-3xl text-center space-y-3">
             <AlertCircle className="w-10 h-10 text-amber-600 mx-auto" />
@@ -309,13 +302,21 @@ export default function CounterAgentSellTicketPage() {
               <BsFillTicketPerforatedFill size={16} /> Buy Bulk Tickets
             </Link>
           </div>
-        ) : (
-          <form onSubmit={handleSellTicket} className="space-y-6">
+        ) : !selectedSchedule ? (
+          /* STEP 1: BUS SCHEDULE LIST & SEARCH FILTER SUB-PAGE */
+          <div className="space-y-6 animate-fade-in">
+            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-gray-200/80 shadow-sm space-y-2">
+              <h1 className="text-2xl font-black text-gray-900">Sell Ticket to Passenger</h1>
+              <p className="text-xs text-gray-500">
+                Step 1: Select a bus schedule to view real-time seat availability and issue passenger tickets.
+              </p>
+            </div>
+
             {/* Filter & Search Toolbar */}
             <div className="bg-white p-5 rounded-3xl border border-gray-200/80 shadow-xs space-y-3">
               <div className="flex items-center justify-between border-b border-gray-100 pb-2">
                 <span className="text-xs font-black text-gray-900 uppercase tracking-wider flex items-center gap-1.5">
-                  <SlidersHorizontal size={16} className="text-[#E31B23]" /> Filter & Search Schedules
+                  <SlidersHorizontal size={16} className="text-[#E31B23]" /> Search & Filter Bus Schedules
                 </span>
                 <span className="text-xs font-bold text-gray-500">
                   Showing {filteredSchedules.length} of {schedules.length} bus(es)
@@ -374,10 +375,10 @@ export default function CounterAgentSellTicketPage() {
               </div>
             </div>
 
-            {/* Step 1: Choose Bus Schedule Card */}
+            {/* Schedule Cards List */}
             <div className="space-y-4">
               <h2 className="text-sm font-black text-gray-900 uppercase tracking-wider flex items-center gap-2 px-1">
-                <Bus size={18} className="text-[#E31B23]" /> 1. Select Bus Schedule ({filteredSchedules.length} Available)
+                <Bus size={18} className="text-[#E31B23]" /> Available Bus Schedules ({filteredSchedules.length})
               </h2>
 
               {loadingSchedules ? (
@@ -403,15 +404,10 @@ export default function CounterAgentSellTicketPage() {
               ) : (
                 <div className="space-y-4">
                   {filteredSchedules.map((sched) => {
-                    const isSelected = selectedSchedule?.id === sched.id;
                     return (
                       <div
                         key={sched.id}
-                        className={`bg-white border rounded-3xl p-5 sm:p-6 transition-all space-y-4 ${
-                          isSelected
-                            ? 'border-[#E31B23] shadow-lg ring-2 ring-[#E31B23]/20 bg-red-50/10'
-                            : 'border-gray-200/80 shadow-xs hover:border-gray-300 hover:shadow-md'
-                        }`}
+                        className="bg-white border border-gray-200/80 rounded-3xl p-5 sm:p-6 transition-all space-y-4 shadow-xs hover:border-gray-300 hover:shadow-md"
                       >
                         {/* Coach Header: Name, Type Tag, Rating */}
                         <div className="flex items-center justify-between">
@@ -473,7 +469,7 @@ export default function CounterAgentSellTicketPage() {
                           </div>
                         </div>
 
-                        {/* Card Footer: Seats Left + Price + Book / Select Seats Button */}
+                        {/* Card Footer: Seats Left + Price + Book Button */}
                         <div className="flex items-center justify-between pt-2 border-t border-gray-50 flex-wrap gap-3">
                           <div>
                             <span className="text-sm font-black text-emerald-600">
@@ -495,13 +491,9 @@ export default function CounterAgentSellTicketPage() {
                             <button
                               type="button"
                               onClick={() => handleSelectSchedule(sched)}
-                              className={`px-6 py-3 rounded-2xl font-black text-xs sm:text-sm flex items-center gap-1.5 transition-all shadow-md active:scale-95 ${
-                                isSelected
-                                  ? 'bg-[#111111] text-white ring-2 ring-[#E31B23]'
-                                  : 'bg-[#E31B23] hover:bg-[#c9121a] text-white shadow-red-600/20'
-                              }`}
+                              className="px-6 py-3 bg-[#E31B23] hover:bg-[#c9121a] text-white rounded-2xl font-black text-xs sm:text-sm flex items-center gap-1.5 transition-all shadow-md hover:shadow-red-600/20 active:scale-95"
                             >
-                              {isSelected ? 'Selected' : 'Book'} <HiChevronRight size={16} />
+                              Book <HiChevronRight size={16} />
                             </button>
                           </div>
                         </div>
@@ -511,52 +503,100 @@ export default function CounterAgentSellTicketPage() {
                 </div>
               )}
             </div>
+          </div>
+        ) : (
+          /* STEP 2: DEDICATED SEAT MAP & PASSENGER INFORMATION SUB-PAGE */
+          <form onSubmit={handleSellTicket} className="space-y-6 animate-fade-in">
+            {/* Sub-Page Top Navigation & Selected Bus Summary Banner */}
+            <div className="bg-white p-6 rounded-3xl border border-gray-200/80 shadow-sm space-y-4">
+              <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedSchedule(null);
+                    setSelectedSeats([]);
+                  }}
+                  className="inline-flex items-center gap-2 text-xs font-bold text-[#E31B23] hover:text-[#c9121a] bg-red-50 hover:bg-red-100 px-4 py-2 rounded-xl transition-colors"
+                >
+                  <ArrowLeft size={16} /> Change Bus / Back to Schedules List
+                </button>
+                <span className="text-xs font-extrabold text-gray-500 uppercase tracking-wider">
+                  Step 2 of 2: Seat & Passenger Info
+                </span>
+              </div>
 
-            {/* Step 2: Select Seat(s) using official SeatMap component */}
-            {selectedSchedule && (
-              <div className="bg-white p-6 rounded-3xl border border-gray-200/80 shadow-xs space-y-6 animate-fade-in">
-                <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-                  <div>
-                    <h2 className="text-sm font-black text-gray-900 uppercase tracking-wider flex items-center gap-2">
-                      <BsFillTicketPerforatedFill size={18} className="text-[#E31B23]" /> 2. Select Seat(s) for{' '}
-                      <span className="text-[#E31B23]">
-                        {selectedSchedule.coach?.name || 'Arabian Express'} ({selectedSchedule.departureTime})
-                      </span>
-                    </h2>
-                    <p className="text-xs text-gray-500 mt-0.5">
-                      Gray seats are already booked by passengers/customers. Click available seats to select.
-                    </p>
+              {/* Selected Bus Overview Banner */}
+              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-gray-50 p-4 rounded-2xl border border-gray-200/80">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-base font-black text-gray-900">
+                      {selectedSchedule.coach?.name || 'Arabian Express Hino AC 01'}
+                    </span>
+                    <span className="text-[10px] bg-red-50 text-[#E31B23] px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider">
+                      {selectedSchedule.coach?.coachType || 'AC Executive'}
+                    </span>
                   </div>
-                  <span className="text-xs font-bold text-gray-600 bg-gray-100 px-3 py-1.5 rounded-xl">
-                    Selected:{' '}
-                    <strong className="text-[#E31B23] font-black">
-                      {selectedSeats.map((s) => s.seatNumber).join(', ') || 'None'}
-                    </strong>
+                  <p className="text-xs font-bold text-gray-700 flex items-center gap-2">
+                    <span>
+                      {selectedSchedule.route?.origin} ➔ {selectedSchedule.route?.destination}
+                    </span>
+                    <span>•</span>
+                    <span className="text-[#E31B23]">
+                      📅 {selectedSchedule.departureDate ? formatDate(selectedSchedule.departureDate, 'dd MMM yyyy') : 'Today'}
+                    </span>
+                    <span>•</span>
+                    <span>🕒 {formatTime(selectedSchedule.departureTime)}</span>
+                  </p>
+                </div>
+                <div className="text-right shrink-0">
+                  <span className="text-xs text-gray-500 font-semibold block">Ticket Price</span>
+                  <span className="text-xl font-black text-[#E31B23]">
+                    ৳{(selectedSchedule.fare || 2000).toLocaleString('en-BD')} / seat
                   </span>
                 </div>
-
-                {loadingSeats ? (
-                  <div className="py-12 flex items-center justify-center gap-2 text-xs text-gray-500">
-                    <Loader2 className="w-6 h-6 text-[#E31B23] animate-spin" /> Loading interactive bus layout...
-                  </div>
-                ) : (
-                  <div className="max-w-xl mx-auto py-2">
-                    <SeatMap
-                      seats={scheduleSeats}
-                      selectedSeats={selectedSeats}
-                      onToggle={handleToggleSeat}
-                      maxSeats={stats?.totalTicketsRemaining || 10}
-                    />
-                  </div>
-                )}
               </div>
-            )}
+            </div>
 
-            {/* Step 3: Passenger Details */}
-            {selectedSeats.length > 0 && selectedSchedule && (
-              <div className="bg-white p-6 rounded-3xl border border-gray-200/80 shadow-xs space-y-4 animate-fade-in">
+            {/* Seat Map Sub-Page Component */}
+            <div className="bg-white p-6 rounded-3xl border border-gray-200/80 shadow-xs space-y-6">
+              <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+                <div>
+                  <h2 className="text-sm font-black text-gray-900 uppercase tracking-wider flex items-center gap-2">
+                    <BsFillTicketPerforatedFill size={18} className="text-[#E31B23]" /> Live Interactive Seat Map
+                  </h2>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    Gray seats are already booked by passengers/customers. Click available seats to select.
+                  </p>
+                </div>
+                <span className="text-xs font-bold text-gray-600 bg-gray-100 px-3 py-1.5 rounded-xl">
+                  Selected Seats:{' '}
+                  <strong className="text-[#E31B23] font-black">
+                    {selectedSeats.map((s) => s.seatNumber).join(', ') || 'None'}
+                  </strong>
+                </span>
+              </div>
+
+              {loadingSeats ? (
+                <div className="py-12 flex items-center justify-center gap-2 text-xs text-gray-500">
+                  <Loader2 className="w-6 h-6 text-[#E31B23] animate-spin" /> Loading seat map layout...
+                </div>
+              ) : (
+                <div className="max-w-xl mx-auto py-2">
+                  <SeatMap
+                    seats={scheduleSeats}
+                    selectedSeats={selectedSeats}
+                    onToggle={handleToggleSeat}
+                    maxSeats={stats?.totalTicketsRemaining || 10}
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Passenger Information Form */}
+            {selectedSeats.length > 0 && (
+              <div className="bg-white p-6 rounded-3xl border border-gray-200/80 shadow-xs space-y-4">
                 <h2 className="text-sm font-black text-gray-900 uppercase tracking-wider flex items-center gap-2">
-                  <User size={18} className="text-[#E31B23]" /> 3. Enter Passenger Information
+                  <User size={18} className="text-[#E31B23]" /> Passenger Information
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -636,7 +676,7 @@ export default function CounterAgentSellTicketPage() {
                   <div className="text-right">
                     <span className="text-xs text-gray-500 font-medium block">Total Cash Collected:</span>
                     <span className="text-xl font-black text-[#E31B23]">
-                      ৳{(selectedSchedule.fare || 2000) * selectedSeats.length}
+                      ৳{((selectedSchedule.fare || 2000) * selectedSeats.length).toLocaleString('en-BD')}
                     </span>
                   </div>
                 </div>
@@ -692,6 +732,7 @@ export default function CounterAgentSellTicketPage() {
                 type="button"
                 onClick={() => {
                   setSuccessBooking(null);
+                  setSelectedSchedule(null);
                   setSelectedSeats([]);
                   setPassengerName('');
                   setPassengerPhone('');
