@@ -108,69 +108,76 @@ export default function CounterAgentDashboard() {
   return (
     <div className="p-6 sm:p-8 space-y-8">
 
-        {/* Top Header Section (Outside Card View) */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="space-y-2">
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-gray-900">
+        {/* Welcome Header Banner (Dark Card View) */}
+        <div className="bg-gradient-to-r from-[#111111] via-[#1a1a1a] to-[#222222] text-white p-5 sm:p-8 rounded-3xl border border-gray-800 shadow-xl relative overflow-hidden">
+          <div className="absolute right-0 top-0 w-80 h-80 bg-[#E31B23]/10 rounded-full blur-3xl pointer-events-none" />
+          
+          <div className="space-y-3 z-10 relative">
+            <h1 className="text-xl sm:text-3xl font-black tracking-tight text-white">
               Welcome, {agent.firstName}! 👋
             </h1>
 
-            <div className="flex flex-wrap items-center gap-2.5">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               {counter ? (
-                <div className="inline-flex items-center gap-2 bg-white border border-gray-200 px-3.5 py-1.5 rounded-xl text-xs text-gray-700 font-semibold shadow-2xs">
-                  <RiStore3Fill size={16} className="text-[#E31B23]" />
-                  <span>Assigned Counter: <strong className="text-gray-900">{counter.name}</strong></span>
-                  {counter.location && (
-                    <span className="text-gray-400 text-[11px]">({counter.location})</span>
-                  )}
+                <div className="inline-flex items-start gap-2.5 bg-white/5 border border-white/10 px-3.5 py-2.5 rounded-2xl text-xs text-gray-200">
+                  <RiStore3Fill size={17} className="text-[#E31B23] shrink-0 mt-0.5" />
+                  <div className="leading-snug">
+                    <span className="text-gray-400 font-semibold block sm:inline">Assigned Counter: </span>
+                    <strong className="text-white font-extrabold">{counter.name}</strong>
+                    {counter.location && (
+                      <span className="text-gray-300 block sm:inline sm:ml-1 text-[11px] sm:text-xs">
+                        ({counter.location})
+                      </span>
+                    )}
+                  </div>
                 </div>
               ) : (
-                <div className="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-800 px-3.5 py-1.5 rounded-xl text-xs font-bold">
-                  <RiErrorWarningFill size={16} className="text-amber-600 shrink-0" />
+                <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 text-amber-300 px-3.5 py-2 rounded-xl text-xs font-bold">
+                  <RiErrorWarningFill size={16} className="shrink-0 text-amber-400" />
                   <span>You have not selected a counter yet — </span>
-                  <Link href="/counter-agent/select-counter" className="underline hover:text-amber-900">
+                  <Link href="/counter-agent/select-counter" className="underline hover:text-amber-200">
                     Select Counter
                   </Link>
                 </div>
               )}
 
               {agent.referralCode && (
-                <div className="inline-flex items-center gap-2 bg-red-50 border border-red-200 px-3.5 py-1.5 rounded-xl text-xs font-bold text-gray-800 shadow-2xs">
-                  <span className="text-gray-500 font-medium">Referral Code:</span>
-                  <strong className="text-[#E31B23] font-mono font-black">{agent.referralCode}</strong>
+                <div className="inline-flex items-center gap-2 bg-[#E31B23]/10 border border-[#E31B23]/30 px-3.5 py-2 rounded-2xl text-xs font-bold text-white">
+                  <span className="text-gray-400 font-medium">Referral Code:</span>
+                  <strong className="text-[#E31B23] font-black tracking-wider text-xs sm:text-sm">{agent.referralCode}</strong>
                   <button
                     onClick={() => handleCopyRefCode(agent.referralCode!)}
-                    className="p-1 hover:bg-red-100 rounded-md text-gray-500 hover:text-gray-800 transition-colors"
+                    className="p-1 hover:bg-white/10 rounded-lg text-gray-300 hover:text-white transition-colors"
                     title="Copy referral code"
                   >
-                    {copied ? <Check size={14} className="text-emerald-600" /> : <Copy size={14} />}
+                    {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
                   </button>
                 </div>
               )}
             </div>
           </div>
+        </div>
 
-          {/* 3 Quick Action Buttons (Outside Card View) */}
-          <div className="flex flex-wrap items-center gap-2.5">
-            <Link
-              href="/counter-agent/sell-ticket"
-              className="px-5 py-3 bg-[#E31B23] hover:bg-[#c9121a] text-white font-extrabold text-xs sm:text-sm rounded-xl transition-all shadow-md flex items-center justify-center gap-2 active:scale-95"
-            >
-              <BsFillTicketPerforatedFill size={19} /> Sell Ticket
-            </Link>
-            <Link
-              href="/counter-agent/sold-tickets"
-              className="px-4.5 py-3 bg-white hover:bg-gray-50 text-gray-800 border border-gray-200 font-extrabold text-xs sm:text-sm rounded-xl transition-all shadow-2xs flex items-center justify-center gap-2 active:scale-95"
-            >
-              <BsFillTicketPerforatedFill size={19} className="text-[#E31B23]" /> My Sold Tickets
-            </Link>
-            <Link
-              href="/counter-agent/buy-bulk"
-              className="px-4.5 py-3 bg-white hover:bg-gray-50 text-gray-800 border border-gray-200 font-extrabold text-xs sm:text-sm rounded-xl transition-all shadow-2xs flex items-center justify-center gap-2 active:scale-95"
-            >
-              <RiShoppingBag3Fill size={19} className="text-purple-600" /> My Bulk Orders
-            </Link>
-          </div>
+        {/* 3 Quick Action Buttons (Outside Card View) */}
+        <div className="flex flex-wrap items-center gap-2.5 sm:gap-3.5">
+          <Link
+            href="/counter-agent/sell-ticket"
+            className="px-5 py-3 bg-[#E31B23] hover:bg-[#c9121a] text-white font-extrabold text-xs sm:text-sm rounded-xl sm:rounded-2xl transition-all shadow-md flex items-center justify-center gap-2 active:scale-95"
+          >
+            <BsFillTicketPerforatedFill size={19} /> Sell Ticket
+          </Link>
+          <Link
+            href="/counter-agent/sold-tickets"
+            className="px-4.5 py-3 bg-white hover:bg-gray-50 text-gray-800 border border-gray-200 font-extrabold text-xs sm:text-sm rounded-xl sm:rounded-2xl transition-all shadow-2xs flex items-center justify-center gap-2 active:scale-95"
+          >
+            <BsFillTicketPerforatedFill size={19} className="text-[#E31B23]" /> My Sold Tickets
+          </Link>
+          <Link
+            href="/counter-agent/buy-bulk"
+            className="px-4.5 py-3 bg-white hover:bg-gray-50 text-gray-800 border border-gray-200 font-extrabold text-xs sm:text-sm rounded-xl sm:rounded-2xl transition-all shadow-2xs flex items-center justify-center gap-2 active:scale-95"
+          >
+            <RiShoppingBag3Fill size={19} className="text-purple-600" /> My Bulk Orders
+          </Link>
         </div>
 
         {/* 5 Stat Cards Grid */}
