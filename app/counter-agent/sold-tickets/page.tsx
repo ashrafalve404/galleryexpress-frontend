@@ -118,7 +118,7 @@ export default function CounterAgentSoldTicketsPage() {
                 <tbody className="divide-y divide-gray-100 text-gray-700">
                   {filtered.map((ticket) => {
                     const passenger = ticket.passengers?.[0];
-                    const seats = ticket.bookingSeats?.map((s: any) => s.seatId).join(', ') || '—';
+                    const seats = ticket.bookingSeats?.map((s: any) => s.seat?.seatNumber || s.seatId).join(', ') || '—';
                     const route = ticket.schedule?.route;
 
                     return (
