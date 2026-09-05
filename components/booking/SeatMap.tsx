@@ -224,15 +224,15 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
       <div className="h-1.5 bg-gradient-to-r from-sky-400/30 via-sky-300/50 to-sky-400/30 border-b border-sky-100" />
 
       {/* 1+2 Seat Matrix Grid */}
-      <div className="p-6 bg-slate-50/50 space-y-4">
+      <div className="px-4 py-6 sm:px-6 bg-slate-50/50 space-y-3.5">
         {rows.map(([rowNum, items]) => {
           const leftCol = items.find((i) => i.expected.col === 1);
           const rightCols = items.filter((i) => i.expected.col === 2 || i.expected.col === 3);
 
           return (
-            <div key={rowNum} className="flex items-center justify-between gap-4 sm:gap-8 max-w-xs mx-auto">
+            <div key={rowNum} className="flex items-center justify-center gap-2 sm:gap-3 max-w-[250px] mx-auto">
               {/* Left Column (Single Seat) */}
-              <div className="w-12 flex justify-center">
+              <div className="w-10 sm:w-11 flex justify-center shrink-0">
                 {leftCol ? (
                   <SeatComponent
                     seat={leftCol.seat}
@@ -241,19 +241,19 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
                     onToggle={handleToggle}
                   />
                 ) : (
-                  <div className="w-12 h-14" />
+                  <div className="w-10 sm:w-11 h-14" />
                 )}
               </div>
 
               {/* Center Aisle Space */}
-              <div className="flex-1 flex items-center justify-center">
-                <span className="text-[10px] text-slate-300 font-black uppercase tracking-widest select-none">
+              <div className="flex-1 flex items-center justify-center min-w-[24px]">
+                <span className="text-[9px] text-slate-300 font-black uppercase tracking-widest select-none">
                   Aisle
                 </span>
               </div>
 
               {/* Right Column (Double Seats) */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
                 {rightCols.map((item) => (
                   <SeatComponent
                     key={item.expected.label}

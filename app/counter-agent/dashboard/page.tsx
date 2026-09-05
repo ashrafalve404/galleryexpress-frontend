@@ -18,6 +18,7 @@ import {
   RiRefreshLine,
   RiBuilding2Fill,
 } from 'react-icons/ri';
+import { BsFillTicketPerforatedFill } from 'react-icons/bs';
 import { Loader2 } from 'lucide-react';
 import { counterAgentApi, type DashboardStats } from '@/lib/api/counterAgent';
 import { useAuthStore } from '@/lib/store/authStore';
@@ -149,7 +150,7 @@ export default function CounterAgentDashboard() {
                 Total Tickets Bought
               </span>
               <div className="p-1.5 sm:p-2 bg-blue-50 text-blue-600 rounded-xl">
-                <RiTicket2Fill size={19} />
+                <BsFillTicketPerforatedFill size={19} />
               </div>
             </div>
             <div>

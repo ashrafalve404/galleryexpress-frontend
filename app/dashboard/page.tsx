@@ -32,6 +32,7 @@ import {
   RiUser3Fill,
   RiNotification3Fill,
 } from 'react-icons/ri';
+import { BsFillTicketPerforatedFill } from 'react-icons/bs';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { UserNotificationBell } from '@/components/layout/UserNotificationBell';
@@ -567,7 +568,7 @@ export default function DashboardPage() {
           href="/dashboard"
           className="flex flex-col items-center gap-0.5 py-1 px-3 text-[#E31B23] font-black"
         >
-          <RiTicket2Fill size={20} className="text-[#E31B23]" />
+          <BsFillTicketPerforatedFill size={20} className="text-[#E31B23]" />
           <span className="text-[10px] font-black">My Trips</span>
         </Link>
 

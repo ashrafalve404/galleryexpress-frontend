@@ -115,18 +115,18 @@ export default function CounterAgentLayout({
       <aside className="hidden md:flex w-64 bg-[#111111] text-white flex-col justify-between border-r border-white/10 sticky top-0 h-screen shrink-0 z-30">
         <div>
           {/* Sidebar Header Logo */}
-          <div className="p-5 border-b border-white/10 space-y-3">
-            <Link href="/" className="block">
-              <div className="bg-white py-2.5 px-4 rounded-xl shadow-sm border border-white/20 flex items-center justify-center w-full">
+          <div className="p-5 border-b border-white/10 flex flex-col items-start gap-2.5">
+            <Link href="/" className="inline-block hover:opacity-95 transition-opacity">
+              <div className="bg-white py-2 px-3.5 rounded-xl shadow-sm border border-white/20 flex items-center justify-center">
                 <img
                   src="/ticketdrkrlogo.png"
                   alt="Ticket Dorkar"
-                  className="h-8 w-auto object-contain max-w-full"
+                  className="h-9 w-auto object-contain"
                 />
               </div>
             </Link>
             <div>
-              <span className="w-full bg-[#E31B23] text-white text-[10px] font-black uppercase tracking-wider py-1.5 px-3 rounded-xl text-center block shadow-xs">
+              <span className="bg-[#E31B23] text-white text-[10px] font-black uppercase tracking-wider py-1 px-2.5 rounded-md inline-block shadow-xs">
                 Counter Agent Portal
               </span>
             </div>
