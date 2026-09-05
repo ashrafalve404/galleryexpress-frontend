@@ -23,6 +23,9 @@ import {
 import { BsFillTicketPerforatedFill } from 'react-icons/bs';
 import { Loader2 } from 'lucide-react';
 import { useAuthStore } from '@/lib/store/authStore';
+import { LanguageToggle } from '@/components/common/LanguageToggle';
+import { useLanguageStore } from '@/lib/store/languageStore';
+import { getTranslation, TranslationKey } from '@/lib/utils/translations';
 
 export default function CounterAgentLayout({
   children,
@@ -81,16 +84,18 @@ export default function CounterAgentLayout({
     );
   }
 
+  const { lang } = useLanguageStore();
+
   const navItems = [
-    { label: 'Dashboard', href: '/counter-agent/dashboard', icon: RiDashboardFill },
-    { label: 'My Ticket', href: '/counter-agent/sold-tickets', icon: BsFillTicketPerforatedFill },
-    { label: 'My Bulk Ticket', href: '/counter-agent/buy-bulk', icon: RiStackFill },
-    { label: 'My Counter', href: '/counter-agent/select-counter', icon: RiStore3Fill },
-    { label: 'Commission', href: '/counter-agent/commissions', icon: RiPercentFill },
-    { label: 'Statement', href: '/counter-agent/statements', icon: RiFileTextFill },
-    { label: 'My Profile', href: '/counter-agent/profile', icon: RiUser3Fill },
-    { label: 'Referral', href: '/counter-agent/referrals', icon: RiShareForwardFill, badge: 'Earn' },
-    { label: 'Setting', href: '/counter-agent/settings', icon: RiSettings4Fill },
+    { label: getTranslation(lang, 'dashboard', 'Dashboard'), href: '/counter-agent/dashboard', icon: RiDashboardFill },
+    { label: getTranslation(lang, 'myTicket', 'My Ticket'), href: '/counter-agent/sold-tickets', icon: BsFillTicketPerforatedFill },
+    { label: getTranslation(lang, 'myBulkTicket', 'My Bulk Ticket'), href: '/counter-agent/buy-bulk', icon: RiStackFill },
+    { label: getTranslation(lang, 'myCounter', 'My Counter'), href: '/counter-agent/select-counter', icon: RiStore3Fill },
+    { label: getTranslation(lang, 'commission', 'Commission'), href: '/counter-agent/commissions', icon: RiPercentFill },
+    { label: getTranslation(lang, 'statement', 'Statement'), href: '/counter-agent/statements', icon: RiFileTextFill },
+    { label: getTranslation(lang, 'myProfile', 'My Profile'), href: '/counter-agent/profile', icon: RiUser3Fill },
+    { label: getTranslation(lang, 'referral', 'Referral'), href: '/counter-agent/referrals', icon: RiShareForwardFill, badge: getTranslation(lang, 'earn', 'Earn') },
+    { label: getTranslation(lang, 'setting', 'Setting'), href: '/counter-agent/settings', icon: RiSettings4Fill },
   ];
 
   return (
@@ -100,21 +105,24 @@ export default function CounterAgentLayout({
         <div>
           {/* Sidebar Header Logo */}
           <div className="p-5 border-b border-white/10 flex flex-col items-start gap-2.5">
-            <Link href="/" className="inline-block hover:opacity-95 transition-opacity">
-              <div className="bg-white py-2 px-3.5 rounded-xl shadow-sm border border-white/20 flex items-center justify-center">
-                <img
-                  src="/ticketdrkrlogo.png"
-                  alt="Ticket Dorkar"
-                  className="h-9 w-auto object-contain"
-                />
-              </div>
-            </Link>
+            <div className="w-full flex items-center justify-between gap-2">
+              <Link href="/" className="inline-block hover:opacity-95 transition-opacity">
+                <div className="bg-white py-1.5 px-3 rounded-xl shadow-sm border border-white/20 flex items-center justify-center">
+                  <img
+                    src="/ticketdrkrlogo.png"
+                    alt="Ticket Dorkar"
+                    className="h-8 w-auto object-contain"
+                  />
+                </div>
+              </Link>
+              <LanguageToggle variant="dark" />
+            </div>
             <div className="flex items-center gap-2">
               <span className="bg-[#E31B23] text-white text-[10px] font-black uppercase tracking-wider py-1 px-2.5 rounded-md inline-block shadow-xs">
-                Agent Portal
+                {getTranslation(lang, 'agentPortal', 'Agent Portal')}
               </span>
               <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[9px] font-extrabold py-0.5 px-2 rounded-full">
-                Active
+                {getTranslation(lang, 'active', 'Active')}
               </span>
             </div>
           </div>
@@ -126,7 +134,7 @@ export default function CounterAgentLayout({
               className="w-full bg-[#E31B23] hover:bg-[#c9121a] text-white font-extrabold text-xs py-3 px-4 rounded-xl shadow-md flex items-center justify-center gap-2 transition-all active:scale-98 group"
             >
               <RiAddCircleFill size={18} className="group-hover:rotate-90 transition-transform duration-200" />
-              <span>Sell New Ticket</span>
+              <span>{getTranslation(lang, 'sellNewTicket', 'Sell New Ticket')}</span>
             </Link>
           </div>
 
@@ -182,7 +190,7 @@ export default function CounterAgentLayout({
 
             <button
               onClick={handleLogout}
-              title="Sign Out"
+              title={getTranslation(lang, 'logout', 'Logout')}
               className="p-2.5 rounded-xl bg-red-500/10 hover:bg-[#E31B23] text-red-400 hover:text-white transition-all shrink-0 border border-red-500/20 shadow-2xs"
             >
               <RiLogoutBoxRFill size={18} />
@@ -200,6 +208,10 @@ export default function CounterAgentLayout({
         >
           <RiMenu3Fill size={22} />
         </button>
+
+        <div className="flex items-center gap-2">
+          <LanguageToggle variant="dark" />
+        </div>
       </header>
 
       {/* Mobile Side Drawer (Sliding Left-to-Right) */}

@@ -21,6 +21,8 @@ import { Loader2, Copy, Check } from 'lucide-react';
 import { toast } from 'sonner';
 import { counterAgentApi, type DashboardStats } from '@/lib/api/counterAgent';
 import { useAuthStore } from '@/lib/store/authStore';
+import { useLanguageStore } from '@/lib/store/languageStore';
+import { getTranslation } from '@/lib/utils/translations';
 
 function formatTk(amount: number) {
   return '৳' + Number(amount).toLocaleString('en-BD');
@@ -91,6 +93,8 @@ export default function CounterAgentDashboard() {
     );
   }
 
+  const { lang } = useLanguageStore();
+
   const {
     agent,
     counter,
@@ -114,7 +118,7 @@ export default function CounterAgentDashboard() {
           
           <div className="space-y-3 z-10 relative">
             <h1 className="text-xl sm:text-3xl font-black tracking-tight text-white">
-              Welcome, {agent.firstName}! 👋
+              {getTranslation(lang, 'welcome', 'Welcome')}, {agent.firstName}! 👋
             </h1>
 
             <div className="flex flex-wrap items-center gap-2 sm:gap-3">
@@ -122,7 +126,7 @@ export default function CounterAgentDashboard() {
                 <div className="inline-flex items-start gap-2.5 bg-white/5 border border-white/10 px-3.5 py-2.5 rounded-2xl text-xs text-gray-200">
                   <RiStore3Fill size={17} className="text-[#E31B23] shrink-0 mt-0.5" />
                   <div className="leading-snug">
-                    <span className="text-gray-400 font-semibold block sm:inline">Assigned Counter: </span>
+                    <span className="text-gray-400 font-semibold block sm:inline">{getTranslation(lang, 'assignedCounter', 'Assigned Counter')}: </span>
                     <strong className="text-white font-extrabold">{counter.name}</strong>
                     {counter.location && (
                       <span className="text-gray-300 block sm:inline sm:ml-1 text-[11px] sm:text-xs">
@@ -143,7 +147,7 @@ export default function CounterAgentDashboard() {
 
               {agent.referralCode && (
                 <div className="inline-flex items-center gap-2 bg-[#E31B23]/10 border border-[#E31B23]/30 px-3.5 py-2 rounded-2xl text-xs font-bold text-white">
-                  <span className="text-gray-400 font-medium">Referral Code:</span>
+                  <span className="text-gray-400 font-medium">{getTranslation(lang, 'referralCode', 'Referral Code')}:</span>
                   <strong className="text-[#E31B23] font-black tracking-wider text-xs sm:text-sm">{agent.referralCode}</strong>
                   <button
                     onClick={() => handleCopyRefCode(agent.referralCode!)}
@@ -164,19 +168,19 @@ export default function CounterAgentDashboard() {
             href="/counter-agent/sell-ticket"
             className="w-full sm:w-auto px-5 py-3.5 sm:py-3 bg-[#E31B23] hover:bg-[#c9121a] text-white font-extrabold text-xs sm:text-sm rounded-2xl transition-all shadow-md flex items-center justify-center gap-2.5 active:scale-98"
           >
-            <BsFillTicketPerforatedFill size={20} /> Sell Ticket
+            <BsFillTicketPerforatedFill size={20} /> {getTranslation(lang, 'sellTicket', 'Sell Ticket')}
           </Link>
           <Link
             href="/counter-agent/sold-tickets"
             className="w-full sm:w-auto px-5 py-3.5 sm:py-3 bg-white hover:bg-gray-50 text-gray-800 border border-gray-200/90 font-extrabold text-xs sm:text-sm rounded-2xl transition-all shadow-2xs flex items-center justify-center gap-2.5 active:scale-98"
           >
-            <BsFillTicketPerforatedFill size={20} className="text-[#E31B23]" /> My Sold Tickets
+            <BsFillTicketPerforatedFill size={20} className="text-[#E31B23]" /> {getTranslation(lang, 'mySoldTickets', 'My Sold Tickets')}
           </Link>
           <Link
             href="/counter-agent/buy-bulk"
             className="w-full sm:w-auto px-5 py-3.5 sm:py-3 bg-white hover:bg-gray-50 text-gray-800 border border-gray-200/90 font-extrabold text-xs sm:text-sm rounded-2xl transition-all shadow-2xs flex items-center justify-center gap-2.5 active:scale-98"
           >
-            <RiShoppingBag3Fill size={20} className="text-purple-600" /> My Bulk Orders
+            <RiShoppingBag3Fill size={20} className="text-purple-600" /> {getTranslation(lang, 'myBulkOrders', 'My Bulk Orders')}
           </Link>
         </div>
 
@@ -185,7 +189,7 @@ export default function CounterAgentDashboard() {
           <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
             <div className="flex items-center justify-between mb-3">
               <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-500">
-                Total Tickets Bought
+                {getTranslation(lang, 'totalTicketsBought', 'Total Tickets Bought')}
               </span>
               <div className="p-1.5 sm:p-2 bg-blue-50 text-blue-600 rounded-xl">
                 <BsFillTicketPerforatedFill size={19} />
@@ -202,7 +206,7 @@ export default function CounterAgentDashboard() {
           <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
             <div className="flex items-center justify-between mb-3">
               <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-500">
-                Remaining Tickets
+                {getTranslation(lang, 'remainingTickets', 'Remaining Tickets')}
               </span>
               <div className="p-1.5 sm:p-2 bg-purple-50 text-purple-600 rounded-xl">
                 <BsFillTicketPerforatedFill size={19} />
@@ -219,7 +223,7 @@ export default function CounterAgentDashboard() {
           <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
             <div className="flex items-center justify-between mb-3">
               <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-500">
-                Tickets Sold
+                {getTranslation(lang, 'ticketsSold', 'Tickets Sold')}
               </span>
               <div className="p-1.5 sm:p-2 bg-red-50 text-[#E31B23] rounded-xl">
                 <BsFillTicketPerforatedFill size={19} />
@@ -236,7 +240,7 @@ export default function CounterAgentDashboard() {
           <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
             <div className="flex items-center justify-between mb-3">
               <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-500">
-                Commission Earned
+                {getTranslation(lang, 'commissionEarned', 'Commission Earned')}
               </span>
               <div className="p-1.5 sm:p-2 bg-emerald-50 text-emerald-600 rounded-xl">
                 <RiFundsFill size={19} />
@@ -253,7 +257,7 @@ export default function CounterAgentDashboard() {
           <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col justify-between col-span-2 lg:col-span-1">
             <div className="flex items-center justify-between mb-3">
               <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-500">
-                Referral Earnings
+                {getTranslation(lang, 'referralEarnings', 'Referral Earnings')}
               </span>
               <div className="p-1.5 sm:p-2 bg-amber-50 text-amber-600 rounded-xl">
                 <RiWallet3Fill size={19} />
@@ -270,7 +274,7 @@ export default function CounterAgentDashboard() {
           <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
             <div className="flex items-center justify-between mb-3">
               <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-500">
-                Total Invested
+                {getTranslation(lang, 'totalInvested', 'Total Invested')}
               </span>
               <div className="p-1.5 sm:p-2 bg-red-50 text-[#E31B23] rounded-xl">
                 <RiWallet3Fill size={19} />

@@ -22,12 +22,15 @@ import { useAuthStore } from '@/lib/store/authStore';
 import { useLogout } from '@/lib/hooks/useAuth';
 import { ROUTES } from '@/lib/utils/constants';
 import { UserNotificationBell } from './UserNotificationBell';
+import { LanguageToggle } from '@/components/common/LanguageToggle';
+import { useLanguageStore } from '@/lib/store/languageStore';
+import { getTranslation, TranslationKey } from '@/lib/utils/translations';
 
-const navLinks = [
-  { href: ROUTES.HOME, label: 'Home', icon: RiHome5Fill },
-  { href: ROUTES.MY_BOOKING, label: 'My Booking', icon: BsFillTicketPerforatedFill },
-  { href: ROUTES.ABOUT, label: 'About Us', icon: RiInformationFill },
-  { href: ROUTES.CONTACT, label: 'Contact', icon: RiPhoneFill },
+const rawNavLinks: { href: string; key: TranslationKey; defaultLabel: string; icon: any }[] = [
+  { href: ROUTES.HOME, key: 'home', defaultLabel: 'Home', icon: RiHome5Fill },
+  { href: ROUTES.MY_BOOKING, key: 'myBooking', defaultLabel: 'My Booking', icon: BsFillTicketPerforatedFill },
+  { href: ROUTES.ABOUT, key: 'aboutUs', defaultLabel: 'About Us', icon: RiInformationFill },
+  { href: ROUTES.CONTACT, key: 'contact', defaultLabel: 'Contact', icon: RiPhoneFill },
 ];
 
 export function Header() {
@@ -38,6 +41,12 @@ export function Header() {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { user, isAuthenticated, isAdmin, isCounterAgent } = useAuthStore();
   const logout = useLogout();
+
+  const { lang } = useLanguageStore();
+  const navLinks = rawNavLinks.map(item => ({
+    ...item,
+    label: getTranslation(lang, item.key, item.defaultLabel)
+  }));
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -111,13 +120,16 @@ export function Header() {
             </div>
 
             {/* Right Side */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5 sm:gap-3">
+              {/* Language Switcher */}
+              <LanguageToggle />
+
               <a
                 href="tel:01826110036"
                 className="hidden lg:flex items-center gap-1.5 text-sm font-semibold text-gray-700 hover:text-[#E31B23] transition-colors"
               >
                 <RiPhoneFill className="text-[#E31B23] text-base" />
-                <span>Help</span>
+                <span>{getTranslation(lang, 'help', 'Help')}</span>
               </a>
 
               {isAuthenticated && user ? (
@@ -140,7 +152,7 @@ export function Header() {
                         className="flex items-center gap-2.5 px-4 py-2 text-sm font-semibold text-gray-700 hover:text-[#E31B23] transition-colors group"
                       >
                         <RiLayoutGridFill className="text-gray-400 group-hover:text-[#E31B23] transition-colors" />
-                        <span>{isCounterAgent() ? 'Agent Dashboard' : 'My Dashboard'}</span>
+                        <span>{isCounterAgent() ? getTranslation(lang, 'agentDashboard', 'Agent Dashboard') : getTranslation(lang, 'myDashboard', 'My Dashboard')}</span>
                       </Link>
                       {isAdmin() && (
                         <Link
@@ -148,7 +160,7 @@ export function Header() {
                           className="flex items-center gap-2.5 px-4 py-2 text-sm font-semibold text-gray-700 hover:text-[#E31B23] transition-colors group"
                         >
                           <RiShieldUserFill className="text-gray-400 group-hover:text-[#E31B23] transition-colors" />
-                          <span>Admin Panel</span>
+                          <span>{getTranslation(lang, 'adminPanel', 'Admin Panel')}</span>
                         </Link>
                       )}
                       <Link
@@ -156,7 +168,7 @@ export function Header() {
                         className="flex items-center gap-2.5 px-4 py-2 text-sm font-semibold text-gray-700 hover:text-[#E31B23] transition-colors group"
                       >
                         <BsFillTicketPerforatedFill className="text-gray-400 group-hover:text-[#E31B23] transition-colors" />
-                        <span>Find Booking</span>
+                        <span>{getTranslation(lang, 'myBooking', 'My Booking')}</span>
                       </Link>
                       <hr className="my-1.5 border-gray-100" />
                       <button
@@ -164,7 +176,7 @@ export function Header() {
                         className="w-full flex items-center gap-2.5 px-4 py-2 text-sm font-semibold text-rose-600 hover:text-rose-700 transition-colors group"
                       >
                         <RiLogoutBoxRFill className="text-rose-400 group-hover:text-rose-700 transition-colors" />
-                        <span>Logout</span>
+                        <span>{getTranslation(lang, 'logout', 'Logout')}</span>
                       </button>
                     </div>
                   )}
@@ -175,7 +187,7 @@ export function Header() {
                   className="flex items-center gap-1.5 sm:gap-2 bg-[#E31B23] hover:bg-[#C41920] text-white px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm hover:shadow-md active:scale-[0.98]"
                 >
                   <RiUser3Fill className="text-sm sm:text-base" />
-                  Sign In
+                  {getTranslation(lang, 'signIn', 'Sign In')}
                 </Link>
               )}
             </div>
