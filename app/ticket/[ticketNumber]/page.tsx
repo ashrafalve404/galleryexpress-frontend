@@ -75,20 +75,50 @@ export default function TicketPage() {
 
   return (
     <>
+      <style jsx global>{`
+        @media print {
+          @page {
+            margin: 10mm;
+            size: auto;
+          }
+          body {
+            background: #ffffff !important;
+          }
+          header, footer, nav, .print-hide {
+            display: none !important;
+          }
+          body * {
+            visibility: hidden !important;
+          }
+          #ticket-card, #ticket-card * {
+            visibility: visible !important;
+          }
+          #ticket-card {
+            position: absolute !important;
+            left: 50% !important;
+            top: 10px !important;
+            transform: translateX(-50%) !important;
+            width: 100% !important;
+            max-width: 500px !important;
+            box-shadow: none !important;
+            border: 1px solid #d1d5db !important;
+          }
+        }
+      `}</style>
       <Header />
       <main className="flex-1 pt-20 pb-10 bg-gray-50 min-h-screen">
         <div className="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Back & Print */}
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-6 print-hide">
             <Link href={ROUTES.MY_BOOKING} className="flex items-center gap-2 text-gray-600 hover:text-[#111111] text-sm">
               <ArrowLeft size={16} />
               Back
             </Link>
             <button
               onClick={() => window.print()}
-              className="flex items-center gap-1.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 px-3 py-2 rounded-lg text-xs font-medium"
+              className="flex items-center gap-1.5 bg-[#E31B23] hover:bg-[#c9121a] text-white px-4 py-2 rounded-xl text-xs font-bold shadow-md transition-all active:scale-95"
             >
-              <Printer size={13} /> Print
+              <Printer size={15} /> Print Ticket
             </button>
           </div>
 
@@ -217,7 +247,7 @@ export default function TicketPage() {
             </div>
           </div>
 
-          <p className="text-center text-xs text-gray-400 mt-6">
+          <p className="text-center text-xs text-gray-400 mt-6 print-hide">
             Present this ticket (digital or printed) at boarding. Keep your booking reference safe.
           </p>
         </div>
