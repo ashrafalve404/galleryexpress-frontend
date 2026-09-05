@@ -225,9 +225,8 @@ export function Header() {
               </div>
             )}
 
-            {/* Nav Links with Filled Icons */}
+            {/* Nav Links in Serial */}
             <div className="px-3 py-4 flex-1 space-y-1">
-              <div className="px-3 pb-2 text-[11px] font-bold uppercase tracking-wider text-gray-400">Navigation</div>
               {navLinks.map(({ href, label, icon: Icon }) => {
                 const isActive = pathname === href;
                 return (
@@ -249,8 +248,7 @@ export function Header() {
 
               {/* Account/Admin Links */}
               {isAuthenticated && user && (
-                <div className="pt-4 mt-4 border-t border-gray-100 space-y-1">
-                  <div className="px-3 pb-2 text-[11px] font-bold uppercase tracking-wider text-gray-400">Account</div>
+                <>
                   <Link
                     href={isCounterAgent() ? '/counter-agent/dashboard' : ROUTES.DASHBOARD}
                     onClick={() => setMenuOpen(false)}
@@ -279,11 +277,11 @@ export function Header() {
                     <RiLogoutBoxRFill size={20} className="text-rose-600" />
                     <span>Logout</span>
                   </button>
-                </div>
+                </>
               )}
 
               {!isAuthenticated && (
-                <div className="pt-4 mt-4 border-t border-gray-100">
+                <div className="pt-2">
                   <Link
                     href={ROUTES.LOGIN}
                     onClick={() => setMenuOpen(false)}
