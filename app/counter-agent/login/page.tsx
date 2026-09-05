@@ -172,12 +172,21 @@ export default function CounterAgentLoginPage() {
             </button>
           </form>
 
-          <div className="mt-8 pt-6 border-t border-gray-100 text-center">
+          <div className="mt-8 pt-6 border-t border-gray-100 text-center space-y-2">
             <p className="text-xs text-gray-500">
-              Are you a customer?{' '}
+              Need a Counter Agent account?{' '}
+              <Link
+                href="/counter-agent/register"
+                className="font-bold text-[#E31B23] hover:underline"
+              >
+                Register New Agent
+              </Link>
+            </p>
+            <p className="text-xs text-gray-400">
+              Are you a passenger?{' '}
               <Link
                 href="/auth/login"
-                className="font-bold text-[#E31B23] hover:underline"
+                className="font-semibold text-gray-600 hover:underline"
               >
                 Customer Login
               </Link>

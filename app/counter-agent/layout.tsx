@@ -4,24 +4,24 @@ import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import {
-  LayoutDashboard,
-  Ticket,
-  Layers,
-  User,
-  Building2,
-  Share2,
-  Percent,
-  Settings,
-  FileText,
-  PlusCircle,
-  LogOut,
-  ChevronRight,
-  Menu,
-  X,
-  ShieldCheck,
-  Loader2,
-  Sparkles,
-} from 'lucide-react';
+  RiDashboardFill,
+  RiTicket2Fill,
+  RiStackFill,
+  RiStore3Fill,
+  RiPercentFill,
+  RiFileTextFill,
+  RiUser3Fill,
+  RiShareForwardFill,
+  RiSettings4Fill,
+  RiAddCircleFill,
+  RiLogoutBoxRFill,
+  RiMenu3Fill,
+  RiCloseFill,
+  RiArrowRightSLine,
+  RiShieldCheckFill,
+} from 'react-icons/ri';
+import { BsFillTicketPerforatedFill } from 'react-icons/bs';
+import { Loader2 } from 'lucide-react';
 import { useAuthStore } from '@/lib/store/authStore';
 
 export default function CounterAgentLayout({
@@ -85,30 +85,28 @@ export default function CounterAgentLayout({
     {
       title: 'MAIN MENU',
       items: [
-        { label: 'Dashboard', href: '/counter-agent/dashboard', icon: LayoutDashboard },
-        { label: 'My Ticket', href: '/counter-agent/sold-tickets', icon: Ticket },
-        { label: 'My Bulk Ticket', href: '/counter-agent/buy-bulk', icon: Layers },
+        { label: 'Dashboard', href: '/counter-agent/dashboard', icon: RiDashboardFill },
+        { label: 'My Ticket', href: '/counter-agent/sold-tickets', icon: BsFillTicketPerforatedFill },
+        { label: 'My Bulk Ticket', href: '/counter-agent/buy-bulk', icon: RiStackFill },
       ],
     },
     {
       title: 'COUNTER & FINANCE',
       items: [
-        { label: 'My Counter', href: '/counter-agent/select-counter', icon: Building2 },
-        { label: 'Commission', href: '/counter-agent/commissions', icon: Percent },
-        { label: 'Statement', href: '/counter-agent/statements', icon: FileText },
+        { label: 'My Counter', href: '/counter-agent/select-counter', icon: RiStore3Fill },
+        { label: 'Commission', href: '/counter-agent/commissions', icon: RiPercentFill },
+        { label: 'Statement', href: '/counter-agent/statements', icon: RiFileTextFill },
       ],
     },
     {
       title: 'ACCOUNT & SYSTEM',
       items: [
-        { label: 'My Profile', href: '/counter-agent/profile', icon: User },
-        { label: 'Referral', href: '/counter-agent/referrals', icon: Share2, badge: 'Earn' },
-        { label: 'Setting', href: '/counter-agent/settings', icon: Settings },
+        { label: 'My Profile', href: '/counter-agent/profile', icon: RiUser3Fill },
+        { label: 'Referral', href: '/counter-agent/referrals', icon: RiShareForwardFill, badge: 'Earn' },
+        { label: 'Setting', href: '/counter-agent/settings', icon: RiSettings4Fill },
       ],
     },
   ];
-
-  const allNavItems = navGroups.flatMap((g) => g.items);
 
   return (
     <div className="min-h-screen bg-[#f8fafc] flex flex-col md:flex-row font-sans">
@@ -142,7 +140,7 @@ export default function CounterAgentLayout({
               href="/counter-agent/sell-ticket"
               className="w-full bg-[#E31B23] hover:bg-[#c9121a] text-white font-extrabold text-xs py-3 px-4 rounded-xl shadow-md flex items-center justify-center gap-2 transition-all active:scale-98 group"
             >
-              <PlusCircle size={16} className="group-hover:rotate-90 transition-transform duration-200" />
+              <RiAddCircleFill size={18} className="group-hover:rotate-90 transition-transform duration-200" />
               <span>Sell New Ticket</span>
             </Link>
           </div>
@@ -168,7 +166,7 @@ export default function CounterAgentLayout({
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <Icon size={18} className={isActive ? 'text-white' : 'text-gray-400'} />
+                        <Icon size={19} className={isActive ? 'text-white' : 'text-gray-400'} />
                         <span>{item.label}</span>
                       </div>
                       {item.badge ? (
@@ -192,7 +190,7 @@ export default function CounterAgentLayout({
               className="flex items-center gap-2.5 min-w-0 hover:opacity-85 transition-opacity"
             >
               <div className="w-9 h-9 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center text-white shrink-0">
-                <User size={18} />
+                <RiUser3Fill size={20} />
               </div>
               <div className="min-w-0">
                 <div className="text-xs font-extrabold text-white truncate">
@@ -209,7 +207,7 @@ export default function CounterAgentLayout({
               title="Sign Out"
               className="p-2.5 rounded-xl bg-red-500/10 hover:bg-[#E31B23] text-red-400 hover:text-white transition-all shrink-0 border border-red-500/20 shadow-2xs"
             >
-              <LogOut size={16} />
+              <RiLogoutBoxRFill size={18} />
             </button>
           </div>
         </div>
@@ -223,7 +221,7 @@ export default function CounterAgentLayout({
             className="p-2 bg-white/10 rounded-xl text-white hover:bg-white/20 transition-all"
             aria-label="Open Navigation Drawer"
           >
-            <Menu size={20} />
+            <RiMenu3Fill size={22} />
           </button>
 
           <span className="text-sm font-black text-white tracking-wide flex items-center gap-2">
@@ -234,9 +232,9 @@ export default function CounterAgentLayout({
 
         <Link
           href="/counter-agent/sell-ticket"
-          className="px-3 py-1.5 rounded-xl bg-[#E31B23] hover:bg-[#c9121a] text-white text-xs font-bold shadow-xs flex items-center gap-1"
+          className="px-3.5 py-1.5 rounded-xl bg-[#E31B23] hover:bg-[#c9121a] text-white text-xs font-bold shadow-xs flex items-center gap-1.5"
         >
-          <PlusCircle size={14} /> Sell
+          <RiAddCircleFill size={16} /> Sell
         </Link>
       </header>
 
@@ -270,7 +268,7 @@ export default function CounterAgentLayout({
                   onClick={() => setMobileDrawerOpen(false)}
                   className="p-1.5 bg-white/10 rounded-lg text-gray-300 hover:text-white"
                 >
-                  <X size={18} />
+                  <RiCloseFill size={20} />
                 </button>
               </div>
 
@@ -281,7 +279,7 @@ export default function CounterAgentLayout({
                   onClick={() => setMobileDrawerOpen(false)}
                   className="w-full bg-[#E31B23] text-white font-black text-xs py-3 px-4 rounded-xl shadow-md flex items-center justify-center gap-2"
                 >
-                  <PlusCircle size={16} /> Sell New Ticket
+                  <RiAddCircleFill size={18} /> Sell New Ticket
                 </Link>
               </div>
 
@@ -307,7 +305,7 @@ export default function CounterAgentLayout({
                           }`}
                         >
                           <div className="flex items-center gap-3">
-                            <Icon size={18} className={isActive ? 'text-white' : 'text-gray-400'} />
+                            <Icon size={19} className={isActive ? 'text-white' : 'text-gray-400'} />
                             <span>{item.label}</span>
                           </div>
                           {item.badge ? (
@@ -315,7 +313,7 @@ export default function CounterAgentLayout({
                               {item.badge}
                             </span>
                           ) : (
-                            <ChevronRight size={16} className="opacity-40" />
+                            <RiArrowRightSLine size={18} className="opacity-40" />
                           )}
                         </Link>
                       );
@@ -330,7 +328,7 @@ export default function CounterAgentLayout({
               <div className="flex items-center justify-between gap-3 mb-3">
                 <div className="flex items-center gap-2.5 min-w-0">
                   <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white shrink-0">
-                    <User size={18} />
+                    <RiUser3Fill size={18} />
                   </div>
                   <div className="min-w-0">
                     <div className="text-xs font-bold text-white truncate">
@@ -346,7 +344,7 @@ export default function CounterAgentLayout({
                 onClick={handleLogout}
                 className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#E31B23] hover:bg-[#c9121a] text-white text-xs font-bold shadow-xs transition-all"
               >
-                <LogOut size={16} /> Sign Out
+                <RiLogoutBoxRFill size={18} /> Sign Out
               </button>
             </div>
           </div>
@@ -363,13 +361,13 @@ export default function CounterAgentLayout({
         </footer>
       </div>
 
-      {/* Mobile App Native Bottom Navigation Bar (4 Normal Options) */}
+      {/* Mobile App Native Bottom Navigation Bar (4 Normal Options with Premium Filled Icons) */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#111111] border-t border-white/10 flex items-center justify-around py-2 px-2 shadow-2xl backdrop-blur-md">
         {[
-          { label: 'Dashboard', href: '/counter-agent/dashboard', icon: LayoutDashboard },
-          { label: 'Sell Ticket', href: '/counter-agent/sell-ticket', icon: PlusCircle },
-          { label: 'My Ticket', href: '/counter-agent/sold-tickets', icon: Ticket },
-          { label: 'Bulk Ticket', href: '/counter-agent/buy-bulk', icon: Layers },
+          { label: 'Dashboard', href: '/counter-agent/dashboard', icon: RiDashboardFill },
+          { label: 'Sell Ticket', href: '/counter-agent/sell-ticket', icon: RiAddCircleFill },
+          { label: 'My Ticket', href: '/counter-agent/sold-tickets', icon: BsFillTicketPerforatedFill },
+          { label: 'Bulk Ticket', href: '/counter-agent/buy-bulk', icon: RiStackFill },
         ].map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;

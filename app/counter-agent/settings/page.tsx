@@ -2,7 +2,15 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Settings, Printer, Bell, Shield, ArrowLeft, Check, Save } from 'lucide-react';
+import {
+  RiSettings4Fill,
+  RiPrinterFill,
+  RiNotification3Fill,
+  RiShieldCheckFill,
+  RiSaveFill,
+  RiCheckFill,
+  RiArrowLeftLine,
+} from 'react-icons/ri';
 import { toast } from 'sonner';
 
 export default function CounterAgentSettingsPage() {
@@ -19,18 +27,12 @@ export default function CounterAgentSettingsPage() {
     <div className="min-h-screen bg-gray-50 p-4 sm:p-8 font-sans">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <Link
-            href="/counter-agent/dashboard"
-            className="inline-flex items-center gap-2 text-xs font-bold text-gray-600 hover:text-gray-900 bg-white px-3.5 py-2 rounded-xl border border-gray-200 shadow-xs"
-          >
-            <ArrowLeft size={16} /> Back to Dashboard
-          </Link>
+        <div className="flex justify-end">
           <button
             onClick={handleSave}
             className="px-4 py-2 bg-[#E31B23] hover:bg-[#c9121a] text-white font-extrabold text-xs rounded-xl shadow-md flex items-center gap-1.5 active:scale-95"
           >
-            <Save size={15} /> Save Settings
+            <RiSaveFill size={16} /> Save Settings
           </button>
         </div>
 
@@ -45,7 +47,7 @@ export default function CounterAgentSettingsPage() {
           {/* Printing Options */}
           <div className="bg-white rounded-3xl border border-gray-200/80 p-6 shadow-xs space-y-4">
             <h2 className="text-base font-black text-gray-900 border-b border-gray-100 pb-3 flex items-center gap-2">
-              <Printer size={18} className="text-[#E31B23]" /> Ticket Printing Preferences
+              <RiPrinterFill size={20} className="text-[#E31B23]" /> Ticket Printing Preferences
             </h2>
 
             <div className="space-y-4 text-xs">
@@ -65,7 +67,7 @@ export default function CounterAgentSettingsPage() {
                       <div className="text-xs font-black">Thermal Slip (80mm POS)</div>
                       <div className="text-[10px] text-gray-500 font-normal">Compact receipt format for counter thermal printers</div>
                     </div>
-                    {paperFormat === 'thermal' && <Check size={16} className="text-[#E31B23]" />}
+                    {paperFormat === 'thermal' && <RiCheckFill size={18} className="text-[#E31B23]" />}
                   </button>
 
                   <button
@@ -81,7 +83,7 @@ export default function CounterAgentSettingsPage() {
                       <div className="text-xs font-black">Standard Boarding Pass (A4/Card)</div>
                       <div className="text-[10px] text-gray-500 font-normal">Full boarding pass layout with passenger QR code</div>
                     </div>
-                    {paperFormat === 'a4' && <Check size={16} className="text-[#E31B23]" />}
+                    {paperFormat === 'a4' && <RiCheckFill size={18} className="text-[#E31B23]" />}
                   </button>
                 </div>
               </div>
@@ -104,7 +106,7 @@ export default function CounterAgentSettingsPage() {
           {/* Notifications */}
           <div className="bg-white rounded-3xl border border-gray-200/80 p-6 shadow-xs space-y-4">
             <h2 className="text-base font-black text-gray-900 border-b border-gray-100 pb-3 flex items-center gap-2">
-              <Bell size={18} className="text-[#E31B23]" /> Notifications &amp; Alerts
+              <RiNotification3Fill size={20} className="text-[#E31B23]" /> Notifications &amp; Alerts
             </h2>
 
             <div className="space-y-3 text-xs">
@@ -140,7 +142,7 @@ export default function CounterAgentSettingsPage() {
           <div className="bg-white rounded-3xl border border-gray-200/80 p-6 shadow-xs flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-2xl bg-red-50 text-[#E31B23] flex items-center justify-center font-bold shrink-0">
-                <Shield size={20} />
+                <RiShieldCheckFill size={22} />
               </div>
               <div>
                 <div className="text-xs font-black text-gray-900">Identity &amp; KYC Verification</div>

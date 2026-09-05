@@ -278,13 +278,7 @@ export default function CounterAgentSellTicketPage() {
     <div className="min-h-screen bg-gray-50 p-4 sm:p-8 font-sans">
       <div className="max-w-5xl mx-auto space-y-6">
         {/* Header Navigation */}
-        <div className="flex items-center justify-between">
-          <Link
-            href="/counter-agent/dashboard"
-            className="inline-flex items-center gap-2 text-xs font-bold text-gray-600 hover:text-gray-900 bg-white px-3.5 py-2 rounded-xl border border-gray-200 shadow-xs"
-          >
-            <ArrowLeft size={16} /> Back to Dashboard
-          </Link>
+        <div className="flex justify-end">
           <div className="flex items-center gap-2 px-3.5 py-1.5 bg-red-50 text-[#E31B23] border border-red-200 rounded-full text-xs font-black">
             <BsFillTicketPerforatedFill size={16} /> Bulk Balance: {remainingBulk} Tickets
           </div>

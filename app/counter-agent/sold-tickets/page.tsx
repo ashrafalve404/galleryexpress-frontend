@@ -55,14 +55,7 @@ export default function CounterAgentSoldTicketsPage() {
     <div className="min-h-screen bg-gray-50 p-4 sm:p-8 font-sans">
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Header Bar */}
-        <div className="flex items-center justify-between">
-          <Link
-            href="/counter-agent/dashboard"
-            className="inline-flex items-center gap-2 text-xs font-bold text-gray-600 hover:text-gray-900 bg-white px-3.5 py-2 rounded-xl border border-gray-200 shadow-xs"
-          >
-            <ArrowLeft size={16} /> Back to Dashboard
-          </Link>
-
+        <div className="flex justify-end">
           <Link
             href="/counter-agent/sell-ticket"
             className="px-4 py-2 bg-[#E31B23] hover:bg-[#c9121a] text-white font-extrabold text-xs rounded-xl shadow-md flex items-center gap-1.5"

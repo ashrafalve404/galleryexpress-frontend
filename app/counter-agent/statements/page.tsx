@@ -2,10 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { FileText, ArrowLeft, Loader2, Download, TrendingUp, TrendingDown, Layers, Ticket, DollarSign } from 'lucide-react';
+import {
+  RiFileTextFill,
+  RiArrowLeftLine,
+  RiDownload2Fill,
+  RiLineChartFill,
+  RiStackFill,
+  RiTicket2Fill,
+} from 'react-icons/ri';
+import { Loader2 } from 'lucide-react';
 import { counterAgentApi } from '@/lib/api/counterAgent';
 import { formatCurrency } from '@/lib/utils/currency';
-import { formatDate, formatDateTime } from '@/lib/utils/date';
+import { formatDate } from '@/lib/utils/date';
 
 export default function CounterAgentStatementPage() {
   const [loading, setLoading] = useState(true);
@@ -38,18 +46,12 @@ export default function CounterAgentStatementPage() {
     <div className="min-h-screen bg-gray-50 p-4 sm:p-8 font-sans">
       <div className="max-w-5xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <Link
-            href="/counter-agent/dashboard"
-            className="inline-flex items-center gap-2 text-xs font-bold text-gray-600 hover:text-gray-900 bg-white px-3.5 py-2 rounded-xl border border-gray-200 shadow-xs"
-          >
-            <ArrowLeft size={16} /> Back to Dashboard
-          </Link>
+        <div className="flex justify-end">
           <button
             onClick={() => window.print()}
             className="px-4 py-2 bg-gray-900 hover:bg-black text-white font-extrabold text-xs rounded-xl shadow-md flex items-center gap-1.5 active:scale-95"
           >
-            <Download size={15} /> Download Statement (PDF)
+            <RiDownload2Fill size={16} /> Download Statement (PDF)
           </button>
         </div>
 
@@ -70,7 +72,7 @@ export default function CounterAgentStatementPage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="bg-white p-6 rounded-3xl border border-gray-200/80 shadow-xs flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-              <Layers size={24} />
+              <RiStackFill size={24} />
             </div>
             <div>
               <div className="text-gray-400 text-xs font-bold uppercase">Total Bulk Package</div>
@@ -80,7 +82,7 @@ export default function CounterAgentStatementPage() {
 
           <div className="bg-white p-6 rounded-3xl border border-gray-200/80 shadow-xs flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-              <Ticket size={24} />
+              <RiTicket2Fill size={24} />
             </div>
             <div>
               <div className="text-gray-400 text-xs font-bold uppercase">Total Sold Tickets</div>
@@ -90,7 +92,7 @@ export default function CounterAgentStatementPage() {
 
           <div className="bg-white p-6 rounded-3xl border border-gray-200/80 shadow-xs flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
-              <TrendingUp size={24} />
+              <RiLineChartFill size={24} />
             </div>
             <div>
               <div className="text-gray-400 text-xs font-bold uppercase">Active Bulk Orders</div>
@@ -102,7 +104,7 @@ export default function CounterAgentStatementPage() {
         {/* Bulk Purchases & Ledger Table */}
         <div className="bg-white rounded-3xl border border-gray-200/80 shadow-xs p-6">
           <h2 className="text-base font-black text-gray-900 mb-4 flex items-center gap-2">
-            <FileText size={18} className="text-[#E31B23]" /> Bulk Purchase Ledger History
+            <RiFileTextFill size={20} className="text-[#E31B23]" /> Bulk Purchase Ledger History
           </h2>
 
           {loading ? (

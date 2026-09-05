@@ -2,7 +2,15 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Share2, Copy, Check, Gift, ArrowLeft, Users, DollarSign, Award } from 'lucide-react';
+import {
+  RiGiftFill,
+  RiFileCopyFill,
+  RiCheckFill,
+  RiArrowLeftLine,
+  RiGroupFill,
+  RiCoinFill,
+  RiAwardFill,
+} from 'react-icons/ri';
 import { toast } from 'sonner';
 import { useAuthStore } from '@/lib/store/authStore';
 
@@ -11,7 +19,7 @@ export default function CounterAgentReferralPage() {
   const [copied, setCopied] = useState(false);
 
   const referralCode = `AGENT-${user?.id?.substring(0, 6)?.toUpperCase() || 'PRO884'}`;
-  const referralLink = `https://ticketdorkar.xyz/counter-agent/login?ref=${referralCode}`;
+  const referralLink = `https://ticketdorkar.xyz/counter-agent/register?ref=${referralCode}`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(referralLink);
@@ -23,21 +31,13 @@ export default function CounterAgentReferralPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-8 font-sans">
       <div className="max-w-4xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <Link
-            href="/counter-agent/dashboard"
-            className="inline-flex items-center gap-2 text-xs font-bold text-gray-600 hover:text-gray-900 bg-white px-3.5 py-2 rounded-xl border border-gray-200 shadow-xs"
-          >
-            <ArrowLeft size={16} /> Back to Dashboard
-          </Link>
-        </div>
+
 
         {/* Hero Banner */}
         <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-black text-white p-6 sm:p-8 rounded-3xl border border-white/10 shadow-lg relative overflow-hidden">
           <div className="relative z-10 max-w-xl space-y-3">
             <div className="inline-flex items-center gap-1.5 bg-[#E31B23] text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">
-              <Gift size={12} /> Agent Partner Program
+              <RiGiftFill size={14} /> Agent Partner Program
             </div>
             <h1 className="text-2xl sm:text-3xl font-black text-white">
               Invite Counter Partners &amp; Earn Cash Bonus
@@ -59,7 +59,7 @@ export default function CounterAgentReferralPage() {
               onClick={handleCopy}
               className="w-full sm:w-auto px-5 py-3 bg-[#E31B23] hover:bg-[#c9121a] text-white text-xs font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 active:scale-95 shrink-0"
             >
-              {copied ? <Check size={16} /> : <Copy size={16} />}
+              {copied ? <RiCheckFill size={18} /> : <RiFileCopyFill size={18} />}
               <span>{copied ? 'Copied Link!' : 'Copy Referral Link'}</span>
             </button>
           </div>
@@ -69,21 +69,21 @@ export default function CounterAgentReferralPage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-xs">
             <div className="text-gray-400 text-xs font-bold uppercase mb-1 flex items-center gap-1.5">
-              <Users size={14} className="text-blue-500" /> Total Referred Agents
+              <RiGroupFill size={16} className="text-blue-500" /> Total Referred Agents
             </div>
             <div className="text-2xl font-black text-gray-900">0 Partner Agents</div>
           </div>
 
           <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-xs">
             <div className="text-gray-400 text-xs font-bold uppercase mb-1 flex items-center gap-1.5">
-              <DollarSign size={14} className="text-emerald-500" /> Total Bonus Earned
+              <RiCoinFill size={16} className="text-emerald-500" /> Total Bonus Earned
             </div>
             <div className="text-2xl font-black text-[#E31B23]">৳ 0</div>
           </div>
 
           <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-xs">
             <div className="text-gray-400 text-xs font-bold uppercase mb-1 flex items-center gap-1.5">
-              <Award size={14} className="text-amber-500" /> Commission Tier
+              <RiAwardFill size={16} className="text-amber-500" /> Commission Tier
             </div>
             <div className="text-2xl font-black text-gray-900">Silver Agent</div>
           </div>
