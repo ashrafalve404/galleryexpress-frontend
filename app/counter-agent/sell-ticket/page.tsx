@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -23,7 +23,7 @@ import {
   SlidersHorizontal,
 } from 'lucide-react';
 import { BsFillTicketPerforatedFill } from 'react-icons/bs';
-import { RiStarFill, RiWindyFill, RiWifiFill, RiFlashlightFill } from 'react-icons/ri';
+import { RiStarFill, RiWindyFill, RiWifiFill, RiFlashlightFill, RiCalendarEventFill } from 'react-icons/ri';
 import { HiChevronRight } from 'react-icons/hi';
 import client from '@/lib/api/client';
 import { counterAgentApi, type DashboardStats } from '@/lib/api/counterAgent';
@@ -86,6 +86,7 @@ export default function CounterAgentSellTicketPage() {
   const [loadingSchedules, setLoadingSchedules] = useState(true);
 
   // Filtering state
+  const dateInputRef = useRef<HTMLInputElement>(null);
   const [filterSearch, setFilterSearch] = useState('');
   const [filterRoute, setFilterRoute] = useState('ALL');
   const [filterDate, setFilterDate] = useState('ALL');
@@ -347,19 +348,48 @@ export default function CounterAgentSellTicketPage() {
                   <option value="COX_DHAKA">Cox's Bazar ➔ Dhaka</option>
                 </select>
 
-                {/* Date Filter */}
-                <select
-                  value={filterDate}
-                  onChange={(e) => setFilterDate(e.target.value)}
-                  className="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-extrabold text-gray-800 focus:outline-none focus:border-[#E31B23]"
-                >
-                  <option value="ALL">All Departure Dates</option>
-                  {uniqueDates.map((d) => (
-                    <option key={d} value={d}>
-                      {formatDate(d, 'dd MMM yyyy (EEE)')}
-                    </option>
-                  ))}
-                </select>
+                {/* Date Filter with Interactive Calendar Picker */}
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      try {
+                        dateInputRef.current?.showPicker();
+                      } catch {
+                        dateInputRef.current?.focus();
+                      }
+                    }}
+                    className="w-full flex items-center justify-between gap-2 px-3 py-2.5 bg-gray-50 border border-gray-200 hover:border-[#E31B23] rounded-xl text-xs font-extrabold text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 transition-all cursor-pointer group"
+                  >
+                    <div className="flex items-center gap-2 truncate">
+                      <RiCalendarEventFill size={16} className="text-[#E31B23] shrink-0 group-hover:scale-110 transition-transform" />
+                      <span className="truncate">
+                        {filterDate === 'ALL'
+                          ? 'All Departure Dates'
+                          : formatDate(filterDate, 'dd MMM yyyy')}
+                      </span>
+                    </div>
+                    {filterDate !== 'ALL' && (
+                      <span
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setFilterDate('ALL');
+                        }}
+                        className="text-[10px] bg-red-100 hover:bg-red-200 text-[#E31B23] px-1.5 py-0.5 rounded font-black shrink-0"
+                        title="Clear date filter"
+                      >
+                        All
+                      </span>
+                    )}
+                  </button>
+                  <input
+                    ref={dateInputRef}
+                    type="date"
+                    value={filterDate === 'ALL' ? '' : filterDate}
+                    onChange={(e) => setFilterDate(e.target.value || 'ALL')}
+                    className="sr-only"
+                  />
+                </div>
 
                 {/* Shift / Time Filter */}
                 <select
@@ -475,8 +505,8 @@ export default function CounterAgentSellTicketPage() {
                             <span className="text-sm font-black text-emerald-600">
                               {sched.availableSeatsCount ?? 30} seats left
                             </span>
-                            <div className="text-[11px] text-gray-400 font-semibold mt-0.5">
-                              📅 {sched.departureDate ? formatDate(sched.departureDate, 'dd MMM yyyy') : 'Today'}
+                            <div className="text-[11px] text-gray-400 font-semibold mt-0.5 flex items-center gap-1">
+                              <Calendar size={13} className="text-gray-400" /> {sched.departureDate ? formatDate(sched.departureDate, 'dd MMM yyyy') : 'Today'}
                             </div>
                           </div>
 
@@ -508,7 +538,7 @@ export default function CounterAgentSellTicketPage() {
           /* STEP 2: DEDICATED SEAT MAP & PASSENGER INFORMATION SUB-PAGE */
           <form onSubmit={handleSellTicket} className="space-y-6 animate-fade-in">
             {/* Sub-Page Top Navigation & Selected Bus Summary Banner */}
-            <div className="bg-white p-6 rounded-3xl border border-gray-200/80 shadow-sm space-y-4">
+            <div className="bg-white p-5 sm:p-6 rounded-3xl border border-gray-200/80 shadow-sm space-y-4">
               <div className="flex items-center justify-between border-b border-gray-100 pb-3">
                 <button
                   type="button"
@@ -516,43 +546,48 @@ export default function CounterAgentSellTicketPage() {
                     setSelectedSchedule(null);
                     setSelectedSeats([]);
                   }}
-                  className="inline-flex items-center gap-2 text-xs font-bold text-[#E31B23] hover:text-[#c9121a] bg-red-50 hover:bg-red-100 px-4 py-2 rounded-xl transition-colors"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-[#E31B23] hover:text-[#c9121a] bg-red-50 hover:bg-red-100 px-3.5 py-2 rounded-xl transition-colors"
                 >
-                  <ArrowLeft size={16} /> Change Bus / Back to Schedules List
+                  <ArrowLeft size={15} /> Back to Schedules
                 </button>
-                <span className="text-xs font-extrabold text-gray-500 uppercase tracking-wider">
-                  Step 2 of 2: Seat & Passenger Info
+                <span className="text-[11px] font-extrabold text-gray-500 uppercase tracking-wider">
+                  Step 2: Seats & Info
                 </span>
               </div>
 
-              {/* Selected Bus Overview Banner */}
-              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-gray-50 p-4 rounded-2xl border border-gray-200/80">
-                <div className="space-y-1">
+              {/* Selected Bus Overview Banner - Mobile Optimized */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 bg-gray-50 p-4 rounded-2xl border border-gray-200/80">
+                <div className="space-y-2 w-full sm:w-auto">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-base font-black text-gray-900">
                       {selectedSchedule.coach?.name || 'Arabian Express Hino AC 01'}
                     </span>
-                    <span className="text-[10px] bg-red-50 text-[#E31B23] px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider">
+                    <span className="text-[10px] bg-red-50 text-[#E31B23] px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider border border-red-100">
                       {selectedSchedule.coach?.coachType || 'AC Executive'}
                     </span>
                   </div>
-                  <p className="text-xs font-bold text-gray-700 flex items-center gap-2">
-                    <span>
+
+                  <div className="flex items-center gap-2 flex-wrap text-xs font-bold text-gray-700">
+                    <span className="bg-white px-2.5 py-1 rounded-lg border border-gray-200/80 shadow-2xs">
                       {selectedSchedule.route?.origin} ➔ {selectedSchedule.route?.destination}
                     </span>
-                    <span>•</span>
-                    <span className="text-[#E31B23]">
-                      📅 {selectedSchedule.departureDate ? formatDate(selectedSchedule.departureDate, 'dd MMM yyyy') : 'Today'}
+                    <span className="bg-white text-[#E31B23] px-2.5 py-1 rounded-lg border border-gray-200/80 shadow-2xs inline-flex items-center gap-1">
+                      <Calendar size={13} /> {selectedSchedule.departureDate ? formatDate(selectedSchedule.departureDate, 'dd MMM yyyy') : 'Today'}
                     </span>
-                    <span>•</span>
-                    <span>🕒 {formatTime(selectedSchedule.departureTime)}</span>
-                  </p>
+                    <span className="bg-white text-gray-800 px-2.5 py-1 rounded-lg border border-gray-200/80 shadow-2xs inline-flex items-center gap-1">
+                      <Clock size={13} className="text-gray-500" /> {formatTime(selectedSchedule.departureTime)}
+                    </span>
+                  </div>
                 </div>
-                <div className="text-right shrink-0">
-                  <span className="text-xs text-gray-500 font-semibold block">Ticket Price</span>
-                  <span className="text-xl font-black text-[#E31B23]">
-                    ৳{(selectedSchedule.fare || 2000).toLocaleString('en-BD')} / seat
-                  </span>
+
+                <div className="w-full sm:w-auto flex items-center justify-between sm:justify-end gap-3 pt-2.5 sm:pt-0 border-t sm:border-t-0 border-gray-200/60 shrink-0">
+                  <span className="text-xs text-gray-500 font-bold sm:hidden">Fare:</span>
+                  <div className="text-right">
+                    <span className="text-lg sm:text-xl font-black text-[#E31B23]">
+                      ৳{(selectedSchedule.fare || 2000).toLocaleString('en-BD')}
+                    </span>
+                    <span className="text-[10px] text-gray-400 font-semibold block">per seat</span>
+                  </div>
                 </div>
               </div>
             </div>
