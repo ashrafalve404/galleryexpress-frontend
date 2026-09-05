@@ -12,6 +12,8 @@ import {
 import { Loader2 } from 'lucide-react';
 import { counterAgentApi, type Commission } from '@/lib/api/counterAgent';
 import { useAuthStore } from '@/lib/store/authStore';
+import { useLanguageStore } from '@/lib/store/languageStore';
+import { getTranslation } from '@/lib/utils/translations';
 
 function formatTk(n: number) {
   return '৳' + Number(n).toLocaleString('en-BD');
@@ -19,6 +21,7 @@ function formatTk(n: number) {
 
 export default function CommissionsPage() {
   const { clearAuth } = useAuthStore();
+  const { lang } = useLanguageStore();
   const [commissions, setCommissions] = useState<Commission[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -49,10 +52,10 @@ export default function CommissionsPage() {
 
         <div>
           <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight flex items-center gap-2">
-            <RiWallet3Fill className="text-[#E31B23]" size={28} /> Commission Ledger
+            <RiWallet3Fill className="text-[#E31B23]" size={28} /> {getTranslation(lang, 'commissionTitle', 'Commission Ledger & History')}
           </h1>
           <p className="text-xs sm:text-sm text-gray-500 mt-1">
-            Complete record of your earned split commissions from user ticket bookings
+            {getTranslation(lang, 'commissionSubtitle', 'Complete record of your earned split commissions from user ticket bookings')}
           </p>
         </div>
 

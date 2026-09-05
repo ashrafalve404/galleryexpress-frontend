@@ -16,6 +16,8 @@ import { BsFillTicketPerforatedFill } from 'react-icons/bs';
 import { Loader2, Minus, Plus, ArrowRight, ChevronUp, ChevronDown } from 'lucide-react';
 import { counterAgentApi, type AllowedRoute, type AgentKycStatus } from '@/lib/api/counterAgent';
 import { useAuthStore } from '@/lib/store/authStore';
+import { useLanguageStore } from '@/lib/store/languageStore';
+import { getTranslation } from '@/lib/utils/translations';
 
 function formatTk(n: number) {
   return '৳' + Number(n).toLocaleString('en-BD');
@@ -24,6 +26,7 @@ function formatTk(n: number) {
 export default function BuyBulkPage() {
   const router = useRouter();
   const { clearAuth, user } = useAuthStore();
+  const { lang } = useLanguageStore();
   const [routes, setRoutes] = useState<AllowedRoute[]>([]);
   const [routeId, setRouteId] = useState('');
   const [quantity, setQuantity] = useState(10);
@@ -121,10 +124,10 @@ export default function BuyBulkPage() {
     <div className="p-6 sm:p-8 space-y-6">
       <div>
         <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight flex items-center gap-2">
-          <BsFillTicketPerforatedFill className="text-[#E31B23]" size={28} /> Buy Bulk Tickets
+          <BsFillTicketPerforatedFill className="text-[#E31B23]" size={28} /> {getTranslation(lang, 'buyBulkTitle', 'Buy Bulk Tickets')}
         </h1>
         <p className="text-xs sm:text-sm text-gray-500 mt-1">
-          Purchase minimum 10 tickets for Dhaka ↔ Cox&apos;s Bazar route at fixed ৳2,000 unit price
+          {getTranslation(lang, 'buyBulkSubtitle', 'Purchase ticket batches to build your commission investment cap.')}
         </p>
       </div>
 

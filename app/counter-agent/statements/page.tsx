@@ -14,8 +14,11 @@ import { Loader2 } from 'lucide-react';
 import { counterAgentApi } from '@/lib/api/counterAgent';
 import { formatCurrency } from '@/lib/utils/currency';
 import { formatDate } from '@/lib/utils/date';
+import { useLanguageStore } from '@/lib/store/languageStore';
+import { getTranslation } from '@/lib/utils/translations';
 
 export default function CounterAgentStatementPage() {
+  const { lang } = useLanguageStore();
   const [loading, setLoading] = useState(true);
   const [overview, setOverview] = useState<any>(null);
   const [bulkOrders, setBulkOrders] = useState<any[]>([]);
@@ -51,7 +54,7 @@ export default function CounterAgentStatementPage() {
             onClick={() => window.print()}
             className="px-4 py-2 bg-gray-900 hover:bg-black text-white font-extrabold text-xs rounded-xl shadow-md flex items-center gap-1.5 active:scale-95"
           >
-            <RiDownload2Fill size={16} /> Download Statement (PDF)
+            <RiDownload2Fill size={16} /> {getTranslation(lang, 'downloadPdf', 'Download Statement (PDF)')}
           </button>
         </div>
 
@@ -59,11 +62,11 @@ export default function CounterAgentStatementPage() {
         <div className="bg-white p-6 rounded-3xl border border-gray-200/80 shadow-xs">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-black text-gray-900">Agent Account Statement</h1>
-              <p className="text-xs text-gray-500 mt-1">Financial overview of your bulk package purchases, ticket sales activity, and commission earnings ledger.</p>
+              <h1 className="text-2xl font-black text-gray-900">{getTranslation(lang, 'statementTitle', 'Agent Account Statement')}</h1>
+              <p className="text-xs text-gray-500 mt-1">{getTranslation(lang, 'statementSubtitle', 'Financial overview of your bulk package purchases, ticket sales activity, and commission earnings ledger.')}</p>
             </div>
             <div className="bg-red-50 text-[#E31B23] border border-red-100 px-4 py-2 rounded-2xl text-xs font-black self-start md:self-auto">
-              Remaining Balance: {remainingBulk} Bulk Tickets
+              {getTranslation(lang, 'remainingBalance', 'Remaining Balance:')} {remainingBulk} {getTranslation(lang, 'orderQty', 'Bulk Tickets')}
             </div>
           </div>
         </div>
@@ -75,8 +78,8 @@ export default function CounterAgentStatementPage() {
               <RiStackFill size={24} />
             </div>
             <div>
-              <div className="text-gray-400 text-xs font-bold uppercase">Total Bulk Package</div>
-              <div className="text-2xl font-black text-gray-900">{totalPurchased} Tickets</div>
+              <div className="text-gray-400 text-xs font-bold uppercase">{getTranslation(lang, 'totalBulkPackage', 'Total Bulk Package')}</div>
+              <div className="text-2xl font-black text-gray-900">{totalPurchased} {getTranslation(lang, 'orderQty', 'Tickets')}</div>
             </div>
           </div>
 
@@ -85,8 +88,8 @@ export default function CounterAgentStatementPage() {
               <RiTicket2Fill size={24} />
             </div>
             <div>
-              <div className="text-gray-400 text-xs font-bold uppercase">Total Sold Tickets</div>
-              <div className="text-2xl font-black text-gray-900">{totalSold} Tickets</div>
+              <div className="text-gray-400 text-xs font-bold uppercase">{getTranslation(lang, 'ticketsSold', 'Total Sold Tickets')}</div>
+              <div className="text-2xl font-black text-gray-900">{totalSold} {getTranslation(lang, 'orderQty', 'Tickets')}</div>
             </div>
           </div>
 
@@ -95,8 +98,8 @@ export default function CounterAgentStatementPage() {
               <RiLineChartFill size={24} />
             </div>
             <div>
-              <div className="text-gray-400 text-xs font-bold uppercase">Active Bulk Orders</div>
-              <div className="text-2xl font-black text-gray-900">{bulkOrders.length} Orders</div>
+              <div className="text-gray-400 text-xs font-bold uppercase">{getTranslation(lang, 'activeBulkOrders', 'Active Bulk Orders')}</div>
+              <div className="text-2xl font-black text-gray-900">{bulkOrders.length} {getTranslation(lang, 'totalOrders', 'Orders')}</div>
             </div>
           </div>
         </div>

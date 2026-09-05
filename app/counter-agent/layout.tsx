@@ -104,18 +104,15 @@ export default function CounterAgentLayout({
         <div>
           {/* Sidebar Header Logo */}
           <div className="p-5 border-b border-white/10 flex flex-col items-start gap-2.5">
-            <div className="w-full flex items-center justify-between gap-2">
-              <Link href="/" className="inline-block hover:opacity-95 transition-opacity">
-                <div className="bg-white py-1.5 px-3 rounded-xl shadow-sm border border-white/20 flex items-center justify-center">
-                  <img
-                    src="/ticketdrkrlogo.png"
-                    alt="Ticket Dorkar"
-                    className="h-8 w-auto object-contain"
-                  />
-                </div>
-              </Link>
-              <LanguageToggle variant="dark" />
-            </div>
+            <Link href="/" className="inline-block hover:opacity-95 transition-opacity">
+              <div className="bg-white py-1.5 px-3 rounded-xl shadow-sm border border-white/20 flex items-center justify-center">
+                <img
+                  src="/ticketdrkrlogo.png"
+                  alt="Ticket Dorkar"
+                  className="h-8 w-auto object-contain"
+                />
+              </div>
+            </Link>
             <div className="flex items-center gap-2">
               <span className="bg-[#E31B23] text-white text-[10px] font-black uppercase tracking-wider py-1 px-2.5 rounded-md inline-block shadow-xs">
                 {getTranslation(lang, 'agentPortal', 'Agent Portal')}
@@ -168,7 +165,13 @@ export default function CounterAgentLayout({
         </div>
 
         {/* Sidebar Footer User & Logout */}
-        <div className="p-4 border-t border-white/10 bg-[#161616]">
+        <div className="p-4 border-t border-white/10 bg-[#161616] space-y-3">
+          {/* Language Switcher Toggle */}
+          <div className="flex items-center justify-between px-1 pb-1 border-b border-white/10">
+            <span className="text-[11px] font-extrabold text-gray-300">Language / ভাষা</span>
+            <LanguageToggle variant="dark" />
+          </div>
+
           <div className="flex items-center justify-between gap-3">
             <Link
               href="/counter-agent/profile"
@@ -235,85 +238,88 @@ export default function CounterAgentLayout({
                     {getTranslation(lang, 'agentNavigation', 'Agent Navigation')}
                   </span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <LanguageToggle variant="dark" />
-                  <button
-                    onClick={() => setMobileDrawerOpen(false)}
-                    className="p-1.5 bg-white/10 rounded-lg text-gray-300 hover:text-white"
-                  >
-                    <RiCloseFill size={20} />
-                  </button>
-                </div>
-              </div>
-
-              {/* Drawer Quick Action */}
-              <div className="p-4 border-b border-white/10">
-                <Link
-                  href="/counter-agent/sell-ticket"
+                <button
                   onClick={() => setMobileDrawerOpen(false)}
-                  className="w-full bg-[#E31B23] text-white font-black text-xs py-3 px-4 rounded-xl shadow-md flex items-center justify-center gap-2"
+                  className="p-1.5 bg-white/10 rounded-lg text-gray-300 hover:text-white"
                 >
-                  <RiAddCircleFill size={18} /> {getTranslation(lang, 'sellNewTicket', 'Sell New Ticket')}
-                </Link>
+                  <RiCloseFill size={20} />
+                </button>
               </div>
-
-              {/* Sequential Navigation Items */}
-              <nav className="p-4 space-y-1">
-                {navItems.map((item) => {
-                  const Icon = item.icon;
-                  const isActive = pathname === item.href;
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={() => setMobileDrawerOpen(false)}
-                      className={`flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-bold transition-all ${
-                        isActive
-                          ? 'bg-[#E31B23] text-white shadow-md'
-                          : 'text-gray-300 hover:bg-white/10'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <Icon size={19} className={isActive ? 'text-white' : 'text-gray-400'} />
-                        <span>{item.label}</span>
-                      </div>
-                      {item.badge ? (
-                        <span className="bg-amber-400 text-black text-[9px] font-black px-1.5 py-0.5 rounded-md uppercase">
-                          {item.badge}
-                        </span>
-                      ) : (
-                        <RiArrowRightSLine size={18} className="opacity-40" />
-                      )}
-                    </Link>
-                  );
-                })}
-              </nav>
             </div>
 
-            {/* Drawer User & Sign Out */}
-            <div className="p-4 border-t border-white/10 bg-[#161616]">
-              <div className="flex items-center justify-between gap-3 mb-3">
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white shrink-0">
-                    <RiUser3Fill size={18} />
+            {/* Drawer Quick Action */}
+            <div className="p-4 border-b border-white/10">
+              <Link
+                href="/counter-agent/sell-ticket"
+                onClick={() => setMobileDrawerOpen(false)}
+                className="w-full bg-[#E31B23] text-white font-black text-xs py-3 px-4 rounded-xl shadow-md flex items-center justify-center gap-2"
+              >
+                <RiAddCircleFill size={18} /> {getTranslation(lang, 'sellNewTicket', 'Sell New Ticket')}
+              </Link>
+            </div>
+
+            {/* Sequential Navigation Items */}
+            <nav className="p-4 space-y-1">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = pathname === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileDrawerOpen(false)}
+                    className={`flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-bold transition-all ${
+                      isActive
+                        ? 'bg-[#E31B23] text-white shadow-md'
+                        : 'text-gray-300 hover:bg-white/10'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Icon size={19} className={isActive ? 'text-white' : 'text-gray-400'} />
+                      <span>{item.label}</span>
+                    </div>
+                    {item.badge ? (
+                      <span className="bg-amber-400 text-black text-[9px] font-black px-1.5 py-0.5 rounded-md uppercase">
+                        {item.badge}
+                      </span>
+                    ) : (
+                      <RiArrowRightSLine size={18} className="opacity-40" />
+                    )}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+
+          {/* Drawer User & Sign Out */}
+          <div className="p-4 border-t border-white/10 bg-[#161616] space-y-3">
+            {/* Language Switcher Toggle */}
+            <div className="flex items-center justify-between px-1 pb-1 border-b border-white/10">
+              <span className="text-[11px] font-extrabold text-gray-300">Language / ভাষা</span>
+              <LanguageToggle variant="dark" />
+            </div>
+
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white shrink-0">
+                  <RiUser3Fill size={18} />
+                </div>
+                <div className="min-w-0">
+                  <div className="text-xs font-bold text-white truncate">
+                    {user?.name || getTranslation(lang, 'agentUser', 'Agent User')}
                   </div>
-                  <div className="min-w-0">
-                    <div className="text-xs font-bold text-white truncate">
-                      {user?.name || getTranslation(lang, 'agentUser', 'Agent User')}
-                    </div>
-                    <div className="text-[10px] text-gray-400 truncate">
-                      {user?.email || ''}
-                    </div>
+                  <div className="text-[10px] text-gray-400 truncate">
+                    {user?.email || ''}
                   </div>
                 </div>
               </div>
-              <button
-                onClick={handleLogout}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#E31B23] hover:bg-[#c9121a] text-white text-xs font-bold shadow-xs transition-all"
-              >
-                <RiLogoutBoxRFill size={18} /> {getTranslation(lang, 'signOut', 'Sign Out')}
-              </button>
             </div>
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#E31B23] hover:bg-[#c9121a] text-white text-xs font-bold shadow-xs transition-all"
+            >
+              <RiLogoutBoxRFill size={18} /> {getTranslation(lang, 'signOut', 'Sign Out')}
+            </button>
           </div>
         </div>
       )}

@@ -14,10 +14,13 @@ import {
 import { Loader2 } from 'lucide-react';
 import { counterAgentApi, type Counter, type DashboardStats } from '@/lib/api/counterAgent';
 import { useAuthStore } from '@/lib/store/authStore';
+import { useLanguageStore } from '@/lib/store/languageStore';
+import { getTranslation } from '@/lib/utils/translations';
 
 export default function SelectCounterPage() {
   const router = useRouter();
   const { clearAuth } = useAuthStore();
+  const { lang } = useLanguageStore();
   const [counters, setCounters] = useState<Counter[]>([]);
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -68,12 +71,10 @@ export default function SelectCounterPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-3xl font-black text-gray-900 tracking-tight flex items-center gap-2">
-            <RiStore3Fill className="text-[#E31B23]" size={28} /> Select Counter Assignment
+            <RiStore3Fill className="text-[#E31B23]" size={28} /> {getTranslation(lang, 'selectCounterTitle', 'Select Counter Assignment')}
           </h1>
           <p className="text-xs sm:text-sm text-gray-500 mt-1">
-            {currentCounterId
-              ? `Currently assigned to: ${stats?.counter?.name}${stats?.counter?.location ? ` (${stats.counter.location})` : ''}`
-              : 'Choose your assigned counter (Dhaka & Cox\'s Bazar counters only).'}
+            {getTranslation(lang, 'selectCounterSubtitle', 'Select the physical terminal/counter where you are currently selling tickets.')}
           </p>
         </div>
 

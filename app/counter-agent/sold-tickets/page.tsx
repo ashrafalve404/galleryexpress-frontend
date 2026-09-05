@@ -17,8 +17,11 @@ import { BsFillTicketPerforatedFill } from 'react-icons/bs';
 import { counterAgentApi } from '@/lib/api/counterAgent';
 import { formatDate } from '@/lib/utils/date';
 import { toast } from 'sonner';
+import { useLanguageStore } from '@/lib/store/languageStore';
+import { getTranslation } from '@/lib/utils/translations';
 
 export default function CounterAgentSoldTicketsPage() {
+  const { lang } = useLanguageStore();
   const [tickets, setTickets] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -60,16 +63,16 @@ export default function CounterAgentSoldTicketsPage() {
             href="/counter-agent/sell-ticket"
             className="px-4 py-2 bg-[#E31B23] hover:bg-[#c9121a] text-white font-extrabold text-xs rounded-xl shadow-md flex items-center gap-1.5"
           >
-            <BsFillTicketPerforatedFill size={16} /> Sell New Ticket
+            <BsFillTicketPerforatedFill size={16} /> {getTranslation(lang, 'sellNewTicket', 'Sell New Ticket')}
           </Link>
         </div>
 
         {/* Title & Search */}
         <div className="bg-white p-6 rounded-3xl border border-gray-200/80 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-black text-gray-900">My Sold Tickets</h1>
+            <h1 className="text-2xl font-black text-gray-900">{getTranslation(lang, 'soldTicketsTitle', 'My Sold Tickets')}</h1>
             <p className="text-xs text-gray-500 mt-1">
-              List of all passenger tickets issued from your bulk balance. Print or view digital QR boarding passes anytime.
+              {getTranslation(lang, 'soldTicketsSubtitle', 'List of all passenger tickets issued from your bulk balance. Print or view digital QR boarding passes anytime.')}
             </p>
           </div>
 
