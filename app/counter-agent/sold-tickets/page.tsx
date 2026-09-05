@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   ArrowLeft,
-  Ticket,
   Printer,
   Search,
   Calendar,
@@ -14,6 +13,7 @@ import {
   Loader2,
   ExternalLink,
 } from 'lucide-react';
+import { BsFillTicketPerforatedFill } from 'react-icons/bs';
 import { counterAgentApi } from '@/lib/api/counterAgent';
 import { toast } from 'sonner';
 
@@ -61,7 +61,7 @@ export default function CounterAgentSoldTicketsPage() {
             href="/counter-agent/sell-ticket"
             className="px-4 py-2 bg-[#E31B23] hover:bg-[#c9121a] text-white font-extrabold text-xs rounded-xl shadow-md flex items-center gap-1.5"
           >
-            <Ticket size={16} /> Sell New Ticket
+            <BsFillTicketPerforatedFill size={16} /> Sell New Ticket
           </Link>
         </div>
 
@@ -95,7 +95,7 @@ export default function CounterAgentSoldTicketsPage() {
             </div>
           ) : filtered.length === 0 ? (
             <div className="py-12 text-center text-gray-400 space-y-3">
-              <Ticket className="w-12 h-12 mx-auto text-gray-300" />
+              <BsFillTicketPerforatedFill className="w-12 h-12 mx-auto text-gray-300" />
               <p className="text-sm font-bold text-gray-600">No sold tickets found.</p>
               <p className="text-xs text-gray-400 max-w-sm mx-auto">
                 When you sell tickets to passengers from your bulk package, they will appear here for easy printing and lookup.

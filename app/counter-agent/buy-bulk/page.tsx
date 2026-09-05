@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
-  RiTicket2Fill,
   RiShoppingBag3Fill,
   RiWallet3Fill,
   RiSmartphoneFill,

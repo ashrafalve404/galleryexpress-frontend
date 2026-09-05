@@ -13,6 +13,7 @@ import {
   RiInformationFill,
 } from 'react-icons/ri';
 import { Loader2 } from 'lucide-react';
+import { BsFillTicketPerforatedFill } from 'react-icons/bs';
 import { counterAgentApi, type AgentKycStatus } from '@/lib/api/counterAgent';
 import { toast } from 'sonner';
 
@@ -137,9 +138,9 @@ export default function AgentKycPage() {
 
           <Link
             href="/counter-agent/buy-bulk"
-            className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs sm:text-sm rounded-xl transition-all shadow-md shrink-0 flex items-center gap-1"
+            className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs sm:text-sm rounded-xl transition-all shadow-md shrink-0 flex items-center gap-1.5"
           >
-            Buy Bulk Tickets <RiArrowRightSLine size={16} />
+            <BsFillTicketPerforatedFill size={16} /> Buy Bulk Tickets <RiArrowRightSLine size={16} />
           </Link>
         </div>
       )}

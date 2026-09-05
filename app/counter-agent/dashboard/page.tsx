@@ -5,8 +5,6 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
   RiDashboardFill,
-  RiTicket2Fill,
-  RiTicketFill,
   RiStore3Fill,
   RiWallet3Fill,
   RiFundsFill,
@@ -164,19 +162,19 @@ export default function CounterAgentDashboard() {
               href="/counter-agent/sell-ticket"
               className="px-5 py-3 bg-[#E31B23] hover:bg-[#c9121a] text-white font-extrabold text-xs sm:text-sm rounded-xl sm:rounded-2xl transition-all shadow-md flex items-center justify-center gap-2"
             >
-              <RiTicket2Fill size={19} /> Sell Ticket
+              <BsFillTicketPerforatedFill size={19} /> Sell Ticket
             </Link>
             <Link
               href="/counter-agent/sold-tickets"
               className="px-4 py-3 bg-white/10 hover:bg-white/20 text-white border border-white/20 font-extrabold text-xs sm:text-sm rounded-xl sm:rounded-2xl transition-all shadow-md flex items-center justify-center gap-2"
             >
-              <RiTicketFill size={19} /> My Sold Tickets
+              <BsFillTicketPerforatedFill size={19} /> My Sold Tickets
             </Link>
             <Link
               href="/counter-agent/buy-bulk"
               className="px-4 py-3 bg-white/10 hover:bg-white/20 text-white border border-white/20 font-extrabold text-xs sm:text-sm rounded-xl sm:rounded-2xl transition-all shadow-md flex items-center justify-center gap-2"
             >
-              <RiAddCircleFill size={19} /> Buy Bulk Tickets
+              <BsFillTicketPerforatedFill size={19} /> My Bulk Orders
             </Link>
           </div>
         </div>
@@ -206,7 +204,7 @@ export default function CounterAgentDashboard() {
                 Remaining Tickets
               </span>
               <div className="p-1.5 sm:p-2 bg-purple-50 text-purple-600 rounded-xl">
-                <RiShoppingBag3Fill size={19} />
+                <BsFillTicketPerforatedFill size={19} />
               </div>
             </div>
             <div>
@@ -223,7 +221,7 @@ export default function CounterAgentDashboard() {
                 Tickets Sold
               </span>
               <div className="p-1.5 sm:p-2 bg-red-50 text-[#E31B23] rounded-xl">
-                <RiTicketFill size={19} />
+                <BsFillTicketPerforatedFill size={19} />
               </div>
             </div>
             <div>
@@ -369,20 +367,20 @@ export default function CounterAgentDashboard() {
         <div className="bg-white rounded-3xl border border-gray-200/80 shadow-sm overflow-hidden space-y-4">
           <div className="p-6 pb-2 border-b border-gray-100 flex items-center justify-between">
             <h2 className="text-lg font-black text-gray-900 tracking-tight flex items-center gap-2">
-              <RiTicket2Fill className="text-[#E31B23]" size={22} /> My Bulk Orders
+              <BsFillTicketPerforatedFill className="text-[#E31B23]" size={22} /> My Bulk Orders
             </h2>
             <span className="text-xs text-gray-500 font-bold">{bulkOrders.length} total orders</span>
           </div>
 
           {bulkOrders.length === 0 ? (
             <div className="p-12 text-center text-gray-500 space-y-3">
-              <RiTicket2Fill className="w-12 h-12 text-gray-300 mx-auto" />
+              <BsFillTicketPerforatedFill className="w-12 h-12 text-gray-300 mx-auto" />
               <p className="text-sm font-medium">No bulk ticket orders found.</p>
               <Link
                 href="/counter-agent/buy-bulk"
                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#E31B23] text-white text-xs font-bold rounded-xl"
               >
-                <RiAddCircleFill size={16} /> Buy First Bulk Batch
+                <BsFillTicketPerforatedFill size={16} /> Buy First Bulk Batch
               </Link>
             </div>
           ) : (

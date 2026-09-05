@@ -13,10 +13,10 @@ import {
   CheckCircle,
   AlertCircle,
   Loader2,
-  Ticket,
   Printer,
   Sparkles,
 } from 'lucide-react';
+import { BsFillTicketPerforatedFill } from 'react-icons/bs';
 import client from '@/lib/api/client';
 import { counterAgentApi, type DashboardStats } from '@/lib/api/counterAgent';
 import { toast } from 'sonner';
@@ -182,7 +182,7 @@ export default function CounterAgentSellTicketPage() {
             <ArrowLeft size={16} /> Back to Dashboard
           </Link>
           <div className="inline-flex items-center gap-2 bg-[#E31B23]/10 text-[#E31B23] px-4 py-2 rounded-xl text-xs font-extrabold border border-[#E31B23]/20">
-            <Ticket size={16} /> Bulk Balance: {remainingBulk} Tickets
+            <BsFillTicketPerforatedFill size={16} /> Bulk Balance: {remainingBulk} Tickets
           </div>
         </div>
 
@@ -203,9 +203,9 @@ export default function CounterAgentSellTicketPage() {
             </p>
             <Link
               href="/counter-agent/buy-bulk"
-              className="inline-block px-5 py-2.5 bg-[#E31B23] hover:bg-[#c9121a] text-white font-bold text-xs rounded-xl shadow-md"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#E31B23] hover:bg-[#c9121a] text-white font-bold text-xs rounded-xl shadow-md"
             >
-              Buy Bulk Tickets
+              <BsFillTicketPerforatedFill size={16} /> Buy Bulk Tickets
             </Link>
           </div>
         ) : (
@@ -258,7 +258,7 @@ export default function CounterAgentSellTicketPage() {
               <div className="bg-white p-6 rounded-3xl border border-gray-200/80 shadow-xs space-y-4 animate-fade-in">
                 <div className="flex items-center justify-between">
                   <h2 className="text-sm font-black text-gray-900 uppercase tracking-wider flex items-center gap-2">
-                    <Ticket size={18} className="text-[#E31B23]" /> 2. Select Seat(s)
+                    <BsFillTicketPerforatedFill size={18} className="text-[#E31B23]" /> 2. Select Seat(s)
                   </h2>
                   <span className="text-xs font-bold text-gray-500">
                     Selected: <strong className="text-[#E31B23]">{selectedSeats.join(', ') || 'None'}</strong>

@@ -5,7 +5,6 @@ import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import {
   RiDashboardFill,
-  RiTicketFill,
   RiStore3Fill,
   RiWallet3Fill,
   RiUser3Fill,
@@ -84,16 +83,28 @@ export default function CounterAgentLayout({
       shortLabel: 'Dashboard',
     },
     {
+      label: 'Sell Ticket',
+      href: '/counter-agent/sell-ticket',
+      icon: BsFillTicketPerforatedFill,
+      shortLabel: 'Sell Ticket',
+    },
+    {
+      label: 'My Sold Tickets',
+      href: '/counter-agent/sold-tickets',
+      icon: BsFillTicketPerforatedFill,
+      shortLabel: 'Sold Tickets',
+    },
+    {
+      label: 'My Bulk Orders',
+      href: '/counter-agent/buy-bulk',
+      icon: BsFillTicketPerforatedFill,
+      shortLabel: 'Bulk Orders',
+    },
+    {
       label: 'KYC Verification',
       href: '/counter-agent/kyc',
       icon: RiShieldCheckFill,
       shortLabel: 'KYC',
-    },
-    {
-      label: 'Buy Bulk Tickets',
-      href: '/counter-agent/buy-bulk',
-      icon: BsFillTicketPerforatedFill,
-      shortLabel: 'Buy Bulk',
     },
     {
       label: 'Select Counter',
