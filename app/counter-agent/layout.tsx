@@ -322,47 +322,57 @@ export default function CounterAgentLayout({
 
       {/* Mobile App Native Bottom Navigation Bar */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#111111] border-t border-white/10 flex items-center justify-around py-2 px-2 shadow-2xl backdrop-blur-md">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = pathname === item.href;
-          const isMiddleBuyBulk = item.href === '/counter-agent/buy-bulk';
+        {navItems
+          .filter((item) =>
+            [
+              '/counter-agent/dashboard',
+              '/counter-agent/sell-ticket',
+              '/counter-agent/buy-bulk',
+              '/counter-agent/sold-tickets',
+              '/counter-agent/commissions',
+            ].includes(item.href)
+          )
+          .map((item) => {
+            const Icon = item.icon;
+            const isActive = pathname === item.href;
+            const isMiddleBuyBulk = item.href === '/counter-agent/buy-bulk';
 
-          if (isMiddleBuyBulk) {
+            if (isMiddleBuyBulk) {
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="flex flex-col items-center gap-0.5 -mt-4"
+                >
+                  <div className="w-12 h-12 rounded-full bg-[#E31B23] text-white flex items-center justify-center shadow-md border-2 border-[#111111] transition-transform active:scale-95">
+                    <Icon size={24} />
+                  </div>
+                  <span className="text-[10px] font-black text-white tracking-tight">{item.shortLabel}</span>
+                </Link>
+              );
+            }
+
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex flex-col items-center gap-0.5 -mt-4"
-              >
-                <div className="w-12 h-12 rounded-full bg-[#E31B23] text-white flex items-center justify-center shadow-md border-2 border-[#111111] transition-transform active:scale-95">
-                  <Icon size={24} />
-                </div>
-                <span className="text-[10px] font-black text-white tracking-tight">{item.shortLabel}</span>
-              </Link>
-            );
-          }
-
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-all ${
-                isActive
-                  ? 'text-[#E31B23] font-black'
-                  : 'text-gray-400 hover:text-white font-medium'
-              }`}
-            >
-              <div
-                className={`p-1 rounded-lg transition-colors ${
-                  isActive ? 'bg-[#E31B23]/15' : 'bg-transparent'
+                className={`flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-all ${
+                  isActive
+                    ? 'text-[#E31B23] font-black'
+                    : 'text-gray-400 hover:text-white font-medium'
                 }`}
               >
-                <Icon size={22} className={isActive ? 'text-[#E31B23]' : 'text-gray-400'} />
-              </div>
-              <span className="text-[10px] tracking-tight">{item.shortLabel}</span>
-            </Link>
-          );
-        })}
+                <div
+                  className={`p-1 rounded-lg transition-colors ${
+                    isActive ? 'bg-[#E31B23]/15' : 'bg-transparent'
+                  }`}
+                >
+                  <Icon size={22} className={isActive ? 'text-[#E31B23]' : 'text-gray-400'} />
+                </div>
+                <span className="text-[10px] tracking-tight">{item.shortLabel}</span>
+              </Link>
+            );
+          })}
       </nav>
     </div>
   );
