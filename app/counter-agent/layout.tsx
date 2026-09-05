@@ -208,10 +208,6 @@ export default function CounterAgentLayout({
         >
           <RiMenu3Fill size={22} />
         </button>
-
-        <div className="flex items-center gap-2">
-          <LanguageToggle variant="dark" />
-        </div>
       </header>
 
       {/* Mobile Side Drawer (Sliding Left-to-Right) */}
@@ -237,15 +233,18 @@ export default function CounterAgentLayout({
                     />
                   </div>
                   <span className="text-xs font-bold text-gray-200">
-                    Agent Navigation
+                    {getTranslation(lang, 'agentNavigation', 'Agent Navigation')}
                   </span>
                 </div>
-                <button
-                  onClick={() => setMobileDrawerOpen(false)}
-                  className="p-1.5 bg-white/10 rounded-lg text-gray-300 hover:text-white"
-                >
-                  <RiCloseFill size={20} />
-                </button>
+                <div className="flex items-center gap-2">
+                  <LanguageToggle variant="dark" />
+                  <button
+                    onClick={() => setMobileDrawerOpen(false)}
+                    className="p-1.5 bg-white/10 rounded-lg text-gray-300 hover:text-white"
+                  >
+                    <RiCloseFill size={20} />
+                  </button>
+                </div>
               </div>
 
               {/* Drawer Quick Action */}
@@ -255,7 +254,7 @@ export default function CounterAgentLayout({
                   onClick={() => setMobileDrawerOpen(false)}
                   className="w-full bg-[#E31B23] text-white font-black text-xs py-3 px-4 rounded-xl shadow-md flex items-center justify-center gap-2"
                 >
-                  <RiAddCircleFill size={18} /> Sell New Ticket
+                  <RiAddCircleFill size={18} /> {getTranslation(lang, 'sellNewTicket', 'Sell New Ticket')}
                 </Link>
               </div>
 
@@ -301,7 +300,7 @@ export default function CounterAgentLayout({
                   </div>
                   <div className="min-w-0">
                     <div className="text-xs font-bold text-white truncate">
-                      {user?.name || 'Agent User'}
+                      {user?.name || getTranslation(lang, 'agentUser', 'Agent User')}
                     </div>
                     <div className="text-[10px] text-gray-400 truncate">
                       {user?.email || ''}
@@ -313,7 +312,7 @@ export default function CounterAgentLayout({
                 onClick={handleLogout}
                 className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#E31B23] hover:bg-[#c9121a] text-white text-xs font-bold shadow-xs transition-all"
               >
-                <RiLogoutBoxRFill size={18} /> Sign Out
+                <RiLogoutBoxRFill size={18} /> {getTranslation(lang, 'signOut', 'Sign Out')}
               </button>
             </div>
           </div>

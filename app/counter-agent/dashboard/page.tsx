@@ -122,7 +122,7 @@ export default function CounterAgentDashboard() {
           
           <div className="space-y-3 z-10 relative">
             <h1 className="text-xl sm:text-3xl font-black tracking-tight text-white">
-              {getTranslation(lang, 'welcome', 'Welcome')}, {agent.firstName}! 👋
+              {getTranslation(lang, 'welcome', 'Welcome')}, {agent?.firstName || 'Agent'}! 👋
             </h1>
 
             <div className="flex flex-wrap items-center gap-2 sm:gap-3">

@@ -58,8 +58,8 @@ export default function CounterAgentLoginPage() {
       setAuth(
         {
           id: user.id,
-          name: `${user.firstName} ${user.lastName}`,
-          email: user.email,
+          name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Agent User',
+          email: user.email || '',
           role: user.role,
           companyId: user.companyId,
           phone: user.phone,

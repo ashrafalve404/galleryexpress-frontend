@@ -270,7 +270,7 @@ export function Header() {
                     className="group flex items-center gap-3.5 px-3.5 py-3 rounded-xl text-sm font-bold text-gray-700 hover:bg-gray-100/80 hover:text-[#E31B23]"
                   >
                     <RiLayoutGridFill size={20} className="text-gray-400 group-hover:text-[#E31B23] transition-colors" />
-                    <span>{isCounterAgent() ? 'Agent Dashboard' : 'My Dashboard'}</span>
+                    <span>{isCounterAgent() ? getTranslation(lang, 'agentDashboard', 'Agent Dashboard') : getTranslation(lang, 'myDashboard', 'My Dashboard')}</span>
                   </Link>
                   {isAdmin() && (
                     <Link
@@ -279,7 +279,7 @@ export function Header() {
                       className="group flex items-center gap-3.5 px-3.5 py-3 rounded-xl text-sm font-bold text-gray-700 hover:bg-gray-100/80 hover:text-[#E31B23]"
                     >
                       <RiShieldUserFill size={20} className="text-gray-400 group-hover:text-[#E31B23] transition-colors" />
-                      <span>Admin Panel</span>
+                      <span>{getTranslation(lang, 'adminPanel', 'Admin Panel')}</span>
                     </Link>
                   )}
                   <button
@@ -290,7 +290,7 @@ export function Header() {
                     className="w-full flex items-center gap-3.5 px-3.5 py-3 rounded-xl text-sm font-bold text-rose-600 hover:bg-rose-50"
                   >
                     <RiLogoutBoxRFill size={20} className="text-rose-600" />
-                    <span>Logout</span>
+                    <span>{getTranslation(lang, 'logout', 'Logout')}</span>
                   </button>
                 </>
               )}
@@ -303,7 +303,7 @@ export function Header() {
                     className="flex items-center justify-center gap-2 bg-[#E31B23] hover:bg-[#C41920] text-white px-4 py-3 rounded-xl text-sm font-bold shadow-sm transition-all"
                   >
                     <RiUser3Fill size={18} />
-                    <span>Sign In / Register</span>
+                    <span>{getTranslation(lang, 'signIn', 'Sign In')} / {getTranslation(lang, 'register', 'Register')}</span>
                   </Link>
                 </div>
               )}
@@ -316,7 +316,7 @@ export function Header() {
                 className="flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-800 shadow-xs hover:border-[#E31B23] transition-colors"
               >
                 <RiPhoneFill size={16} className="text-[#E31B23]" />
-                <span>Customer Support: 01826-110036</span>
+                <span>{getTranslation(lang, 'customerSupport', 'Customer Support')}: 01826-110036</span>
               </a>
               <div className="text-center text-[10px] text-gray-400 mt-2">
                 © {new Date().getFullYear()} Ticket Dorkar Limited

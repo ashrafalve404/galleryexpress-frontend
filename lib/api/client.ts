@@ -100,9 +100,14 @@ client.interceptors.response.use(
           localStorage.removeItem('refreshToken');
           localStorage.removeItem('user');
           const isUrlAdmin = originalRequest?.url?.includes('/admin/');
-          const isPageAdmin = window.location.pathname.startsWith('/admin');
+          const isPageAdmin = typeof window !== 'undefined' && window.location.pathname.startsWith('/admin');
           if (isUrlAdmin || isPageAdmin) {
             window.location.href = '/auth/login';
+          }
+          const isUrlAgent = originalRequest?.url?.includes('/counter-agent/');
+          const isPageAgent = typeof window !== 'undefined' && window.location.pathname.startsWith('/counter-agent');
+          if (isUrlAgent || isPageAgent) {
+            window.location.href = '/counter-agent/login';
           }
         }
         return Promise.reject(cleanErr);
