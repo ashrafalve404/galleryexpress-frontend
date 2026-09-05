@@ -3,26 +3,87 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import { Lock, Eye, EyeOff, User, Phone, Mail } from 'lucide-react';
-import { useState } from 'react';
-import { useRegister } from '@/lib/hooks/useAuth';
+import { Lock, Eye, EyeOff, User, Phone, Mail, ShieldCheck, ArrowRight, RotateCw, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useRegister, useSendOtp } from '@/lib/hooks/useAuth';
 import { registerSchema, type RegisterFormData } from '@/lib/validations/authSchema';
 import { ROUTES } from '@/lib/utils/constants';
 
 export default function RegisterPage() {
   const registerMutation = useRegister();
+  const sendOtpMutation = useSendOtp();
+
   const [showPassword, setShowPassword] = useState(false);
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [otpCode, setOtpCode] = useState('');
+  const [otpError, setOtpError] = useState('');
+  const [formData, setFormData] = useState<RegisterFormData | null>(null);
+  const [countdown, setCountdown] = useState(60);
+  const [canResend, setCanResend] = useState(false);
 
   const { register, handleSubmit, formState: { errors } } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
   });
 
+  // Countdown timer for Resend OTP
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (showOtpModal && countdown > 0) {
+      timer = setInterval(() => {
+        setCountdown((prev) => prev - 1);
+      }, 1000);
+    } else if (countdown === 0) {
+      setCanResend(true);
+    }
+    return () => clearInterval(timer);
+  }, [showOtpModal, countdown]);
+
   const onSubmit = (data: RegisterFormData) => {
-    registerMutation.mutate({
-      name: data.name,
-      phone: data.phone,
-      email: data.email || undefined,
-      password: data.password,
+    setFormData(data);
+    setOtpError('');
+    // Step 1: Send OTP to mobile phone first
+    sendOtpMutation.mutate(data.phone, {
+      onSuccess: () => {
+        setShowOtpModal(true);
+        setCountdown(60);
+        setCanResend(false);
+      },
+    });
+  };
+
+  const handleVerifyAndRegister = () => {
+    if (!otpCode || otpCode.trim().length !== 4) {
+      setOtpError('Please enter the 4-digit OTP code sent to your phone.');
+      return;
+    }
+    setOtpError('');
+    if (!formData) return;
+
+    // Step 2: Submit registration with mandatory OTP code
+    registerMutation.mutate(
+      {
+        name: formData.name,
+        phone: formData.phone,
+        email: formData.email || undefined,
+        password: formData.password,
+        otp: otpCode.trim(),
+      },
+      {
+        onError: (err: any) => {
+          setOtpError(err?.response?.data?.message || err?.message || 'Invalid or expired OTP code.');
+        },
+      }
+    );
+  };
+
+  const handleResendOtp = () => {
+    if (!formData || !canResend) return;
+    setOtpError('');
+    sendOtpMutation.mutate(formData.phone, {
+      onSuccess: () => {
+        setCountdown(60);
+        setCanResend(false);
+      },
     });
   };
 
@@ -123,13 +184,13 @@ export default function RegisterPage() {
 
             <button
               type="submit"
-              disabled={registerMutation.isPending}
+              disabled={sendOtpMutation.isPending}
               className="w-full bg-[#E31B23] disabled:opacity-70 hover:bg-[#C41920] text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all hover:shadow-md text-sm mt-2 active:scale-[0.99]"
             >
-              {registerMutation.isPending ? (
+              {sendOtpMutation.isPending ? (
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
-                'Create Account'
+                'Send Verification OTP'
               )}
             </button>
           </form>
@@ -146,6 +207,83 @@ export default function RegisterPage() {
           <Link href={ROUTES.PRIVACY} className="underline hover:text-gray-600">Privacy Policy</Link>.
         </p>
       </div>
+
+      {/* OTP Verification Modal */}
+      {showOtpModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl relative border border-gray-100">
+            <button
+              onClick={() => setShowOtpModal(false)}
+              className="absolute right-5 top-5 text-gray-400 hover:text-gray-600 p-1.5 rounded-full hover:bg-gray-100 transition-colors"
+            >
+              <X size={18} />
+            </button>
+
+            <div className="w-12 h-12 rounded-2xl bg-red-50 text-[#E31B23] flex items-center justify-center mx-auto mb-4 border border-red-100">
+              <ShieldCheck size={26} />
+            </div>
+
+            <h3 className="text-xl font-black text-center text-gray-900 mb-1">Verify Mobile OTP</h3>
+            <p className="text-xs text-center text-gray-500 mb-6 leading-relaxed">
+              We sent a 4-digit verification code via SMS to{' '}
+              <strong className="text-gray-900 font-bold">{formData?.phone}</strong>
+            </p>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-center text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+                  Enter 4-Digit OTP Code
+                </label>
+                <input
+                  type="text"
+                  maxLength={4}
+                  value={otpCode}
+                  onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
+                  placeholder="• • • •"
+                  className="w-full text-center text-2xl font-black tracking-[0.5em] py-3.5 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-[#E31B23] transition-all"
+                  autoFocus
+                />
+              </div>
+
+              {otpError && (
+                <div className="p-3 bg-red-50 border border-red-200 text-red-600 text-xs font-semibold rounded-xl text-center">
+                  {otpError}
+                </div>
+              )}
+
+              <button
+                onClick={handleVerifyAndRegister}
+                disabled={registerMutation.isPending || otpCode.length !== 4}
+                className="w-full bg-[#E31B23] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#C41920] text-white font-extrabold py-3.5 rounded-2xl flex items-center justify-center gap-2 transition-all shadow-md active:scale-95 text-sm"
+              >
+                {registerMutation.isPending ? (
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <>
+                    Verify & Create Account <ArrowRight size={16} />
+                  </>
+                )}
+              </button>
+
+              <div className="pt-2 text-center">
+                {canResend ? (
+                  <button
+                    onClick={handleResendOtp}
+                    disabled={sendOtpMutation.isPending}
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-[#E31B23] hover:underline"
+                  >
+                    <RotateCw size={13} /> Resend OTP SMS
+                  </button>
+                ) : (
+                  <p className="text-xs text-gray-400 font-medium">
+                    Resend OTP code in <span className="font-bold text-gray-700">{countdown}s</span>
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

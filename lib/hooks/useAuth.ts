@@ -1,9 +1,21 @@
 import { useMutation } from '@tanstack/react-query';
-import { login, register, logout, type LoginDto, type RegisterDto } from '../api/auth';
+import { login, register, sendRegisterOtp, logout, type LoginDto, type RegisterDto } from '../api/auth';
 import { useAuthStore } from '../store/authStore';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { ROUTES } from '../utils/constants';
+
+export function useSendOtp() {
+  return useMutation({
+    mutationFn: (phone: string) => sendRegisterOtp(phone),
+    onSuccess: (data) => {
+      toast.success(data?.message || 'OTP code sent to your mobile phone!');
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message || err?.message || 'Failed to send OTP code.');
+    },
+  });
+}
 
 export function useLogin() {
   const setAuth = useAuthStore((s) => s.setAuth);

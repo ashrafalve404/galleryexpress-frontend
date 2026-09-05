@@ -12,6 +12,7 @@ export interface RegisterDto {
   phone: string;
   email?: string;
   password: string;
+  otp?: string;
 }
 
 export interface AuthUser {
@@ -82,6 +83,11 @@ export async function login(dto: LoginDto): Promise<AuthResponse> {
   };
 }
 
+export async function sendRegisterOtp(phone: string): Promise<{ success: boolean; message: string; phone: string }> {
+  const { data } = await client.post('/api/v1/auth/register/send-otp', { phone });
+  return data?.data || data;
+}
+
 export async function register(dto: RegisterDto): Promise<AuthResponse> {
   const parts = dto.name.trim().split(' ');
   const firstName = parts[0] || dto.name;
@@ -91,6 +97,7 @@ export async function register(dto: RegisterDto): Promise<AuthResponse> {
     phone: dto.phone,
     email: dto.email || undefined,
     password: dto.password,
+    otp: dto.otp,
     firstName,
     lastName,
   });
