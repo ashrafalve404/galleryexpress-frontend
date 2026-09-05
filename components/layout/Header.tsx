@@ -17,6 +17,7 @@ import {
   RiUser3Fill,
   RiMenu3Fill
 } from 'react-icons/ri';
+import { BsFillTicketPerforatedFill } from 'react-icons/bs';
 import { useAuthStore } from '@/lib/store/authStore';
 import { useLogout } from '@/lib/hooks/useAuth';
 import { ROUTES } from '@/lib/utils/constants';
@@ -24,7 +25,7 @@ import { UserNotificationBell } from './UserNotificationBell';
 
 const navLinks = [
   { href: ROUTES.HOME, label: 'Home', icon: RiHome5Fill },
-  { href: ROUTES.MY_BOOKING, label: 'My Booking', icon: RiTicket2Fill },
+  { href: ROUTES.MY_BOOKING, label: 'My Booking', icon: BsFillTicketPerforatedFill },
   { href: ROUTES.ABOUT, label: 'About Us', icon: RiInformationFill },
   { href: ROUTES.CONTACT, label: 'Contact', icon: RiPhoneFill },
 ];
@@ -154,7 +155,7 @@ export function Header() {
                         href={ROUTES.MY_BOOKING}
                         className="flex items-center gap-2.5 px-4 py-2 text-sm font-semibold text-gray-700 hover:text-[#E31B23] transition-colors group"
                       >
-                        <RiTicket2Fill className="text-gray-400 group-hover:text-[#E31B23] transition-colors" />
+                        <BsFillTicketPerforatedFill className="text-gray-400 group-hover:text-[#E31B23] transition-colors" />
                         <span>Find Booking</span>
                       </Link>
                       <hr className="my-1.5 border-gray-100" />

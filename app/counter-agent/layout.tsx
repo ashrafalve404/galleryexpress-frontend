@@ -16,6 +16,7 @@ import {
   RiShieldCheckFill,
 } from 'react-icons/ri';
 import { Loader2, LogOut } from 'lucide-react';
+import { BsFillTicketPerforatedFill } from 'react-icons/bs';
 import { useAuthStore } from '@/lib/store/authStore';
 
 export default function CounterAgentLayout({
@@ -91,7 +92,7 @@ export default function CounterAgentLayout({
     {
       label: 'Buy Bulk Tickets',
       href: '/counter-agent/buy-bulk',
-      icon: RiTicketFill,
+      icon: BsFillTicketPerforatedFill,
       shortLabel: 'Buy Bulk',
     },
     {
@@ -114,18 +115,18 @@ export default function CounterAgentLayout({
       <aside className="hidden md:flex w-64 bg-[#111111] text-white flex-col justify-between border-r border-white/10 sticky top-0 h-screen shrink-0 z-30">
         <div>
           {/* Sidebar Header Logo */}
-          <div className="p-6 border-b border-white/10">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="bg-white p-2 rounded-xl shadow-sm border border-white/20">
+          <div className="p-5 border-b border-white/10 space-y-3">
+            <Link href="/" className="block">
+              <div className="bg-white py-2.5 px-4 rounded-xl shadow-sm border border-white/20 flex items-center justify-center w-full">
                 <img
                   src="/ticketdrkrlogo.png"
                   alt="Ticket Dorkar"
-                  className="h-8 w-auto object-contain"
+                  className="h-8 w-auto object-contain max-w-full"
                 />
               </div>
             </Link>
-            <div className="mt-3">
-              <span className="bg-[#E31B23] text-white text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md inline-block">
+            <div>
+              <span className="w-full bg-[#E31B23] text-white text-[10px] font-black uppercase tracking-wider py-1.5 px-3 rounded-xl text-center block shadow-xs">
                 Counter Agent Portal
               </span>
             </div>
@@ -322,7 +323,7 @@ export default function CounterAgentLayout({
                 href={item.href}
                 className="flex flex-col items-center gap-0.5 -mt-4"
               >
-                <div className="w-12 h-12 rounded-full bg-[#E31B23] text-white flex items-center justify-center shadow-lg shadow-[#E31B23]/40 border-2 border-[#111111] transition-transform active:scale-95">
+                <div className="w-12 h-12 rounded-full bg-[#E31B23] text-white flex items-center justify-center shadow-md border-2 border-[#111111] transition-transform active:scale-95">
                   <Icon size={24} />
                 </div>
                 <span className="text-[10px] font-black text-white tracking-tight">{item.shortLabel}</span>
