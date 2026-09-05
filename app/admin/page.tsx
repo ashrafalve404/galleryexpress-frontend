@@ -85,7 +85,7 @@ export default function AdminDashboard() {
     },
     {
       title: 'Revenue (Month)',
-      value: dashData?.monthlyRevenue ? formatCurrency(dashData.monthlyRevenue) : '--',
+      value: dashData?.monthlyRevenue !== undefined ? formatCurrency(dashData.monthlyRevenue) : '--',
       icon: RiBankCardFill,
       color: 'bg-emerald-500',
       trend: 'up' as const,
