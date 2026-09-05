@@ -159,16 +159,30 @@ export default function CounterAgentDashboard() {
             </div>
           </div>
 
-          <Link
-            href="/counter-agent/buy-bulk"
-            className="w-full sm:w-auto shrink-0 px-5 py-3 bg-[#E31B23] hover:bg-[#c9121a] text-white font-extrabold text-xs sm:text-sm rounded-xl sm:rounded-2xl transition-all shadow-md flex items-center justify-center gap-2 z-10"
-          >
-            <RiAddCircleFill size={19} /> Buy Bulk Tickets
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-2.5 w-full sm:w-auto shrink-0 z-10">
+            <Link
+              href="/counter-agent/sell-ticket"
+              className="px-5 py-3 bg-[#E31B23] hover:bg-[#c9121a] text-white font-extrabold text-xs sm:text-sm rounded-xl sm:rounded-2xl transition-all shadow-md flex items-center justify-center gap-2"
+            >
+              <RiTicket2Fill size={19} /> Sell Ticket
+            </Link>
+            <Link
+              href="/counter-agent/sold-tickets"
+              className="px-4 py-3 bg-white/10 hover:bg-white/20 text-white border border-white/20 font-extrabold text-xs sm:text-sm rounded-xl sm:rounded-2xl transition-all shadow-md flex items-center justify-center gap-2"
+            >
+              <RiTicketFill size={19} /> My Sold Tickets
+            </Link>
+            <Link
+              href="/counter-agent/buy-bulk"
+              className="px-4 py-3 bg-white/10 hover:bg-white/20 text-white border border-white/20 font-extrabold text-xs sm:text-sm rounded-xl sm:rounded-2xl transition-all shadow-md flex items-center justify-center gap-2"
+            >
+              <RiAddCircleFill size={19} /> Buy Bulk Tickets
+            </Link>
+          </div>
         </div>
 
-        {/* 4 Stat Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        {/* 5 Stat Cards Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
           <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
             <div className="flex items-center justify-between mb-3">
               <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-500">
@@ -206,6 +220,23 @@ export default function CounterAgentDashboard() {
           <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
             <div className="flex items-center justify-between mb-3">
               <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-500">
+                Tickets Sold
+              </span>
+              <div className="p-1.5 sm:p-2 bg-red-50 text-[#E31B23] rounded-xl">
+                <RiTicketFill size={19} />
+              </div>
+            </div>
+            <div>
+              <div className="text-xl sm:text-3xl font-black text-[#E31B23]">
+                {stats.ticketsSold ?? Math.max(0, totalTicketsBought - totalTicketsRemaining)}
+              </div>
+              <p className="text-[10px] sm:text-[11px] text-gray-400 mt-1">Issued to passengers</p>
+            </div>
+          </div>
+
+          <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-500">
                 Commission Earned
               </span>
               <div className="p-1.5 sm:p-2 bg-emerald-50 text-emerald-600 rounded-xl">
@@ -217,6 +248,23 @@ export default function CounterAgentDashboard() {
                 {formatTk(commissionStats.totalEarned)}
               </div>
               <p className="text-[10px] sm:text-[11px] text-gray-400 mt-1">Total revenue generated</p>
+            </div>
+          </div>
+
+          <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col justify-between col-span-2 lg:col-span-1">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-500">
+                Referral Earnings
+              </span>
+              <div className="p-1.5 sm:p-2 bg-amber-50 text-amber-600 rounded-xl">
+                <RiWallet3Fill size={19} />
+              </div>
+            </div>
+            <div>
+              <div className="text-xl sm:text-3xl font-black text-amber-600">
+                {formatTk(stats.referralEarnings || 0)}
+              </div>
+              <p className="text-[10px] sm:text-[11px] text-gray-400 mt-1">From {stats.referredCount || 0} referred agent(s)</p>
             </div>
           </div>
 

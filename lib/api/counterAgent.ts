@@ -47,7 +47,10 @@ export interface DashboardStats {
   counter?: { id: string; name: string; location?: string } | null;
   totalTicketsBought: number;
   totalTicketsRemaining: number;
+  ticketsSold?: number;
   totalInvested: number;
+  referredCount?: number;
+  referralEarnings?: number;
   commissionStats: {
     totalEarned: number;
     commissionCap: number;
@@ -172,5 +175,22 @@ export const counterAgentApi = {
   async rejectBulkOrder(id: string, reason?: string): Promise<{ message: string }> {
     const res = await apiClient.post(`${BASE}/admin/bulk-orders/${id}/reject`, { reason });
     return res.data?.data ?? res.data;
+  },
+
+  async sellTicket(dto: {
+    scheduleId: string;
+    seatNumbers: string[];
+    passengerName: string;
+    passengerPhone: string;
+    passengerEmail?: string;
+    gender?: string;
+  }): Promise<{ success: boolean; message: string; bookingRef: string; bookingId: string; remainingBulkQuantity: number }> {
+    const res = await apiClient.post(`${BASE}/sell-ticket`, dto);
+    return res.data?.data ?? res.data;
+  },
+
+  async getMySoldTickets(): Promise<any[]> {
+    const res = await apiClient.get(`${BASE}/sold-tickets`);
+    return res.data?.data ?? res.data ?? [];
   },
 };

@@ -337,11 +337,12 @@ export default function AdminCounterAgentsPage() {
               <thead className="bg-gray-50 text-gray-500 font-bold uppercase text-[11px] border-b border-gray-200">
                 <tr>
                   <th className="py-3.5 px-4">Agent Name</th>
-                  <th className="py-3.5 px-4">Contact</th>
+                  <th className="py-3.5 px-4">Referral Code</th>
                   <th className="py-3.5 px-4">Assigned Counter</th>
-                  <th className="py-3.5 px-4">Total Invested</th>
-                  <th className="py-3.5 px-4">Earned</th>
-                  <th className="py-3.5 px-4">Tickets Left</th>
+                  <th className="py-3.5 px-4">Bulk Tickets</th>
+                  <th className="py-3.5 px-4">Sold</th>
+                  <th className="py-3.5 px-4">Invested</th>
+                  <th className="py-3.5 px-4">Referral Earnings</th>
                   <th className="py-3.5 px-4">Status</th>
                   <th className="py-3.5 px-4 text-right">Actions</th>
                 </tr>
@@ -349,7 +350,7 @@ export default function AdminCounterAgentsPage() {
               <tbody className="divide-y divide-gray-100 text-gray-700">
                 {filteredAgents.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="text-center py-8 text-gray-400">
+                    <td colSpan={9} className="text-center py-8 text-gray-400">
                       No counter agents found matching search.
                     </td>
                   </tr>
@@ -357,11 +358,20 @@ export default function AdminCounterAgentsPage() {
                   filteredAgents.map((ag) => (
                     <tr key={ag.id} className="hover:bg-gray-50/80 transition-colors">
                       <td className="py-4 px-4 font-bold text-gray-900">
-                        {ag.firstName} {ag.lastName}
+                        <div>{ag.firstName} {ag.lastName}</div>
+                        <div className="text-xs text-gray-400 font-normal">{ag.phone || ag.email}</div>
                       </td>
-                      <td className="py-4 px-4 text-xs text-gray-500">
-                        <div>{ag.email}</div>
-                        <div className="text-gray-400">{ag.phone || '—'}</div>
+                      <td className="py-4 px-4 text-xs font-semibold text-gray-800">
+                        {ag.referralCode ? (
+                          <span className="font-mono bg-red-50 text-[#E31B23] px-2 py-0.5 rounded-md border border-red-100 font-bold">
+                            {ag.referralCode}
+                          </span>
+                        ) : '—'}
+                        {ag.referredByCode && (
+                          <div className="text-[10px] text-gray-400 mt-0.5">
+                            Referred by: <strong className="text-gray-600 font-bold">{ag.referredByCode}</strong>
+                          </div>
+                        )}
                       </td>
                       <td className="py-4 px-4 font-semibold text-gray-800">
                         {ag.counter ? (
@@ -373,14 +383,17 @@ export default function AdminCounterAgentsPage() {
                           <span className="text-amber-500 font-normal">Unassigned</span>
                         )}
                       </td>
+                      <td className="py-4 px-4 font-semibold text-purple-700">
+                        {ag.totalRemainingTickets} left / {ag.totalTicketsBought} total
+                      </td>
+                      <td className="py-4 px-4 font-bold text-[#E31B23]">
+                        {ag.ticketsSold ?? Math.max(0, ag.totalTicketsBought - ag.totalRemainingTickets)}
+                      </td>
                       <td className="py-4 px-4 font-bold text-gray-900">
                         {formatTk(ag.totalInvested)}
                       </td>
-                      <td className="py-4 px-4 font-bold text-emerald-600">
-                        {formatTk(ag.totalEarned)}
-                      </td>
-                      <td className="py-4 px-4 font-semibold text-purple-700">
-                        {ag.totalRemainingTickets} / {ag.totalTicketsBought}
+                      <td className="py-4 px-4 font-bold text-amber-600">
+                        {formatTk(ag.totalReferralCommissionEarned || 0)}
                       </td>
                       <td className="py-4 px-4">
                         <span
