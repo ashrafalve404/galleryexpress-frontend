@@ -129,7 +129,10 @@ export default function CounterAgentSoldTicketsPage() {
                       ? ticket.bookingSeats.map((s: any) => s?.seat?.seatNumber || s?.seatId || '').filter(Boolean).join(', ')
                       : '—';
                     const route = ticket.schedule?.route;
-                    const coachType = ticket.schedule?.coach?.coachType || 'AC';
+                    const coachTypeObj = ticket.schedule?.coach?.coachType;
+                    const coachType = typeof coachTypeObj === 'object' && coachTypeObj !== null
+                      ? ((coachTypeObj as any).name || 'AC Executive')
+                      : (coachTypeObj || 'AC Executive');
                     const dateStr = ticket.createdAt ? formatDate(ticket.createdAt, 'dd MMM yyyy') : '—';
 
                     return (

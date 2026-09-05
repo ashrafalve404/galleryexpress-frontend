@@ -243,7 +243,8 @@ export default function CounterAgentSellTicketPage() {
       const q = filterSearch.toLowerCase();
       const coachName = (sched.coach?.name || '').toLowerCase();
       const coachNo = (sched.coach?.coachNumber || '').toLowerCase();
-      const coachType = (sched.coach?.coachType || '').toLowerCase();
+      const rawCoachType = sched.coach?.coachType;
+      const coachType = (typeof rawCoachType === 'object' && rawCoachType !== null ? (rawCoachType as any).name || '' : String(rawCoachType || '')).toLowerCase();
       if (!coachName.includes(q) && !coachNo.includes(q) && !coachType.includes(q)) {
         return false;
       }
@@ -446,7 +447,9 @@ export default function CounterAgentSellTicketPage() {
                               {sched.coach?.name || 'Arabian Express Hino AC 01'}
                             </span>
                             <span className="text-[10px] bg-red-50 text-[#E31B23] px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider border border-red-100">
-                              {sched.coach?.coachType || 'AC Executive'}
+                              {typeof sched.coach?.coachType === 'object' && sched.coach?.coachType !== null
+                                ? ((sched.coach.coachType as any).name || 'AC Executive')
+                                : (sched.coach?.coachType || 'AC Executive')}
                             </span>
                           </div>
                           <div className="flex items-center gap-1 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200/80 text-amber-700">
@@ -563,7 +566,9 @@ export default function CounterAgentSellTicketPage() {
                       {selectedSchedule.coach?.name || 'Arabian Express Hino AC 01'}
                     </span>
                     <span className="text-[10px] bg-red-50 text-[#E31B23] px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider border border-red-100">
-                      {selectedSchedule.coach?.coachType || 'AC Executive'}
+                      {typeof selectedSchedule.coach?.coachType === 'object' && selectedSchedule.coach?.coachType !== null
+                        ? ((selectedSchedule.coach.coachType as any).name || 'AC Executive')
+                        : (selectedSchedule.coach?.coachType || 'AC Executive')}
                     </span>
                   </div>
 
