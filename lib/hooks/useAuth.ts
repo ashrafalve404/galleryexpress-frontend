@@ -45,8 +45,10 @@ export function useLogin() {
         router.push(ROUTES.HOME);
       }
     },
-    onError: (err: Error) => {
-      toast.error(err.message || 'Invalid email or password.');
+    onError: (err: any) => {
+      const msg = err?.response?.data?.message;
+      const displayMsg = Array.isArray(msg) ? msg.join(', ') : msg || err?.message || 'Invalid email or password.';
+      toast.error(displayMsg);
     },
   });
 }
@@ -66,8 +68,10 @@ export function useRegister() {
       toast.success('Account created successfully! Welcome to Ticket Dorkar.');
       router.push(ROUTES.HOME);
     },
-    onError: (err: Error) => {
-      toast.error(err.message || 'Registration failed. Please try again.');
+    onError: (err: any) => {
+      const msg = err?.response?.data?.message;
+      const displayMsg = Array.isArray(msg) ? msg.join(', ') : msg || err?.message || 'Registration failed. Please try again.';
+      toast.error(displayMsg);
     },
   });
 }

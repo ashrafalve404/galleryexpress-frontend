@@ -72,18 +72,26 @@ function normalizeUser(rawUser: Record<string, unknown> | undefined): AuthUser {
 }
 
 export async function login(dto: LoginDto): Promise<AuthResponse> {
-  const { data } = await client.post('/api/v1/auth/login', {
-    loginIdentifier: dto.loginIdentifier || dto.phone || dto.email,
-    phone: dto.phone || dto.loginIdentifier,
-    email: dto.email,
-    password: dto.password,
-  });
+  const rawId = (dto.loginIdentifier || dto.phone || dto.email || '').trim();
+  const isPhone = /^[0-9+\s-]{8,}$/.test(rawId);
 
-  const payload = data?.data || data;
+  const payload: Record<string, string> = {
+    loginIdentifier: rawId,
+    password: dto.password,
+  };
+  if (isPhone) {
+    payload.phone = rawId;
+  } else if (rawId.includes('@')) {
+    payload.email = rawId;
+  }
+
+  const { data } = await client.post('/api/v1/auth/login', payload);
+
+  const resPayload = data?.data || data;
   return {
-    accessToken: payload?.accessToken || '',
-    refreshToken: payload?.refreshToken || '',
-    user: normalizeUser(payload?.user),
+    accessToken: resPayload?.accessToken || '',
+    refreshToken: resPayload?.refreshToken || '',
+    user: normalizeUser(resPayload?.user),
   };
 }
 
