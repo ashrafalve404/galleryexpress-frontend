@@ -17,13 +17,19 @@ import {
   Sparkles,
   Clock,
   MapPin,
-  Tag,
+  Building2,
+  Search,
+  Filter,
+  SlidersHorizontal,
 } from 'lucide-react';
 import { BsFillTicketPerforatedFill } from 'react-icons/bs';
+import { RiStarFill, RiWindyFill, RiWifiFill, RiFlashlightFill } from 'react-icons/ri';
+import { HiChevronRight } from 'react-icons/hi';
 import client from '@/lib/api/client';
 import { counterAgentApi, type DashboardStats } from '@/lib/api/counterAgent';
 import { getScheduleSeats, type Seat } from '@/lib/api/schedules';
 import { SeatMap } from '@/components/booking/SeatMap';
+import { formatDate, formatTime } from '@/lib/utils/date';
 import { toast } from 'sonner';
 
 interface ScheduleItem {
@@ -78,6 +84,12 @@ export default function CounterAgentSellTicketPage() {
   const [schedules, setSchedules] = useState<ScheduleItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingSchedules, setLoadingSchedules] = useState(true);
+
+  // Filtering state
+  const [filterSearch, setFilterSearch] = useState('');
+  const [filterRoute, setFilterRoute] = useState('ALL');
+  const [filterDate, setFilterDate] = useState('ALL');
+  const [filterTime, setFilterTime] = useState('ALL');
 
   // Form State
   const [selectedSchedule, setSelectedSchedule] = useState<ScheduleItem | null>(null);
@@ -221,6 +233,45 @@ export default function CounterAgentSellTicketPage() {
 
   const remainingBulk = stats?.totalTicketsRemaining || 0;
 
+  // Extract unique available dates from schedules
+  const uniqueDates = Array.from(new Set(schedules.map((s) => s.departureDate).filter(Boolean)));
+
+  // Filtered schedules list
+  const filteredSchedules = schedules.filter((sched) => {
+    if (filterSearch.trim()) {
+      const q = filterSearch.toLowerCase();
+      const coachName = (sched.coach?.name || '').toLowerCase();
+      const coachNo = (sched.coach?.coachNumber || '').toLowerCase();
+      const coachType = (sched.coach?.coachType || '').toLowerCase();
+      if (!coachName.includes(q) && !coachNo.includes(q) && !coachType.includes(q)) {
+        return false;
+      }
+    }
+
+    if (filterRoute === 'DHAKA_COX') {
+      if (sched.route?.origin !== 'Dhaka' || sched.route?.destination !== "Cox's Bazar") return false;
+    } else if (filterRoute === 'COX_DHAKA') {
+      if (sched.route?.origin !== "Cox's Bazar" || sched.route?.destination !== 'Dhaka') return false;
+    }
+
+    if (filterDate !== 'ALL' && sched.departureDate) {
+      if (!sched.departureDate.includes(filterDate)) return false;
+    }
+
+    if (filterTime !== 'ALL') {
+      const timeStr = sched.departureTime || '';
+      let hour = parseInt(timeStr.split(':')[0], 10);
+      if (timeStr.toUpperCase().includes('PM') && hour < 12) hour += 12;
+      if (timeStr.toUpperCase().includes('AM') && hour === 12) hour = 0;
+
+      if (filterTime === 'MORNING' && (hour < 6 || hour >= 12)) return false;
+      if (filterTime === 'AFTERNOON' && (hour < 12 || hour >= 18)) return false;
+      if (filterTime === 'NIGHT' && (hour < 18 || hour > 23)) return false;
+    }
+
+    return true;
+  });
+
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-8 font-sans">
       <div className="max-w-5xl mx-auto space-y-6">
@@ -260,77 +311,199 @@ export default function CounterAgentSellTicketPage() {
           </div>
         ) : (
           <form onSubmit={handleSellTicket} className="space-y-6">
-            {/* Step 1: Choose Bus Schedule */}
-            <div className="bg-white p-6 rounded-3xl border border-gray-200/80 shadow-xs space-y-4">
-              <h2 className="text-sm font-black text-gray-900 uppercase tracking-wider flex items-center gap-2">
-                <Bus size={18} className="text-[#E31B23]" /> 1. Select Preferred Bus Schedule
+            {/* Filter & Search Toolbar */}
+            <div className="bg-white p-5 rounded-3xl border border-gray-200/80 shadow-xs space-y-3">
+              <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+                <span className="text-xs font-black text-gray-900 uppercase tracking-wider flex items-center gap-1.5">
+                  <SlidersHorizontal size={16} className="text-[#E31B23]" /> Filter & Search Schedules
+                </span>
+                <span className="text-xs font-bold text-gray-500">
+                  Showing {filteredSchedules.length} of {schedules.length} bus(es)
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                {/* Search Bus Name / Coach */}
+                <div className="relative">
+                  <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="text"
+                    value={filterSearch}
+                    onChange={(e) => setFilterSearch(e.target.value)}
+                    placeholder="Search bus name..."
+                    className="w-full pl-9 pr-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23]"
+                  />
+                </div>
+
+                {/* Route Filter */}
+                <select
+                  value={filterRoute}
+                  onChange={(e) => setFilterRoute(e.target.value)}
+                  className="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-extrabold text-gray-800 focus:outline-none focus:border-[#E31B23]"
+                >
+                  <option value="ALL">All Routes (Dhaka ↔ Cox)</option>
+                  <option value="DHAKA_COX">Dhaka ➔ Cox's Bazar</option>
+                  <option value="COX_DHAKA">Cox's Bazar ➔ Dhaka</option>
+                </select>
+
+                {/* Date Filter */}
+                <select
+                  value={filterDate}
+                  onChange={(e) => setFilterDate(e.target.value)}
+                  className="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-extrabold text-gray-800 focus:outline-none focus:border-[#E31B23]"
+                >
+                  <option value="ALL">All Departure Dates</option>
+                  {uniqueDates.map((d) => (
+                    <option key={d} value={d}>
+                      {formatDate(d, 'dd MMM yyyy (EEE)')}
+                    </option>
+                  ))}
+                </select>
+
+                {/* Shift / Time Filter */}
+                <select
+                  value={filterTime}
+                  onChange={(e) => setFilterTime(e.target.value)}
+                  className="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-extrabold text-gray-800 focus:outline-none focus:border-[#E31B23]"
+                >
+                  <option value="ALL">All Departure Times</option>
+                  <option value="MORNING">Morning (06:00 AM - 12:00 PM)</option>
+                  <option value="AFTERNOON">Afternoon (12:00 PM - 06:00 PM)</option>
+                  <option value="NIGHT">Night (06:00 PM - 12:00 AM)</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Step 1: Choose Bus Schedule Card */}
+            <div className="space-y-4">
+              <h2 className="text-sm font-black text-gray-900 uppercase tracking-wider flex items-center gap-2 px-1">
+                <Bus size={18} className="text-[#E31B23]" /> 1. Select Bus Schedule ({filteredSchedules.length} Available)
               </h2>
 
               {loadingSchedules ? (
-                <div className="py-8 flex justify-center items-center gap-2 text-xs text-gray-500">
-                  <Loader2 className="w-5 h-5 text-[#E31B23] animate-spin" /> Loading schedules...
+                <div className="py-12 bg-white rounded-3xl border border-gray-200/80 flex justify-center items-center gap-2 text-xs text-gray-500">
+                  <Loader2 className="w-5 h-5 text-[#E31B23] animate-spin" /> Loading available bus schedules...
                 </div>
-              ) : schedules.length === 0 ? (
-                <div className="py-6 text-center text-xs text-gray-500">No active schedules available right now.</div>
+              ) : filteredSchedules.length === 0 ? (
+                <div className="py-12 bg-white rounded-3xl border border-gray-200/80 text-center text-xs text-gray-500 space-y-2">
+                  <p className="font-bold text-gray-700">No active schedules match your search filters.</p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFilterSearch('');
+                      setFilterRoute('ALL');
+                      setFilterDate('ALL');
+                      setFilterTime('ALL');
+                    }}
+                    className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold rounded-xl"
+                  >
+                    Reset Filters
+                  </button>
+                </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {schedules.map((sched) => {
+                <div className="space-y-4">
+                  {filteredSchedules.map((sched) => {
                     const isSelected = selectedSchedule?.id === sched.id;
-                    const dateDisplay = sched.departureDate
-                      ? new Date(sched.departureDate).toLocaleDateString('en-US', {
-                          weekday: 'short',
-                          month: 'short',
-                          day: 'numeric',
-                        })
-                      : 'Today';
-
                     return (
                       <div
                         key={sched.id}
-                        onClick={() => handleSelectSchedule(sched)}
-                        className={`p-4 rounded-2xl border cursor-pointer transition-all space-y-3 ${
+                        className={`bg-white border rounded-3xl p-5 sm:p-6 transition-all space-y-4 ${
                           isSelected
-                            ? 'bg-[#111827] text-white border-[#111827] shadow-lg scale-[1.02] ring-2 ring-[#E31B23]'
-                            : 'bg-white hover:bg-gray-50 border-gray-200 text-gray-900 shadow-2xs'
+                            ? 'border-[#E31B23] shadow-lg ring-2 ring-[#E31B23]/20 bg-red-50/10'
+                            : 'border-gray-200/80 shadow-xs hover:border-gray-300 hover:shadow-md'
                         }`}
                       >
-                        {/* Header Badges */}
-                        <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-                          <span
-                            className={`text-[10px] font-black px-2.5 py-0.5 rounded-md uppercase tracking-wider ${
-                              isSelected ? 'bg-white/20 text-white' : 'bg-red-50 text-[#E31B23]'
-                            }`}
-                          >
-                            {sched.coach?.coachType || 'AC Deluxe'}
-                          </span>
-                          <span className={`text-xs font-black ${isSelected ? 'text-emerald-400' : 'text-[#E31B23]'}`}>
-                            ৳{sched.fare || 2000} / seat
-                          </span>
+                        {/* Coach Header: Name, Type Tag, Rating */}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2.5 flex-wrap">
+                            <span className="font-black text-gray-900 text-base sm:text-lg">
+                              {sched.coach?.name || 'Arabian Express Hino AC 01'}
+                            </span>
+                            <span className="text-[10px] bg-red-50 text-[#E31B23] px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider border border-red-100">
+                              {sched.coach?.coachType || 'AC Executive'}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200/80 text-amber-700">
+                            <RiStarFill className="text-[#F59E0B] text-sm" />
+                            <span className="text-xs font-black">4.8</span>
+                          </div>
                         </div>
 
-                        {/* Route Origin -> Destination */}
-                        <div>
-                          <p className="text-sm font-extrabold truncate flex items-center gap-1.5">
-                            <MapPin size={14} className={isSelected ? 'text-red-400' : 'text-[#E31B23]'} />
-                            {sched.route?.origin} ➔ {sched.route?.destination}
-                          </p>
-                          <p className={`text-xs ${isSelected ? 'text-gray-300' : 'text-gray-600'} font-semibold mt-0.5`}>
-                            {sched.coach?.name || `Coach ${sched.coach?.coachNumber || ''}`}
-                          </p>
+                        {/* Departure, Duration & Arrival */}
+                        <div className="flex items-center justify-between gap-4 py-3 border-y border-gray-100">
+                          <div className="text-left">
+                            <div className="text-xl sm:text-2xl font-black text-gray-900">
+                              {formatTime(sched.departureTime)}
+                            </div>
+                            <div className="text-xs text-gray-600 font-extrabold mt-0.5">
+                              {sched.route?.origin || 'Dhaka'}
+                            </div>
+                          </div>
+
+                          <div className="flex-1 flex flex-col items-center gap-1">
+                            <div className="text-xs text-gray-400 font-bold">8h</div>
+                            <div className="relative w-full flex items-center">
+                              <div className="flex-1 h-px bg-gray-200" />
+                              <div className="mx-2 w-2.5 h-2.5 rounded-full bg-[#E31B23] shrink-0" />
+                              <div className="flex-1 h-px bg-gray-200" />
+                            </div>
+                            <div className="text-xs text-gray-400 font-medium">Non-stop</div>
+                          </div>
+
+                          <div className="text-right">
+                            <div className="text-xl sm:text-2xl font-black text-gray-900">
+                              {formatTime(sched.arrivalTime || '03:00 PM')}
+                            </div>
+                            <div className="text-xs text-gray-600 font-extrabold mt-0.5">
+                              {sched.route?.destination || "Cox's Bazar"}
+                            </div>
+                          </div>
                         </div>
 
-                        {/* Date and Departure Time */}
-                        <div
-                          className={`text-xs font-semibold flex items-center justify-between pt-1 border-t ${
-                            isSelected ? 'border-white/10 text-gray-300' : 'border-gray-100 text-gray-500'
-                          }`}
-                        >
-                          <span className="flex items-center gap-1">
-                            <Calendar size={13} /> {dateDisplay}
-                          </span>
-                          <span className="flex items-center gap-1 font-bold">
-                            <Clock size={13} /> {sched.departureTime}
-                          </span>
+                        {/* Main Boarding Counter Information */}
+                        <div className="flex items-start gap-2 bg-blue-50/70 border border-blue-200/80 rounded-2xl px-4 py-2.5">
+                          <Building2 size={16} className="text-blue-600 shrink-0 mt-0.5" />
+                          <div className="text-xs font-semibold text-blue-900 leading-snug">
+                            <span className="font-extrabold">Main Boarding Counter: </span>
+                            {sched.route?.origin === 'Dhaka' ? 'Dhaka - Arambagh' : `${sched.route?.origin} Main Counter`}
+                            <span className="text-blue-700 font-medium">
+                              {' '}
+                              · All {sched.route?.origin} Pickup Counters Available
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Card Footer: Seats Left + Price + Book / Select Seats Button */}
+                        <div className="flex items-center justify-between pt-2 border-t border-gray-50 flex-wrap gap-3">
+                          <div>
+                            <span className="text-sm font-black text-emerald-600">
+                              {sched.availableSeatsCount ?? 30} seats left
+                            </span>
+                            <div className="text-[11px] text-gray-400 font-semibold mt-0.5">
+                              📅 {sched.departureDate ? formatDate(sched.departureDate, 'dd MMM yyyy') : 'Today'}
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-4">
+                            <div className="text-right">
+                              <div className="text-xl sm:text-2xl font-black text-[#E31B23]">
+                                ৳{(sched.fare || 2000).toLocaleString('en-BD')}
+                              </div>
+                              <div className="text-[11px] text-gray-400 font-medium">per seat</div>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() => handleSelectSchedule(sched)}
+                              className={`px-6 py-3 rounded-2xl font-black text-xs sm:text-sm flex items-center gap-1.5 transition-all shadow-md active:scale-95 ${
+                                isSelected
+                                  ? 'bg-[#111111] text-white ring-2 ring-[#E31B23]'
+                                  : 'bg-[#E31B23] hover:bg-[#c9121a] text-white shadow-red-600/20'
+                              }`}
+                            >
+                              {isSelected ? 'Selected' : 'Book'} <HiChevronRight size={16} />
+                            </button>
+                          </div>
                         </div>
                       </div>
                     );
@@ -345,14 +518,20 @@ export default function CounterAgentSellTicketPage() {
                 <div className="flex items-center justify-between border-b border-gray-100 pb-3">
                   <div>
                     <h2 className="text-sm font-black text-gray-900 uppercase tracking-wider flex items-center gap-2">
-                      <BsFillTicketPerforatedFill size={18} className="text-[#E31B23]" /> 2. Select Seat(s)
+                      <BsFillTicketPerforatedFill size={18} className="text-[#E31B23]" /> 2. Select Seat(s) for{' '}
+                      <span className="text-[#E31B23]">
+                        {selectedSchedule.coach?.name || 'Arabian Express'} ({selectedSchedule.departureTime})
+                      </span>
                     </h2>
                     <p className="text-xs text-gray-500 mt-0.5">
                       Gray seats are already booked by passengers/customers. Click available seats to select.
                     </p>
                   </div>
                   <span className="text-xs font-bold text-gray-600 bg-gray-100 px-3 py-1.5 rounded-xl">
-                    Selected: <strong className="text-[#E31B23] font-black">{selectedSeats.map((s) => s.seatNumber).join(', ') || 'None'}</strong>
+                    Selected:{' '}
+                    <strong className="text-[#E31B23] font-black">
+                      {selectedSeats.map((s) => s.seatNumber).join(', ') || 'None'}
+                    </strong>
                   </span>
                 </div>
 
