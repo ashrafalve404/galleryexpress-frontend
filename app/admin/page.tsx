@@ -6,7 +6,7 @@ import { HiTrendingUp, HiTrendingDown } from 'react-icons/hi';
 import Link from 'next/link';
 import client from '@/lib/api/client';
 import { formatCurrency } from '@/lib/utils/currency';
-import { formatDate, formatDateTime } from '@/lib/utils/date';
+import { formatDate, formatTime, formatDateTime } from '@/lib/utils/date';
 import { BOOKING_STATUS_COLORS, BOOKING_STATUS_LABELS, ROUTES } from '@/lib/utils/constants';
 import { AdminHeader } from '@/components/layout/AdminHeader';
 
@@ -138,22 +138,33 @@ export default function AdminDashboard() {
                   <div className="skeleton h-4 w-20 rounded" />
                 </div>
               ))
-            ) : (recentBookings || []).slice(0, 10).map((b: Record<string, unknown>) => (
-              <div key={b.id as string} className="px-6 py-3.5 flex items-center justify-between hover:bg-gray-50 transition-colors">
-                <div>
-                  <div className="text-sm font-mono font-bold text-[#111111]">{b.bookingRef as string}</div>
-                  <div className="text-xs text-gray-400 font-medium">{b.createdAt ? formatDateTime(b.createdAt as string) : ''}</div>
+            ) : (recentBookings || []).slice(0, 10).map((b: Record<string, unknown>) => {
+              const schedule = b.schedule as Record<string, unknown> | undefined;
+              const travelDate = schedule?.departureDate ? formatDate(schedule.departureDate as string, 'dd MMM yyyy') : null;
+              const busTime = schedule?.departureTime ? formatTime(schedule.departureTime as string) : null;
+
+              return (
+                <div key={b.id as string} className="px-6 py-3.5 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                  <div>
+                    <div className="text-sm font-mono font-bold text-[#111111]">{b.bookingRef as string}</div>
+                    {travelDate && (
+                      <div className="text-xs text-gray-700 font-semibold mt-0.5">
+                        Journey: {travelDate} {busTime ? `· ${busTime}` : ''}
+                      </div>
+                    )}
+                    <div className="text-[11px] text-gray-400 font-medium">Bought: {b.createdAt ? formatDateTime(b.createdAt as string) : ''}</div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-bold text-gray-800">
+                      {formatCurrency(getAdminBookingAmount(b))}
+                    </span>
+                    <span className={`text-xs px-2.5 py-0.5 rounded-full font-bold ${BOOKING_STATUS_COLORS[b.status as string] || 'bg-gray-100 text-gray-700'}`}>
+                      {BOOKING_STATUS_LABELS[b.status as string] || b.status as string}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-bold text-gray-800">
-                    {formatCurrency(getAdminBookingAmount(b))}
-                  </span>
-                  <span className={`text-xs px-2.5 py-0.5 rounded-full font-bold ${BOOKING_STATUS_COLORS[b.status as string] || 'bg-gray-100 text-gray-700'}`}>
-                    {BOOKING_STATUS_LABELS[b.status as string] || b.status as string}
-                  </span>
-                </div>
-              </div>
-            ))}
+              );
+            })}
             {!bookingsLoading && (!recentBookings || recentBookings.length === 0) && (
               <div className="px-6 py-10 text-center text-gray-400 text-sm font-medium">No bookings recorded yet</div>
             )}

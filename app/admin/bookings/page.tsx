@@ -1,12 +1,12 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { Search, RefreshCw, ChevronLeft, ChevronRight, Trash2, AlertTriangle, MapPin } from 'lucide-react';
+import { Search, RefreshCw, ChevronLeft, ChevronRight, Trash2, AlertTriangle, MapPin, Calendar, Clock, Bus } from 'lucide-react';
 import { useState } from 'react';
 import client from '@/lib/api/client';
 import { adminDeleteBooking, adminApproveBookingPayment, adminRejectBookingPayment } from '@/lib/api/bookings';
 import { formatCurrency } from '@/lib/utils/currency';
-import { formatDateTime } from '@/lib/utils/date';
+import { formatDate, formatTime, formatDateTime } from '@/lib/utils/date';
 import { BOOKING_STATUS_COLORS, BOOKING_STATUS_LABELS } from '@/lib/utils/constants';
 import { useAuthStore } from '@/lib/store/authStore';
 import { toast } from 'sonner';
@@ -141,10 +141,10 @@ export default function AdminBookingsPage() {
       {/* Smooth Horizontally Scrollable Data Table */}
       <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-xs">
         <div className="overflow-x-auto">
-          <table className="w-full text-xs sm:text-sm min-w-[850px]">
+          <table className="w-full text-xs sm:text-sm min-w-[950px]">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-100">
-                {['Ref #', 'Passenger', 'Route', 'Amount', 'Payment Info', 'Status', 'Date', 'Actions'].map((h) => (
+                {['Ref #', 'Passenger', 'Route & Bus', 'Journey Date & Bus Time', 'Amount', 'Payment Info', 'Status', 'Booked Date', 'Actions'].map((h) => (
                   <th key={h} className="text-left px-5 py-3.5 font-bold text-gray-500 text-xs uppercase tracking-wider">{h}</th>
                 ))}
               </tr>
@@ -153,15 +153,16 @@ export default function AdminBookingsPage() {
               {isLoading ? (
                 [1, 2, 3, 4, 5].map((i) => (
                   <tr key={i}>
-                    {[1, 2, 3, 4, 5, 6, 7, 8].map((j) => (
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((j) => (
                       <td key={j} className="px-5 py-4"><div className="skeleton h-4 rounded w-20" /></td>
                     ))}
                   </tr>
                 ))
               ) : bookings.map((b) => {
                 const passengers = (b.passengers as Record<string, unknown>[]) || [];
-                const schedule = b.schedule as Record<string, unknown>;
-                const route = schedule?.route as Record<string, unknown>;
+                const schedule = b.schedule as Record<string, unknown> | undefined;
+                const route = schedule?.route as Record<string, unknown> | undefined;
+                const coach = schedule?.coach as Record<string, unknown> | undefined;
                 const counter = b.counter as Record<string, unknown> | undefined;
                 const counterName = (counter?.name as string) || (counter?.location as string);
                 const notes = (b.notes as string) || '';
@@ -170,25 +171,58 @@ export default function AdminBookingsPage() {
                 const firstPassenger = passengers[0];
                 const isPending = b.status === 'HELD' || b.status === 'PENDING';
 
+                const bookingSeats = (b.bookingSeats as any[]) || (b.seats as any[]) || [];
+                const seatsStr = bookingSeats
+                  .map((s: any) => s?.seat?.seatNumber || s?.seatNumber || s?.seatId)
+                  .filter(Boolean)
+                  .join(', ');
+
+                const coachName = (coach?.name as string) || (coach?.coachNumber as string) || '';
+                const travelDate = schedule?.departureDate ? formatDate(schedule.departureDate as string, 'dd MMM yyyy') : null;
+                const busTime = schedule?.departureTime ? formatTime(schedule.departureTime as string) : null;
+
                 return (
                   <tr key={b.id as string} className="hover:bg-gray-50/80 transition-colors">
-                    <td className="px-5 py-4 font-mono font-bold text-[#111111] text-xs">
+                    <td className="px-5 py-4 font-mono font-bold text-[#111111] text-xs whitespace-nowrap">
                       {b.bookingRef as string}
                     </td>
                     <td className="px-5 py-4">
                       <div className="font-semibold text-gray-900">{firstPassenger?.name as string || '--'}</div>
                       <div className="text-xs text-gray-400 font-medium">{firstPassenger?.phone as string || '--'}</div>
+                      {seatsStr ? (
+                        <div className="text-[11px] text-gray-500 font-medium mt-0.5">
+                          Seat(s): <span className="font-bold text-[#E31B23]">{seatsStr}</span>
+                        </div>
+                      ) : null}
                     </td>
                     <td className="px-5 py-4 text-gray-700 font-medium whitespace-nowrap">
-                      <div className="font-semibold text-gray-900">{route ? `${route.origin} → ${route.destination}` : '--'}</div>
+                      <div className="font-bold text-gray-900 flex items-center gap-1.5">
+                        <Bus size={13} className="text-[#E31B23] shrink-0" />
+                        <span>{route ? `${route.origin} → ${route.destination}` : '--'}</span>
+                      </div>
+                      {coachName ? (
+                        <div className="text-xs text-gray-500 font-medium mt-0.5">
+                          {coachName}
+                        </div>
+                      ) : null}
                       {boardingStop && (
-                        <div className="text-[11px] text-[#E31B23] font-bold flex items-center gap-1 mt-0.5">
-                          <MapPin size={11} className="shrink-0 text-[#E31B23]" />
+                        <div className="text-[11px] text-emerald-700 font-bold flex items-center gap-1 mt-0.5">
+                          <MapPin size={11} className="shrink-0 text-emerald-600" />
                           <span>Counter: {boardingStop}</span>
                         </div>
                       )}
                     </td>
-                    <td className="px-5 py-4 font-bold text-[#E31B23]">
+                    <td className="px-5 py-4 text-gray-700 text-xs whitespace-nowrap">
+                      <div className="flex items-center gap-1.5 font-bold text-gray-900">
+                        <Calendar size={13} className="text-[#E31B23] shrink-0" />
+                        <span>{travelDate || '--'}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-gray-600 font-medium mt-0.5">
+                        <Clock size={13} className="text-gray-400 shrink-0" />
+                        <span>Bus Time: <strong className="text-gray-900 font-bold">{busTime || '--'}</strong></span>
+                      </div>
+                    </td>
+                    <td className="px-5 py-4 font-bold text-[#E31B23] whitespace-nowrap">
                       {formatCurrency(getAdminBookingAmount(b))}
                     </td>
                     <td className="px-5 py-4">
@@ -211,7 +245,7 @@ export default function AdminBookingsPage() {
                         </div>
                       ) : null}
                     </td>
-                    <td className="px-5 py-4">
+                    <td className="px-5 py-4 whitespace-nowrap">
                       <span className={`text-xs px-2.5 py-0.5 rounded-full font-bold ${
                         b.status === 'CONFIRMED'
                           ? 'bg-emerald-100 text-emerald-800'
@@ -223,7 +257,8 @@ export default function AdminBookingsPage() {
                       </span>
                     </td>
                     <td className="px-5 py-4 text-gray-500 text-xs font-medium whitespace-nowrap">
-                      {b.createdAt ? formatDateTime(b.createdAt as string) : '--'}
+                      <div className="text-gray-900 font-bold">{b.createdAt ? formatDateTime(b.createdAt as string) : '--'}</div>
+                      <div className="text-[10px] text-gray-400 font-semibold uppercase">Purchase Time</div>
                     </td>
                     <td className="px-5 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-2">
@@ -261,7 +296,7 @@ export default function AdminBookingsPage() {
               })}
               {!isLoading && bookings.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-5 py-12 text-center text-gray-400 text-sm font-medium">
+                  <td colSpan={9} className="px-5 py-12 text-center text-gray-400 text-sm font-medium">
                     No bookings found matching your search.
                   </td>
                 </tr>
