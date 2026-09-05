@@ -60,21 +60,40 @@ export default function CounterAgentSellTicketPage() {
     remainingBulkQuantity: number;
   } | null>(null);
 
-  // Load Agent Stats to verify Bulk Ticket balance
+  // Load Agent Stats to verify Bulk Ticket balance & active schedules
   useEffect(() => {
     async function loadData() {
+      // 1. Fetch agent dashboard stats
       try {
         const statsData = await counterAgentApi.getDashboardStats();
         setStats(statsData);
-
-        // Fetch available schedules for Dhaka <-> Cox's Bazar
-        const schedRes = await client.get('/api/v1/schedules', { params: { limit: 50 } });
-        const list = schedRes.data?.data?.data || schedRes.data?.data || schedRes.data || [];
-        setSchedules(Array.isArray(list) ? list : []);
-      } catch (e: any) {
-        toast.error('Failed to load portal data.');
+      } catch (err) {
+        console.error('Failed to load agent stats:', err);
       } finally {
         setLoading(false);
+      }
+
+      // 2. Fetch active bus schedules
+      try {
+        const schedList = await counterAgentApi.getActiveSchedules();
+        if (Array.isArray(schedList) && schedList.length > 0) {
+          setSchedules(schedList);
+        } else {
+          // Fallback to public schedule search
+          const fallbackRes = await client.get('/api/v1/schedules/search', { params: { limit: 50 } });
+          const list = fallbackRes.data?.data?.data || fallbackRes.data?.data || fallbackRes.data || [];
+          setSchedules(Array.isArray(list) ? list : []);
+        }
+      } catch (err) {
+        console.error('Failed to load agent schedules:', err);
+        try {
+          const fallbackRes = await client.get('/api/v1/schedules/search', { params: { limit: 50 } });
+          const list = fallbackRes.data?.data?.data || fallbackRes.data?.data || fallbackRes.data || [];
+          setSchedules(Array.isArray(list) ? list : []);
+        } catch {
+          setSchedules([]);
+        }
+      } finally {
         setLoadingSchedules(false);
       }
     }

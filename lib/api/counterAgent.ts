@@ -193,4 +193,9 @@ export const counterAgentApi = {
     const res = await apiClient.get(`${BASE}/sold-tickets`);
     return res.data?.data ?? res.data ?? [];
   },
+
+  async getActiveSchedules(): Promise<any[]> {
+    const res = await apiClient.get(`${BASE}/schedules`);
+    return res.data?.data ?? res.data ?? [];
+  },
 };
