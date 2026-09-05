@@ -2,7 +2,7 @@ import { Language } from '../store/languageStore';
 
 export const dictionary = {
   EN: {
-    // Navigation
+    // Navigation & Header
     home: 'Home',
     myBooking: 'My Booking',
     aboutUs: 'About Us',
@@ -15,8 +15,10 @@ export const dictionary = {
     adminPanel: 'Admin Panel',
     logout: 'Logout',
     customerSupport: 'Customer Support',
+    findBooking: 'Find Booking',
+    valuedPassenger: 'Valued Passenger',
 
-    // Agent Portal Sidebar
+    // Agent Portal Sidebar & Layout
     dashboard: 'Dashboard',
     myTicket: 'My Ticket',
     myBulkTicket: 'My Bulk Ticket',
@@ -30,19 +32,75 @@ export const dictionary = {
     sellTicket: 'Sell Ticket',
     mySoldTickets: 'My Sold Tickets',
     myBulkOrders: 'My Bulk Orders',
+    signOut: 'Sign Out',
+    agentUser: 'Agent User',
+    agentProfile: 'Agent Profile',
 
-    // Agent Dashboard
+    // Agent Dashboard Header & Banner
     welcome: 'Welcome',
     assignedCounter: 'Assigned Counter',
     referralCode: 'Referral Code',
-    totalTicketsBought: 'Total Tickets Bought',
-    remainingTickets: 'Remaining Tickets',
-    ticketsSold: 'Tickets Sold',
-    commissionEarned: 'Commission Earned',
-    referralEarnings: 'Referral Earnings',
-    totalInvested: 'Total Invested',
+    noCounterAssigned: 'You have not selected a counter yet —',
+    selectCounter: 'Select Counter',
 
-    // Search Box & Travel
+    // Stat Cards
+    totalTicketsBought: 'Total Tickets Bought',
+    cumulativeBulkQty: 'Cumulative bulk quantity',
+    remainingTickets: 'Remaining Tickets',
+    activeBulkAlloc: 'Active bulk allocation',
+    ticketsSold: 'Tickets Sold',
+    issuedToPassengers: 'Issued to passengers',
+    commissionEarned: 'Commission Earned',
+    totalRevenueGen: 'Total revenue generated',
+    referralEarnings: 'Referral Earnings',
+    fromReferredAgents: 'From referred agent(s)',
+    totalInvested: 'Total Invested',
+    maxCapLimit: 'Max commission cap limit',
+
+    // Tracker & Orders Table
+    commissionCapacityTracker: 'Commission Capacity Tracker',
+    trackerSubtext: 'Commission is capped at your cumulative bulk ticket investment amount.',
+    capacityCapReached: 'Capacity Cap Reached',
+    commissionActive: 'Commission Active',
+    earnedSoFar: 'Earned So Far',
+    maxCap: 'Max Cap',
+    remainingMargin: 'Remaining Margin',
+    capacityUsed: 'Capacity Used',
+    remainingCapacity: 'Remaining Capacity',
+    actionRequired: 'Action Required',
+    orderRoute: 'Route',
+    orderQty: 'Qty',
+    orderRemaining: 'Remaining',
+    orderInvested: 'Invested',
+    orderEarned: 'Earned',
+    orderCap: 'Cap',
+    orderStatus: 'Status',
+    orderDate: 'Date',
+    totalOrders: 'total orders',
+    noBulkOrders: 'No bulk ticket orders found.',
+    buyFirstBatch: 'Buy First Bulk Batch',
+
+    // Sell Ticket & Search Filters
+    searchBusPlaceholder: 'Search bus name...',
+    allRoutes: 'All Routes (Dhaka ↔ Cox)',
+    dhakaToCox: "Dhaka ➔ Cox's Bazar",
+    coxToDhaka: "Cox's Bazar ➔ Dhaka",
+    allDepartureDate: 'All Dates',
+    quickDate: 'Quick Date:',
+    allDepartureTimes: 'All Departure Times',
+    morningTime: 'Morning (06:00 AM - 12:00 PM)',
+    afternoonTime: 'Afternoon (12:00 PM - 06:00 PM)',
+    nightTime: 'Night (06:00 PM - 12:00 AM)',
+    availableBusSchedules: 'Available Bus Schedules',
+    noActiveSchedules: 'No active schedules match your search filters.',
+    resetFilters: 'Reset Filters',
+    departureTime: 'Departure Time',
+    startingFare: 'Starting Fare',
+    availableSeats: 'Available Seats',
+    totalSeats: 'Total Seats',
+    selectSeats: 'Select Seats',
+
+    // Homepage & Search Card
     leavingFrom: 'Leaving From',
     goingTo: 'Going To',
     selectCity: 'Select City',
@@ -51,8 +109,6 @@ export const dictionary = {
     today: 'Today',
     tomorrow: 'Tomorrow',
     popularRoutes: 'Popular Routes',
-    allDepartureTimes: 'All Departure Times',
-    availableBuses: 'Available Bus Schedules',
 
     // General
     earn: 'Earn',
@@ -61,7 +117,7 @@ export const dictionary = {
     agentNavigation: 'Agent Navigation',
   },
   BN: {
-    // Navigation
+    // Navigation & Header
     home: 'হোম',
     myBooking: 'আমার বুকিং',
     aboutUs: 'আমাদের সম্পর্কে',
@@ -74,8 +130,10 @@ export const dictionary = {
     adminPanel: 'এডমিন প্যানেল',
     logout: 'লগআউট',
     customerSupport: 'কাস্টমার সাপোর্ট',
+    findBooking: 'বুকিং খুঁজুন',
+    valuedPassenger: 'সম্মানিত যাত্রী',
 
-    // Agent Portal Sidebar
+    // Agent Portal Sidebar & Layout
     dashboard: 'ড্যাশবোর্ড',
     myTicket: 'আমার টিকিট',
     myBulkTicket: 'আমার বাল্ক টিকিট',
@@ -89,19 +147,75 @@ export const dictionary = {
     sellTicket: 'টিকিট বিক্রি করুন',
     mySoldTickets: 'আমার বিক্রীত টিকিট',
     myBulkOrders: 'আমার বাল্ক অর্ডার',
+    signOut: 'সাইন আউট',
+    agentUser: 'এজেন্ট ব্যবহারকারী',
+    agentProfile: 'এজেন্ট প্রোফাইল',
 
-    // Agent Dashboard
+    // Agent Dashboard Header & Banner
     welcome: 'স্বাগতম',
     assignedCounter: 'বরাদ্দকৃত কাউন্টার',
     referralCode: 'রেফারেল কোড',
-    totalTicketsBought: 'মোট টিকিট কেনা',
-    remainingTickets: 'অবশিষ্ট টিকিট',
-    ticketsSold: 'টিকিট বিক্রি',
-    commissionEarned: 'অর্জিত কমিশন',
-    referralEarnings: 'রেফারেল আয়',
-    totalInvested: 'মোট বিনিয়োগ',
+    noCounterAssigned: 'আপনি এখনো কোনো কাউন্টার নির্বাচন করেননি —',
+    selectCounter: 'কাউন্টার নির্বাচন করুন',
 
-    // Search Box & Travel
+    // Stat Cards
+    totalTicketsBought: 'মোট টিকিট কেনা',
+    cumulativeBulkQty: 'সর্বমোট কেনা বাল্ক টিকিটের সংখ্যা',
+    remainingTickets: 'অবশিষ্ট টিকিট',
+    activeBulkAlloc: 'সক্রিয় বাল্ক টিকিটের স্টক',
+    ticketsSold: 'টিকিট বিক্রি',
+    issuedToPassengers: 'যাত্রীদের ইস্যু করা মোট টিকিট',
+    commissionEarned: 'অর্জিত কমিশন',
+    totalRevenueGen: 'সর্বমোট উৎপন্ন আয়',
+    referralEarnings: 'রেফারেল আয়',
+    fromReferredAgents: 'জন রেফারকৃত এজেন্ট থেকে',
+    totalInvested: 'মোট বিনিয়োগ',
+    maxCapLimit: 'সর্বোচ্চ কমিশন সীমা (ক্যাপ)',
+
+    // Tracker & Orders Table
+    commissionCapacityTracker: 'কমিশন ক্যাপাসিটি ট্র্যাকার',
+    trackerSubtext: 'আপনার কমিশন আপনার সর্বমোট বাল্ক টিকিট বিনিয়োগের পরিমাণ দ্বারা সীমাবদ্ধ।',
+    capacityCapReached: 'কমিশন ক্যাপ পূর্ণ হয়েছে',
+    commissionActive: 'কমিশন সক্রিয় রয়েছে',
+    earnedSoFar: 'এ পর্যন্ত অর্জিত',
+    maxCap: 'সর্বোচ্চ সীমা (ক্যাপ)',
+    remainingMargin: 'অবশিষ্ট কমিশন সীমা',
+    capacityUsed: 'ক্যাপাসিটি ব্যবহার হয়েছে',
+    remainingCapacity: 'অবশিষ্ট ক্যাপাসিটি',
+    actionRequired: 'জরুরি পদক্ষেপ',
+    orderRoute: 'রুট',
+    orderQty: 'পরিমাণ',
+    orderRemaining: 'অবশিষ্ট',
+    orderInvested: 'বিনিয়োগ',
+    orderEarned: 'অর্জিত আয়',
+    orderCap: 'সীমা',
+    orderStatus: 'স্ট্যাটাস',
+    orderDate: 'তারিখ',
+    totalOrders: 'মোট অর্ডার',
+    noBulkOrders: 'কোনো বাল্ক টিকিট অর্ডার পাওয়া যায়নি।',
+    buyFirstBatch: 'প্রথম বাল্ক ব্যাচ কিনুন',
+
+    // Sell Ticket & Search Filters
+    searchBusPlaceholder: 'বাসের নাম দিয়ে খুঁজুন...',
+    allRoutes: 'সকল রুট (ঢাকা ↔ কক্সবাজার)',
+    dhakaToCox: 'ঢাকা ➔ কক্সবাজার',
+    coxToDhaka: 'কক্সবাজার ➔ ঢাকা',
+    allDepartureDate: 'সকল তারিখ',
+    quickDate: 'দ্রুত তারিখ:',
+    allDepartureTimes: 'সকল ছাড়ার সময়',
+    morningTime: 'সকাল (০৬:০০ AM - ১২:০০ PM)',
+    afternoonTime: 'দুপুর (১২:০০ PM - ০৬:০০ PM)',
+    nightTime: 'রাত (০৬:০০ PM - ১২:০০ AM)',
+    availableBusSchedules: 'উপলব্ধ বাস সময়সূচী',
+    noActiveSchedules: 'আপনার ফিল্টারে কোনো সক্রিয় বাস সময়সূচী পাওয়া যায়নি।',
+    resetFilters: 'ফিল্টার রিসেট করুন',
+    departureTime: 'ছাড়ার সময়',
+    startingFare: 'শুরুর ভাড়া',
+    availableSeats: 'ফ্রি সিট',
+    totalSeats: 'মোট সিট',
+    selectSeats: 'সিট নির্বাচন করুন',
+
+    // Homepage & Search Card
     leavingFrom: 'কোথা থেকে',
     goingTo: 'কোথায় যাবেন',
     selectCity: 'শহর নির্বাচন করুন',
@@ -109,14 +223,12 @@ export const dictionary = {
     searchBuses: 'বাস খুঁজুন',
     today: 'আজ',
     tomorrow: 'আগামীকাল',
-    popularRoutes: 'জনপ্রিয় রুটসমূহ',
-    allDepartureTimes: 'সকল ছাড়ার সময়',
-    availableBuses: 'উপলব্ধ বাস সময়সূচী',
+    popularRoutes: 'জনপ্রিয় রুটসমূহ',
 
     // General
     earn: 'আয়',
     agentPortal: 'এজেন্ট পোর্টাল',
-    active: 'সক্রিয়',
+    active: 'সক্রিয়',
     agentNavigation: 'এজেন্ট নেভিগেশন',
   },
 };

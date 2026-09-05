@@ -95,15 +95,19 @@ export default function CounterAgentDashboard() {
 
   const { lang } = useLanguageStore();
 
-  const {
-    agent,
-    counter,
-    totalTicketsBought,
-    totalTicketsRemaining,
-    totalInvested,
-    commissionStats,
-    bulkOrders,
-  } = stats;
+  const agent = stats?.agent || { id: '', firstName: 'Agent', lastName: '', email: '' };
+  const counter = stats?.counter || null;
+  const totalTicketsBought = stats?.totalTicketsBought || 0;
+  const totalTicketsRemaining = stats?.totalTicketsRemaining || 0;
+  const totalInvested = stats?.totalInvested || 0;
+  const commissionStats = stats?.commissionStats || {
+    totalEarned: 0,
+    commissionCap: 0,
+    remainingCapacity: 0,
+    capReached: false,
+    recentCommissions: [],
+  };
+  const bulkOrders = Array.isArray(stats?.bulkOrders) ? stats.bulkOrders : [];
 
   const capPct = commissionStats.commissionCap > 0
     ? Math.min((commissionStats.totalEarned / commissionStats.commissionCap) * 100, 100)

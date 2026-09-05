@@ -121,8 +121,8 @@ export function Header() {
 
             {/* Right Side */}
             <div className="flex items-center gap-2.5 sm:gap-3">
-              {/* Language Switcher */}
-              <LanguageToggle />
+              {/* Language Switcher (PC / Desktop Mode) */}
+              <LanguageToggle className="hidden lg:inline-flex" />
 
               <a
                 href="tel:01826110036"
@@ -212,16 +212,19 @@ export function Header() {
                 <img
                   src="/ticketdrkrlogo.png"
                   alt="Ticket Dorkar"
-                  className="h-12 w-auto object-contain"
+                  className="h-10 w-auto object-contain"
                 />
               </Link>
-              <button
-                onClick={() => setMenuOpen(false)}
-                className="p-2 rounded-xl text-gray-500 hover:text-gray-800 hover:bg-gray-200/60 transition-colors"
-                aria-label="Close menu"
-              >
-                <HiX size={22} />
-              </button>
+              <div className="flex items-center gap-2">
+                <LanguageToggle />
+                <button
+                  onClick={() => setMenuOpen(false)}
+                  className="p-2 rounded-xl text-gray-500 hover:text-gray-800 hover:bg-gray-200/60 transition-colors"
+                  aria-label="Close menu"
+                >
+                  <HiX size={22} />
+                </button>
+              </div>
             </div>
 
             {/* User Profile Card inside Drawer (if logged in) */}

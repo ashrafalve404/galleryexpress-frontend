@@ -43,6 +43,9 @@ import {
 } from 'date-fns';
 import client from '@/lib/api/client';
 import { counterAgentApi, type DashboardStats } from '@/lib/api/counterAgent';
+import { useAuthStore } from '@/lib/store/authStore';
+import { useLanguageStore } from '@/lib/store/languageStore';
+import { getTranslation } from '@/lib/utils/translations';
 import { getScheduleSeats, type Seat } from '@/lib/api/schedules';
 import { SeatMap } from '@/components/booking/SeatMap';
 import { formatDate, formatTime } from '@/lib/utils/date';
@@ -271,6 +274,7 @@ function generateFallbackSeats(bookedSeatNumbers: string[]): Seat[] {
 
 export default function CounterAgentSellTicketPage() {
   const router = useRouter();
+  const { lang } = useLanguageStore();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [schedules, setSchedules] = useState<ScheduleItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -521,7 +525,7 @@ export default function CounterAgentSellTicketPage() {
                     type="text"
                     value={filterSearch}
                     onChange={(e) => setFilterSearch(e.target.value)}
-                    placeholder="Search bus name..."
+                    placeholder={getTranslation(lang, 'searchBusPlaceholder', 'Search bus name...')}
                     className="w-full pl-9 pr-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23]"
                   />
                 </div>
@@ -532,9 +536,9 @@ export default function CounterAgentSellTicketPage() {
                   onChange={(e) => setFilterRoute(e.target.value)}
                   className="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-extrabold text-gray-800 focus:outline-none focus:border-[#E31B23]"
                 >
-                  <option value="ALL">All Routes (Dhaka ↔ Cox)</option>
-                  <option value="DHAKA_COX">Dhaka ➔ Cox's Bazar</option>
-                  <option value="COX_DHAKA">Cox's Bazar ➔ Dhaka</option>
+                  <option value="ALL">{getTranslation(lang, 'allRoutes', 'All Routes (Dhaka ↔ Cox)')}</option>
+                  <option value="DHAKA_COX">{getTranslation(lang, 'dhakaToCox', "Dhaka ➔ Cox's Bazar")}</option>
+                  <option value="COX_DHAKA">{getTranslation(lang, 'coxToDhaka', "Cox's Bazar ➔ Dhaka")}</option>
                 </select>
 
                 {/* Date Filter with Homepage-Style Interactive Calendar Picker */}
@@ -550,17 +554,17 @@ export default function CounterAgentSellTicketPage() {
                   onChange={(e) => setFilterTime(e.target.value)}
                   className="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-extrabold text-gray-800 focus:outline-none focus:border-[#E31B23]"
                 >
-                  <option value="ALL">All Departure Times</option>
-                  <option value="MORNING">Morning (06:00 AM - 12:00 PM)</option>
-                  <option value="AFTERNOON">Afternoon (12:00 PM - 06:00 PM)</option>
-                  <option value="NIGHT">Night (06:00 PM - 12:00 AM)</option>
+                  <option value="ALL">{getTranslation(lang, 'allDepartureTimes', 'All Departure Times')}</option>
+                  <option value="MORNING">{getTranslation(lang, 'morningTime', 'Morning (06:00 AM - 12:00 PM)')}</option>
+                  <option value="AFTERNOON">{getTranslation(lang, 'afternoonTime', 'Afternoon (12:00 PM - 06:00 PM)')}</option>
+                  <option value="NIGHT">{getTranslation(lang, 'nightTime', 'Night (06:00 PM - 12:00 AM)')}</option>
                 </select>
               </div>
 
               {/* Quick Departure Date Selector Pills */}
               <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar pt-3 border-t border-gray-100">
                 <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider shrink-0 pr-1">
-                  Quick Date:
+                  {getTranslation(lang, 'quickDate', 'Quick Date:')}
                 </span>
                 <button
                   type="button"
@@ -571,12 +575,12 @@ export default function CounterAgentSellTicketPage() {
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
-                  All Dates
+                  {getTranslation(lang, 'allDepartureDate', 'All Dates')}
                 </button>
                 {Array.from({ length: 14 }).map((_, i) => {
                   const d = addDays(new Date(), i);
                   const dateStr = format(d, 'yyyy-MM-dd');
-                  const label = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : format(d, 'EEE, dd MMM');
+                  const label = i === 0 ? getTranslation(lang, 'today', 'Today') : i === 1 ? getTranslation(lang, 'tomorrow', 'Tomorrow') : format(d, 'EEE, dd MMM');
                   const isSelected = filterDate === dateStr;
                   const hasSchedules = uniqueDates.some((ad) => ad.startsWith(dateStr));
 
@@ -596,7 +600,7 @@ export default function CounterAgentSellTicketPage() {
                       <span>{label}</span>
                       {i === 0 && (
                         <span className={`text-[9px] px-1 rounded uppercase font-black ${isSelected ? 'bg-white/20 text-white' : 'bg-red-100 text-[#E31B23]'}`}>
-                          Today
+                          {getTranslation(lang, 'today', 'Today')}
                         </span>
                       )}
                     </button>
@@ -608,7 +612,7 @@ export default function CounterAgentSellTicketPage() {
             {/* Schedule Cards List */}
             <div className="space-y-4">
               <h2 className="text-sm font-black text-gray-900 uppercase tracking-wider flex items-center gap-2 px-1">
-                <Bus size={18} className="text-[#E31B23]" /> Available Bus Schedules ({filteredSchedules.length})
+                <Bus size={18} className="text-[#E31B23]" /> {getTranslation(lang, 'availableBusSchedules', 'Available Bus Schedules')} ({filteredSchedules.length})
               </h2>
 
               {loadingSchedules ? (
@@ -617,7 +621,7 @@ export default function CounterAgentSellTicketPage() {
                 </div>
               ) : filteredSchedules.length === 0 ? (
                 <div className="py-12 bg-white rounded-3xl border border-gray-200/80 text-center text-xs text-gray-500 space-y-2">
-                  <p className="font-bold text-gray-700">No active schedules match your search filters.</p>
+                  <p className="font-bold text-gray-700">{getTranslation(lang, 'noActiveSchedules', 'No active schedules match your search filters.')}</p>
                   <button
                     type="button"
                     onClick={() => {
@@ -628,7 +632,7 @@ export default function CounterAgentSellTicketPage() {
                     }}
                     className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold rounded-xl"
                   >
-                    Reset Filters
+                    {getTranslation(lang, 'resetFilters', 'Reset Filters')}
                   </button>
                 </div>
               ) : (
