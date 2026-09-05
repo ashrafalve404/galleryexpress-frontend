@@ -39,12 +39,12 @@ export default function CounterAgentLayout({
     setMounted(true);
   }, []);
 
-  const isLoginPage = pathname === '/counter-agent/login';
+  const isAuthPage = pathname === '/counter-agent/login' || pathname === '/counter-agent/register';
 
   useEffect(() => {
     if (!mounted) return;
 
-    if (isLoginPage) {
+    if (isAuthPage) {
       if (isAuthenticated && isCounterAgent()) {
         router.replace('/counter-agent/dashboard');
       }
@@ -54,7 +54,7 @@ export default function CounterAgentLayout({
     if (!isAuthenticated || !isCounterAgent()) {
       router.replace('/counter-agent/login');
     }
-  }, [mounted, isLoginPage, isAuthenticated, isCounterAgent, router]);
+  }, [mounted, isAuthPage, isAuthenticated, isCounterAgent, router]);
 
   // Close mobile drawer on route change
   useEffect(() => {
@@ -66,8 +66,8 @@ export default function CounterAgentLayout({
     router.push('/counter-agent/login');
   };
 
-  // Don't apply protection/sidebar layout to the login page
-  if (isLoginPage) {
+  // Don't apply protection/sidebar layout to auth pages (login & register)
+  if (isAuthPage) {
     return <>{children}</>;
   }
 

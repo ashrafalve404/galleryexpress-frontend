@@ -159,24 +159,24 @@ export default function CounterAgentDashboard() {
         </div>
 
         {/* 3 Quick Action Buttons (Outside Card View) */}
-        <div className="flex flex-wrap items-center gap-2.5 sm:gap-3.5">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-3.5">
           <Link
             href="/counter-agent/sell-ticket"
-            className="px-5 py-3 bg-[#E31B23] hover:bg-[#c9121a] text-white font-extrabold text-xs sm:text-sm rounded-xl sm:rounded-2xl transition-all shadow-md flex items-center justify-center gap-2 active:scale-95"
+            className="w-full sm:w-auto px-5 py-3.5 sm:py-3 bg-[#E31B23] hover:bg-[#c9121a] text-white font-extrabold text-xs sm:text-sm rounded-2xl transition-all shadow-md flex items-center justify-center gap-2.5 active:scale-98"
           >
-            <BsFillTicketPerforatedFill size={19} /> Sell Ticket
+            <BsFillTicketPerforatedFill size={20} /> Sell Ticket
           </Link>
           <Link
             href="/counter-agent/sold-tickets"
-            className="px-4.5 py-3 bg-white hover:bg-gray-50 text-gray-800 border border-gray-200 font-extrabold text-xs sm:text-sm rounded-xl sm:rounded-2xl transition-all shadow-2xs flex items-center justify-center gap-2 active:scale-95"
+            className="w-full sm:w-auto px-5 py-3.5 sm:py-3 bg-white hover:bg-gray-50 text-gray-800 border border-gray-200/90 font-extrabold text-xs sm:text-sm rounded-2xl transition-all shadow-2xs flex items-center justify-center gap-2.5 active:scale-98"
           >
-            <BsFillTicketPerforatedFill size={19} className="text-[#E31B23]" /> My Sold Tickets
+            <BsFillTicketPerforatedFill size={20} className="text-[#E31B23]" /> My Sold Tickets
           </Link>
           <Link
             href="/counter-agent/buy-bulk"
-            className="px-4.5 py-3 bg-white hover:bg-gray-50 text-gray-800 border border-gray-200 font-extrabold text-xs sm:text-sm rounded-xl sm:rounded-2xl transition-all shadow-2xs flex items-center justify-center gap-2 active:scale-95"
+            className="w-full sm:w-auto px-5 py-3.5 sm:py-3 bg-white hover:bg-gray-50 text-gray-800 border border-gray-200/90 font-extrabold text-xs sm:text-sm rounded-2xl transition-all shadow-2xs flex items-center justify-center gap-2.5 active:scale-98"
           >
-            <RiShoppingBag3Fill size={19} className="text-purple-600" /> My Bulk Orders
+            <RiShoppingBag3Fill size={20} className="text-purple-600" /> My Bulk Orders
           </Link>
         </div>
 
