@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
-import { RiCheckboxCircleFill, RiAwardFill, RiShieldCheckFill } from 'react-icons/ri';
+import { RiCheckboxCircleFill } from 'react-icons/ri';
 
 export const metadata: Metadata = {
   title: 'About Ticket Dorkar Limited — Premier Bus Service in Bangladesh',
@@ -24,21 +24,16 @@ export default function AboutPage() {
           </div>
 
           <div className="space-y-6 text-gray-600 leading-relaxed">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-white rounded-2xl border border-gray-100 p-8 shadow-xs hover:shadow-md transition-shadow">
-                <div className="w-12 h-12 rounded-2xl bg-[#E31B23]/10 text-[#E31B23] flex items-center justify-center mb-4">
-                  <RiAwardFill size={26} className="text-[#E31B23]" />
-                </div>
+            {/* Single Card: Our Story & Our Mission */}
+            <div className="bg-white rounded-2xl border border-gray-100 p-6 sm:p-8 shadow-xs space-y-6">
+              <div>
                 <h2 className="text-xl font-black text-[#111111] mb-3">Our Story</h2>
                 <p className="text-sm leading-relaxed text-gray-600">
-                  Ticket Dorkar Limited is one of Bangladesh's premier intercity bus operators. Founded with a simple mission — to make intercity travel comfortable, affordable, and safe — we operate modern Scania & Volvo AC double-deck coaches on key express routes connecting Dhaka, Chittagong, and Cox's Bazar.
+                  Ticket Dorkar Limited is one of Bangladesh&apos;s premier intercity bus operators. Founded with a simple mission — to make intercity travel comfortable, affordable, and safe — we operate modern Scania &amp; Volvo AC double-deck coaches on key express routes connecting Dhaka, Chittagong, and Cox&apos;s Bazar.
                 </p>
               </div>
 
-              <div className="bg-white rounded-2xl border border-gray-100 p-8 shadow-xs hover:shadow-md transition-shadow">
-                <div className="w-12 h-12 rounded-2xl bg-[#E31B23]/10 text-[#E31B23] flex items-center justify-center mb-4">
-                  <RiShieldCheckFill size={26} className="text-[#E31B23]" />
-                </div>
+              <div className="pt-6 border-t border-gray-100">
                 <h2 className="text-xl font-black text-[#111111] mb-3">Our Mission</h2>
                 <p className="text-sm leading-relaxed text-gray-600">
                   To provide the most reliable, comfortable, and affordable bus travel experience in Bangladesh. Every seat, every journey, every passenger matters to us. We combine modern fleet management with digital QR ticketing.
