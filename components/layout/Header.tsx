@@ -215,16 +215,13 @@ export function Header() {
                   className="h-10 w-auto object-contain"
                 />
               </Link>
-              <div className="flex items-center gap-2">
-                <LanguageToggle />
-                <button
-                  onClick={() => setMenuOpen(false)}
-                  className="p-2 rounded-xl text-gray-500 hover:text-gray-800 hover:bg-gray-200/60 transition-colors"
-                  aria-label="Close menu"
-                >
-                  <HiX size={22} />
-                </button>
-              </div>
+              <button
+                onClick={() => setMenuOpen(false)}
+                className="p-2 rounded-xl text-gray-500 hover:text-gray-800 hover:bg-gray-200/60 transition-colors"
+                aria-label="Close menu"
+              >
+                <HiX size={22} />
+              </button>
             </div>
 
             {/* User Profile Card inside Drawer (if logged in) */}
@@ -309,8 +306,8 @@ export function Header() {
               )}
             </div>
 
-            {/* Drawer Footer (Support & Help) */}
-            <div className="p-4 border-t border-gray-100 bg-gray-50/50">
+            {/* Drawer Footer (Support & Help + Language Switcher) */}
+            <div className="p-4 border-t border-gray-100 bg-gray-50/50 space-y-3">
               <a
                 href="tel:01826110036"
                 className="flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-800 shadow-xs hover:border-[#E31B23] transition-colors"
@@ -318,7 +315,11 @@ export function Header() {
                 <RiPhoneFill size={16} className="text-[#E31B23]" />
                 <span>{getTranslation(lang, 'customerSupport', 'Customer Support')}: 01826-110036</span>
               </a>
-              <div className="text-center text-[10px] text-gray-400 mt-2">
+              <div className="flex items-center justify-between px-1 pt-1 border-t border-gray-200/60">
+                <span className="text-xs font-bold text-gray-600">Language / ভাষা</span>
+                <LanguageToggle />
+              </div>
+              <div className="text-center text-[10px] text-gray-400 mt-1">
                 © {new Date().getFullYear()} Ticket Dorkar Limited
               </div>
             </div>
