@@ -35,6 +35,7 @@ export default function CounterAgentLayout({
   const router = useRouter();
   const pathname = usePathname();
   const { isAuthenticated, isCounterAgent, user, clearAuth } = useAuthStore();
+  const { lang } = useLanguageStore();
   const [mounted, setMounted] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
@@ -83,8 +84,6 @@ export default function CounterAgentLayout({
       </div>
     );
   }
-
-  const { lang } = useLanguageStore();
 
   const navItems = [
     { label: getTranslation(lang, 'dashboard', 'Dashboard'), href: '/counter-agent/dashboard', icon: RiDashboardFill },
