@@ -321,17 +321,16 @@ export default function CounterAgentLayout({
       </div>
 
       {/* Mobile App Native Bottom Navigation Bar */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#111111] border-t border-white/10 flex items-center justify-around py-2 px-2 shadow-2xl backdrop-blur-md">
-        {navItems
-          .filter((item) =>
-            [
-              '/counter-agent/dashboard',
-              '/counter-agent/sell-ticket',
-              '/counter-agent/buy-bulk',
-              '/counter-agent/sold-tickets',
-              '/counter-agent/commissions',
-            ].includes(item.href)
-          )
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#111111] border-t border-white/10 flex items-center justify-around py-1.5 px-2 shadow-2xl backdrop-blur-md">
+        {[
+          '/counter-agent/dashboard',
+          '/counter-agent/sell-ticket',
+          '/counter-agent/buy-bulk',
+          '/counter-agent/sold-tickets',
+          '/counter-agent/commissions',
+        ]
+          .map((href) => navItems.find((item) => item.href === href)!)
+          .filter(Boolean)
           .map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
@@ -342,12 +341,18 @@ export default function CounterAgentLayout({
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="flex flex-col items-center gap-0.5 -mt-4"
+                  className="flex flex-col items-center gap-0.5 -mt-4 z-10"
                 >
-                  <div className="w-12 h-12 rounded-full bg-[#E31B23] text-white flex items-center justify-center shadow-md border-2 border-[#111111] transition-transform active:scale-95">
-                    <Icon size={24} />
+                  <div
+                    className={`w-12 h-12 rounded-full flex items-center justify-center transition-transform active:scale-95 border-2 border-[#111111] ${
+                      isActive ? 'bg-[#c9121a] text-white' : 'bg-[#E31B23] text-white'
+                    }`}
+                  >
+                    <Icon size={22} />
                   </div>
-                  <span className="text-[10px] font-black text-white tracking-tight">{item.shortLabel}</span>
+                  <span className={`text-[10px] font-black tracking-tight ${isActive ? 'text-[#E31B23]' : 'text-gray-200'}`}>
+                    {item.shortLabel}
+                  </span>
                 </Link>
               );
             }
@@ -356,7 +361,7 @@ export default function CounterAgentLayout({
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-all ${
+                className={`flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-xl transition-all ${
                   isActive
                     ? 'text-[#E31B23] font-black'
                     : 'text-gray-400 hover:text-white font-medium'
@@ -367,7 +372,7 @@ export default function CounterAgentLayout({
                     isActive ? 'bg-[#E31B23]/15' : 'bg-transparent'
                   }`}
                 >
-                  <Icon size={22} className={isActive ? 'text-[#E31B23]' : 'text-gray-400'} />
+                  <Icon size={20} className={isActive ? 'text-[#E31B23]' : 'text-gray-400'} />
                 </div>
                 <span className="text-[10px] tracking-tight">{item.shortLabel}</span>
               </Link>
