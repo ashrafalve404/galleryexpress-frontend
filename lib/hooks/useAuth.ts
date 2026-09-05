@@ -19,11 +19,19 @@ export function useLogin() {
       setAuth(data.user, data.accessToken, data.refreshToken);
       toast.success(`Welcome back, ${data.user.name || 'User'}!`);
 
-      // Redirect admins to admin panel
+      // Redirect admins to admin panel, counter agents to agent dashboard
       const isAdmin = ['SUPER_ADMIN', 'ADMIN', 'STAFF', 'COUNTER_MANAGER'].includes(
         data.user.role || ''
       );
-      router.push(isAdmin ? ROUTES.ADMIN : ROUTES.HOME);
+      const isCounterAgent = data.user.role === 'COUNTER_AGENT';
+
+      if (isAdmin) {
+        router.push(ROUTES.ADMIN);
+      } else if (isCounterAgent) {
+        router.push('/counter-agent/dashboard');
+      } else {
+        router.push(ROUTES.HOME);
+      }
     },
     onError: (err: Error) => {
       toast.error(err.message || 'Invalid email or password.');
