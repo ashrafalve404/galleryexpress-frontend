@@ -81,31 +81,16 @@ export default function CounterAgentLayout({
     );
   }
 
-  const navGroups = [
-    {
-      title: 'MAIN MENU',
-      items: [
-        { label: 'Dashboard', href: '/counter-agent/dashboard', icon: RiDashboardFill },
-        { label: 'My Ticket', href: '/counter-agent/sold-tickets', icon: BsFillTicketPerforatedFill },
-        { label: 'My Bulk Ticket', href: '/counter-agent/buy-bulk', icon: RiStackFill },
-      ],
-    },
-    {
-      title: 'COUNTER & FINANCE',
-      items: [
-        { label: 'My Counter', href: '/counter-agent/select-counter', icon: RiStore3Fill },
-        { label: 'Commission', href: '/counter-agent/commissions', icon: RiPercentFill },
-        { label: 'Statement', href: '/counter-agent/statements', icon: RiFileTextFill },
-      ],
-    },
-    {
-      title: 'ACCOUNT & SYSTEM',
-      items: [
-        { label: 'My Profile', href: '/counter-agent/profile', icon: RiUser3Fill },
-        { label: 'Referral', href: '/counter-agent/referrals', icon: RiShareForwardFill, badge: 'Earn' },
-        { label: 'Setting', href: '/counter-agent/settings', icon: RiSettings4Fill },
-      ],
-    },
+  const navItems = [
+    { label: 'Dashboard', href: '/counter-agent/dashboard', icon: RiDashboardFill },
+    { label: 'My Ticket', href: '/counter-agent/sold-tickets', icon: BsFillTicketPerforatedFill },
+    { label: 'My Bulk Ticket', href: '/counter-agent/buy-bulk', icon: RiStackFill },
+    { label: 'My Counter', href: '/counter-agent/select-counter', icon: RiStore3Fill },
+    { label: 'Commission', href: '/counter-agent/commissions', icon: RiPercentFill },
+    { label: 'Statement', href: '/counter-agent/statements', icon: RiFileTextFill },
+    { label: 'My Profile', href: '/counter-agent/profile', icon: RiUser3Fill },
+    { label: 'Referral', href: '/counter-agent/referrals', icon: RiShareForwardFill, badge: 'Earn' },
+    { label: 'Setting', href: '/counter-agent/settings', icon: RiSettings4Fill },
   ];
 
   return (
@@ -145,40 +130,33 @@ export default function CounterAgentLayout({
             </Link>
           </div>
 
-          {/* Grouped Navigation Links */}
-          <nav className="p-4 space-y-5">
-            {navGroups.map((group) => (
-              <div key={group.title} className="space-y-1">
-                <div className="text-[10px] font-black text-gray-400 tracking-wider px-3 mb-2 uppercase">
-                  {group.title}
-                </div>
-                {group.items.map((item) => {
-                  const Icon = item.icon;
-                  const isActive = pathname === item.href || (item.href === '/counter-agent/profile' && pathname === '/counter-agent/kyc');
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                        isActive
-                          ? 'bg-[#E31B23] text-white shadow-md'
-                          : 'text-gray-300 hover:text-white hover:bg-white/10'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <Icon size={19} className={isActive ? 'text-white' : 'text-gray-400'} />
-                        <span>{item.label}</span>
-                      </div>
-                      {item.badge ? (
-                        <span className="bg-amber-400 text-black text-[9px] font-black px-1.5 py-0.5 rounded-md uppercase">
-                          {item.badge}
-                        </span>
-                      ) : null}
-                    </Link>
-                  );
-                })}
-              </div>
-            ))}
+          {/* Sequential Navigation Links */}
+          <nav className="p-4 space-y-1">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = pathname === item.href || (item.href === '/counter-agent/profile' && pathname === '/counter-agent/kyc');
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-bold transition-all ${
+                    isActive
+                      ? 'bg-[#E31B23] text-white shadow-md'
+                      : 'text-gray-300 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon size={19} className={isActive ? 'text-white' : 'text-gray-400'} />
+                    <span>{item.label}</span>
+                  </div>
+                  {item.badge ? (
+                    <span className="bg-amber-400 text-black text-[9px] font-black px-1.5 py-0.5 rounded-md uppercase">
+                      {item.badge}
+                    </span>
+                  ) : null}
+                </Link>
+              );
+            })}
           </nav>
         </div>
 
@@ -213,29 +191,15 @@ export default function CounterAgentLayout({
         </div>
       </aside>
 
-      {/* Mobile Top Header with Menu Button */}
-      <header className="md:hidden bg-[#111111] text-white p-4 border-b border-white/10 flex items-center justify-between sticky top-0 z-40">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setMobileDrawerOpen(true)}
-            className="p-2 bg-white/10 rounded-xl text-white hover:bg-white/20 transition-all"
-            aria-label="Open Navigation Drawer"
-          >
-            <RiMenu3Fill size={22} />
-          </button>
-
-          <span className="text-sm font-black text-white tracking-wide flex items-center gap-2">
-            <img src="/ticketdrkrlogo.png" alt="Logo" className="h-6 w-auto bg-white p-1 rounded-md" />
-            Agent Portal
-          </span>
-        </div>
-
-        <Link
-          href="/counter-agent/sell-ticket"
-          className="px-3.5 py-1.5 rounded-xl bg-[#E31B23] hover:bg-[#c9121a] text-white text-xs font-bold shadow-xs flex items-center gap-1.5"
+      {/* Mobile Top Header */}
+      <header className="md:hidden bg-[#111111] text-white px-4 py-3 border-b border-white/10 flex items-center justify-between sticky top-0 z-40">
+        <button
+          onClick={() => setMobileDrawerOpen(true)}
+          className="p-2 bg-white/10 rounded-xl text-white hover:bg-white/20 transition-all"
+          aria-label="Open Navigation Drawer"
         >
-          <RiAddCircleFill size={16} /> Sell
-        </Link>
+          <RiMenu3Fill size={22} />
+        </button>
       </header>
 
       {/* Mobile Side Drawer (Sliding Left-to-Right) */}
@@ -283,43 +247,36 @@ export default function CounterAgentLayout({
                 </Link>
               </div>
 
-              {/* Grouped Navigation Items */}
-              <nav className="p-4 space-y-4">
-                {navGroups.map((group) => (
-                  <div key={group.title} className="space-y-1">
-                    <div className="text-[10px] font-black text-gray-400 tracking-wider px-3 mb-1 uppercase">
-                      {group.title}
-                    </div>
-                    {group.items.map((item) => {
-                      const Icon = item.icon;
-                      const isActive = pathname === item.href;
-                      return (
-                        <Link
-                          key={item.href}
-                          href={item.href}
-                          onClick={() => setMobileDrawerOpen(false)}
-                          className={`flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-bold transition-all ${
-                            isActive
-                              ? 'bg-[#E31B23] text-white shadow-md'
-                              : 'text-gray-300 hover:bg-white/10'
-                          }`}
-                        >
-                          <div className="flex items-center gap-3">
-                            <Icon size={19} className={isActive ? 'text-white' : 'text-gray-400'} />
-                            <span>{item.label}</span>
-                          </div>
-                          {item.badge ? (
-                            <span className="bg-amber-400 text-black text-[9px] font-black px-1.5 py-0.5 rounded-md uppercase">
-                              {item.badge}
-                            </span>
-                          ) : (
-                            <RiArrowRightSLine size={18} className="opacity-40" />
-                          )}
-                        </Link>
-                      );
-                    })}
-                  </div>
-                ))}
+              {/* Sequential Navigation Items */}
+              <nav className="p-4 space-y-1">
+                {navItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = pathname === item.href;
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setMobileDrawerOpen(false)}
+                      className={`flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-bold transition-all ${
+                        isActive
+                          ? 'bg-[#E31B23] text-white shadow-md'
+                          : 'text-gray-300 hover:bg-white/10'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <Icon size={19} className={isActive ? 'text-white' : 'text-gray-400'} />
+                        <span>{item.label}</span>
+                      </div>
+                      {item.badge ? (
+                        <span className="bg-amber-400 text-black text-[9px] font-black px-1.5 py-0.5 rounded-md uppercase">
+                          {item.badge}
+                        </span>
+                      ) : (
+                        <RiArrowRightSLine size={18} className="opacity-40" />
+                      )}
+                    </Link>
+                  );
+                })}
               </nav>
             </div>
 

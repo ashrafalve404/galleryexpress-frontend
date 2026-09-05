@@ -3,10 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import {
-  RiGiftFill,
   RiFileCopyFill,
   RiCheckFill,
-  RiArrowLeftLine,
   RiGroupFill,
   RiCoinFill,
   RiAwardFill,
@@ -18,7 +16,10 @@ export default function CounterAgentReferralPage() {
   const { user } = useAuthStore();
   const [copied, setCopied] = useState(false);
 
-  const referralCode = `AGENT-${user?.id?.substring(0, 6)?.toUpperCase() || 'PRO884'}`;
+  const referralCode =
+    (user as any)?.referralCode ||
+    (user as any)?.agentCode ||
+    `AGENT-${user?.id?.substring(0, 6)?.toUpperCase() || 'C7D202'}`;
   const referralLink = `https://ticketdorkar.xyz/counter-agent/register?ref=${referralCode}`;
 
   const handleCopy = () => {
@@ -36,9 +37,6 @@ export default function CounterAgentReferralPage() {
         {/* Hero Banner */}
         <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-black text-white p-6 sm:p-8 rounded-3xl border border-white/10 shadow-lg relative overflow-hidden">
           <div className="relative z-10 max-w-xl space-y-3">
-            <div className="inline-flex items-center gap-1.5 bg-[#E31B23] text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">
-              <RiGiftFill size={14} /> Agent Partner Program
-            </div>
             <h1 className="text-2xl sm:text-3xl font-black text-white">
               Invite Counter Partners &amp; Earn Cash Bonus
             </h1>

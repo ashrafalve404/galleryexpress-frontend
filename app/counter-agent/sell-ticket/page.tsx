@@ -24,7 +24,23 @@ import {
 } from 'lucide-react';
 import { BsFillTicketPerforatedFill } from 'react-icons/bs';
 import { RiStarFill, RiWindyFill, RiWifiFill, RiFlashlightFill, RiCalendarEventFill } from 'react-icons/ri';
-import { HiChevronRight } from 'react-icons/hi';
+import { HiChevronLeft, HiChevronRight } from 'react-icons/hi';
+import {
+  format,
+  addMonths,
+  subMonths,
+  startOfMonth,
+  endOfMonth,
+  startOfWeek,
+  endOfWeek,
+  addDays,
+  isSameMonth,
+  isSameDay,
+  isBefore,
+  isAfter,
+  startOfDay,
+  parseISO,
+} from 'date-fns';
 import client from '@/lib/api/client';
 import { counterAgentApi, type DashboardStats } from '@/lib/api/counterAgent';
 import { getScheduleSeats, type Seat } from '@/lib/api/schedules';
@@ -50,6 +66,181 @@ interface ScheduleItem {
   };
   fare: number;
   availableSeatsCount?: number;
+}
+
+interface AgentCalendarPickerProps {
+  value: string;
+  onChange: (dateStr: string) => void;
+  availableDates?: string[];
+}
+
+function AgentCalendarPicker({ value, onChange, availableDates = [] }: AgentCalendarPickerProps) {
+  const [open, setOpen] = useState(false);
+  const selectedDate = value && value !== 'ALL' ? parseISO(value) : new Date();
+  const [currentMonth, setCurrentMonth] = useState(selectedDate);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const monthStart = startOfMonth(currentMonth);
+  const monthEnd = endOfMonth(monthStart);
+  const startDate = startOfWeek(monthStart);
+  const endDate = endOfWeek(monthEnd);
+
+  const days: Date[] = [];
+  let day = startDate;
+  while (day <= endDate) {
+    days.push(day);
+    day = addDays(day, 1);
+  }
+
+  const todayStart = startOfDay(new Date());
+  const maxDate = addDays(todayStart, 30);
+
+  const formattedDisplay = value === 'ALL' || !value
+    ? 'All Departure Dates'
+    : formatDate(value, 'EEE, dd MMM yyyy');
+
+  return (
+    <div className="relative flex-1" ref={containerRef}>
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between gap-2 px-3.5 py-2.5 bg-gray-50 border border-gray-200 hover:border-[#E31B23] rounded-xl text-xs font-extrabold text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 transition-all cursor-pointer group"
+      >
+        <div className="flex items-center gap-2 truncate">
+          <RiCalendarEventFill size={16} className="text-[#E31B23] shrink-0 group-hover:scale-110 transition-transform" />
+          <span className="truncate">{formattedDisplay}</span>
+        </div>
+        {value !== 'ALL' ? (
+          <span
+            onClick={(e) => {
+              e.stopPropagation();
+              onChange('ALL');
+            }}
+            className="text-[10px] bg-red-100 hover:bg-red-200 text-[#E31B23] px-2 py-0.5 rounded font-black shrink-0"
+            title="Show All Dates"
+          >
+            Clear
+          </span>
+        ) : (
+          <HiChevronLeft size={16} className="-rotate-90 text-gray-400 shrink-0" />
+        )}
+      </button>
+
+      {open && (
+        <div className="absolute top-full left-0 right-0 sm:right-auto mt-2 bg-white border border-gray-100 rounded-2xl shadow-2xl z-[100] p-4 w-[290px] sm:w-[300px] animate-fade-in-up">
+          <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-100">
+            <button
+              type="button"
+              onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
+              className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors"
+            >
+              <HiChevronLeft size={18} />
+            </button>
+            <span className="font-black text-gray-900 text-sm">
+              {format(currentMonth, 'MMMM yyyy')}
+            </span>
+            <button
+              type="button"
+              onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
+              className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors"
+            >
+              <HiChevronRight size={18} />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-7 gap-1 text-center mb-2">
+            {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((d) => (
+              <span key={d} className="text-[10px] font-bold text-gray-400 uppercase">
+                {d}
+              </span>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-7 gap-1 text-center">
+            {days.map((d, idx) => {
+              const isPast = isBefore(d, todayStart);
+              const isBeyond30Days = isAfter(d, maxDate);
+              const isSelected = value !== 'ALL' && isSameDay(d, selectedDate);
+              const isCurrentMonth = isSameMonth(d, currentMonth);
+              const dateStr = format(d, 'yyyy-MM-dd');
+              const hasSchedules = availableDates.some((ad) => ad.startsWith(dateStr));
+
+              return (
+                <button
+                  key={idx}
+                  type="button"
+                  disabled={isPast || isBeyond30Days}
+                  onClick={() => {
+                    onChange(dateStr);
+                    setOpen(false);
+                  }}
+                  className={`h-8 w-8 rounded-xl flex flex-col items-center justify-center text-xs font-bold transition-all mx-auto relative ${
+                    isSelected
+                      ? 'bg-[#E31B23] text-white shadow-md scale-105'
+                      : isPast || isBeyond30Days
+                      ? 'text-gray-300 cursor-not-allowed opacity-40'
+                      : !isCurrentMonth
+                      ? 'text-gray-300 hover:bg-gray-50'
+                      : 'text-gray-800 hover:bg-[#E31B23]/10 hover:text-[#E31B23]'
+                  }`}
+                >
+                  <span>{format(d, 'd')}</span>
+                  {hasSchedules && !isSelected && (
+                    <span className="w-1 h-1 rounded-full bg-[#E31B23] absolute bottom-1" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="mt-3 pt-2.5 border-t border-gray-100 flex items-center justify-between text-xs">
+            <button
+              type="button"
+              onClick={() => {
+                onChange('ALL');
+                setOpen(false);
+              }}
+              className="text-gray-600 hover:text-[#E31B23] font-bold"
+            >
+              All Dates
+            </button>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  onChange(format(new Date(), 'yyyy-MM-dd'));
+                  setOpen(false);
+                }}
+                className="text-[#E31B23] font-bold hover:underline"
+              >
+                Today
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  onChange(format(addDays(new Date(), 1), 'yyyy-MM-dd'));
+                  setOpen(false);
+                }}
+                className="text-gray-600 hover:text-[#E31B23] font-bold"
+              >
+                Tomorrow
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 function generateFallbackSeats(bookedSeatNumbers: string[]): Seat[] {
@@ -257,7 +448,10 @@ export default function CounterAgentSellTicketPage() {
     }
 
     if (filterDate !== 'ALL' && sched.departureDate) {
-      if (!sched.departureDate.includes(filterDate)) return false;
+      const schedDateStr = typeof sched.departureDate === 'string'
+        ? sched.departureDate.substring(0, 10)
+        : new Date(sched.departureDate).toISOString().substring(0, 10);
+      if (schedDateStr !== filterDate && !sched.departureDate.includes(filterDate)) return false;
     }
 
     if (filterTime !== 'ALL') {
@@ -343,48 +537,12 @@ export default function CounterAgentSellTicketPage() {
                   <option value="COX_DHAKA">Cox's Bazar ➔ Dhaka</option>
                 </select>
 
-                {/* Date Filter with Interactive Calendar Picker */}
-                <div className="relative">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      try {
-                        dateInputRef.current?.showPicker();
-                      } catch {
-                        dateInputRef.current?.focus();
-                      }
-                    }}
-                    className="w-full flex items-center justify-between gap-2 px-3 py-2.5 bg-gray-50 border border-gray-200 hover:border-[#E31B23] rounded-xl text-xs font-extrabold text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 transition-all cursor-pointer group"
-                  >
-                    <div className="flex items-center gap-2 truncate">
-                      <RiCalendarEventFill size={16} className="text-[#E31B23] shrink-0 group-hover:scale-110 transition-transform" />
-                      <span className="truncate">
-                        {filterDate === 'ALL'
-                          ? 'All Departure Dates'
-                          : formatDate(filterDate, 'dd MMM yyyy')}
-                      </span>
-                    </div>
-                    {filterDate !== 'ALL' && (
-                      <span
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setFilterDate('ALL');
-                        }}
-                        className="text-[10px] bg-red-100 hover:bg-red-200 text-[#E31B23] px-1.5 py-0.5 rounded font-black shrink-0"
-                        title="Clear date filter"
-                      >
-                        All
-                      </span>
-                    )}
-                  </button>
-                  <input
-                    ref={dateInputRef}
-                    type="date"
-                    value={filterDate === 'ALL' ? '' : filterDate}
-                    onChange={(e) => setFilterDate(e.target.value || 'ALL')}
-                    className="sr-only"
-                  />
-                </div>
+                {/* Date Filter with Homepage-Style Interactive Calendar Picker */}
+                <AgentCalendarPicker
+                  value={filterDate}
+                  onChange={setFilterDate}
+                  availableDates={uniqueDates}
+                />
 
                 {/* Shift / Time Filter */}
                 <select
@@ -397,6 +555,53 @@ export default function CounterAgentSellTicketPage() {
                   <option value="AFTERNOON">Afternoon (12:00 PM - 06:00 PM)</option>
                   <option value="NIGHT">Night (06:00 PM - 12:00 AM)</option>
                 </select>
+              </div>
+
+              {/* Quick Departure Date Selector Pills */}
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar pt-3 border-t border-gray-100">
+                <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider shrink-0 pr-1">
+                  Quick Date:
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setFilterDate('ALL')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-extrabold whitespace-nowrap transition-all ${
+                    filterDate === 'ALL'
+                      ? 'bg-[#E31B23] text-white shadow-xs'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  All Dates
+                </button>
+                {Array.from({ length: 14 }).map((_, i) => {
+                  const d = addDays(new Date(), i);
+                  const dateStr = format(d, 'yyyy-MM-dd');
+                  const label = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : format(d, 'EEE, dd MMM');
+                  const isSelected = filterDate === dateStr;
+                  const hasSchedules = uniqueDates.some((ad) => ad.startsWith(dateStr));
+
+                  return (
+                    <button
+                      key={dateStr}
+                      type="button"
+                      onClick={() => setFilterDate(dateStr)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                        isSelected
+                          ? 'bg-[#E31B23] text-white shadow-xs'
+                          : hasSchedules
+                          ? 'bg-red-50 text-[#E31B23] border border-red-100 hover:bg-red-100'
+                          : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200/80'
+                      }`}
+                    >
+                      <span>{label}</span>
+                      {i === 0 && (
+                        <span className={`text-[9px] px-1 rounded uppercase font-black ${isSelected ? 'bg-white/20 text-white' : 'bg-red-100 text-[#E31B23]'}`}>
+                          Today
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
