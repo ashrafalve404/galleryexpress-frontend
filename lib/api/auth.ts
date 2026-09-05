@@ -13,6 +13,8 @@ export interface RegisterDto {
   email?: string;
   password: string;
   otp?: string;
+  role?: string;
+  referCode?: string;
 }
 
 export interface AuthUser {
@@ -24,6 +26,7 @@ export interface AuthUser {
   companyId: string;
   firstName?: string;
   lastName?: string;
+  referralCode?: string;
 }
 
 export interface AuthResponse {
@@ -64,6 +67,7 @@ function normalizeUser(rawUser: Record<string, unknown> | undefined): AuthUser {
     companyId: (rawUser.companyId as string) || '',
     firstName,
     lastName,
+    referralCode: (rawUser.referralCode as string) || undefined,
   };
 }
 
@@ -98,6 +102,8 @@ export async function register(dto: RegisterDto): Promise<AuthResponse> {
     email: dto.email || undefined,
     password: dto.password,
     otp: dto.otp,
+    role: dto.role,
+    referCode: dto.referCode,
     firstName,
     lastName,
   });

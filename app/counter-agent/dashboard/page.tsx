@@ -19,7 +19,8 @@ import {
   RiBuilding2Fill,
 } from 'react-icons/ri';
 import { BsFillTicketPerforatedFill } from 'react-icons/bs';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Copy, Check } from 'lucide-react';
+import { toast } from 'sonner';
 import { counterAgentApi, type DashboardStats } from '@/lib/api/counterAgent';
 import { useAuthStore } from '@/lib/store/authStore';
 
@@ -33,6 +34,14 @@ export default function CounterAgentDashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyRefCode = (code: string) => {
+    navigator.clipboard.writeText(code);
+    setCopied(true);
+    toast.success('Referral code copied to clipboard!');
+    setTimeout(() => setCopied(false), 2500);
+  };
 
   const loadStats = useCallback(async () => {
     try {
@@ -110,28 +119,44 @@ export default function CounterAgentDashboard() {
               Welcome, {agent.firstName}! 👋
             </h1>
 
-            {counter ? (
-              <div className="inline-flex items-start gap-2.5 bg-white/5 border border-white/10 px-3.5 py-2.5 rounded-2xl text-xs text-gray-200">
-                <RiStore3Fill size={17} className="text-[#E31B23] shrink-0 mt-0.5" />
-                <div className="leading-snug">
-                  <span className="text-gray-400 font-semibold block sm:inline">Assigned Counter: </span>
-                  <strong className="text-white font-extrabold">{counter.name}</strong>
-                  {counter.location && (
-                    <span className="text-gray-300 block sm:inline sm:ml-1 text-[11px] sm:text-xs">
-                      ({counter.location})
-                    </span>
-                  )}
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+              {counter ? (
+                <div className="inline-flex items-start gap-2.5 bg-white/5 border border-white/10 px-3.5 py-2.5 rounded-2xl text-xs text-gray-200">
+                  <RiStore3Fill size={17} className="text-[#E31B23] shrink-0 mt-0.5" />
+                  <div className="leading-snug">
+                    <span className="text-gray-400 font-semibold block sm:inline">Assigned Counter: </span>
+                    <strong className="text-white font-extrabold">{counter.name}</strong>
+                    {counter.location && (
+                      <span className="text-gray-300 block sm:inline sm:ml-1 text-[11px] sm:text-xs">
+                        ({counter.location})
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 text-amber-300 px-3.5 py-2 rounded-xl text-xs font-bold">
-                <RiErrorWarningFill size={16} className="shrink-0 text-amber-400" />
-                <span>You have not selected a counter yet — </span>
-                <Link href="/counter-agent/select-counter" className="underline hover:text-amber-200">
-                  Select Counter
-                </Link>
-              </div>
-            )}
+              ) : (
+                <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 text-amber-300 px-3.5 py-2 rounded-xl text-xs font-bold">
+                  <RiErrorWarningFill size={16} className="shrink-0 text-amber-400" />
+                  <span>You have not selected a counter yet — </span>
+                  <Link href="/counter-agent/select-counter" className="underline hover:text-amber-200">
+                    Select Counter
+                  </Link>
+                </div>
+              )}
+
+              {agent.referralCode && (
+                <div className="inline-flex items-center gap-2 bg-[#E31B23]/10 border border-[#E31B23]/30 px-3.5 py-2 rounded-2xl text-xs font-bold text-white">
+                  <span className="text-gray-400 font-medium">Referral Code:</span>
+                  <strong className="text-[#E31B23] font-black tracking-wider text-xs sm:text-sm">{agent.referralCode}</strong>
+                  <button
+                    onClick={() => handleCopyRefCode(agent.referralCode!)}
+                    className="p-1 hover:bg-white/10 rounded-lg text-gray-300 hover:text-white transition-colors"
+                    title="Copy referral code"
+                  >
+                    {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
           <Link

@@ -42,6 +42,7 @@ export interface DashboardStats {
     lastName: string;
     email: string;
     assignedCounterId?: string;
+    referralCode?: string;
   };
   counter?: { id: string; name: string; location?: string } | null;
   totalTicketsBought: number;

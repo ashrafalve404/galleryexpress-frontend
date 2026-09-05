@@ -3,7 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import { Lock, Eye, EyeOff, User, Phone, Mail, ShieldCheck, ArrowRight, RotateCw, X } from 'lucide-react';
+import { Lock, Eye, EyeOff, User, Phone, Mail, ShieldCheck, ArrowRight, RotateCw, X, Building2, Tag } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useRegister, useSendOtp } from '@/lib/hooks/useAuth';
 import { registerSchema, type RegisterFormData } from '@/lib/validations/authSchema';
@@ -13,6 +13,8 @@ export default function RegisterPage() {
   const registerMutation = useRegister();
   const sendOtpMutation = useSendOtp();
 
+  const [role, setRole] = useState<'CUSTOMER' | 'COUNTER_AGENT'>('CUSTOMER');
+  const [referCode, setReferCode] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [otpCode, setOtpCode] = useState('');
@@ -41,14 +43,27 @@ export default function RegisterPage() {
   const onSubmit = (data: RegisterFormData) => {
     setFormData(data);
     setOtpError('');
-    // Step 1: Send OTP to mobile phone first
-    sendOtpMutation.mutate(data.phone, {
-      onSuccess: () => {
-        setShowOtpModal(true);
-        setCountdown(60);
-        setCanResend(false);
-      },
-    });
+
+    if (role === 'COUNTER_AGENT') {
+      // Counter Agent registration: No OTP required!
+      registerMutation.mutate({
+        name: data.name,
+        phone: data.phone,
+        email: data.email || undefined,
+        password: data.password,
+        role: 'COUNTER_AGENT',
+        referCode: referCode.trim() || undefined,
+      });
+    } else {
+      // Customer registration: Require mobile OTP verification first
+      sendOtpMutation.mutate(data.phone, {
+        onSuccess: () => {
+          setShowOtpModal(true);
+          setCountdown(60);
+          setCanResend(false);
+        },
+      });
+    }
   };
 
   const handleVerifyAndRegister = () => {
@@ -59,13 +74,14 @@ export default function RegisterPage() {
     setOtpError('');
     if (!formData) return;
 
-    // Step 2: Submit registration with mandatory OTP code
+    // Submit customer registration with verified OTP code
     registerMutation.mutate(
       {
         name: formData.name,
         phone: formData.phone,
         email: formData.email || undefined,
         password: formData.password,
+        role: 'CUSTOMER',
         otp: otpCode.trim(),
       },
       {
@@ -103,16 +119,49 @@ export default function RegisterPage() {
         </div>
 
         <div className="bg-white rounded-2xl p-7 border border-gray-100 shadow-sm">
+          {/* Role Selection Tabs */}
+          <div className="mb-6">
+            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2 text-center">
+              Select Account Type
+            </label>
+            <div className="grid grid-cols-2 gap-2 p-1.5 bg-gray-100/80 rounded-xl border border-gray-200/60">
+              <button
+                type="button"
+                onClick={() => setRole('CUSTOMER')}
+                className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-xs font-extrabold transition-all ${
+                  role === 'CUSTOMER'
+                    ? 'bg-white text-[#E31B23] shadow-xs border border-gray-200/60'
+                    : 'text-gray-500 hover:text-gray-900'
+                }`}
+              >
+                <User size={15} /> Passenger
+              </button>
+              <button
+                type="button"
+                onClick={() => setRole('COUNTER_AGENT')}
+                className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-xs font-extrabold transition-all ${
+                  role === 'COUNTER_AGENT'
+                    ? 'bg-[#111827] text-white shadow-xs'
+                    : 'text-gray-500 hover:text-gray-900'
+                }`}
+              >
+                <Building2 size={15} /> Counter Agent
+              </button>
+            </div>
+          </div>
+
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {/* 1. Name */}
             <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Full Name</label>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">
+                {role === 'COUNTER_AGENT' ? 'Agent / Counter Name' : 'Full Name'}
+              </label>
               <div className="relative">
                 <User size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
                   {...register('name')}
                   type="text"
-                  placeholder="e.g. Tanvir Hossain"
+                  placeholder={role === 'COUNTER_AGENT' ? 'e.g. Sayedabad Counter 1' : 'e.g. Tanvir Hossain'}
                   className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23] transition-all"
                 />
               </div>
@@ -182,13 +231,38 @@ export default function RegisterPage() {
               {errors.confirmPassword && <p className="text-red-500 text-xs mt-1 font-medium">{errors.confirmPassword.message}</p>}
             </div>
 
+            {/* 6. Referral Code (Optional for Counter Agent) */}
+            {role === 'COUNTER_AGENT' && (
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">
+                  Referral Code <span className="text-gray-400 font-normal uppercase text-[10px]">(Optional)</span>
+                </label>
+                <div className="relative">
+                  <Tag size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="text"
+                    value={referCode}
+                    onChange={(e) => setReferCode(e.target.value)}
+                    placeholder="e.g. AG-8F4A21"
+                    className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#111827]/20 focus:border-[#111827] uppercase tracking-wider transition-all"
+                  />
+                </div>
+              </div>
+            )}
+
             <button
               type="submit"
-              disabled={sendOtpMutation.isPending}
-              className="w-full bg-[#E31B23] disabled:opacity-70 hover:bg-[#C41920] text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all hover:shadow-md text-sm mt-2 active:scale-[0.99]"
+              disabled={sendOtpMutation.isPending || registerMutation.isPending}
+              className={`w-full font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all hover:shadow-md text-sm mt-2 active:scale-[0.99] ${
+                role === 'COUNTER_AGENT'
+                  ? 'bg-[#111827] hover:bg-black text-white'
+                  : 'bg-[#E31B23] hover:bg-[#C41920] text-white'
+              }`}
             >
-              {sendOtpMutation.isPending ? (
+              {sendOtpMutation.isPending || registerMutation.isPending ? (
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : role === 'COUNTER_AGENT' ? (
+                'Register Counter Agent Account'
               ) : (
                 'Send Verification OTP'
               )}
