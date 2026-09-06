@@ -25,6 +25,7 @@ import { UserNotificationBell } from './UserNotificationBell';
 import { LanguageToggle } from '@/components/common/LanguageToggle';
 import { useLanguageStore } from '@/lib/store/languageStore';
 import { getTranslation, TranslationKey } from '@/lib/utils/translations';
+import { LogOut } from 'lucide-react';
 
 const rawNavLinks: { href: string; key: TranslationKey; defaultLabel: string; icon: any }[] = [
   { href: ROUTES.HOME, key: 'home', defaultLabel: 'Home', icon: RiHome5Fill },
@@ -97,7 +98,7 @@ export function Header() {
                 <img
                   src="/ticketdrkrlogo.png"
                   alt="Ticket Dorkar"
-                  className="h-12 sm:h-[60px] lg:h-[66px] w-auto object-contain transition-transform hover:scale-105"
+                  className="h-11 sm:h-[52px] lg:h-[56px] w-auto object-contain transition-transform hover:scale-105"
                 />
               </Link>
             </div>
@@ -121,8 +122,10 @@ export function Header() {
 
             {/* Right Side */}
             <div className="flex items-center gap-2.5 sm:gap-3">
-              {/* Language Switcher (PC / Desktop Mode) */}
-              <LanguageToggle className="hidden lg:inline-flex" />
+              {/* Language Switcher (PC / Desktop Mode only, hidden on mobile) */}
+              <div className="hidden lg:block">
+                <LanguageToggle />
+              </div>
 
               <a
                 href="tel:01826110036"
@@ -175,7 +178,7 @@ export function Header() {
                         onClick={logout}
                         className="w-full flex items-center gap-2.5 px-4 py-2 text-sm font-semibold text-rose-600 hover:text-rose-700 transition-colors group"
                       >
-                        <RiLogoutBoxRFill className="text-rose-400 group-hover:text-rose-700 transition-colors" />
+                        <LogOut className="w-4 h-4 text-rose-500 group-hover:text-rose-700 transition-colors" />
                         <span>{getTranslation(lang, 'logout', 'Logout')}</span>
                       </button>
                     </div>
@@ -286,7 +289,7 @@ export function Header() {
                     }}
                     className="w-full flex items-center gap-3.5 px-3.5 py-3 rounded-xl text-sm font-bold text-rose-600 hover:bg-rose-50"
                   >
-                    <RiLogoutBoxRFill size={20} className="text-rose-600" />
+                    <LogOut className="w-5 h-5 text-rose-600" />
                     <span>{getTranslation(lang, 'logout', 'Logout')}</span>
                   </button>
                 </>

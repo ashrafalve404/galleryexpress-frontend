@@ -11,48 +11,53 @@ import {
 import { useAuthStore } from '@/lib/store/authStore';
 import { useLogout } from '@/lib/hooks/useAuth';
 import { ROUTES } from '@/lib/utils/constants';
+import { useLanguageStore } from '@/lib/store/languageStore';
+import { LanguageToggle } from '@/components/common/LanguageToggle';
 
-const navGroups = [
-  {
-    label: 'Overview',
-    items: [
-      { href: ROUTES.ADMIN, label: 'Dashboard', icon: LayoutDashboard, exact: true },
-      { href: ROUTES.ADMIN_NOTIFICATIONS, label: 'Notifications', icon: Bell },
-    ],
-  },
-  {
-    label: 'Operations',
-    items: [
-      { href: ROUTES.ADMIN_BOOKINGS, label: 'Bookings', icon: Ticket },
-      { href: ROUTES.ADMIN_TICKETS, label: 'Tickets', icon: FileText },
-      { href: ROUTES.ADMIN_SCHEDULES, label: 'Schedules', icon: Calendar },
-      { href: ROUTES.ADMIN_COACHES, label: 'Coaches', icon: Bus },
-      { href: ROUTES.ADMIN_ROUTES, label: 'Routes', icon: MapPin },
-    ],
-  },
-  {
-    label: 'Commerce',
-    items: [
-      { href: ROUTES.ADMIN_FARES, label: 'Fares', icon: BadgeDollarSign },
-      { href: ROUTES.ADMIN_DISCOUNTS, label: 'Discounts', icon: Tag },
-      { href: ROUTES.ADMIN_OFFERS, label: 'Offer Posters', icon: Sparkles },
-      { href: ROUTES.ADMIN_COUNTERS, label: 'Counters', icon: Building2 },
-    ],
-  },
-  {
-    label: 'Management',
-    items: [
-      { href: '/admin/counter-agents', label: 'Counter Agent Activity', icon: Building2 },
-      { href: '/admin/kyc', label: 'Agent KYC Requests', icon: ShieldCheck },
-      { href: ROUTES.ADMIN_MESSAGES, label: 'Messages', icon: Mail },
-      { href: ROUTES.ADMIN_USERS, label: 'Users & Staff', icon: Users },
-      { href: ROUTES.ADMIN_REPORTS, label: 'Reports', icon: BarChart3 },
-      { href: ROUTES.ADMIN_CMS, label: 'CMS Pages', icon: FileText },
-      { href: ROUTES.ADMIN_SLIDERS, label: 'Sliders', icon: ImageIcon },
-      { href: ROUTES.ADMIN_SETTINGS, label: 'Settings', icon: Settings },
-    ],
-  },
-];
+function getNavGroups(lang: string) {
+  const isBn = lang === 'BN';
+  return [
+    {
+      label: isBn ? 'ওভারভিউ' : 'Overview',
+      items: [
+        { href: ROUTES.ADMIN, label: isBn ? 'ড্যাশবোর্ড' : 'Dashboard', icon: LayoutDashboard, exact: true },
+        { href: ROUTES.ADMIN_NOTIFICATIONS, label: isBn ? 'নোটিফিকেশনস' : 'Notifications', icon: Bell },
+      ],
+    },
+    {
+      label: isBn ? 'অপারেশনস' : 'Operations',
+      items: [
+        { href: ROUTES.ADMIN_BOOKINGS, label: isBn ? 'বুকিংসমূহ' : 'Bookings', icon: Ticket },
+        { href: ROUTES.ADMIN_TICKETS, label: isBn ? 'টিকিটসমূহ' : 'Tickets', icon: FileText },
+        { href: ROUTES.ADMIN_SCHEDULES, label: isBn ? 'সময়সূচী' : 'Schedules', icon: Calendar },
+        { href: ROUTES.ADMIN_COACHES, label: isBn ? 'কোচসমূহ' : 'Coaches', icon: Bus },
+        { href: ROUTES.ADMIN_ROUTES, label: isBn ? 'রুটসমূহ' : 'Routes', icon: MapPin },
+      ],
+    },
+    {
+      label: isBn ? 'বাণিজ্য' : 'Commerce',
+      items: [
+        { href: ROUTES.ADMIN_FARES, label: isBn ? 'ভাড়া' : 'Fares', icon: BadgeDollarSign },
+        { href: ROUTES.ADMIN_DISCOUNTS, label: isBn ? 'ডিসকাউন্ট' : 'Discounts', icon: Tag },
+        { href: ROUTES.ADMIN_OFFERS, label: isBn ? 'অফার পোস্টার' : 'Offer Posters', icon: Sparkles },
+        { href: ROUTES.ADMIN_COUNTERS, label: isBn ? 'কাউন্টারসমূহ' : 'Counters', icon: Building2 },
+      ],
+    },
+    {
+      label: isBn ? 'ব্যবস্থাপনা' : 'Management',
+      items: [
+        { href: '/admin/counter-agents', label: isBn ? 'কাউন্টার এজেন্ট কর্মকাণ্ড' : 'Counter Agent Activity', icon: Building2 },
+        { href: '/admin/kyc', label: isBn ? 'এজেন্ট কেওয়াইসি আবেদন' : 'Agent KYC Requests', icon: ShieldCheck },
+        { href: ROUTES.ADMIN_MESSAGES, label: isBn ? 'মেসেজসমূহ' : 'Messages', icon: Mail },
+        { href: ROUTES.ADMIN_USERS, label: isBn ? 'ইউজার ও স্টাফ' : 'Users & Staff', icon: Users },
+        { href: ROUTES.ADMIN_REPORTS, label: isBn ? 'রিপোর্টস' : 'Reports', icon: BarChart3 },
+        { href: ROUTES.ADMIN_CMS, label: isBn ? 'সিএমএস পেজ' : 'CMS Pages', icon: FileText },
+        { href: ROUTES.ADMIN_SLIDERS, label: isBn ? 'স্লাইডার' : 'Sliders', icon: ImageIcon },
+        { href: ROUTES.ADMIN_SETTINGS, label: isBn ? 'সেটিংস' : 'Settings', icon: Settings },
+      ],
+    },
+  ];
+}
 
 function NavItem({ href, label, icon: Icon, exact, collapsed, onClick }: { href: string; label: string; icon: React.ComponentType<{ size?: number; className?: string }>; exact?: boolean; collapsed: boolean; onClick?: () => void }) {
   const pathname = usePathname();
@@ -79,8 +84,12 @@ export function AdminSidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user } = useAuthStore();
+  const { lang } = useLanguageStore();
   const logout = useLogout();
   const pathname = usePathname();
+
+  const isBn = lang === 'BN';
+  const navGroups = getNavGroups(lang);
 
   useEffect(() => { setMobileOpen(false); }, [pathname]);
 
@@ -116,21 +125,22 @@ export function AdminSidebar() {
         )}
       </div>
 
-      {/* Quick link to Public Site */}
-      <div className="px-3 pt-3">
+      {/* Quick link to Public Site + Language Toggle */}
+      <div className="px-3 pt-3 flex items-center gap-2">
         <Link
           href={ROUTES.HOME}
           target="_blank"
           rel="noopener noreferrer"
-          className={`flex items-center gap-2 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition-all ${collapsed && !isMobile ? 'justify-center' : 'justify-between'}`}
-          title="Visit Public Website"
+          className={`flex-1 flex items-center gap-2 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition-all ${collapsed && !isMobile ? 'justify-center' : 'justify-between'}`}
+          title={isBn ? 'পাবলিক ওয়েবসাইটে যান' : 'Visit Public Website'}
         >
           <div className="flex items-center gap-2">
             <Globe size={15} className="text-[#E31B23] shrink-0" />
-            {(!collapsed || isMobile) && <span>Public Website</span>}
+            {(!collapsed || isMobile) && <span>{isBn ? 'পাবলিক ওয়েবসাইট' : 'Public Website'}</span>}
           </div>
           {(!collapsed || isMobile) && <ExternalLink size={13} className="text-gray-400" />}
         </Link>
+        {(!collapsed || isMobile) && <LanguageToggle />}
       </div>
 
       {/* Nav */}
@@ -167,10 +177,10 @@ export function AdminSidebar() {
         <button
           onClick={logout}
           className={`flex items-center gap-2 w-full px-3 py-2.5 rounded-xl text-sm font-semibold text-rose-600 hover:bg-rose-50 transition-colors ${collapsed && !isMobile ? 'justify-center' : ''}`}
-          title={collapsed && !isMobile ? 'Logout' : undefined}
+          title={collapsed && !isMobile ? (isBn ? 'লগআউট' : 'Logout') : undefined}
         >
           <LogOut size={16} />
-          {(!collapsed || isMobile) && 'Logout'}
+          {(!collapsed || isMobile) && (isBn ? 'লগআউট' : 'Logout')}
         </button>
       </div>
     </div>
@@ -201,12 +211,15 @@ export function AdminSidebar() {
             <img src="/ticketdrkrlogo.png" alt="Ticket Dorkar" className="h-7 w-auto object-contain" />
           </Link>
         </div>
-        <Link
-          href={ROUTES.HOME}
-          className="text-xs bg-[#E31B23]/10 text-[#E31B23] hover:bg-[#E31B23]/20 px-3 py-1.5 rounded-full font-bold flex items-center gap-1.5 transition-colors"
-        >
-          <Globe size={13} /> Public Site
-        </Link>
+        <div className="flex items-center gap-2">
+          <LanguageToggle />
+          <Link
+            href={ROUTES.HOME}
+            className="text-xs bg-[#E31B23]/10 text-[#E31B23] hover:bg-[#E31B23]/20 px-3 py-1.5 rounded-full font-bold flex items-center gap-1.5 transition-colors"
+          >
+            <Globe size={13} /> {isBn ? 'পাবলিক সাইট' : 'Public Site'}
+          </Link>
+        </div>
       </div>
 
       {/* Mobile Drawer */}

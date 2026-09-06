@@ -21,6 +21,7 @@ import {
   Power,
 } from 'lucide-react';
 import apiClient from '@/lib/api/client';
+import { useLanguageStore } from '@/lib/store/languageStore';
 import { toast } from 'sonner';
 
 function formatTk(amount: number) {
@@ -28,6 +29,8 @@ function formatTk(amount: number) {
 }
 
 export default function AdminCounterAgentsPage() {
+  const { lang } = useLanguageStore();
+  const isBn = lang === 'BN';
   const [activeTab, setActiveTab] = useState<'agents' | 'orders' | 'commissions'>('agents');
   const [overview, setOverview] = useState<any>(null);
   const [agents, setAgents] = useState<any[]>([]);
@@ -186,17 +189,17 @@ export default function AdminCounterAgentsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-black text-gray-900 tracking-tight flex items-center gap-2">
-            <Users className="text-[#E31B23]" size={26} /> Counter Agent Management
+            <Users className="text-[#E31B23]" size={26} /> {isBn ? 'কাউন্টার এজেন্ট ব্যবস্থাপনা' : 'Counter Agent Management'}
           </h1>
           <p className="text-xs text-gray-500 mt-1">
-            Monitor bulk ticket orders, counter assignments, and commission payouts platform-wide
+            {isBn ? 'প্ল্যাটফর্মের সকল বাল্ক টিকিট অর্ডার, কাউন্টার বরাদ্দ এবং কমিশন মনিটর করুন' : 'Monitor bulk ticket orders, counter assignments, and commission payouts platform-wide'}
           </p>
         </div>
         <button
           onClick={loadData}
           className="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-xl transition-all flex items-center gap-2 self-start sm:self-auto"
         >
-          <RefreshCw size={14} /> Refresh Data
+          <RefreshCw size={14} /> {isBn ? 'তথ্য রিফ্রেশ করুন' : 'Refresh Data'}
         </button>
       </div>
 
@@ -213,7 +216,7 @@ export default function AdminCounterAgentsPage() {
           <div className="bg-white p-5 rounded-2xl border border-gray-200/80 shadow-xs flex flex-col justify-between">
             <div className="flex items-center justify-between mb-2">
               <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">
-                Active Agents
+                {isBn ? 'সক্রিয় এজেন্ট' : 'Active Agents'}
               </span>
               <div className="p-2 bg-blue-50 text-blue-600 rounded-xl">
                 <Users size={18} />
@@ -223,7 +226,7 @@ export default function AdminCounterAgentsPage() {
               <div className="text-2xl font-black text-gray-900">
                 {overview.totalAgents}
               </div>
-              <p className="text-[10px] text-gray-400 mt-1">Total registered agents</p>
+              <p className="text-[10px] text-gray-400 mt-1">{isBn ? 'মোট নিবন্ধিত এজেন্ট' : 'Total registered agents'}</p>
             </div>
           </div>
 

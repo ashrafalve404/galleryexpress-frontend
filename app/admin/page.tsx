@@ -10,6 +10,8 @@ import { formatDate, formatTime, formatDateTime } from '@/lib/utils/date';
 import { BOOKING_STATUS_COLORS, BOOKING_STATUS_LABELS, ROUTES } from '@/lib/utils/constants';
 import { AdminHeader } from '@/components/layout/AdminHeader';
 
+import { useLanguageStore } from '@/lib/store/languageStore';
+
 function StatCard({
   title, value, sub, icon: Icon, color, trend,
 }: {
@@ -53,6 +55,9 @@ function getAdminBookingAmount(b: Record<string, unknown>): number {
 }
 
 export default function AdminDashboard() {
+  const { lang } = useLanguageStore();
+  const isBn = lang === 'BN';
+
   const { data: dashData, isLoading } = useQuery({
     queryKey: ['admin', 'dashboard'],
     queryFn: async () => {
@@ -77,27 +82,27 @@ export default function AdminDashboard() {
 
   const stats = [
     {
-      title: 'Total Bookings',
+      title: isBn ? 'মোট বুকিং' : 'Total Bookings',
       value: dashData?.totalBookings ?? '--',
       icon: RiTicketFill,
       color: 'bg-[#E31B23]',
       trend: 'up' as const,
     },
     {
-      title: 'Revenue (Month)',
+      title: isBn ? 'মাসিক আয়' : 'Revenue (Month)',
       value: dashData?.monthlyRevenue !== undefined ? formatCurrency(dashData.monthlyRevenue) : '--',
       icon: RiBankCardFill,
       color: 'bg-emerald-500',
       trend: 'up' as const,
     },
     {
-      title: 'Active Schedules',
+      title: isBn ? 'সক্রিয় সময়সূচী' : 'Active Schedules',
       value: dashData?.activeSchedules ?? '--',
       icon: RiCalendarEventFill,
       color: 'bg-blue-500',
     },
     {
-      title: 'Total Passengers',
+      title: isBn ? 'মোট যাত্রী' : 'Total Passengers',
       value: dashData?.totalPassengers ?? '--',
       icon: RiGroupFill,
       color: 'bg-purple-500',
@@ -108,8 +113,8 @@ export default function AdminDashboard() {
   return (
     <div>
       <AdminHeader
-        title="Dashboard Overview"
-        description="Monitor real-time sales, bookings, agent activities, and pending actions."
+        title={isBn ? 'ড্যাশবোর্ড ওভারভিউ' : 'Dashboard Overview'}
+        description={isBn ? 'রিয়েল-টাইম টিকিট বিক্রি, বুকিং, এজেন্ট কর্মকাণ্ড এবং পেন্ডিং অ্যাকশন মনিটর করুন।' : 'Monitor real-time sales, bookings, agent activities, and pending actions.'}
       />
 
       {/* Stats Grid */}
@@ -125,9 +130,9 @@ export default function AdminDashboard() {
         {/* Recent Bookings */}
         <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 overflow-hidden">
           <div className="flex items-center justify-between px-6 py-4 border-b border-gray-50">
-            <h2 className="font-bold text-[#111111] text-sm">Recent Bookings</h2>
+            <h2 className="font-bold text-[#111111] text-sm">{isBn ? 'সাম্প্রতিক বুকিংসমূহ' : 'Recent Bookings'}</h2>
             <Link href={ROUTES.ADMIN_BOOKINGS} className="text-[#E31B23] text-xs font-bold hover:underline">
-              View all →
+              {isBn ? 'সব দেখুন →' : 'View all →'}
             </Link>
           </div>
           <div className="divide-y divide-gray-50">

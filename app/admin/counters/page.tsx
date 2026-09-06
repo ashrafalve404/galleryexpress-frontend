@@ -6,6 +6,8 @@ import { useState } from 'react';
 import client from '@/lib/api/client';
 import { toast } from 'sonner';
 
+import { useLanguageStore } from '@/lib/store/languageStore';
+
 interface Counter {
   id: string;
   name: string;
@@ -16,6 +18,8 @@ interface Counter {
 }
 
 export default function AdminCountersPage() {
+  const { lang } = useLanguageStore();
+  const isBn = lang === 'BN';
   const qc = useQueryClient();
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
@@ -111,8 +115,8 @@ export default function AdminCountersPage() {
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-xl sm:text-2xl font-black text-[#111111]">Ticket Counters</h1>
-          <p className="text-gray-500 text-xs sm:text-sm mt-0.5 font-medium">{counters.length} counters active</p>
+          <h1 className="text-xl sm:text-2xl font-black text-[#111111]">{isBn ? 'টিকিট কাউন্টারসমূহ' : 'Ticket Counters'}</h1>
+          <p className="text-gray-500 text-xs sm:text-sm mt-0.5 font-medium">{isBn ? `মোট ${counters.length} টি কাউন্টার সক্রিয় রয়েছে` : `${counters.length} counters active`}</p>
         </div>
         <button
           onClick={() => {
@@ -122,7 +126,7 @@ export default function AdminCountersPage() {
           }}
           className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#E31B23] hover:bg-[#C41920] text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm active:scale-95"
         >
-          <Plus size={16} /> Add Counter
+          <Plus size={16} /> {isBn ? 'নতুন কাউন্টার যুক্ত করুন' : 'Add Counter'}
         </button>
       </div>
 
@@ -131,7 +135,7 @@ export default function AdminCountersPage() {
           <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
-            placeholder="Search counters by name or location..."
+            placeholder={isBn ? 'কাউন্টারের নাম বা স্থান দিয়ে খুঁজুন...' : 'Search counters by name or location...'}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20"

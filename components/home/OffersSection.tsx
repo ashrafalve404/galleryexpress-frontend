@@ -5,8 +5,11 @@ import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 import { HiChevronLeft, HiChevronRight } from 'react-icons/hi';
 import { getPublicOffers, type OfferItem } from '@/lib/api/offers';
+import { useLanguageStore } from '@/lib/store/languageStore';
+import { getTranslation } from '@/lib/utils/translations';
 
 export function OffersSection() {
+  const { lang } = useLanguageStore();
   const [current, setCurrent] = useState(0);
 
   const { data: offersData, isLoading } = useQuery({
@@ -31,10 +34,10 @@ export function OffersSection() {
         <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 sm:mb-10">
           <div>
             <h2 className="text-2xl sm:text-3xl font-black text-[#111111]">
-              Special Offers
+              {getTranslation(lang, 'specialOffers', 'Special Offers')}
             </h2>
             <p className="text-gray-500 mt-1 text-sm font-medium">
-              Check out our latest promotional deals
+              {getTranslation(lang, 'specialOffersSub', 'Check out our latest promotional deals')}
             </p>
           </div>
         </div>

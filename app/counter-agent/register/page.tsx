@@ -17,12 +17,16 @@ import {
 } from 'lucide-react';
 import apiClient from '@/lib/api/client';
 import { useAuthStore } from '@/lib/store/authStore';
+import { useLanguageStore } from '@/lib/store/languageStore';
 import { toast } from 'sonner';
 
 function CounterAgentRegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { setAuth } = useAuthStore();
+  const { lang } = useLanguageStore();
+
+  const isBn = lang === 'BN';
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -46,15 +50,15 @@ function CounterAgentRegisterForm() {
     e.preventDefault();
 
     if (!firstName.trim()) {
-      setError('Please enter your First Name.');
+      setError(isBn ? 'অনুগ্রহ করে প্রথম নাম লিখুন।' : 'Please enter your First Name.');
       return;
     }
     if (!phone.trim()) {
-      setError('Please enter your Mobile Phone Number.');
+      setError(isBn ? 'অনুগ্রহ করে মোবাইল নম্বর লিখুন।' : 'Please enter your Mobile Phone Number.');
       return;
     }
     if (!password || password.length < 6) {
-      setError('Password must be at least 6 characters long.');
+      setError(isBn ? 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।' : 'Password must be at least 6 characters long.');
       return;
     }
 
@@ -75,7 +79,7 @@ function CounterAgentRegisterForm() {
       const res = await apiClient.post('/api/v1/auth/register', payload);
       const data = res.data?.data ?? res.data;
 
-      toast.success('Agent Account registered successfully!');
+      toast.success(isBn ? 'এজেন্ট অ্যাকাউন্ট সফলভাবে নিবন্ধিত হয়েছে!' : 'Agent Account registered successfully!');
 
       if (data?.accessToken && data?.user) {
         const u = data.user;
@@ -98,7 +102,7 @@ function CounterAgentRegisterForm() {
     } catch (err: any) {
       setError(
         err?.response?.data?.message ||
-          'Failed to complete agent registration. Mobile number or email may already be in use.',
+          (isBn ? 'এজেন্ট নিবন্ধন সম্পন্ন করা সম্ভব হয়নি। মোবাইল নম্বর বা ইমেইল ইতিমধ্যে ব্যবহৃত হয়ে থাকতে পারে।' : 'Failed to complete agent registration. Mobile number or email may already be in use.'),
       );
     } finally {
       setLoading(false);
@@ -119,10 +123,10 @@ function CounterAgentRegisterForm() {
             </Link>
           </div>
           <h1 className="text-2xl font-black text-gray-900 tracking-tight">
-            Agent Registration
+            {isBn ? 'কাউন্টার এজেন্ট নিবন্ধন' : 'Agent Registration'}
           </h1>
           <p className="text-xs sm:text-sm text-gray-500 mt-1">
-            Create an official Ticket Dorkar Counter Agent account
+            {isBn ? 'অফিসিয়াল টিকিট দরকার কাউন্টার এজেন্ট অ্যাকাউন্ট তৈরি করুন' : 'Create an official Ticket Dorkar Counter Agent account'}
           </p>
         </div>
 
@@ -131,7 +135,7 @@ function CounterAgentRegisterForm() {
           <div className="mb-5 p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-bold flex items-center gap-2 shadow-2xs">
             <Gift size={18} className="text-amber-600 shrink-0" />
             <div>
-              <span>Referred by Agent: </span>
+              <span>{isBn ? 'রেফারকারী এজেন্ট: ' : 'Referred by Agent: '}</span>
               <span className="font-mono text-[#E31B23] font-black">{referralCode}</span>
             </div>
           </div>
@@ -148,7 +152,7 @@ function CounterAgentRegisterForm() {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">
-                First Name *
+                {isBn ? 'এজেন্টের নাম লিখুন *' : 'Enter Agent Name *'}
               </label>
               <div className="relative">
                 <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -157,7 +161,7 @@ function CounterAgentRegisterForm() {
                   required
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  placeholder="First name"
+                  placeholder={isBn ? 'যেমন: আব্দুল করিম' : 'e.g. Abdul Karim'}
                   className="w-full pl-10 pr-3 py-3 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 text-xs focus:bg-white focus:border-[#E31B23] outline-none font-medium"
                 />
               </div>
@@ -165,13 +169,13 @@ function CounterAgentRegisterForm() {
 
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">
-                Last Name
+                {isBn ? 'পদবি / শেষ অংশ' : 'Last Name'}
               </label>
               <input
                 type="text"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
-                placeholder="Last name"
+                placeholder={isBn ? 'যেমন: হোসেন' : 'Last name'}
                 className="w-full px-3 py-3 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 text-xs focus:bg-white focus:border-[#E31B23] outline-none font-medium"
               />
             </div>
@@ -179,7 +183,7 @@ function CounterAgentRegisterForm() {
 
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">
-              Mobile Phone Number *
+              {isBn ? 'মোবাইল ফোন নম্বর *' : 'Mobile Phone Number *'}
             </label>
             <div className="relative">
               <Phone size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -196,7 +200,7 @@ function CounterAgentRegisterForm() {
 
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">
-              Email Address (Optional)
+              {isBn ? 'ইমেইল ঠিকানা (ঐচ্ছিক)' : 'Email Address (Optional)'}
             </label>
             <div className="relative">
               <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -212,7 +216,7 @@ function CounterAgentRegisterForm() {
 
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">
-              Password *
+              {isBn ? 'পাসওয়ার্ড *' : 'Password *'}
             </label>
             <div className="relative">
               <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -237,7 +241,7 @@ function CounterAgentRegisterForm() {
 
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">
-              Referral Code (Optional)
+              {isBn ? 'রেফারেল কোড (ঐচ্ছিক)' : 'Referral Code (Optional)'}
             </label>
             <div className="relative">
               <Gift size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -258,22 +262,22 @@ function CounterAgentRegisterForm() {
           >
             {loading ? (
               <>
-                <Loader2 size={16} className="animate-spin" /> Registering Agent…
+                <Loader2 size={16} className="animate-spin" /> {isBn ? 'নিবন্ধন করা হচ্ছে…' : 'Registering Agent…'}
               </>
             ) : (
-              'Create Agent Account'
+              isBn ? 'এজেন্ট অ্যাকাউন্ট তৈরি করুন' : 'Create Agent Account'
             )}
           </button>
         </form>
 
         <div className="mt-6 pt-5 border-t border-gray-100 text-center space-y-2">
           <p className="text-xs text-gray-500">
-            Already have an Agent Account?{' '}
+            {isBn ? 'ইতিমধ্যে এজেন্ট অ্যাকাউন্ট রয়েছে?' : 'Already have an Agent Account?'}{' '}
             <Link
               href="/counter-agent/login"
               className="font-bold text-[#E31B23] hover:underline"
             >
-              Login to Agent Portal
+              {isBn ? 'এজেন্ট পোর্টালে সাইন ইন করুন' : 'Login to Agent Portal'}
             </Link>
           </p>
         </div>

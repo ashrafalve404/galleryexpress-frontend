@@ -7,46 +7,50 @@ import { RiMapPin2Fill, RiCalendarEventFill, RiBusFill, RiBuilding2Fill } from '
 import { useBookingStore } from '@/lib/store/bookingStore';
 import { today, tomorrow, formatDate } from '@/lib/utils/date';
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay, isBefore, isAfter, startOfDay, parseISO } from 'date-fns';
+import { useLanguageStore } from '@/lib/store/languageStore';
+import { getTranslation } from '@/lib/utils/translations';
 
 export interface LocationOption {
   city: string;
   name: string;
+  nameBn?: string;
   sub: string;
+  subBn?: string;
   type: 'city' | 'counter';
 }
 
 export const LOCATION_OPTIONS: LocationOption[] = [
   // Dhaka — city header
-  { city: 'Dhaka', name: 'Dhaka', sub: 'All Dhaka Counters', type: 'city' },
+  { city: 'Dhaka', name: 'Dhaka', nameBn: 'ঢাকা', sub: 'All Dhaka Counters', subBn: 'ঢাকার সকল কাউন্টার', type: 'city' },
   // 20 Dhaka boarding counters (north to south)
-  { city: 'Dhaka', name: 'Dhaka - Abdullahpur',      sub: 'Abdullahpur Bus Stop, Uttara',          type: 'counter' },
-  { city: 'Dhaka', name: 'Dhaka - Uttara Azampur',   sub: 'Azampur Bus Stop, Uttara',              type: 'counter' },
-  { city: 'Dhaka', name: 'Dhaka - Uttara Jasimuddin',sub: 'Jasimuddin Road, Uttara',               type: 'counter' },
-  { city: 'Dhaka', name: 'Dhaka - Uttara Airport',   sub: 'Airport Road, Uttara',                  type: 'counter' },
-  { city: 'Dhaka', name: 'Dhaka - Bashundhara',      sub: 'Bashundhara R/A Gate',                  type: 'counter' },
-  { city: 'Dhaka', name: 'Dhaka - Nadda',            sub: 'Nadda Bus Stop, Badda',                 type: 'counter' },
-  { city: 'Dhaka', name: 'Dhaka - Notun Bazar',      sub: 'Notun Bazar Bus Stop, Badda',           type: 'counter' },
-  { city: 'Dhaka', name: 'Dhaka - Uttar Badda',      sub: 'Uttar Badda Bus Stop',                  type: 'counter' },
-  { city: 'Dhaka', name: 'Dhaka - Moddho Badda',     sub: 'Moddho Badda Bus Stop',                 type: 'counter' },
-  { city: 'Dhaka', name: 'Dhaka - Rampura',          sub: 'Rampura Bus Stop, DIT Road',            type: 'counter' },
-  { city: 'Dhaka', name: 'Dhaka - Malibagh',         sub: 'Malibagh Chowdhurypara',                type: 'counter' },
-  { city: 'Dhaka', name: 'Dhaka - Fakirerpool',      sub: 'Fakirerpool Bus Stop, Motijheel',       type: 'counter' },
-  { city: 'Dhaka', name: 'Dhaka - Arambagh',         sub: 'Arambagh Bus Stop, Motijheel',          type: 'counter' },
-  { city: 'Dhaka', name: 'Dhaka - Sayedabad',        sub: 'Sayedabad Bus Terminal, Gate 7',        type: 'counter' },
-  { city: 'Dhaka', name: 'Dhaka - Soniakora',        sub: 'Soniakora Bus Stop, Jatrabari',         type: 'counter' },
-  { city: 'Dhaka', name: 'Dhaka - Matuail',          sub: 'Matuail Bus Stop, Jatrabari',           type: 'counter' },
-  { city: 'Dhaka', name: 'Dhaka - Signboard',        sub: 'Signboard Bus Stop, Demra',             type: 'counter' },
-  { city: 'Dhaka', name: 'Dhaka - Chittagong Road',  sub: 'Chittagong Road, Demra',                type: 'counter' },
-  { city: 'Dhaka', name: 'Dhaka - Kanchpur',         sub: 'Kanchpur Bridge, Dhaka Highway',        type: 'counter' },
-  { city: 'Dhaka', name: 'Dhaka - Madanpur',         sub: 'Madanpur Bus Stop, Dhaka Highway',      type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Abdullahpur', nameBn: 'ঢাকা - আবদুল্লাহপুর', sub: 'Abdullahpur Bus Stop, Uttara', subBn: 'আব্দুল্লাহপুর বাস স্টপ, উত্তরা', type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Uttara Azampur', nameBn: 'ঢাকা - উত্তরা আজমপুর', sub: 'Azampur Bus Stop, Uttara', subBn: 'আজমপুর বাস স্টপ, উত্তরা', type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Uttara Jasimuddin', nameBn: 'ঢাকা - উত্তরা জসীমউদ্দীন', sub: 'Jasimuddin Road, Uttara', subBn: 'জসীমউদ্দীন রোড, উত্তরা', type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Uttara Airport', nameBn: 'ঢাকা - উত্তরা বিমানবন্দর', sub: 'Airport Road, Uttara', subBn: 'বিমানবন্দর রোড, উত্তরা', type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Bashundhara', nameBn: 'ঢাকা - বসুন্ধরা', sub: 'Bashundhara R/A Gate', subBn: 'বসুন্ধরা আ/এ গেট', type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Nadda', nameBn: 'ঢাকা - নদ্দা', sub: 'Nadda Bus Stop, Badda', subBn: 'নদ্দা বাস স্টপ, বাড্ডা', type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Notun Bazar', nameBn: 'ঢাকা - নতুন বাজার', sub: 'Notun Bazar Bus Stop, Badda', subBn: 'নতুন বাজার বাস স্টপ, বাড্ডা', type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Uttar Badda', nameBn: 'ঢাকা - উত্তর বাড্ডা', sub: 'Uttar Badda Bus Stop', subBn: 'উত্তর বাড্ডা বাস স্টপ', type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Moddho Badda', nameBn: 'ঢাকা - মধ্য বাড্ডা', sub: 'Moddho Badda Bus Stop', subBn: 'মধ্য বাড্ডা বাস স্টপ', type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Rampura', nameBn: 'ঢাকা - রামপুরা', sub: 'Rampura Bus Stop, DIT Road', subBn: 'রামপুরা বাস স্টপ, ডিআইটি রোড', type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Malibagh', nameBn: 'ঢাকা - মালিবাগ', sub: 'Malibagh Chowdhurypara', subBn: 'মালিবাগ চৌধুরীপাড়া', type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Fakirerpool', nameBn: 'ঢাকা - ফকিরাপুল', sub: 'Fakirerpool Bus Stop, Motijheel', subBn: 'ফকিরাপুল বাস স্টপ, মতিঝিল', type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Arambagh', nameBn: 'ঢাকা - আরামবাগ', sub: 'Arambagh Bus Stop, Motijheel', subBn: 'আরামবাগ বাস স্টপ, মতিঝিল', type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Sayedabad', nameBn: 'ঢাকা - সায়েদাবাদ', sub: 'Sayedabad Bus Terminal, Gate 7', subBn: 'সায়েদাবাদ বাস টার্মিনাল, গেট ৭', type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Soniakora', nameBn: 'ঢাকা - সোনিয়াখোড়া', sub: 'Soniakora Bus Stop, Jatrabari', subBn: 'সোনিয়াখোড়া বাস স্টপ, যাত্রাবাড়ী', type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Matuail', nameBn: 'ঢাকা - মাতুয়াইল', sub: 'Matuail Bus Stop, Jatrabari', subBn: 'মাতুয়াইল বাস স্টপ, যাত্রাবাড়ী', type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Signboard', nameBn: 'ঢাকা - সাইনবোর্ড', sub: 'Signboard Bus Stop, Demra', subBn: 'সাইনবোর্ড বাস স্টপ, ডেমরা', type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Chittagong Road', nameBn: 'ঢাকা - চট্টগ্রাম রোড', sub: 'Chittagong Road, Demra', subBn: 'চট্টগ্রাম রোড, ডেমরা', type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Kanchpur', nameBn: 'ঢাকা - কাঁচপুর', sub: 'Kanchpur Bridge, Dhaka Highway', subBn: 'কাঁচপুর ব্রিজ, ঢাকা হাইওয়ে', type: 'counter' },
+  { city: 'Dhaka', name: 'Dhaka - Madanpur', nameBn: 'ঢাকা - মদনপুর', sub: 'Madanpur Bus Stop, Dhaka Highway', subBn: 'মদনপুর বাস স্টপ, ঢাকা হাইওয়ে', type: 'counter' },
 
   // Chittagong
-  { city: 'Chittagong', name: 'Chittagong',             sub: 'All Terminals & Counters',           type: 'city' },
-  { city: 'Chittagong', name: 'Chittagong - Dampara',   sub: 'Dampara Bus Terminal, Station Road', type: 'counter' },
+  { city: 'Chittagong', name: 'Chittagong', nameBn: 'চট্টগ্রাম', sub: 'All Terminals & Counters', subBn: 'সকল টার্মিনাল ও কাউন্টার', type: 'city' },
+  { city: 'Chittagong', name: 'Chittagong - Dampara', nameBn: 'চট্টগ্রাম - দামপাড়া', sub: 'Dampara Bus Terminal, Station Road', subBn: 'দামপাড়া বাস টার্মিনাল, স্টেশন রোড', type: 'counter' },
 
   // Cox's Bazar
-  { city: "Cox's Bazar", name: "Cox's Bazar",            sub: 'All Terminals & Counters',          type: 'city' },
-  { city: "Cox's Bazar", name: "Cox's Bazar - Kolatoli", sub: 'Kolatoli Road, Near Sea Beach',     type: 'counter' },
+  { city: "Cox's Bazar", name: "Cox's Bazar", nameBn: 'কক্সবাজার', sub: 'All Terminals & Counters', subBn: 'সকল টার্মিনাল ও কাউন্টার', type: 'city' },
+  { city: "Cox's Bazar", name: "Cox's Bazar - Kolatoli", nameBn: "কক্সবাজার - কলাতলী", sub: 'Kolatoli Road, Near Sea Beach', subBn: 'কলাতলী রোড, সমুদ্র সৈকতের কাছে', type: 'counter' },
 ];
 
 
@@ -60,14 +64,19 @@ interface CityInputProps {
 
 function CityInput({ id, label, placeholder, value, onChange }: CityInputProps) {
   const [open, setOpen] = useState(false);
+  const { lang } = useLanguageStore();
 
   const valLower = value.toLowerCase().trim();
   const filtered = LOCATION_OPTIONS.filter((loc) => {
     if (!valLower) return true;
+    const nameBn = loc.nameBn || '';
+    const subBn = loc.subBn || '';
     return (
       loc.name.toLowerCase().includes(valLower) ||
       loc.city.toLowerCase().includes(valLower) ||
-      loc.sub.toLowerCase().includes(valLower)
+      loc.sub.toLowerCase().includes(valLower) ||
+      nameBn.toLowerCase().includes(valLower) ||
+      subBn.toLowerCase().includes(valLower)
     );
   });
 
@@ -92,33 +101,41 @@ function CityInput({ id, label, placeholder, value, onChange }: CityInputProps) 
       </div>
       {open && filtered.length > 0 && (
         <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-100 rounded-2xl shadow-2xl z-50 overflow-hidden animate-fade-in py-1 max-h-64 overflow-y-auto">
-          {filtered.map((item) => (
-            <button
-              key={item.name}
-              type="button"
-              onMouseDown={() => { onChange(item.name); setOpen(false); }}
-              className="w-full text-left px-3.5 py-2.5 hover:bg-gray-50 flex items-center justify-between gap-2 transition-colors border-b border-gray-50 last:border-0 group"
-            >
-              <div className="flex items-center gap-2.5 min-w-0">
-                {item.type === 'counter' ? (
-                  <RiBuilding2Fill size={16} className="text-blue-500 shrink-0 group-hover:scale-110 transition-transform" />
-                ) : (
-                  <RiMapPin2Fill size={15} className="text-[#E31B23] shrink-0 group-hover:scale-110 transition-transform" />
-                )}
-                <div className="truncate">
-                  <div className="text-xs sm:text-sm font-bold text-[#111111] group-hover:text-[#E31B23] transition-colors truncate">
-                    {item.name}
+          {filtered.map((item) => {
+            const displayName = lang === 'BN' && item.nameBn ? item.nameBn : item.name;
+            const displaySub = lang === 'BN' && item.subBn ? item.subBn : item.sub;
+            const displayType = item.type === 'counter' 
+              ? (lang === 'BN' ? 'কাউন্টার' : 'counter')
+              : (lang === 'BN' ? 'শহর' : 'city');
+
+            return (
+              <button
+                key={item.name}
+                type="button"
+                onMouseDown={() => { onChange(item.name); setOpen(false); }}
+                className="w-full text-left px-3.5 py-2.5 hover:bg-gray-50 flex items-center justify-between gap-2 transition-colors border-b border-gray-50 last:border-0 group"
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  {item.type === 'counter' ? (
+                    <RiBuilding2Fill size={16} className="text-blue-500 shrink-0 group-hover:scale-110 transition-transform" />
+                  ) : (
+                    <RiMapPin2Fill size={15} className="text-[#E31B23] shrink-0 group-hover:scale-110 transition-transform" />
+                  )}
+                  <div className="truncate">
+                    <div className="text-xs sm:text-sm font-bold text-[#111111] group-hover:text-[#E31B23] transition-colors truncate">
+                      {displayName}
+                    </div>
+                    <div className="text-[10px] text-gray-400 font-medium truncate">{displaySub}</div>
                   </div>
-                  <div className="text-[10px] text-gray-400 font-medium truncate">{item.sub}</div>
                 </div>
-              </div>
-              <span className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wider shrink-0 ${
-                item.type === 'counter' ? 'bg-blue-50 text-blue-600' : 'bg-red-50 text-[#E31B23]'
-              }`}>
-                {item.type}
-              </span>
-            </button>
-          ))}
+                <span className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wider shrink-0 ${
+                  item.type === 'counter' ? 'bg-blue-50 text-blue-600' : 'bg-red-50 text-[#E31B23]'
+                }`}>
+                  {displayType}
+                </span>
+              </button>
+            );
+          })}
         </div>
       )}
     </div>
@@ -132,6 +149,7 @@ interface ProfessionalDatePickerProps {
 
 function ProfessionalDatePicker({ value, onChange }: ProfessionalDatePickerProps) {
   const [open, setOpen] = useState(false);
+  const { lang } = useLanguageStore();
   const selectedDate = value ? parseISO(value) : new Date();
   const [currentMonth, setCurrentMonth] = useState(selectedDate);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -160,12 +178,14 @@ function ProfessionalDatePicker({ value, onChange }: ProfessionalDatePickerProps
 
   const todayStart = startOfDay(new Date());
 
-  const formattedDisplay = value ? formatDate(value, 'EEE, dd MMM yyyy') : 'Select Date';
+  const formattedDisplay = value 
+    ? formatDate(value, 'EEE, dd MMM yyyy') 
+    : (lang === 'BN' ? 'তারিখ নির্বাচন করুন' : 'Select Date');
 
   return (
     <div className="relative flex-1" ref={containerRef} suppressHydrationWarning>
       <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wide mb-0.5 sm:mb-1">
-        Journey Date
+        {lang === 'BN' ? 'যাত্রার তারিখ' : 'Journey Date'}
       </label>
       
       {/* Trigger Button */}
@@ -204,7 +224,7 @@ function ProfessionalDatePicker({ value, onChange }: ProfessionalDatePickerProps
 
           {/* Weekday headers */}
           <div className="grid grid-cols-7 gap-1 text-center mb-1.5">
-            {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((d) => (
+            {(lang === 'BN' ? ['রবি', 'সোম', 'মঙ্গল', 'বুধ', 'বৃহ', 'শুক্র', 'শনি'] : ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']).map((d) => (
               <span key={d} className="text-[10px] sm:text-[11px] font-bold text-gray-400 uppercase">
                 {d}
               </span>
@@ -238,7 +258,7 @@ function ProfessionalDatePicker({ value, onChange }: ProfessionalDatePickerProps
                       ? 'text-gray-300 hover:bg-gray-50'
                       : 'text-gray-800 hover:bg-[#E31B23]/10 hover:text-[#E31B23]'
                   }`}
-                  title={isBeyond7Days ? 'Booking is open up to 7 days in advance' : undefined}
+                  title={isBeyond7Days ? (lang === 'BN' ? 'বুকিং সর্বোচ্চ ৭ দিন আগে উন্মুক্ত থাকে' : 'Booking is open up to 7 days in advance') : undefined}
                 >
                   {format(d, 'd')}
                 </button>
@@ -256,7 +276,7 @@ function ProfessionalDatePicker({ value, onChange }: ProfessionalDatePickerProps
               }}
               className="hover:text-[#E31B23] transition-colors"
             >
-              Today
+              {lang === 'BN' ? 'আজ' : 'Today'}
             </button>
             <button
               type="button"
@@ -266,7 +286,7 @@ function ProfessionalDatePicker({ value, onChange }: ProfessionalDatePickerProps
               }}
               className="hover:text-[#E31B23] transition-colors"
             >
-              Tomorrow
+              {lang === 'BN' ? 'আগামীকাল' : 'Tomorrow'}
             </button>
           </div>
         </div>
@@ -277,6 +297,7 @@ function ProfessionalDatePicker({ value, onChange }: ProfessionalDatePickerProps
 
 export function SearchCard() {
   const router = useRouter();
+  const { lang } = useLanguageStore();
   const { from, to, date, setSearch } = useBookingStore();
   const [localFrom, setLocalFrom] = useState(from || 'Dhaka');
   const [localTo, setLocalTo] = useState(to || "Cox's Bazar");
@@ -322,7 +343,7 @@ export function SearchCard() {
       <div className="flex items-center justify-between px-3.5 sm:px-6 pt-3.5 sm:pt-5 pb-0.5 sm:pb-1">
         <h2 className="text-[#111111] font-black text-sm sm:text-base flex items-center gap-2">
           <RiBusFill className="text-[#E31B23] text-lg" />
-          Find Your Bus
+          {lang === 'BN' ? 'বাস টিকিট খুঁজুন' : 'Find Your Bus'}
         </h2>
       </div>
 
@@ -332,8 +353,8 @@ export function SearchCard() {
           <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-1.5 sm:gap-2">
             <CityInput
               id="from"
-              label="Depart From"
-              placeholder="e.g. Dhaka"
+              label={lang === 'BN' ? 'যাত্রার স্থান (কোথা থেকে)' : 'Depart From'}
+              placeholder={lang === 'BN' ? 'যেমন: ঢাকা' : 'e.g. Dhaka'}
               value={localFrom}
               onChange={setLocalFrom}
             />
@@ -349,8 +370,8 @@ export function SearchCard() {
 
             <CityInput
               id="to"
-              label="Going To"
-              placeholder="e.g. Chittagong"
+              label={lang === 'BN' ? 'গন্তব্য স্থান (কোথায় যাবেন)' : 'Going To'}
+              placeholder={lang === 'BN' ? 'যেমন: চট্টগ্রাম' : 'e.g. Chittagong'}
               value={localTo}
               onChange={setLocalTo}
             />
@@ -366,6 +387,7 @@ export function SearchCard() {
             <div className="flex gap-1.5 shrink-0 pb-[1px]">
               {['Today', 'Tomorrow'].map((label, i) => {
                 const d = i === 0 ? today() : tomorrow();
+                const displayLabel = lang === 'BN' ? (i === 0 ? 'আজ' : 'আগামীকাল') : label;
                 return (
                   <button
                     key={label}
@@ -377,7 +399,7 @@ export function SearchCard() {
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
-                    {label}
+                    {displayLabel}
                   </button>
                 );
               })}
@@ -396,11 +418,11 @@ export function SearchCard() {
             className="w-full bg-[#E31B23] hover:bg-[#C41920] text-white font-bold py-2.5 sm:py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg active:scale-[0.99] text-sm sm:text-base mt-1"
           >
             <HiSearch className="text-base sm:text-lg" />
-            Search Buses
+            {lang === 'BN' ? 'বাস খুঁজুন' : 'Search Buses'}
           </button>
         </form>
-
       </div>
     </div>
   );
 }
+

@@ -46,6 +46,9 @@ import { useLogout } from '@/lib/hooks/useAuth';
 import type { Booking } from '@/lib/api/bookings';
 import { toast } from 'sonner';
 
+import { useLanguageStore } from '@/lib/store/languageStore';
+import { getTranslation } from '@/lib/utils/translations';
+
 interface BookingWithTickets extends Booking {
   tickets?: Array<{ ticketNumber: string; status: string }>;
   bookingSeats?: Array<{ seat?: { seatNumber: string; seatType: string } }>;
@@ -71,6 +74,7 @@ function getDashboardBookingAmount(b: any): number {
 export default function DashboardPage() {
   const router = useRouter();
   const { user, isAuthenticated } = useAuthStore();
+  const { lang } = useLanguageStore();
   const logout = useLogout();
   const [mounted, setMounted] = useState(false);
 
@@ -106,15 +110,19 @@ export default function DashboardPage() {
             <div className="w-14 h-14 sm:w-16 sm:h-16 bg-[#E31B23]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <User size={28} className="text-[#E31B23]" />
             </div>
-            <h1 className="text-xl sm:text-2xl font-black text-[#111111] mb-2">Sign in Required</h1>
+            <h1 className="text-xl sm:text-2xl font-black text-[#111111] mb-2">
+              {lang === 'BN' ? 'লগইন আবশ্যক' : 'Sign in Required'}
+            </h1>
             <p className="text-gray-500 text-xs sm:text-sm mb-6 font-medium">
-              Please sign in to access your passenger dashboard, view upcoming trips, and manage your tickets.
+              {lang === 'BN'
+                ? 'আপনার ড্যাশবোর্ড, আসন্ন ট্রিপ এবং টিকিট পরিচালনা দেখতে অনুগ্রহ করে সাইন ইন করুন।'
+                : 'Please sign in to access your passenger dashboard, view upcoming trips, and manage your tickets.'}
             </p>
             <Link
               href={ROUTES.LOGIN}
               className="w-full bg-[#E31B23] hover:bg-[#C41920] text-white font-bold py-3.5 rounded-xl block text-center transition-all text-xs sm:text-sm shadow-md"
             >
-              Sign In Now
+              {lang === 'BN' ? 'এখনই লগইন করুন' : 'Sign In Now'}
             </Link>
           </div>
         </main>
@@ -148,11 +156,11 @@ export default function DashboardPage() {
     setCancellingId(selectedCancelBooking.id);
     try {
       await cancelBooking(selectedCancelBooking.id, { reason: 'Cancelled via passenger dashboard' });
-      toast.success('Booking cancelled successfully.');
+      toast.success(lang === 'BN' ? 'বুকিং সফলভাবে বাতিল করা হয়েছে।' : 'Booking cancelled successfully.');
       setSelectedCancelBooking(null);
       refetch();
     } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message || 'Failed to cancel booking.';
+      const msg = err?.response?.data?.message || err?.message || (lang === 'BN' ? 'বুকিং বাতিল করতে ব্যর্থ হয়েছে।' : 'Failed to cancel booking.');
       toast.error(msg);
     } finally {
       setCancellingId(null);
@@ -177,7 +185,7 @@ export default function DashboardPage() {
           {/* Top Bar Actions (Before Welcome Card) */}
           <div className="flex items-center justify-between mb-3 px-1">
             <span className="text-xs font-extrabold uppercase tracking-wider text-gray-500">
-              Passenger Account Overview
+              {lang === 'BN' ? 'যাত্রী ড্যাশবোর্ড ওভারভিউ' : 'Passenger Account Overview'}
             </span>
             <div className="flex items-center gap-2">
               <UserNotificationBell />
@@ -194,10 +202,10 @@ export default function DashboardPage() {
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2 mb-1">
                     <h1 className="text-lg sm:text-2xl font-black text-white truncate">
-                      Welcome, {user?.name || 'Passenger'}
+                      {lang === 'BN' ? `স্বাগতম, ${user?.name || 'যাত্রী'}` : `Welcome, ${user?.name || 'Passenger'}`}
                     </h1>
                     <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shrink-0">
-                      <ShieldCheck size={11} /> Verified
+                      <ShieldCheck size={11} /> {lang === 'BN' ? 'যাচাইকৃত' : 'Verified'}
                     </span>
                   </div>
                   <p className="text-gray-400 text-xs sm:text-sm font-medium flex items-center gap-2 sm:gap-3 flex-wrap">
@@ -217,7 +225,7 @@ export default function DashboardPage() {
                   href={ROUTES.HOME}
                   className="w-full sm:w-auto bg-[#E31B23] hover:bg-[#C41920] text-white px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-md active:scale-95"
                 >
-                  <Search size={15} /> Book New Ticket
+                  <Search size={15} /> {lang === 'BN' ? 'নতুন টিকিট কাটুন' : 'Book New Ticket'}
                 </Link>
               </div>
             </div>
@@ -231,7 +239,9 @@ export default function DashboardPage() {
               </div>
               <div className="min-w-0">
                 <div className="text-xl sm:text-2xl font-black text-[#111111]">{confirmedBookings.length}</div>
-                <div className="text-[11px] sm:text-xs text-gray-500 font-semibold truncate">Confirmed Trips</div>
+                <div className="text-[11px] sm:text-xs text-gray-500 font-semibold truncate">
+                  {lang === 'BN' ? 'নিশ্চিতকৃত ট্রিপ' : 'Confirmed Trips'}
+                </div>
               </div>
             </div>
 
@@ -241,7 +251,9 @@ export default function DashboardPage() {
               </div>
               <div className="min-w-0">
                 <div className="text-xl sm:text-2xl font-black text-[#111111]">{allBookings.length}</div>
-                <div className="text-[11px] sm:text-xs text-gray-500 font-semibold truncate">Total Bookings</div>
+                <div className="text-[11px] sm:text-xs text-gray-500 font-semibold truncate">
+                  {lang === 'BN' ? 'মোট বুকিং' : 'Total Bookings'}
+                </div>
               </div>
             </div>
 
@@ -251,7 +263,9 @@ export default function DashboardPage() {
               </div>
               <div className="min-w-0">
                 <div className="text-xl sm:text-2xl font-black text-[#111111]">{cancelledBookings.length}</div>
-                <div className="text-[11px] sm:text-xs text-gray-500 font-semibold truncate">Cancelled Journeys</div>
+                <div className="text-[11px] sm:text-xs text-gray-500 font-semibold truncate">
+                  {lang === 'BN' ? 'বাতিলকৃত যাত্রা' : 'Cancelled Journeys'}
+                </div>
               </div>
             </div>
           </div>
@@ -262,10 +276,10 @@ export default function DashboardPage() {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#E31B23]">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#E31B23] animate-ping" />
-                  Upcoming Journey
+                  {lang === 'BN' ? 'আসন্ন ভ্রমণ' : 'Upcoming Journey'}
                 </div>
                 <span className="bg-green-100 text-green-800 text-[11px] sm:text-xs font-extrabold px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full flex items-center gap-1">
-                  <CheckCircle2 size={12} /> Confirmed
+                  <CheckCircle2 size={12} /> {lang === 'BN' ? 'কনফার্মড' : 'Confirmed'}
                 </span>
               </div>
 
@@ -307,19 +321,21 @@ export default function DashboardPage() {
                         ? formatDate(upcomingTrip.schedule.departureDate, 'EEE, dd MMM yyyy')
                         : '--'}
                     </span>
-                    <span>• Coach: {upcomingTrip.schedule?.coach?.name || 'Deluxe'}</span>
-                    <span>• Ref: <strong className="font-mono text-[#111111]">{upcomingTrip.bookingRef}</strong></span>
+                    <span>• {lang === 'BN' ? 'কোচ' : 'Coach'}: {upcomingTrip.schedule?.coach?.name || 'Deluxe'}</span>
+                    <span>• {lang === 'BN' ? 'রেফ' : 'Ref'}: <strong className="font-mono text-[#111111]">{upcomingTrip.bookingRef}</strong></span>
                   </div>
                 </div>
 
                 {/* View Ticket CTA */}
                 <div className="bg-white p-4 sm:p-5 rounded-xl border border-gray-100 text-center space-y-3 flex flex-col justify-center">
-                  <div className="text-xs text-gray-500 font-semibold">Ready to Board?</div>
+                  <div className="text-xs text-gray-500 font-semibold">
+                    {lang === 'BN' ? 'ভ্রমণের জন্য প্রস্তুত?' : 'Ready to Board?'}
+                  </div>
                   <button
                     onClick={() => handleViewTicket(upcomingTrip)}
                     className="w-full bg-[#111111] hover:bg-gray-800 text-white font-bold py-3 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-sm active:scale-98"
                   >
-                    <Ticket size={16} /> View Digital Boarding Pass
+                    <Ticket size={16} /> {lang === 'BN' ? 'ডিজিটাল বোর্ডিং পাস দেখুন' : 'View Digital Boarding Pass'}
                   </button>
                 </div>
               </div>
@@ -329,17 +345,21 @@ export default function DashboardPage() {
           {/* Filter Tabs & History Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div>
-              <h2 className="text-lg sm:text-xl font-black text-[#111111]">My Booking History</h2>
-              <p className="text-xs text-gray-500 font-medium">Manage and view all your bus reservations.</p>
+              <h2 className="text-lg sm:text-xl font-black text-[#111111]">
+                {lang === 'BN' ? 'আমার বুকিং ইতিহাস' : 'My Booking History'}
+              </h2>
+              <p className="text-xs text-gray-500 font-medium">
+                {lang === 'BN' ? 'আপনার সকল বাস বুকিং পরিচালনা ও দেখুন।' : 'Manage and view all your bus reservations.'}
+              </p>
             </div>
 
-            {/* Filter Tabs (Horizontal scrollable on mobile) */}
+            {/* Filter Tabs */}
             <div className="flex bg-white p-1 rounded-xl border border-gray-200 shadow-2xs overflow-x-auto scrollbar-hide self-start sm:self-auto max-w-full">
               {[
-                { id: 'all', label: 'All Trips' },
-                { id: 'upcoming', label: 'Upcoming' },
-                { id: 'confirmed', label: 'Confirmed' },
-                { id: 'cancelled', label: 'Cancelled' },
+                { id: 'all', label: lang === 'BN' ? 'সকল ট্রিপ' : 'All Trips' },
+                { id: 'upcoming', label: lang === 'BN' ? 'আসন্ন' : 'Upcoming' },
+                { id: 'confirmed', label: lang === 'BN' ? 'নিশ্চিতকৃত' : 'Confirmed' },
+                { id: 'cancelled', label: lang === 'BN' ? 'বাতিলকৃত' : 'Cancelled' },
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -371,17 +391,19 @@ export default function DashboardPage() {
               <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-gray-400">
                 <Ticket size={26} />
               </div>
-              <h3 className="font-bold text-gray-800 text-base mb-1">No Bookings Found</h3>
+              <h3 className="font-bold text-gray-800 text-base mb-1">
+                {lang === 'BN' ? 'কোনো বুকিং পাওয়া যায়নি' : 'No Bookings Found'}
+              </h3>
               <p className="text-gray-500 text-xs mb-6 font-medium">
                 {activeTab === 'all'
-                  ? 'You have not made any bus bookings yet.'
-                  : `No ${activeTab} bookings found.`}
+                  ? (lang === 'BN' ? 'আপনি এখনো কোনো বাস টিকিট বুক করেননি।' : 'You have not made any bus bookings yet.')
+                  : (lang === 'BN' ? `কোনো ${activeTab} বুকিং পাওয়া যায়নি।` : `No ${activeTab} bookings found.`)}
               </p>
               <Link
                 href={ROUTES.HOME}
                 className="bg-[#E31B23] hover:bg-[#C41920] text-white font-bold px-5 py-2.5 rounded-xl inline-flex items-center gap-2 text-xs transition-all shadow-2xs"
               >
-                <Search size={14} /> Search Buses
+                <Search size={14} /> {lang === 'BN' ? 'বাস টিকিট খুঁজুন' : 'Search Buses'}
               </Link>
             </div>
           ) : (
@@ -398,7 +420,7 @@ export default function DashboardPage() {
                     {/* Status Header Bar */}
                     <div className="px-4 sm:px-6 py-3 bg-gray-50 border-b border-gray-100 flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2 truncate">
-                        <span className="text-xs font-semibold text-gray-500">Ref:</span>
+                        <span className="text-xs font-semibold text-gray-500">{lang === 'BN' ? 'রেফ:' : 'Ref:'}</span>
                         <span className="font-mono font-black text-xs sm:text-sm text-[#111111] truncate">{b.bookingRef}</span>
                       </div>
                       <span className={`px-2.5 py-0.5 rounded-full text-[11px] sm:text-xs font-bold shrink-0 ${statusClass}`}>
@@ -441,7 +463,9 @@ export default function DashboardPage() {
                         {/* Seats & Amount */}
                         <div className="flex flex-row md:flex-col justify-between items-center md:items-start border-t md:border-t-0 pt-3 md:pt-0 border-gray-100">
                           <div>
-                            <div className="text-xs text-gray-400 font-semibold mb-1">Seats</div>
+                            <div className="text-xs text-gray-400 font-semibold mb-1">
+                              {lang === 'BN' ? 'আসনসমূহ' : 'Seats'}
+                            </div>
                             <div className="flex flex-wrap gap-1 mb-1">
                               {(b.bookingSeats || b.seats || []).map((bs: any, idx: number) => (
                                 <span key={idx} className="bg-gray-100 text-gray-800 text-xs font-bold px-2 py-0.5 rounded-md">
@@ -462,13 +486,13 @@ export default function DashboardPage() {
                               onClick={() => handleViewTicket(b)}
                               className="w-full bg-[#111111] hover:bg-gray-800 text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors active:scale-98"
                             >
-                              <Ticket size={14} /> View Ticket
+                              <Ticket size={14} /> {lang === 'BN' ? 'টিকিট দেখুন' : 'View Ticket'}
                             </button>
                           )}
                           {(b.status === 'HELD' || b.status === 'PENDING') && (
                             <div className="bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-bold p-2.5 rounded-xl text-center flex items-center justify-center gap-1.5 shadow-2xs">
                               <Clock size={14} className="text-amber-600 shrink-0" />
-                              <span>Awaiting Admin Payment Approval</span>
+                              <span>{lang === 'BN' ? 'অ্যাডমিন পেমেন্ট অনুমোদনের অপেক্ষায়' : 'Awaiting Admin Payment Approval'}</span>
                             </div>
                           )}
                           {b.status === 'CONFIRMED' && (
@@ -476,7 +500,7 @@ export default function DashboardPage() {
                               onClick={() => setSelectedCancelBooking(b)}
                               className="w-full sm:w-auto bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-3.5 py-2 rounded-xl text-xs font-bold transition-colors active:scale-95 flex items-center justify-center gap-1.5"
                             >
-                              Resell Ticket to Admin
+                              {lang === 'BN' ? 'টিকিট রিসেল করুন' : 'Resell Ticket to Admin'}
                             </button>
                           )}
                         </div>
@@ -499,26 +523,30 @@ export default function DashboardPage() {
                 <RiErrorWarningFill size={22} className="text-amber-600" />
               </div>
               <div>
-                <h3 className="font-black text-[#111111] text-base">Resell Ticket to Admin?</h3>
+                <h3 className="font-black text-[#111111] text-base">
+                  {lang === 'BN' ? 'টিকিট অ্যাডমিনের নিকট বিক্রি করবেন?' : 'Resell Ticket to Admin?'}
+                </h3>
                 <p className="text-gray-500 text-xs mt-0.5">Ref #: {selectedCancelBooking.bookingRef}</p>
               </div>
             </div>
 
             <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-4 text-xs space-y-2">
               <div className="flex justify-between text-gray-600 font-medium">
-                <span>Original Ticket Price:</span>
+                <span>{lang === 'BN' ? 'মূল টিকিট মূল্য:' : 'Original Ticket Price:'}</span>
                 <span className="font-bold text-gray-900">{formatCurrency(getDashboardBookingAmount(selectedCancelBooking))}</span>
               </div>
               <div className="flex justify-between text-gray-600 font-medium">
-                <span>Resell Policy Rate:</span>
+                <span>{lang === 'BN' ? 'রিসেল নীতি হার:' : 'Resell Policy Rate:'}</span>
                 <span className="font-bold text-amber-700">
                   {new Date(selectedCancelBooking.schedule?.departureDate || '').toDateString() === new Date().toDateString()
-                    ? 'Non-resellable (Today\'s departure)'
-                    : '100% Refund (>24h) / 80% Refund (≤24h)'}
+                    ? (lang === 'BN' ? 'রিসেল প্রযোজ্য নয় (আজকের ট্রিপ)' : 'Non-resellable (Today\'s departure)')
+                    : (lang === 'BN' ? '১০০% রিফান্ড (>২৪ঘণ্টা) / ৮০% রিফান্ড (≤২৪ঘণ্টা)' : '100% Refund (>24h) / 80% Refund (≤24h)')}
                 </span>
               </div>
               <p className="text-[11px] text-gray-500 pt-1 border-t border-slate-200 leading-relaxed">
-                Tickets for today’s departure cannot be resold. Tickets resold more than 24h prior to departure get a 100% refund, while tickets resold within 24h incur a 20% service fee.
+                {lang === 'BN'
+                  ? 'আজকের ছাড়ার সময়ের টিকিট রিসেল করা সম্ভব নয়। ২৪ ঘণ্টার বেশি পূর্বে রিসেল করলে ১০০% রিফান্ড এবং ২৪ ঘণ্টার মধ্যে ২০% সার্ভিস ফি প্রযোজ্য হবে।'
+                  : 'Tickets for today’s departure cannot be resold. Tickets resold more than 24h prior to departure get a 100% refund, while tickets resold within 24h incur a 20% service fee.'}
               </p>
             </div>
 
@@ -528,7 +556,7 @@ export default function DashboardPage() {
                 disabled={!!cancellingId}
                 className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-colors disabled:opacity-60"
               >
-                Keep Ticket
+                {lang === 'BN' ? 'টিকিট রাখুন' : 'Keep Ticket'}
               </button>
               <button
                 onClick={handleCancelBooking}
@@ -538,7 +566,7 @@ export default function DashboardPage() {
                 {cancellingId ? (
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 ) : (
-                  'Confirm Resell'
+                  (lang === 'BN' ? 'রিসেল নিশ্চিত করুন' : 'Confirm Resell')
                 )}
               </button>
             </div>
@@ -553,7 +581,7 @@ export default function DashboardPage() {
           className="flex flex-col items-center gap-0.5 py-1 px-3 text-gray-400 hover:text-white transition-all"
         >
           <RiHome5Fill size={20} />
-          <span className="text-[10px] font-bold">Home</span>
+          <span className="text-[10px] font-bold">{lang === 'BN' ? 'হোম' : 'Home'}</span>
         </Link>
         
         <Link
@@ -561,7 +589,7 @@ export default function DashboardPage() {
           className="flex flex-col items-center gap-0.5 py-1 px-3 text-gray-400 hover:text-white transition-all"
         >
           <RiBusFill size={20} />
-          <span className="text-[10px] font-bold">Book Bus</span>
+          <span className="text-[10px] font-bold">{lang === 'BN' ? 'বাস টিকিট' : 'Book Bus'}</span>
         </Link>
 
         <Link
@@ -569,7 +597,7 @@ export default function DashboardPage() {
           className="flex flex-col items-center gap-0.5 py-1 px-3 text-[#E31B23] font-black"
         >
           <BsFillTicketPerforatedFill size={20} className="text-[#E31B23]" />
-          <span className="text-[10px] font-black">My Trips</span>
+          <span className="text-[10px] font-black">{lang === 'BN' ? 'আমার ট্রিপ' : 'My Trips'}</span>
         </Link>
 
         <Link
@@ -577,11 +605,12 @@ export default function DashboardPage() {
           className="flex flex-col items-center gap-0.5 py-1 px-3 text-gray-400 hover:text-white transition-all"
         >
           <RiNotification3Fill size={20} />
-          <span className="text-[10px] font-bold">Notifications</span>
+          <span className="text-[10px] font-bold">{lang === 'BN' ? 'নোটিফিকেশন' : 'Notifications'}</span>
         </Link>
       </nav>
-
       <Footer />
     </>
   );
 }
+
+

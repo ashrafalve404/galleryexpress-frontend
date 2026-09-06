@@ -10,9 +10,11 @@ import { useState } from 'react';
 import { useLogin } from '@/lib/hooks/useAuth';
 import { loginSchema, type LoginFormData } from '@/lib/validations/authSchema';
 import { ROUTES } from '@/lib/utils/constants';
+import { useLanguageStore } from '@/lib/store/languageStore';
 
 export default function LoginPage() {
   const login = useLogin();
+  const { lang } = useLanguageStore();
   const [showPassword, setShowPassword] = useState(false);
 
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
@@ -57,22 +59,40 @@ export default function LoginPage() {
 
         {/* Hero Features & Headline */}
         <div className="relative z-10 max-w-md text-white">
-
-
           <h2 className="text-white font-black text-3xl sm:text-4xl leading-tight mb-4 drop-shadow-md">
-            Your Premium Journey <br />
-            <span className="text-[#E31B23]">Starts Right Here.</span>
+            {lang === 'BN' ? (
+              <>
+                আপনার আরামদায়ক যাত্রা <br />
+                <span className="text-[#E31B23]">শুরু হোক এখান থেকেই।</span>
+              </>
+            ) : (
+              <>
+                Your Premium Journey <br />
+                <span className="text-[#E31B23]">Starts Right Here.</span>
+              </>
+            )}
           </h2>
 
           <p className="text-white/80 text-sm leading-relaxed mb-6 font-medium">
-            Sign in with your registered mobile number or email to access digital QR boarding passes, manage schedules, and travel seamlessly across Bangladesh.
+            {lang === 'BN'
+              ? 'আপনার নিবন্ধিত মোবাইল নম্বর বা ইমেইল দিয়ে সাইন ইন করে ডিজিটাল কিউআর বোর্ডিং পাস এবং সহজ সময়সূচী পরিচালনা করুন।'
+              : 'Sign in with your registered mobile number or email to access digital QR boarding passes, manage schedules, and travel seamlessly across Bangladesh.'}
           </p>
 
           <div className="space-y-3 border-t border-white/15 pt-6">
             {[
-              { icon: RiShieldCheckFill, label: 'Verified & Secure Online Payment Options' },
-              { icon: RiTicket2Fill,     label: 'Instant Mobile QR Boarding Ticket' },
-              { icon: RiBusFill,         label: 'Modern Fleet with Premium AC Comfort' },
+              {
+                icon: RiShieldCheckFill,
+                label: lang === 'BN' ? 'ভেরিফাইড ও নিরাপদ অনলাইন পেমেন্ট সুবিধা' : 'Verified & Secure Online Payment Options',
+              },
+              {
+                icon: RiTicket2Fill,
+                label: lang === 'BN' ? 'তাৎক্ষণিক মোবাইল কিউআর বোর্ডিং টিকিট' : 'Instant Mobile QR Boarding Ticket',
+              },
+              {
+                icon: RiBusFill,
+                label: lang === 'BN' ? 'আধুনিক প্রিমিয়াম এসি কোচ সেবা' : 'Modern Fleet with Premium AC Comfort',
+              },
             ].map(({ icon: Icon, label }) => (
               <div key={label} className="flex items-center gap-3 text-xs text-white/90 font-semibold">
                 <div className="w-7 h-7 rounded-xl bg-[#E31B23]/20 flex items-center justify-center text-[#E31B23] shrink-0">
@@ -86,7 +106,8 @@ export default function LoginPage() {
 
         {/* Footer info */}
         <div className="relative z-10 text-white/60 text-xs font-medium">
-          &copy; {new Date().getFullYear()} Ticket Dorkar. All rights reserved.
+          &copy; {new Date().getFullYear()}{' '}
+          {lang === 'BN' ? 'টিকেট দরকার লিমিটেড। সর্বস্বত্ব সংরক্ষিত।' : 'Ticket Dorkar. All rights reserved.'}
         </div>
       </div>
 
@@ -102,8 +123,12 @@ export default function LoginPage() {
                 className="h-12 sm:h-16 w-auto object-contain mx-auto transition-transform hover:scale-105"
               />
             </Link>
-            <h1 className="text-2xl font-black text-[#111111] mb-1">Welcome back</h1>
-            <p className="text-gray-500 text-sm font-medium">Sign in to your account to continue.</p>
+            <h1 className="text-2xl font-black text-[#111111] mb-1">
+              {lang === 'BN' ? 'পুনরায় স্বাগতম' : 'Welcome back'}
+            </h1>
+            <p className="text-gray-500 text-sm font-medium">
+              {lang === 'BN' ? 'আপনার অ্যাকাউন্টে সাইন ইন করে এগিয়ে যান।' : 'Sign in to your account to continue.'}
+            </p>
           </div>
 
           {/* Form Card View */}
@@ -111,14 +136,14 @@ export default function LoginPage() {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">
-                  Mobile Number or Email
+                  {lang === 'BN' ? 'মোবাইল নম্বর অথবা ইমেইল' : 'Mobile Number or Email'}
                 </label>
                 <div className="relative">
                   <Phone size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
                   <input
                     {...register('phone')}
                     type="text"
-                    placeholder="017XXXXXXXX or email"
+                    placeholder={lang === 'BN' ? '০১৭XXXXXXXX বা ইমেইল' : '017XXXXXXXX or email'}
                     className="w-full pl-10 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold text-[#111111] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23] transition-all"
                   />
                 </div>
@@ -127,7 +152,7 @@ export default function LoginPage() {
 
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">
-                  Password
+                  {lang === 'BN' ? 'পাসওয়ার্ড' : 'Password'}
                 </label>
                 <div className="relative">
                   <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -156,22 +181,22 @@ export default function LoginPage() {
                 {login.isPending ? (
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 ) : (
-                  'Sign In'
+                  lang === 'BN' ? 'সাইন ইন করুন' : 'Sign In'
                 )}
               </button>
             </form>
 
             <p className="text-center text-xs sm:text-sm text-gray-500 mt-6 font-medium">
-              Don't have an account?{' '}
+              {lang === 'BN' ? 'কোনো অ্যাকাউন্ট নেই?' : "Don't have an account?"}{' '}
               <Link href={ROUTES.REGISTER} className="text-[#E31B23] font-bold hover:underline">
-                Register now
+                {lang === 'BN' ? 'এখনই নিবন্ধন করুন' : 'Register now'}
               </Link>
             </p>
           </div>
 
           <p className="text-center text-xs text-gray-400 mt-4 font-medium">
             <Link href={ROUTES.HOME} className="hover:text-[#E31B23] transition-colors inline-flex items-center gap-1">
-              <ArrowLeft size={12} /> Back to home
+              <ArrowLeft size={12} /> {lang === 'BN' ? 'হোমপেজে ফিরে যান' : 'Back to home'}
             </Link>
           </p>
         </div>
@@ -179,3 +204,4 @@ export default function LoginPage() {
     </div>
   );
 }
+

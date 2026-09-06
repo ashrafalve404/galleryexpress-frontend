@@ -8,10 +8,12 @@ import { useState, useEffect } from 'react';
 import { useRegister, useSendOtp } from '@/lib/hooks/useAuth';
 import { registerSchema, type RegisterFormData } from '@/lib/validations/authSchema';
 import { ROUTES } from '@/lib/utils/constants';
+import { useLanguageStore } from '@/lib/store/languageStore';
 
 export default function RegisterPage() {
   const registerMutation = useRegister();
   const sendOtpMutation = useSendOtp();
+  const { lang } = useLanguageStore();
 
   const [role, setRole] = useState<'CUSTOMER' | 'COUNTER_AGENT'>('CUSTOMER');
   const [referCode, setReferCode] = useState('');
@@ -68,7 +70,7 @@ export default function RegisterPage() {
 
   const handleVerifyAndRegister = () => {
     if (!otpCode || otpCode.trim().length !== 4) {
-      setOtpError('Please enter the 4-digit OTP code sent to your phone.');
+      setOtpError(lang === 'BN' ? 'আপনার ফোনে পাঠানো ৪-ডিজিটের ওটিপি কোডটি লিখুন।' : 'Please enter the 4-digit OTP code sent to your phone.');
       return;
     }
     setOtpError('');
@@ -86,7 +88,11 @@ export default function RegisterPage() {
       },
       {
         onError: (err: any) => {
-          setOtpError(err?.response?.data?.message || err?.message || 'Invalid or expired OTP code.');
+          setOtpError(
+            err?.response?.data?.message ||
+            err?.message ||
+            (lang === 'BN' ? 'অকার্যকর বা মেয়ারউত্তীর্ণ ওটিপি কোড।' : 'Invalid or expired OTP code.')
+          );
         },
       }
     );
@@ -114,15 +120,19 @@ export default function RegisterPage() {
               className="h-12 sm:h-16 w-auto object-contain mx-auto transition-transform hover:scale-105"
             />
           </Link>
-          <h1 className="text-2xl font-black text-[#111111] mb-1">Create your account</h1>
-          <p className="text-gray-500 text-sm font-medium">Join thousands of happy travellers across Bangladesh.</p>
+          <h1 className="text-2xl font-black text-[#111111] mb-1">
+            {lang === 'BN' ? 'আপনার অ্যাকাউন্ট তৈরি করুন' : 'Create your account'}
+          </h1>
+          <p className="text-gray-500 text-sm font-medium">
+            {lang === 'BN' ? 'বাংলাদেশজুড়ে হাজারো সন্তুষ্ট ভ্রমণকারীর সাথে যুক্ত হন।' : 'Join thousands of happy travellers across Bangladesh.'}
+          </p>
         </div>
 
         <div className="bg-white rounded-2xl p-7 border border-gray-100 shadow-sm">
           {/* Role Selection Tabs */}
           <div className="mb-6">
             <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2 text-center">
-              Select Account Type
+              {lang === 'BN' ? 'অ্যাকাউন্টের ধরন নির্বাচন করুন' : 'Select Account Type'}
             </label>
             <div className="grid grid-cols-2 gap-2 p-1.5 bg-gray-100/80 rounded-xl border border-gray-200/60">
               <button
@@ -134,7 +144,7 @@ export default function RegisterPage() {
                     : 'text-gray-500 hover:text-gray-900'
                 }`}
               >
-                <User size={15} /> Passenger
+                <User size={15} /> {lang === 'BN' ? 'যাত্রী' : 'Passenger'}
               </button>
               <button
                 type="button"
@@ -145,7 +155,7 @@ export default function RegisterPage() {
                     : 'text-gray-500 hover:text-gray-900'
                 }`}
               >
-                <Building2 size={15} /> Counter Agent
+                <Building2 size={15} /> {lang === 'BN' ? 'কাউন্টার এজেন্ট' : 'Counter Agent'}
               </button>
             </div>
           </div>
@@ -154,14 +164,20 @@ export default function RegisterPage() {
             {/* 1. Name */}
             <div>
               <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">
-                {role === 'COUNTER_AGENT' ? 'Agent / Counter Name' : 'Full Name'}
+                {role === 'COUNTER_AGENT'
+                  ? (lang === 'BN' ? 'এজেন্টের নাম লিখুন' : 'Enter Agent Name')
+                  : (lang === 'BN' ? 'আপনার নাম লিখুন' : 'Enter Your Name')}
               </label>
               <div className="relative">
                 <User size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
                   {...register('name')}
                   type="text"
-                  placeholder={role === 'COUNTER_AGENT' ? 'e.g. Sayedabad Counter 1' : 'e.g. Tanvir Hossain'}
+                  placeholder={
+                    role === 'COUNTER_AGENT'
+                      ? (lang === 'BN' ? 'যেমন: আব্দুল করিম' : 'e.g. Abdul Karim')
+                      : (lang === 'BN' ? 'যেমন: তানভীর হোসেন' : 'e.g. Tanvir Hossain')
+                  }
                   className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23] transition-all"
                 />
               </div>
@@ -170,7 +186,9 @@ export default function RegisterPage() {
 
             {/* 2. Phone */}
             <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Mobile Number</label>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">
+                {lang === 'BN' ? 'মোবাইল নম্বর' : 'Mobile Number'}
+              </label>
               <div className="relative">
                 <Phone size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
@@ -185,7 +203,9 @@ export default function RegisterPage() {
 
             {/* 3. Email */}
             <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Email Address</label>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">
+                {lang === 'BN' ? 'ইমেইল ঠিকানা' : 'Email Address'}
+              </label>
               <div className="relative">
                 <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
@@ -200,13 +220,15 @@ export default function RegisterPage() {
 
             {/* 4. Password */}
             <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Password</label>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">
+                {lang === 'BN' ? 'পাসওয়ার্ড' : 'Password'}
+              </label>
               <div className="relative">
                 <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
                   {...register('password')}
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="Min. 6 characters"
+                  placeholder={lang === 'BN' ? 'কমপক্ষে ৬টি অক্ষর' : 'Min. 6 characters'}
                   className="w-full pl-10 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23] transition-all"
                 />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
@@ -218,13 +240,15 @@ export default function RegisterPage() {
 
             {/* 5. Confirm Password */}
             <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Confirm Password</label>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">
+                {lang === 'BN' ? 'পাসওয়ার্ড নিশ্চিত করুন' : 'Confirm Password'}
+              </label>
               <div className="relative">
                 <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
                   {...register('confirmPassword')}
                   type="password"
-                  placeholder="Re-enter password"
+                  placeholder={lang === 'BN' ? 'পাসওয়ার্ড পুনরায় লিখুন' : 'Re-enter password'}
                   className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23] transition-all"
                 />
               </div>
@@ -235,7 +259,8 @@ export default function RegisterPage() {
             {role === 'COUNTER_AGENT' && (
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">
-                  Referral Code <span className="text-gray-400 font-normal uppercase text-[10px]">(Optional)</span>
+                  {lang === 'BN' ? 'রেফারেল কোড' : 'Referral Code'}{' '}
+                  <span className="text-gray-400 font-normal uppercase text-[10px]">({lang === 'BN' ? 'ঐচ্ছিক' : 'Optional'})</span>
                 </label>
                 <div className="relative">
                   <Tag size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -262,23 +287,31 @@ export default function RegisterPage() {
               {sendOtpMutation.isPending || registerMutation.isPending ? (
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : role === 'COUNTER_AGENT' ? (
-                'Register Counter Agent Account'
+                (lang === 'BN' ? 'কাউন্টার এজেন্ট অ্যাকাউন্ট রেজিস্টার করুন' : 'Register Counter Agent Account')
               ) : (
-                'Send Verification OTP'
+                (lang === 'BN' ? 'যাচাইকরণ ওটিপি পাঠান' : 'Send Verification OTP')
               )}
             </button>
           </form>
 
           <p className="text-center text-sm text-gray-500 mt-5 font-medium">
-            Already have an account?{' '}
-            <Link href={ROUTES.LOGIN} className="text-[#E31B23] font-bold hover:underline">Sign in</Link>
+            {lang === 'BN' ? 'ইতিমধ্যে অ্যাকাউন্ট আছে?' : 'Already have an account?'}{' '}
+            <Link href={ROUTES.LOGIN} className="text-[#E31B23] font-bold hover:underline">
+              {lang === 'BN' ? 'সাইন ইন করুন' : 'Sign in'}
+            </Link>
           </p>
         </div>
 
         <p className="text-center text-xs text-gray-400 mt-4 font-medium">
-          By registering, you agree to our{' '}
-          <Link href={ROUTES.TERMS} className="underline hover:text-gray-600">Terms</Link> and{' '}
-          <Link href={ROUTES.PRIVACY} className="underline hover:text-gray-600">Privacy Policy</Link>.
+          {lang === 'BN' ? 'নিবন্ধন করার মাধ্যমে আপনি আমাদের' : 'By registering, you agree to our'}{' '}
+          <Link href={ROUTES.TERMS} className="underline hover:text-gray-600">
+            {lang === 'BN' ? 'শর্তাবলী' : 'Terms'}
+          </Link>{' '}
+          {lang === 'BN' ? 'এবং' : 'and'}{' '}
+          <Link href={ROUTES.PRIVACY} className="underline hover:text-gray-600">
+            {lang === 'BN' ? 'গোপনীয়তা নীতি' : 'Privacy Policy'}
+          </Link>{' '}
+          {lang === 'BN' ? 'মেনে নিচ্ছেন।' : '.'}
         </p>
       </div>
 
@@ -297,16 +330,18 @@ export default function RegisterPage() {
               <ShieldCheck size={26} />
             </div>
 
-            <h3 className="text-xl font-black text-center text-gray-900 mb-1">Verify Mobile OTP</h3>
+            <h3 className="text-xl font-black text-center text-gray-900 mb-1">
+              {lang === 'BN' ? 'মোবাইল ওটিপি যাচাই করুন' : 'Verify Mobile OTP'}
+            </h3>
             <p className="text-xs text-center text-gray-500 mb-6 leading-relaxed">
-              We sent a 4-digit verification code via SMS to{' '}
+              {lang === 'BN' ? 'আমরা এই মোবাইল নম্বরে ৪-ডিজিটের ভেরিফিকেশন কোড পাঠিয়েছি:' : 'We sent a 4-digit verification code via SMS to'}{' '}
               <strong className="text-gray-900 font-bold">{formData?.phone}</strong>
             </p>
 
             <div className="space-y-4">
               <div>
                 <label className="block text-center text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
-                  Enter 4-Digit OTP Code
+                  {lang === 'BN' ? '৪-ডিজিটের ওটিপি কোড লিখুন' : 'Enter 4-Digit OTP Code'}
                 </label>
                 <input
                   type="text"
@@ -334,7 +369,7 @@ export default function RegisterPage() {
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 ) : (
                   <>
-                    Verify & Create Account <ArrowRight size={16} />
+                    {lang === 'BN' ? 'যাচাই ও অ্যাকাউন্ট তৈরি করুন' : 'Verify & Create Account'} <ArrowRight size={16} />
                   </>
                 )}
               </button>
@@ -346,11 +381,19 @@ export default function RegisterPage() {
                     disabled={sendOtpMutation.isPending}
                     className="inline-flex items-center gap-1.5 text-xs font-bold text-[#E31B23] hover:underline"
                   >
-                    <RotateCw size={13} /> Resend OTP SMS
+                    <RotateCw size={13} /> {lang === 'BN' ? 'পুনরায় ওটিপি এসএমএস পাঠান' : 'Resend OTP SMS'}
                   </button>
                 ) : (
                   <p className="text-xs text-gray-400 font-medium">
-                    Resend OTP code in <span className="font-bold text-gray-700">{countdown}s</span>
+                    {lang === 'BN' ? (
+                      <>
+                        <span className="font-bold text-gray-700">{countdown} সেকেন্ড</span> পর পুনরায় ওটিপি পাঠানো যাবে
+                      </>
+                    ) : (
+                      <>
+                        Resend OTP code in <span className="font-bold text-gray-700">{countdown}s</span>
+                      </>
+                    )}
                   </p>
                 )}
               </div>
@@ -361,3 +404,4 @@ export default function RegisterPage() {
     </div>
   );
 }
+

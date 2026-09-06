@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+import { FAQContent } from '@/components/faq/FAQContent';
 
 export const metadata: Metadata = {
   title: 'Frequently Asked Questions (FAQ) — Ticket Dorkar Bus Ticket',
@@ -43,32 +44,11 @@ export default function FAQPage() {
       />
       <Header />
       <main className="flex-1 pt-24 pb-16 min-h-screen bg-gray-50">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <h1 className="text-3xl font-black text-[#111111] mb-2">Frequently Asked Questions</h1>
-            <p className="text-gray-500 text-sm">Everything you need to know about booking bus tickets with Ticket Dorkar.</p>
-          </div>
-          <div className="space-y-3">
-            {faqs.map((faq, i) => (
-              <details key={i} className="group bg-white border border-gray-100 rounded-xl overflow-hidden">
-                <summary className="flex items-center justify-between cursor-pointer px-6 py-4 font-semibold text-[#111111] text-sm list-none hover:bg-gray-50 transition-colors">
-                  {faq.q}
-                  <span className="ml-4 text-[#E31B23] transition-transform group-open:rotate-45 font-bold text-xl leading-none shrink-0">+</span>
-                </summary>
-                <div className="px-6 pb-4 text-gray-500 text-sm leading-relaxed">{faq.a}</div>
-              </details>
-            ))}
-          </div>
-          <div className="mt-10 bg-[#E31B23]/5 border border-[#E31B23]/20 rounded-2xl p-6 text-center">
-            <p className="text-gray-700 text-sm mb-3">Still have questions about your bus journey?</p>
-            <a href="/contact" className="inline-block bg-[#E31B23] text-white font-semibold px-5 py-2.5 rounded-xl text-sm hover:bg-[#C41920] transition-colors">
-              Contact Support Team
-            </a>
-          </div>
-        </div>
+        <FAQContent />
       </main>
       <Footer />
     </>
   );
 }
+
 

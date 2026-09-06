@@ -15,20 +15,24 @@ import {
 } from 'lucide-react';
 import apiClient from '@/lib/api/client';
 import { useAuthStore } from '@/lib/store/authStore';
+import { useLanguageStore } from '@/lib/store/languageStore';
 
 export default function CounterAgentLoginPage() {
   const router = useRouter();
   const { setAuth } = useAuthStore();
+  const { lang } = useLanguageStore();
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const isBn = lang === 'BN';
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!identifier.trim()) {
-      setError('Please enter your phone number or email address.');
+      setError(isBn ? 'অনুগ্রহ করে মোবাইল নম্বর অথবা ইমেইল ঠিকানা দিন।' : 'Please enter your phone number or email address.');
       return;
     }
     setError('');
@@ -50,7 +54,7 @@ export default function CounterAgentLoginPage() {
       const { user, accessToken, refreshToken } = data;
 
       if (user.role !== 'COUNTER_AGENT') {
-        setError('Access denied. This portal is strictly for Counter Agents.');
+        setError(isBn ? 'প্রবেশাধিকার সংরক্ষিত। এই পোর্টালটি শুধুমাত্র কাউন্টার এজেন্টদের জন্য।' : 'Access denied. This portal is strictly for Counter Agents.');
         setLoading(false);
         return;
       }
@@ -71,7 +75,7 @@ export default function CounterAgentLoginPage() {
     } catch (err: any) {
       setError(
         err?.response?.data?.message ||
-          'Invalid credentials. Please enter a valid phone number or email and password.',
+          (isBn ? 'ভুল তথ্য প্রদান করা হয়েছে। সঠিক মোবাইল নম্বর/ইমেইল ও পাসওয়ার্ড দিন।' : 'Invalid credentials. Please enter a valid phone number or email and password.'),
       );
     } finally {
       setLoading(false);
@@ -94,10 +98,10 @@ export default function CounterAgentLoginPage() {
               </Link>
             </div>
             <h1 className="text-2xl font-black text-gray-900 tracking-tight">
-              Counter Agent Portal
+              {isBn ? 'কাউন্টার এজেন্ট পোর্টাল' : 'Counter Agent Portal'}
             </h1>
             <p className="text-xs sm:text-sm text-gray-500 mt-1">
-              Enter your agent account phone number or email to continue
+              {isBn ? 'এগিয়ে যেতে আপনার এজেন্ট অ্যাকাউন্টের মোবাইল নম্বর বা ইমেইল লিখুন' : 'Enter your agent account phone number or email to continue'}
             </p>
           </div>
 
@@ -111,7 +115,7 @@ export default function CounterAgentLoginPage() {
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
-                Mobile Number or Email Address
+                {isBn ? 'মোবাইল নম্বর অথবা ইমেইল ঠিকানা' : 'Mobile Number or Email Address'}
               </label>
               <div className="relative">
                 <Mail
@@ -131,7 +135,7 @@ export default function CounterAgentLoginPage() {
 
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
-                Password
+                {isBn ? 'পাসওয়ার্ড' : 'Password'}
               </label>
               <div className="relative">
                 <Lock
@@ -150,7 +154,7 @@ export default function CounterAgentLoginPage() {
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1"
-                  title={showPassword ? 'Hide password' : 'Show password'}
+                  title={showPassword ? (isBn ? 'পাসওয়ার্ড লুকান' : 'Hide password') : (isBn ? 'পাসওয়ার্ড দেখুন' : 'Show password')}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -164,31 +168,31 @@ export default function CounterAgentLoginPage() {
             >
               {loading ? (
                 <>
-                  <Loader2 size={18} className="animate-spin" /> Signing In…
+                  <Loader2 size={18} className="animate-spin" /> {isBn ? 'সাইন ইন হচ্ছে…' : 'Signing In…'}
                 </>
               ) : (
-                'Login to Agent Dashboard'
+                isBn ? 'এজেন্ট ড্যাশবোর্ডে সাইন ইন করুন' : 'Login to Agent Dashboard'
               )}
             </button>
           </form>
 
           <div className="mt-8 pt-6 border-t border-gray-100 text-center space-y-2">
             <p className="text-xs text-gray-500">
-              Need a Counter Agent account?{' '}
+              {isBn ? 'এজেন্ট অ্যাকাউন্ট নেই?' : 'Need a Counter Agent account?'}{' '}
               <Link
                 href="/counter-agent/register"
                 className="font-bold text-[#E31B23] hover:underline"
               >
-                Register New Agent
+                {isBn ? 'নতুন এজেন্ট নিবন্ধন করুন' : 'Register New Agent'}
               </Link>
             </p>
             <p className="text-xs text-gray-400">
-              Are you a passenger?{' '}
+              {isBn ? 'আপনি কি একজন যাত্রী?' : 'Are you a passenger?'}{' '}
               <Link
                 href="/auth/login"
                 className="font-semibold text-gray-600 hover:underline"
               >
-                Customer Login
+                {isBn ? 'কাস্টমার লগইন করুন' : 'Customer Login'}
               </Link>
             </p>
           </div>

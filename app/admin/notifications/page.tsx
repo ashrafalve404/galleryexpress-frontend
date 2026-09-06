@@ -7,8 +7,11 @@ import { Bell, Ticket, Building2, Mail, ExternalLink, RefreshCw, CheckCircle2, F
 import { getAdminNotifications, type AdminNotification } from '@/lib/api/notifications';
 import { formatDateTime } from '@/lib/utils/date';
 import { AdminHeader } from '@/components/layout/AdminHeader';
+import { useLanguageStore } from '@/lib/store/languageStore';
 
 export default function AdminNotificationsPage() {
+  const { lang } = useLanguageStore();
+  const isBn = lang === 'BN';
   const [filterCategory, setFilterCategory] = useState<string>('ALL');
 
   const { data, refetch, isLoading } = useQuery({
@@ -41,8 +44,8 @@ export default function AdminNotificationsPage() {
   return (
     <div>
       <AdminHeader
-        title="Notification Center"
-        description="Real-time alerts for user ticket payments, agent bulk orders, and customer messages."
+        title={isBn ? 'নোটিফিকেশন সেন্টার' : 'Notification Center'}
+        description={isBn ? 'ইউজার টিকিট পেমেন্ট, এজেন্ট বাল্ক অর্ডার এবং কাস্টমার মেসেজের রিয়েল-টাইম অ্যালার্ট।' : 'Real-time alerts for user ticket payments, agent bulk orders, and customer messages.'}
       />
 
       {/* Stats Summary & Action Bar */}
@@ -53,7 +56,7 @@ export default function AdminNotificationsPage() {
           </div>
           <div>
             <div className="text-2xl font-black text-[#111111]">{unreadCount}</div>
-            <div className="text-xs text-gray-500 font-medium">Action Needed / Pending</div>
+            <div className="text-xs text-gray-500 font-medium">{isBn ? 'পেন্ডিং / অ্যাকশন প্রয়োজন' : 'Action Needed / Pending'}</div>
           </div>
         </div>
 
@@ -65,7 +68,7 @@ export default function AdminNotificationsPage() {
             <div className="text-2xl font-black text-[#111111]">
               {notifications.filter((n) => n.category === 'AGENT_BULK').length}
             </div>
-            <div className="text-xs text-gray-500 font-medium">Agent Bulk Orders</div>
+            <div className="text-xs text-gray-500 font-medium">{isBn ? 'এজেন্ট বাল্ক অর্ডার' : 'Agent Bulk Orders'}</div>
           </div>
         </div>
 
@@ -77,7 +80,7 @@ export default function AdminNotificationsPage() {
             <div className="text-2xl font-black text-[#111111]">
               {notifications.filter((n) => n.category === 'USER_PAYMENT').length}
             </div>
-            <div className="text-xs text-gray-500 font-medium">User Ticket Payments</div>
+            <div className="text-xs text-gray-500 font-medium">{isBn ? 'ইউজার টিকিট পেমেন্ট' : 'User Ticket Payments'}</div>
           </div>
         </div>
       </div>
@@ -86,10 +89,10 @@ export default function AdminNotificationsPage() {
       <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-2xs mb-6 flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="flex flex-wrap gap-2 w-full sm:w-auto">
           {[
-            { id: 'ALL', label: 'All Alerts' },
-            { id: 'USER_PAYMENT', label: 'User Payments' },
-            { id: 'AGENT_BULK', label: 'Agent Bulk Orders' },
-            { id: 'MESSAGE', label: 'Messages' },
+            { id: 'ALL', label: isBn ? 'সকল অ্যালার্ট' : 'All Alerts' },
+            { id: 'USER_PAYMENT', label: isBn ? 'ইউজার পেমেন্ট' : 'User Payments' },
+            { id: 'AGENT_BULK', label: isBn ? 'এজেন্ট বাল্ক' : 'Agent Bulk Orders' },
+            { id: 'MESSAGE', label: isBn ? 'মেসেজসমূহ' : 'Messages' },
           ].map((tab) => (
             <button
               key={tab.id}

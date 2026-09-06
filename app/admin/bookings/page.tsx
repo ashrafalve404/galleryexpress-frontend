@@ -12,6 +12,7 @@ import { useAuthStore } from '@/lib/store/authStore';
 import { toast } from 'sonner';
 import { RiErrorWarningFill } from 'react-icons/ri';
 import { AdminHeader } from '@/components/layout/AdminHeader';
+import { useLanguageStore } from '@/lib/store/languageStore';
 
 function getAdminBookingAmount(b: Record<string, unknown>): number {
   const raw = Number(b.netAmount) || Number(b.totalAmount) || Number(b.finalAmount) || 0;
@@ -33,6 +34,8 @@ function getAdminBookingAmount(b: Record<string, unknown>): number {
 
 export default function AdminBookingsPage() {
   const { isAdmin } = useAuthStore();
+  const { lang } = useLanguageStore();
+  const isBn = lang === 'BN';
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [page, setPage] = useState(1);
@@ -109,8 +112,8 @@ export default function AdminBookingsPage() {
   return (
     <div>
       <AdminHeader
-        title="Bookings Management"
-        description={`${total} total bookings recorded. Manage payments, approvals, and ticket statuses.`}
+        title={isBn ? 'বুকিং ব্যবস্থাপনা' : 'Bookings Management'}
+        description={isBn ? `সর্বমোট ${total} টি বুকিং তথ্য। পেমেন্ট অনুমোদন ও টিকেট স্ট্যাটাস পরিচালনা করুন।` : `${total} total bookings recorded. Manage payments, approvals, and ticket statuses.`}
       />
 
       {/* Filters Bar */}
@@ -119,7 +122,7 @@ export default function AdminBookingsPage() {
           <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
-            placeholder="Search by reference number..."
+            placeholder={isBn ? 'রেফারেন্স নম্বর দিয়ে খুঁজুন...' : 'Search by reference number...'}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 font-medium"
@@ -130,11 +133,11 @@ export default function AdminBookingsPage() {
           onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
           className="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm font-semibold text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20"
         >
-          <option value="">All Statuses</option>
-          <option value="CONFIRMED">Confirmed</option>
-          <option value="HELD">Pending / Held</option>
-          <option value="CANCELLED">Cancelled</option>
-          <option value="EXPIRED">Expired</option>
+          <option value="">{isBn ? 'সকল স্ট্যাটাস' : 'All Statuses'}</option>
+          <option value="CONFIRMED">{isBn ? 'কনফার্মড (নিশ্চিত)' : 'Confirmed'}</option>
+          <option value="HELD">{isBn ? 'পেন্ডিং / হেল্ড' : 'Pending / Held'}</option>
+          <option value="CANCELLED">{isBn ? 'বাতিলকৃত' : 'Cancelled'}</option>
+          <option value="EXPIRED">{isBn ? 'মেয়াদউত্তীর্ণ' : 'Expired'}</option>
         </select>
       </div>
 

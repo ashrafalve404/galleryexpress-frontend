@@ -7,6 +7,8 @@ import { Bell, Ticket, Building2, Mail, ExternalLink, CheckCircle2, ChevronRight
 import { getAdminNotifications, type AdminNotification } from '@/lib/api/notifications';
 import { formatDateTime } from '@/lib/utils/date';
 import { ROUTES } from '@/lib/utils/constants';
+import { LanguageToggle } from '@/components/common/LanguageToggle';
+import { useLanguageStore } from '@/lib/store/languageStore';
 
 interface AdminHeaderProps {
   title?: string;
@@ -14,8 +16,10 @@ interface AdminHeaderProps {
 }
 
 export function AdminHeader({ title, description }: AdminHeaderProps) {
+  const { lang } = useLanguageStore();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const isBn = lang === 'BN';
 
   const { data, refetch, isFetching } = useQuery({
     queryKey: ['adminNotifications'],
@@ -58,6 +62,9 @@ export function AdminHeader({ title, description }: AdminHeaderProps) {
       </div>
 
       <div className="flex items-center gap-3 self-end sm:self-auto">
+        {/* Language Toggle Switch */}
+        <LanguageToggle />
+
         {/* Notification Bell Dropdown Container */}
         <div className="relative" ref={dropdownRef}>
           <button

@@ -16,9 +16,12 @@ import {
 import { Loader2 } from 'lucide-react';
 import { counterAgentApi, type AgentKycStatus } from '@/lib/api/counterAgent';
 import { formatDateTime } from '@/lib/utils/date';
+import { useLanguageStore } from '@/lib/store/languageStore';
 import { toast } from 'sonner';
 
 export default function AdminKycPage() {
+  const { lang } = useLanguageStore();
+  const isBn = lang === 'BN';
   const [agents, setAgents] = useState<AgentKycStatus[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -115,10 +118,10 @@ export default function AdminKycPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight flex items-center gap-3">
-            <RiShieldCheckFill className="text-[#E31B23]" size={32} /> Counter Agent KYC Verification
+            <RiShieldCheckFill className="text-[#E31B23]" size={32} /> {isBn ? 'কাউন্টার এজেন্ট কেওয়াইসি ভেরিফিকেশন' : 'Counter Agent KYC Verification'}
           </h1>
           <p className="text-xs sm:text-sm text-gray-500 mt-1">
-            Review NID document submissions and verify counter agent identity approvals.
+            {isBn ? 'কাউন্টার এজেন্টের এনআইডি ডকুমেন্ট ও পরিচয়পত্র যাচাই ও অনুমোদন করুন।' : 'Review NID document submissions and verify counter agent identity approvals.'}
           </p>
         </div>
 
@@ -126,7 +129,7 @@ export default function AdminKycPage() {
           onClick={handleRefresh}
           className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-700 hover:bg-gray-50 transition-all flex items-center gap-1.5 shadow-2xs self-start sm:self-auto"
         >
-          <RiRefreshLine size={15} className={refreshing ? 'animate-spin' : ''} /> Refresh List
+          <RiRefreshLine size={15} className={refreshing ? 'animate-spin' : ''} /> {isBn ? 'তালিকা রিফ্রেশ করুন' : 'Refresh List'}
         </button>
       </div>
 
@@ -145,12 +148,12 @@ export default function AdminKycPage() {
             >
               <span>
                 {tab === 'PENDING'
-                  ? 'Pending Review'
+                  ? (isBn ? 'পেন্ডিং আবেদন' : 'Pending Review')
                   : tab === 'VERIFIED'
-                  ? 'Verified'
+                  ? (isBn ? 'ভেরিফাইড' : 'Verified')
                   : tab === 'REJECTED'
-                  ? 'Rejected'
-                  : 'All Requests'}
+                  ? (isBn ? 'বাতিলকৃত' : 'Rejected')
+                  : (isBn ? 'সকল আবেদন' : 'All Requests')}
               </span>
               {tab === 'PENDING' && pendingCount > 0 && (
                 <span className="px-1.5 py-0.5 bg-white text-[#E31B23] text-[10px] font-black rounded-full">
@@ -166,7 +169,7 @@ export default function AdminKycPage() {
           <RiSearchLine size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
-            placeholder="Search agent name, NID..."
+            placeholder={isBn ? 'নাম, ফোন বা এনআইডি দিয়ে খুঁজুন...' : 'Search name, phone, NID...'}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-gray-900 focus:border-[#E31B23] outline-none"

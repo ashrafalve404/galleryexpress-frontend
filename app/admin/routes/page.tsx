@@ -6,6 +6,8 @@ import { useState } from 'react';
 import client from '@/lib/api/client';
 import { toast } from 'sonner';
 
+import { useLanguageStore } from '@/lib/store/languageStore';
+
 interface RouteItem {
   id: string;
   origin: string;
@@ -16,6 +18,8 @@ interface RouteItem {
 }
 
 export default function AdminRoutesPage() {
+  const { lang } = useLanguageStore();
+  const isBn = lang === 'BN';
   const qc = useQueryClient();
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
@@ -164,8 +168,8 @@ export default function AdminRoutesPage() {
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-xl sm:text-2xl font-black text-[#111111]">Routes</h1>
-          <p className="text-gray-500 text-xs sm:text-sm mt-0.5 font-medium">{routes.length} routes configured</p>
+          <h1 className="text-xl sm:text-2xl font-black text-[#111111]">{isBn ? 'রুটসমূহ' : 'Routes'}</h1>
+          <p className="text-gray-500 text-xs sm:text-sm mt-0.5 font-medium">{isBn ? `মোট ${routes.length} টি রুট কনফিগার করা হয়েছে` : `${routes.length} routes configured`}</p>
         </div>
         <div className="flex items-center gap-2">
           {filtered.length > 0 && (
@@ -173,7 +177,7 @@ export default function AdminRoutesPage() {
               onClick={() => handleSelectAll(selectedIds.length !== filtered.length)}
               className="px-3 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold transition-colors"
             >
-              {selectedIds.length === filtered.length ? 'Deselect All' : 'Select All'}
+              {selectedIds.length === filtered.length ? (isBn ? 'সব অসংযুক্ত করুন' : 'Deselect All') : (isBn ? 'সব সিলেক্ট করুন' : 'Select All')}
             </button>
           )}
           <button
@@ -184,7 +188,7 @@ export default function AdminRoutesPage() {
             }}
             className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-[#E31B23] hover:bg-[#C41920] text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm active:scale-95"
           >
-            <Plus size={16} /> Add Route
+            <Plus size={16} /> {isBn ? 'নতুন রুট যুক্ত করুন' : 'Add Route'}
           </button>
         </div>
       </div>

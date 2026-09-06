@@ -4,7 +4,12 @@ import { useQuery } from '@tanstack/react-query';
 import client from '@/lib/api/client';
 import { formatDateTime } from '@/lib/utils/date';
 
+import { useLanguageStore } from '@/lib/store/languageStore';
+
 export default function AdminTicketsPage() {
+  const { lang } = useLanguageStore();
+  const isBn = lang === 'BN';
+
   const { data, isLoading } = useQuery({
     queryKey: ['admin', 'tickets'],
     queryFn: async () => {
@@ -15,11 +20,15 @@ export default function AdminTicketsPage() {
   });
   const tickets: Record<string, unknown>[] = Array.isArray(data) ? data : [];
 
+  const headers = isBn
+    ? ['টিকিট নম্বর', 'বুকিং নম্বর', 'যাত্রী', 'আসন', 'স্ট্যাটাস', 'ইস্যুর তারিখ']
+    : ['Ticket No.', 'Booking Ref', 'Passenger', 'Seat', 'Status', 'Issued'];
+
   return (
     <div className="min-w-0 max-w-full">
       <div className="mb-6">
-        <h1 className="text-xl sm:text-2xl font-black text-[#111111]">Tickets Issued</h1>
-        <p className="text-gray-500 text-xs sm:text-sm mt-0.5 font-medium">{tickets.length} tickets issued</p>
+        <h1 className="text-xl sm:text-2xl font-black text-[#111111]">{isBn ? 'ইস্যুকৃত টিকিটসমূহ' : 'Tickets Issued'}</h1>
+        <p className="text-gray-500 text-xs sm:text-sm mt-0.5 font-medium">{isBn ? `মোট ${tickets.length} টি টিকিট ইস্যু করা হয়েছে` : `${tickets.length} tickets issued`}</p>
       </div>
 
       <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-xs">
@@ -27,7 +36,7 @@ export default function AdminTicketsPage() {
           <table className="w-full text-xs sm:text-sm min-w-[650px]">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-100">
-                {['Ticket No.', 'Booking Ref', 'Passenger', 'Seat', 'Status', 'Issued'].map((h) => (
+                {headers.map((h) => (
                   <th key={h} className="text-left px-5 py-3.5 font-bold text-gray-500 uppercase tracking-wider text-xs">{h}</th>
                 ))}
               </tr>

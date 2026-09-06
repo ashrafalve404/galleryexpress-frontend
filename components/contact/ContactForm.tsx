@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import client from '@/lib/api/client';
 import { toast } from 'sonner';
+import { useLanguageStore } from '@/lib/store/languageStore';
 
 export function ContactForm() {
+  const { lang } = useLanguageStore();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -14,7 +16,7 @@ export function ContactForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !email || !message) {
-      toast.error('Please fill in all required fields.');
+      toast.error(lang === 'BN' ? 'অনুগ্রহ করে সকল আবশ্যক তথ্য প্রদান করুন।' : 'Please fill in all required fields.');
       return;
     }
 
@@ -27,13 +29,20 @@ export function ContactForm() {
         message,
       });
 
-      toast.success('Thank you! Your message has been sent successfully. Admin will review it shortly.');
+      toast.success(
+        lang === 'BN'
+          ? 'ধন্যবাদ! আপনার বার্তাটি সফলভাবে পাঠানো হয়েছে। আমাদের টিম শীঘ্রই উত্তর দেবে।'
+          : 'Thank you! Your message has been sent successfully. Admin will review it shortly.'
+      );
       setName('');
       setEmail('');
       setPhone('');
       setMessage('');
     } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message || 'Failed to send message. Please try again.';
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        (lang === 'BN' ? 'বার্তা পাঠাতে ব্যর্থ হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।' : 'Failed to send message. Please try again.');
       toast.error(msg);
     } finally {
       setSubmitting(false);
@@ -42,22 +51,28 @@ export function ContactForm() {
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 p-6">
-      <h2 className="font-bold text-[#111111] mb-5">Send a Message</h2>
+      <h2 className="font-bold text-[#111111] mb-5">
+        {lang === 'BN' ? 'আমাদের বার্তা পাঠান' : 'Send a Message'}
+      </h2>
       <form className="space-y-4" onSubmit={handleSubmit}>
         <div>
-          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Your Name *</label>
+          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+            {lang === 'BN' ? 'আপনার নাম *' : 'Your Name *'}
+          </label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Full name"
+            placeholder={lang === 'BN' ? 'সম্পূর্ণ নাম' : 'Full name'}
             required
             className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23]"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Email Address *</label>
+          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+            {lang === 'BN' ? 'ইমেইল ঠিকানা *' : 'Email Address *'}
+          </label>
           <input
             type="email"
             value={email}
@@ -69,7 +84,9 @@ export function ContactForm() {
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Phone Number</label>
+          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+            {lang === 'BN' ? 'ফোন নম্বর' : 'Phone Number'}
+          </label>
           <input
             type="tel"
             value={phone}
@@ -80,13 +97,15 @@ export function ContactForm() {
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Message *</label>
+          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+            {lang === 'BN' ? 'আপনার বার্তা *' : 'Message *'}
+          </label>
           <textarea
             rows={4}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             required
-            placeholder="How can we help?"
+            placeholder={lang === 'BN' ? 'আপনাকে কীভাবে সাহায্য করতে পারি?' : 'How can we help?'}
             className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23] resize-none"
           />
         </div>
@@ -99,10 +118,11 @@ export function ContactForm() {
           {submitting ? (
             <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
           ) : (
-            'Send Message'
+            lang === 'BN' ? 'বার্তা পাঠান' : 'Send Message'
           )}
         </button>
       </form>
     </div>
   );
 }
+

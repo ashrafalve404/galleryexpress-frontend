@@ -4,43 +4,60 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { HiChevronLeft, HiChevronRight } from 'react-icons/hi';
 import { SearchCard } from './SearchCard';
+import { useLanguageStore } from '@/lib/store/languageStore';
 
-const slides = [
+const rawSlides = [
   {
     image: '/herro-image0.webp',
-    title: 'Premium Executive Coach Travel',
-    subtitle: 'Experience Unmatched Comfort & Luxury Intercity Journeys Across Bangladesh',
+    titleEn: 'Premium Executive Coach Travel',
+    subtitleEn: 'Experience Unmatched Comfort & Luxury Intercity Journeys Across Bangladesh',
+    titleBn: 'প্রিমিয়াম এক্সিকিউটিভ কোচ ভ্রমণ',
+    subtitleBn: 'বাংলাদেশজুড়ে সেরা আরামদায়ক ও বিলাসবহুল আন্তঃনগর বাস ভ্রমণের অভিজ্ঞতা',
     position: 'object-top',
   },
   {
     image: '/hero-image1.webp',
-    title: "Explore Cox's Bazar Coastal Highway",
-    subtitle: 'Daily Scania & Volvo AC Express Coaches with Deluxe Seat Comfort',
+    titleEn: "Explore Cox's Bazar Coastal Highway",
+    subtitleEn: 'Daily Executive AC Express Coaches with Deluxe Seat Comfort',
+    titleBn: 'কক্সবাজার কোস্টাল হাইওয়ে ভ্রমণ',
+    subtitleBn: 'প্রতিদিন এক্সিকিউটিভ এসি এক্সপ্রেস কোচে আরামদায়ক আসন সুবিধা',
     position: 'object-bottom',
   },
   {
     image: '/hero-image2.webp',
-    title: 'Scenic Green Journeys',
-    subtitle: 'Punctual Departures & GPS-Tracked Fleet Across All Routes',
+    titleEn: 'Scenic Green Journeys',
+    subtitleEn: 'Punctual Departures & GPS-Tracked Fleet Across All Routes',
+    titleBn: 'প্রাকৃতিক সৌন্দর্যের নিরাপদ ভ্রমণ',
+    subtitleBn: 'যথাসময়ে যাত্রা শুরু এবং জিপিএস ট্র্যাকিংযুক্ত আধুনিক বাস',
     position: 'object-bottom',
   },
   {
     image: '/hero-image3.webp',
-    title: 'Intercity Highway Express',
-    subtitle: "Connecting Dhaka, Chittagong & Cox's Bazar Daily",
+    titleEn: 'Intercity Highway Express',
+    subtitleEn: "Connecting Dhaka, Chittagong & Cox's Bazar Daily",
+    titleBn: 'আন্তঃনগর হাইওয়ে এক্সপ্রেস',
+    subtitleBn: 'ঢাকা, চট্টগ্রাম ও কক্সবাজারের মধ্যে প্রতিদিনের বিশ্বস্ত যাতায়াত',
     position: 'object-bottom',
   },
 ];
 
 export function HeroSlider() {
+  const { lang } = useLanguageStore();
   const [current, setCurrent] = useState(0);
+
+  const slides = rawSlides.map((s) => ({
+    image: s.image,
+    title: lang === 'BN' ? s.titleBn : s.titleEn,
+    subtitle: lang === 'BN' ? s.subtitleBn : s.subtitleEn,
+    position: s.position,
+  }));
 
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrent((prev) => (prev + 1) % slides.length);
     }, 6000);
     return () => clearInterval(timer);
-  }, []);
+  }, [slides.length]);
 
   const prevSlide = () => setCurrent((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
   const nextSlide = () => setCurrent((prev) => (prev + 1) % slides.length);
