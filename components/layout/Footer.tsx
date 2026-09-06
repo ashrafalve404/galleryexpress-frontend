@@ -56,7 +56,7 @@ export function Footer() {
               {lang === 'BN' ? 'ভ্রমণের জন্য প্রস্তুত?' : 'Ready to travel?'}
             </h3>
             <p className="text-white/90 text-sm sm:text-base font-medium mt-1.5">
-              {lang === 'BN' ? 'এখনই আপনার আসন বুক করুন এবং বাংলাদেশজুড়ে আরামদায়ক ভ্রমণ উপভোগ করুন।' : 'Book your seat now and enjoy a comfortable journey across Bangladesh.'}
+              {lang === 'BN' ? 'এখনই আপনার সিট বুক করুন এবং বাংলাদেশজুড়ে আরামদায়ক ভ্রমণ উপভোগ করুন।' : 'Book your seat now and enjoy a comfortable journey across Bangladesh.'}
             </p>
           </div>
           <Link

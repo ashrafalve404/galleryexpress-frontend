@@ -102,10 +102,10 @@ export default function CounterAgentLayout({
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex w-64 bg-[#111111] text-white flex-col justify-between border-r border-white/10 sticky top-0 h-screen shrink-0 z-30 overflow-y-auto">
         <div>
-          {/* Sidebar Header Logo */}
-          <div className="p-5 border-b border-white/10 flex flex-col items-start gap-2.5">
-            <Link href="/" className="inline-block hover:opacity-95 transition-opacity">
-              <div className="bg-white py-1.5 px-3 rounded-xl shadow-sm border border-white/20 flex items-center justify-center">
+          {/* Sidebar Header Logo & Status */}
+          <div className="p-5 border-b border-white/10 space-y-3">
+            <Link href="/" className="block hover:opacity-95 transition-opacity" title="Go to Public Website">
+              <div className="bg-white py-2 px-3.5 rounded-2xl shadow-sm border border-white/20 flex items-center justify-center">
                 <img
                   src="/ticketdrkrlogo.png"
                   alt="Ticket Dorkar"
@@ -113,13 +113,16 @@ export default function CounterAgentLayout({
                 />
               </div>
             </Link>
-            <div className="flex items-center gap-2">
-              <span className="bg-[#E31B23] text-white text-[10px] font-black uppercase tracking-wider py-1 px-2.5 rounded-md inline-block shadow-xs">
+
+            <div className="flex items-center justify-between px-1">
+              <div className="flex items-center gap-1.5 text-xs font-black text-gray-300 tracking-wide uppercase">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#E31B23]" />
                 {getTranslation(lang, 'agentPortal', 'Agent Portal')}
-              </span>
-              <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[9px] font-extrabold py-0.5 px-2 rounded-full">
+              </div>
+              <div className="flex items-center gap-1.5 bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 px-2 py-0.5 rounded-full text-[10px] font-extrabold">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 {getTranslation(lang, 'active', 'Active')}
-              </span>
+              </div>
             </div>
           </div>
 
@@ -203,13 +206,23 @@ export default function CounterAgentLayout({
 
       {/* Mobile Top Header */}
       <header className="md:hidden bg-[#111111] text-white px-4 py-3 border-b border-white/10 flex items-center justify-between sticky top-0 z-40">
-        <button
-          onClick={() => setMobileDrawerOpen(true)}
-          className="p-2 bg-white/10 rounded-xl text-white hover:bg-white/20 transition-all"
-          aria-label="Open Navigation Drawer"
-        >
-          <RiMenu3Fill size={22} />
-        </button>
+        <div className="flex items-center gap-2.5">
+          <button
+            onClick={() => setMobileDrawerOpen(true)}
+            className="p-2 bg-white/10 rounded-xl text-white hover:bg-white/20 transition-all active:scale-95"
+            aria-label="Open Navigation Drawer"
+          >
+            <RiMenu3Fill size={20} />
+          </button>
+          <span className="text-xs font-black text-white tracking-wide uppercase">
+            {getTranslation(lang, 'agentPortal', 'Agent Portal')}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-1.5 bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 px-2.5 py-1 rounded-full text-[10px] font-black">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          {getTranslation(lang, 'active', 'Active')}
+        </div>
       </header>
 
       {/* Mobile Side Drawer (Sliding Left-to-Right) */}
@@ -226,24 +239,35 @@ export default function CounterAgentLayout({
             {/* Top scrollable section */}
             <div className="flex-1 overflow-y-auto">
               {/* Drawer Header */}
-              <div className="p-5 border-b border-white/10 flex items-center justify-between sticky top-0 bg-[#111111] z-10">
+              <div className="p-4 border-b border-white/10 flex items-center justify-between sticky top-0 bg-[#111111] z-10">
                 <div className="flex items-center gap-2.5">
-                  <div className="bg-white p-1.5 rounded-lg">
+                  <Link
+                    href="/"
+                    onClick={() => setMobileDrawerOpen(false)}
+                    className="bg-white p-1.5 rounded-xl hover:opacity-90 transition-opacity block"
+                    title="Go to Public Website"
+                  >
                     <img
                       src="/ticketdrkrlogo.png"
                       alt="Ticket Dorkar"
                       className="h-6 w-auto object-contain"
                     />
+                  </Link>
+                  <div className="flex flex-col">
+                    <span className="text-xs font-black text-white">
+                      {getTranslation(lang, 'agentPortal', 'Agent Portal')}
+                    </span>
+                    <div className="flex items-center gap-1 text-[10px] text-emerald-400 font-bold">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      {getTranslation(lang, 'active', 'Active')}
+                    </div>
                   </div>
-                  <span className="text-xs font-bold text-gray-200">
-                    {getTranslation(lang, 'agentNavigation', 'Agent Navigation')}
-                  </span>
                 </div>
                 <button
                   onClick={() => setMobileDrawerOpen(false)}
-                  className="p-1.5 bg-white/10 rounded-lg text-gray-300 hover:text-white"
+                  className="p-2 bg-white/10 rounded-xl text-gray-300 hover:text-white"
                 >
-                  <RiCloseFill size={20} />
+                  <RiCloseFill size={18} />
                 </button>
               </div>
 

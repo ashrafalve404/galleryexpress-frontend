@@ -20,7 +20,7 @@ const rawSlides = [
     titleEn: "Explore Cox's Bazar Coastal Highway",
     subtitleEn: 'Daily Executive AC Express Coaches with Deluxe Seat Comfort',
     titleBn: 'কক্সবাজার কোস্টাল হাইওয়ে ভ্রমণ',
-    subtitleBn: 'প্রতিদিন এক্সিকিউটিভ এসি এক্সপ্রেস কোচে আরামদায়ক আসন সুবিধা',
+    subtitleBn: 'প্রতিদিন এক্সিকিউটিভ এসি এক্সপ্রেস কোচে আরামদায়ক সিট সুবিধা',
     position: 'object-bottom',
   },
   {

@@ -192,7 +192,7 @@ export function ScheduleCard({ schedule }: ScheduleCardProps) {
           <span className={`text-sm font-bold ${seatColor}`}>
             {seats === 0
               ? (isBn ? 'বুকিং শেষ' : 'Sold Out')
-              : (isBn ? `${seats}টি আসন খালি` : `${seats} seats left`)}
+              : (isBn ? `${seats}টি সিট খালি` : `${seats} seats left`)}
           </span>
           {seats > 0 && seats <= 10 && (
             <div className="text-xs text-amber-600 font-semibold mt-0.5">{isBn ? 'দ্রুত বুক হচ্ছে' : 'Filling fast'}</div>
@@ -201,14 +201,14 @@ export function ScheduleCard({ schedule }: ScheduleCardProps) {
         <div className="flex items-center gap-4">
           <div className="text-right">
             <div className="text-xl font-black text-[#E31B23]">{formatCurrency(price)}</div>
-            <div className="text-[11px] text-gray-400 font-medium">{isBn ? 'প্রতি আসন' : 'per seat'}</div>
+            <div className="text-[11px] text-gray-400 font-medium">{isBn ? 'প্রতি সিট' : 'per seat'}</div>
           </div>
           <button
             onClick={handleBook}
             disabled={seats === 0}
             className="bg-[#E31B23] disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-[#C41920] text-white font-bold px-5 py-2.5 rounded-xl flex items-center gap-1 transition-all hover:shadow-md text-sm active:scale-95"
           >
-            {seats === 0 ? (isBn ? 'পূর্ণ' : 'Full') : (isBn ? 'আসন বুক করুন' : 'Book')}
+            {seats === 0 ? (isBn ? 'পূর্ণ' : 'Full') : (isBn ? 'সিট বুক করুন' : 'Book')}
             {seats > 0 && <HiChevronRight className="text-base" />}
           </button>
         </div>

@@ -11,10 +11,11 @@ import {
   RiCheckboxCircleFill,
   RiShieldCheckFill,
   RiInformationFill,
+  RiStackFill,
 } from 'react-icons/ri';
 import { BsFillTicketPerforatedFill } from 'react-icons/bs';
 import { Loader2, Minus, Plus, ArrowRight, ChevronUp, ChevronDown } from 'lucide-react';
-import { counterAgentApi, type AllowedRoute, type AgentKycStatus } from '@/lib/api/counterAgent';
+import { counterAgentApi, type AllowedRoute, type AgentKycStatus, type BulkOrder } from '@/lib/api/counterAgent';
 import { useAuthStore } from '@/lib/store/authStore';
 import { useLanguageStore } from '@/lib/store/languageStore';
 import { getTranslation } from '@/lib/utils/translations';
@@ -34,10 +35,18 @@ export default function BuyBulkPage() {
   const [routesLoading, setRoutesLoading] = useState(true);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+  const [myBulkOrders, setMyBulkOrders] = useState<BulkOrder[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(true);
   const [kycData, setKycData] = useState<AgentKycStatus | null>(null);
 
   useEffect(() => {
     counterAgentApi.getKycStatus().then(setKycData).catch(() => {});
+    counterAgentApi
+      .getBulkOrders()
+      .then(setMyBulkOrders)
+      .catch(() => {})
+      .finally(() => setOrdersLoading(false));
+
     counterAgentApi
       .getAllowedRoutes()
       .then((r) => {
@@ -65,7 +74,7 @@ export default function BuyBulkPage() {
       return;
     }
     if (quantity < 10) {
-      setError(lang === 'BN' ? 'সর্বনিম্ন বাল্ক অর্ডারের পরিমাণ ১০টি টিকিট।' : 'Minimum bulk order quantity is 10 tickets.');
+      setError(lang === 'BN' ? 'সর্বনিম্ন বাল্ক অর্ডারের পরিমাণ 10টি টিকিট।' : 'Minimum bulk order quantity is 10 tickets.');
       return;
     }
     if (!routeId) {
@@ -106,6 +115,7 @@ export default function BuyBulkPage() {
       });
 
       setShowPaymentModal(false);
+      setMyBulkOrders((prev) => [order, ...prev]);
       setSuccess(
         lang === 'BN'
           ? `${order.quantity}টি টিকিটের বাল্ক টিকিট অর্ডার জমা দেওয়া হয়েছে! অ্যাডমিনের পেমেন্ট যাচাইকরণের অপেক্ষায় রয়েছে। অনুমোদিত হলে আপনার টিকিট কোটা চালু হবে।`
@@ -185,7 +195,7 @@ export default function BuyBulkPage() {
 
               <div>
                 <label className="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5 sm:mb-2">
-                  {lang === 'BN' ? 'টিকিটের পরিমাণ' : 'Ticket Quantity'} <span className="text-red-500 font-normal">{lang === 'BN' ? '(সর্বনিম্ন ১০টি টিকিট)' : '(Minimum 10 tickets)'}</span>
+                  {lang === 'BN' ? 'টিকিটের পরিমাণ' : 'Ticket Quantity'} <span className="text-red-500 font-normal">{lang === 'BN' ? '(সর্বনিম্ন 10টি টিকিট)' : '(Minimum 10 tickets)'}</span>
                 </label>
                 <div className="flex items-center gap-2.5 sm:gap-3">
                   {/* Decrease 10 tickets */}
@@ -193,7 +203,7 @@ export default function BuyBulkPage() {
                     type="button"
                     onClick={() => setQuantity((q) => Math.max(10, q - 10))}
                     className="p-2.5 sm:p-3 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-xl text-gray-700 font-bold transition-all active:scale-95 shrink-0"
-                    title={lang === 'BN' ? '১০টি কমাইন' : 'Decrease by 10 tickets'}
+                    title={lang === 'BN' ? '10টি কমাইন' : 'Decrease by 10 tickets'}
                   >
                     <Minus size={18} />
                   </button>
@@ -236,7 +246,7 @@ export default function BuyBulkPage() {
                     type="button"
                     onClick={() => setQuantity((q) => q + 10)}
                     className="p-2.5 sm:p-3 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-xl text-gray-700 font-bold transition-all active:scale-95 shrink-0"
-                    title={lang === 'BN' ? '১০টি বাড়ান' : 'Increase by 10 tickets'}
+                    title={lang === 'BN' ? '10টি বাড়ান' : 'Increase by 10 tickets'}
                   >
                     <Plus size={18} />
                   </button>
@@ -297,6 +307,102 @@ export default function BuyBulkPage() {
             </ul>
           </div>
         </div>
+      </div>
+
+      {/* Existing / Active Bulk Ticket Orders Section */}
+      <div className="bg-white p-6 sm:p-8 rounded-3xl border border-gray-200/80 shadow-sm space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-3">
+          <div>
+            <h2 className="text-lg font-black text-gray-900 tracking-tight flex items-center gap-2">
+              <RiStackFill className="text-[#E31B23]" size={22} />
+              {lang === 'BN' ? 'আপনার বাল্ক টিকিট অর্ডারের তালিকা' : 'Your Bulk Ticket Orders'}
+            </h2>
+            <p className="text-xs text-gray-500 mt-0.5">
+              {lang === 'BN' ? 'আপনার বর্তমান সক্রিয় ও সেপ্টেম্বর সংক্রান্ত বাল্ক অর্ডারের বিবরণ।' : 'Overview of your active and pending bulk ticket allocations.'}
+            </p>
+          </div>
+          {myBulkOrders.length > 0 && (
+            <span className="text-xs font-black text-gray-700 bg-gray-100 px-3 py-1.5 rounded-xl border border-gray-200 w-fit">
+              {lang === 'BN' ? `মোট ${myBulkOrders.length}টি অর্ডার` : `${myBulkOrders.length} Total Orders`}
+            </span>
+          )}
+        </div>
+
+        {ordersLoading ? (
+          <div className="py-8 flex justify-center">
+            <Loader2 className="w-6 h-6 text-[#E31B23] animate-spin" />
+          </div>
+        ) : myBulkOrders.length === 0 ? (
+          <div className="text-center py-8 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+            <BsFillTicketPerforatedFill className="w-10 h-10 text-gray-300 mx-auto mb-2" />
+            <p className="text-xs sm:text-sm font-bold text-gray-500">
+              {lang === 'BN' ? 'আপনার কোনো সক্রিয় বা পূর্বের বাল্ক টিকিট অর্ডার নেই।' : 'You have no active or past bulk ticket orders yet.'}
+            </p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-gray-100 text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-wider">
+                  <th className="pb-3 px-2">{lang === 'BN' ? 'রুট' : 'Route'}</th>
+                  <th className="pb-3 px-2 text-center">{lang === 'BN' ? 'পরিমাণ (বাকি)' : 'Qty (Remaining)'}</th>
+                  <th className="pb-3 px-2 text-right">{lang === 'BN' ? 'মোট মূল্য' : 'Total Amount'}</th>
+                  <th className="pb-3 px-2 text-center">{lang === 'BN' ? 'স্ট্যাটাস' : 'Status'}</th>
+                  <th className="pb-3 px-2 text-right">{lang === 'BN' ? 'তারিখ' : 'Date'}</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100 text-xs sm:text-sm">
+                {myBulkOrders.map((order) => {
+                  const status = (order.status || 'PENDING').toUpperCase();
+                  const isApproved = status === 'APPROVED' || status === 'ACTIVE';
+                  const isPending = status === 'PENDING';
+                  const isRejected = status === 'REJECTED';
+
+                  return (
+                    <tr key={order.id} className="hover:bg-gray-50/80 transition-colors">
+                      <td className="py-3.5 px-2 font-black text-gray-900">
+                        {order.route ? `${order.route.origin} → ${order.route.destination}` : 'General Bulk Quota'}
+                      </td>
+                      <td className="py-3.5 px-2 text-center">
+                        <span className="font-extrabold text-gray-900">{order.quantity}</span>{' '}
+                        <span className="text-xs text-gray-500 font-semibold">
+                          ({lang === 'BN' ? `${order.remainingQuantity ?? order.quantity}টি বাকি` : `${order.remainingQuantity ?? order.quantity} left`})
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-2 text-right font-black text-[#E31B23]">
+                        {formatTk(order.totalAmount)}
+                      </td>
+                      <td className="py-3.5 px-2 text-center">
+                        {isApproved && (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-black bg-emerald-100 text-emerald-800 border border-emerald-200">
+                            <RiCheckboxCircleFill size={13} /> {lang === 'BN' ? 'সক্রিয়' : 'Active'}
+                          </span>
+                        )}
+                        {isPending && (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-black bg-amber-100 text-amber-800 border border-amber-200">
+                            <RiInformationFill size={13} /> {lang === 'BN' ? 'অনুমোদনের অপেক্ষায়' : 'Pending Approval'}
+                          </span>
+                        )}
+                        {isRejected && (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-black bg-red-100 text-red-800 border border-red-200">
+                            <RiErrorWarningFill size={13} /> {lang === 'BN' ? 'প্রত্যাখ্যাত' : 'Rejected'}
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-3.5 px-2 text-right text-xs text-gray-500 font-medium whitespace-nowrap">
+                        {new Date(order.createdAt).toLocaleDateString(lang === 'BN' ? 'bn-BD' : 'en-US', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                        })}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {/* Manual Payment Confirmation Modal */}

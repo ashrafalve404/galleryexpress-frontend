@@ -15,19 +15,27 @@ import { useLanguageStore } from '@/lib/store/languageStore';
 export default function CounterAgentReferralPage() {
   const { user } = useAuthStore();
   const { lang } = useLanguageStore();
-  const [copied, setCopied] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [copiedCode, setCopiedCode] = useState(false);
 
   const referralCode =
     (user as any)?.referralCode ||
     (user as any)?.agentCode ||
-    `AGENT-${user?.id?.substring(0, 6)?.toUpperCase() || 'C7D202'}`;
+    `AG-${user?.id?.substring(0, 6)?.toUpperCase() || 'C7D202'}`;
   const referralLink = `https://ticketdorkar.xyz/counter-agent/register?ref=${referralCode}`;
 
-  const handleCopy = () => {
+  const handleCopyLink = () => {
     navigator.clipboard.writeText(referralLink);
-    setCopied(true);
+    setCopiedLink(true);
     toast.success(lang === 'BN' ? 'রেফারেল লিংক ক্লিপবোর্ডে কপি করা হয়েছে!' : 'Referral link copied to clipboard!');
-    setTimeout(() => setCopied(false), 2500);
+    setTimeout(() => setCopiedLink(false), 2500);
+  };
+
+  const handleCopyCode = () => {
+    navigator.clipboard.writeText(referralCode);
+    setCopiedCode(true);
+    toast.success(lang === 'BN' ? 'রেফারেল কোড ক্লিপবোর্ডে কপি করা হয়েছে!' : 'Referral code copied to clipboard!');
+    setTimeout(() => setCopiedCode(false), 2500);
   };
 
   return (
@@ -38,36 +46,66 @@ export default function CounterAgentReferralPage() {
         <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-black text-white p-6 sm:p-8 rounded-3xl border border-white/10 shadow-lg relative overflow-hidden">
           <div className="relative z-10 max-w-xl space-y-3">
             <h1 className="text-2xl sm:text-3xl font-black text-white">
-              {lang === 'BN' ? 'কাউন্টার পার্টনারদের আমন্ত্রণ জানান এবং ক্যাশ বোনাস উপার্জন করুন' : 'Invite Counter Partners & Earn Cash Bonus'}
+              {lang === 'BN' ? 'কাউন্টার পার্টনারদের আমন্ত্রণ জানান' : 'Invite Counter Partners'}
             </h1>
             <p className="text-xs text-gray-300 leading-relaxed font-medium">
               {lang === 'BN'
-                ? 'অন্যান্য কাউন্টার অপারেটরদের সাথে আপনার রেফারেল লিংক শেয়ার করুন। প্রতিটি নিবন্ধিত ও যাচাইকৃত এজেন্টের জন্য ৫০০ টাকা ইনস্ট্যান্ট বাল্ক ক্রেডিট পান!'
-                : 'Share your referral link with other counter operators. Receive ৳500 instant bulk credit for every verified agent that joins!'}
+                ? 'অন্যান্য কাউন্টার অপারেটরদের সাথে আপনার অনন্য রেফারেল লিংক ও রেফারেল কোড শেয়ার করুন এবং টিকিট দরকার প্ল্যাটফর্মে এজেন্ট যুক্ত করুন।'
+                : 'Share your unique referral link and referral code with other counter operators to connect new agents.'}
             </p>
           </div>
         </div>
 
-        {/* Referral Link Box */}
-        <div className="bg-white p-6 rounded-3xl border border-gray-200/80 shadow-xs space-y-4">
-          <h2 className="text-sm font-black text-gray-900 uppercase tracking-wider">
-            {lang === 'BN' ? 'আপনার রেফারেল লিংক' : 'Your Referral Link'}
-          </h2>
-          <div className="flex flex-col sm:flex-row items-center gap-3">
-            <div className="flex-1 w-full bg-gray-50 border border-gray-200 px-4 py-3 rounded-xl font-mono text-xs font-bold text-gray-800 truncate">
-              {referralLink}
+        {/* Referral Code & Link Section */}
+        <div className="bg-white p-6 sm:p-8 rounded-3xl border border-gray-200/80 shadow-xs space-y-6">
+          {/* Referral Code Box */}
+          <div className="space-y-2">
+            <h2 className="text-xs font-black text-gray-500 uppercase tracking-wider">
+              {lang === 'BN' ? 'আপনার রেফারেল কোড' : 'Your Referral Code'}
+            </h2>
+            <div className="flex flex-col sm:flex-row items-center gap-3">
+              <div className="flex-1 w-full bg-red-50 border border-red-200 px-4 py-3 rounded-xl font-mono text-base sm:text-lg font-black text-[#E31B23] tracking-widest text-center sm:text-left select-all">
+                {referralCode}
+              </div>
+              <button
+                type="button"
+                onClick={handleCopyCode}
+                className="w-full sm:w-auto px-5 py-3.5 bg-gray-900 hover:bg-black text-white text-xs font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 active:scale-95 shrink-0"
+              >
+                {copiedCode ? <RiCheckFill size={18} /> : <RiFileCopyFill size={18} />}
+                <span>
+                  {copiedCode
+                    ? (lang === 'BN' ? 'কোড কপি সম্পন্ন!' : 'Copied Code!')
+                    : (lang === 'BN' ? 'কোড কপি করুন' : 'Copy Code')}
+                </span>
+              </button>
             </div>
-            <button
-              onClick={handleCopy}
-              className="w-full sm:w-auto px-5 py-3 bg-[#E31B23] hover:bg-[#c9121a] text-white text-xs font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 active:scale-95 shrink-0"
-            >
-              {copied ? <RiCheckFill size={18} /> : <RiFileCopyFill size={18} />}
-              <span>
-                {copied
-                  ? (lang === 'BN' ? 'কপি সম্পন্ন!' : 'Copied Link!')
-                  : (lang === 'BN' ? 'রেফারেল লিংক কপি করুন' : 'Copy Referral Link')}
-              </span>
-            </button>
+          </div>
+
+          <div className="border-t border-gray-100" />
+
+          {/* Referral Link Box */}
+          <div className="space-y-2">
+            <h2 className="text-xs font-black text-gray-500 uppercase tracking-wider">
+              {lang === 'BN' ? 'আপনার রেফারেল লিংক' : 'Your Referral Link'}
+            </h2>
+            <div className="flex flex-col sm:flex-row items-center gap-3">
+              <div className="flex-1 w-full bg-gray-50 border border-gray-200 px-4 py-3 rounded-xl font-mono text-xs font-bold text-gray-800 truncate select-all">
+                {referralLink}
+              </div>
+              <button
+                type="button"
+                onClick={handleCopyLink}
+                className="w-full sm:w-auto px-5 py-3.5 bg-[#E31B23] hover:bg-[#c9121a] text-white text-xs font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 active:scale-95 shrink-0"
+              >
+                {copiedLink ? <RiCheckFill size={18} /> : <RiFileCopyFill size={18} />}
+                <span>
+                  {copiedLink
+                    ? (lang === 'BN' ? 'লিংক কপি সম্পন্ন!' : 'Copied Link!')
+                    : (lang === 'BN' ? 'লিংক কপি করুন' : 'Copy Link')}
+                </span>
+              </button>
+            </div>
           </div>
         </div>
 

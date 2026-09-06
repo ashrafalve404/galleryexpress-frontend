@@ -36,7 +36,7 @@ export function TermsContent() {
       <Section title={isBn ? '২. বুকিং এবং টিকিট' : '2. Booking and Tickets'}>
         <p>
           {isBn
-            ? 'সকল বুকিং আসন প্রাপ্যতার ওপর নির্ভর করে। সফলভাবে মূল্য পরিশোধ করার পরেই একটি বুকিং নিশ্চিত বলে গণ্য হবে। আপনার ডিজিটাল টিকিটটি বৈধ বোর্ডিং পাস হিসেবে গণ্য হবে।'
+            ? 'সকল বুকিং সিট প্রাপ্যতার ওপর নির্ভর করে। সফলভাবে মূল্য পরিশোধ করার পরেই একটি বুকিং নিশ্চিত বলে গণ্য হবে। আপনার ডিজিটাল টিকিটটি বৈধ বোর্ডিং পাস হিসেবে গণ্য হবে।'
             : 'All bookings are subject to seat availability. A booking is confirmed only after successful payment. Your digital ticket constitutes a valid boarding pass.'}
         </p>
       </Section>
