@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   RiFileTextFill,
-  RiArrowLeftLine,
   RiDownload2Fill,
   RiLineChartFill,
   RiStackFill,
@@ -66,7 +65,7 @@ export default function CounterAgentStatementPage() {
               <p className="text-xs text-gray-500 mt-1">{getTranslation(lang, 'statementSubtitle', 'Financial overview of your bulk package purchases, ticket sales activity, and commission earnings ledger.')}</p>
             </div>
             <div className="bg-red-50 text-[#E31B23] border border-red-100 px-4 py-2 rounded-2xl text-xs font-black self-start md:self-auto">
-              {getTranslation(lang, 'remainingBalance', 'Remaining Balance:')} {remainingBulk} {getTranslation(lang, 'orderQty', 'Bulk Tickets')}
+              {getTranslation(lang, 'remainingBalance', 'Remaining Balance:')} {remainingBulk} {lang === 'BN' ? 'টি টিকিট' : 'Bulk Tickets'}
             </div>
           </div>
         </div>
@@ -79,7 +78,7 @@ export default function CounterAgentStatementPage() {
             </div>
             <div>
               <div className="text-gray-400 text-xs font-bold uppercase">{getTranslation(lang, 'totalBulkPackage', 'Total Bulk Package')}</div>
-              <div className="text-2xl font-black text-gray-900">{totalPurchased} {getTranslation(lang, 'orderQty', 'Tickets')}</div>
+              <div className="text-2xl font-black text-gray-900">{totalPurchased} {lang === 'BN' ? 'টি টিকিট' : 'Tickets'}</div>
             </div>
           </div>
 
@@ -89,7 +88,7 @@ export default function CounterAgentStatementPage() {
             </div>
             <div>
               <div className="text-gray-400 text-xs font-bold uppercase">{getTranslation(lang, 'ticketsSold', 'Total Sold Tickets')}</div>
-              <div className="text-2xl font-black text-gray-900">{totalSold} {getTranslation(lang, 'orderQty', 'Tickets')}</div>
+              <div className="text-2xl font-black text-gray-900">{totalSold} {lang === 'BN' ? 'টি টিকিট' : 'Tickets'}</div>
             </div>
           </div>
 
@@ -99,7 +98,7 @@ export default function CounterAgentStatementPage() {
             </div>
             <div>
               <div className="text-gray-400 text-xs font-bold uppercase">{getTranslation(lang, 'activeBulkOrders', 'Active Bulk Orders')}</div>
-              <div className="text-2xl font-black text-gray-900">{bulkOrders.length} {getTranslation(lang, 'totalOrders', 'Orders')}</div>
+              <div className="text-2xl font-black text-gray-900">{bulkOrders.length} {lang === 'BN' ? 'টি অর্ডার' : 'Orders'}</div>
             </div>
           </div>
         </div>
@@ -107,30 +106,35 @@ export default function CounterAgentStatementPage() {
         {/* Bulk Purchases & Ledger Table */}
         <div className="bg-white rounded-3xl border border-gray-200/80 shadow-xs p-6">
           <h2 className="text-base font-black text-gray-900 mb-4 flex items-center gap-2">
-            <RiFileTextFill size={20} className="text-[#E31B23]" /> Bulk Purchase Ledger History
+            <RiFileTextFill size={20} className="text-[#E31B23]" />
+            {lang === 'BN' ? 'বাল্ক ক্রয় লেজার ইতিহাস' : 'Bulk Purchase Ledger History'}
           </h2>
 
           {loading ? (
             <div className="py-12 text-center flex flex-col items-center gap-2">
               <Loader2 className="w-8 h-8 text-[#E31B23] animate-spin" />
-              <p className="text-xs text-gray-500 font-semibold">Loading statement ledger...</p>
+              <p className="text-xs text-gray-500 font-semibold">
+                {lang === 'BN' ? 'স্টেটমেন্ট লেজার লোড হচ্ছে...' : 'Loading statement ledger...'}
+              </p>
             </div>
           ) : bulkOrders.length === 0 ? (
             <div className="py-12 text-center text-gray-400">
-              <p className="text-sm font-bold text-gray-600">No statement history found.</p>
+              <p className="text-sm font-bold text-gray-600">
+                {lang === 'BN' ? 'কোনো স্টেটমেন্ট ইতিহাস পাওয়া যায়নি।' : 'No statement history found.'}
+              </p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs sm:text-sm">
                 <thead className="bg-gray-50 text-gray-500 font-bold uppercase text-[11px] border-b border-gray-200">
                   <tr>
-                    <th className="py-3 px-4">Order ID</th>
-                    <th className="py-3 px-4">Package</th>
-                    <th className="py-3 px-4">Tickets Allocated</th>
-                    <th className="py-3 px-4">Remaining</th>
-                    <th className="py-3 px-4">Amount Paid</th>
-                    <th className="py-3 px-4">Status</th>
-                    <th className="py-3 px-4 text-right">Date</th>
+                    <th className="py-3 px-4">{lang === 'BN' ? 'অর্ডার আইডি' : 'Order ID'}</th>
+                    <th className="py-3 px-4">{lang === 'BN' ? 'প্যাকেজ' : 'Package'}</th>
+                    <th className="py-3 px-4">{lang === 'BN' ? 'বরাদ্দকৃত টিকিট' : 'Tickets Allocated'}</th>
+                    <th className="py-3 px-4">{lang === 'BN' ? 'অবশিষ্ট' : 'Remaining'}</th>
+                    <th className="py-3 px-4">{lang === 'BN' ? 'পরিশোধিত অর্থ' : 'Amount Paid'}</th>
+                    <th className="py-3 px-4">{lang === 'BN' ? 'স্ট্যাটাস' : 'Status'}</th>
+                    <th className="py-3 px-4 text-right">{lang === 'BN' ? 'তারিখ' : 'Date'}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 text-gray-700">
@@ -140,7 +144,7 @@ export default function CounterAgentStatementPage() {
                         {order.id?.substring(0, 8) || '--'}
                       </td>
                       <td className="py-3.5 px-4 font-semibold text-gray-800">
-                        {order.quantity || 10} Tickets Bulk Pass
+                        {order.quantity || 10} {lang === 'BN' ? 'টি টিকিট বাল্ক পাস' : 'Tickets Bulk Pass'}
                       </td>
                       <td className="py-3.5 px-4 font-bold text-gray-900">
                         +{order.quantity || 0}

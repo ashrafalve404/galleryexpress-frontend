@@ -478,31 +478,40 @@ export default function CounterAgentSellTicketPage() {
         {/* Header Navigation */}
         <div className="flex justify-end">
           <div className="flex items-center gap-2 px-3.5 py-1.5 bg-red-50 text-[#E31B23] border border-red-200 rounded-full text-xs font-black">
-            <BsFillTicketPerforatedFill size={16} /> Bulk Balance: {remainingBulk} Tickets
+            <BsFillTicketPerforatedFill size={16} />
+            {lang === 'BN' ? `বাল্ক ব্যালেন্স: ${remainingBulk} টি টিকিট` : `Bulk Balance: ${remainingBulk} Tickets`}
           </div>
         </div>
 
         {remainingBulk <= 0 ? (
           <div className="bg-amber-50 border border-amber-200 text-amber-800 p-6 rounded-3xl text-center space-y-3">
             <AlertCircle className="w-10 h-10 text-amber-600 mx-auto" />
-            <h3 className="text-lg font-bold">No Bulk Tickets Remaining</h3>
+            <h3 className="text-lg font-bold">
+              {lang === 'BN' ? 'কোনো বাল্ক টিকিট অবশিষ্ট নেই' : 'No Bulk Tickets Remaining'}
+            </h3>
             <p className="text-xs max-w-md mx-auto">
-              You do not have any active bulk ticket balance remaining. Please purchase a bulk ticket package to sell tickets.
+              {lang === 'BN'
+                ? 'আপনার কোনো সক্রিয় বাল্ক টিকিট ব্যালেন্স অবশিষ্ট নেই। টিকিট বিক্রি করতে অনুগ্রহ করে একটি বাল্ক টিকিট প্যাকেজ ক্রয় করুন।'
+                : 'You do not have any active bulk ticket balance remaining. Please purchase a bulk ticket package to sell tickets.'}
             </p>
             <Link
               href="/counter-agent/buy-bulk"
               className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#E31B23] hover:bg-[#c9121a] text-white font-bold text-xs rounded-xl shadow-md"
             >
-              <BsFillTicketPerforatedFill size={16} /> Buy Bulk Tickets
+              <BsFillTicketPerforatedFill size={16} /> {lang === 'BN' ? 'বাল্ক টিকিট ক্রয় করুন' : 'Buy Bulk Tickets'}
             </Link>
           </div>
         ) : !selectedSchedule ? (
           /* STEP 1: BUS SCHEDULE LIST & SEARCH FILTER SUB-PAGE */
           <div className="space-y-6 animate-fade-in">
             <div className="bg-white p-6 sm:p-8 rounded-3xl border border-gray-200/80 shadow-sm space-y-2">
-              <h1 className="text-2xl font-black text-gray-900">Sell Ticket to Passenger</h1>
+              <h1 className="text-2xl font-black text-gray-900">
+                {lang === 'BN' ? 'যাত্রীর নিকট টিকিট বিক্রি' : 'Sell Ticket to Passenger'}
+              </h1>
               <p className="text-xs text-gray-500">
-                Step 1: Select a bus schedule to view real-time seat availability and issue passenger tickets.
+                {lang === 'BN'
+                  ? 'ধাপ ১: রিয়েল-টাইম আসন লভ্যতা দেখতে এবং যাত্রীদের টিকিট ইস্যু করতে একটি বাস সিডিউল নির্বাচন করুন।'
+                  : 'Step 1: Select a bus schedule to view real-time seat availability and issue passenger tickets.'}
               </p>
             </div>
 
@@ -510,10 +519,13 @@ export default function CounterAgentSellTicketPage() {
             <div className="bg-white p-5 rounded-3xl border border-gray-200/80 shadow-xs space-y-3">
               <div className="flex items-center justify-between border-b border-gray-100 pb-2">
                 <span className="text-xs font-black text-gray-900 uppercase tracking-wider flex items-center gap-1.5">
-                  <SlidersHorizontal size={16} className="text-[#E31B23]" /> Search & Filter Bus Schedules
+                  <SlidersHorizontal size={16} className="text-[#E31B23]" />
+                  {lang === 'BN' ? 'বাস সিডিউল অনুসন্ধান ও ফিল্টার' : 'Search & Filter Bus Schedules'}
                 </span>
                 <span className="text-xs font-bold text-gray-500">
-                  Showing {filteredSchedules.length} of {schedules.length} bus(es)
+                  {lang === 'BN'
+                    ? `${schedules.length}টি বাসের মধ্যে ${filteredSchedules.length}টি দেখানো হচ্ছে`
+                    : `Showing ${filteredSchedules.length} of ${schedules.length} bus(es)`}
                 </span>
               </div>
 
@@ -696,11 +708,11 @@ export default function CounterAgentSellTicketPage() {
                         <div className="flex items-start gap-2 bg-blue-50/70 border border-blue-200/80 rounded-2xl px-4 py-2.5">
                           <Building2 size={16} className="text-blue-600 shrink-0 mt-0.5" />
                           <div className="text-xs font-semibold text-blue-900 leading-snug">
-                            <span className="font-extrabold">Main Boarding Counter: </span>
-                            {sched.route?.origin === 'Dhaka' ? 'Dhaka - Arambagh' : `${sched.route?.origin} Main Counter`}
+                            <span className="font-extrabold">{lang === 'BN' ? 'প্রধান বোর্ডিং কাউন্টার: ' : 'Main Boarding Counter: '}</span>
+                            {sched.route?.origin === 'Dhaka' ? (lang === 'BN' ? 'ঢাকা - আরামবাগ' : 'Dhaka - Arambagh') : `${sched.route?.origin} Main Counter`}
                             <span className="text-blue-700 font-medium">
                               {' '}
-                              · All {sched.route?.origin} Pickup Counters Available
+                              · {lang === 'BN' ? `সকল ${sched.route?.origin} পিকআপ কাউন্টার উপলব্ধ` : `All ${sched.route?.origin} Pickup Counters Available`}
                             </span>
                           </div>
                         </div>
@@ -709,10 +721,10 @@ export default function CounterAgentSellTicketPage() {
                         <div className="flex items-center justify-between pt-2 border-t border-gray-50 flex-wrap gap-3">
                           <div>
                             <span className="text-sm font-black text-emerald-600">
-                              {sched.availableSeatsCount ?? 30} seats left
+                              {sched.availableSeatsCount ?? 30} {lang === 'BN' ? 'টি আসন বাকি' : 'seats left'}
                             </span>
                             <div className="text-[11px] text-gray-400 font-semibold mt-0.5 flex items-center gap-1">
-                              <Calendar size={13} className="text-gray-400" /> {sched.departureDate ? formatDate(sched.departureDate, 'dd MMM yyyy') : 'Today'}
+                              <Calendar size={13} className="text-gray-400" /> {sched.departureDate ? formatDate(sched.departureDate, 'dd MMM yyyy') : (lang === 'BN' ? 'আজ' : 'Today')}
                             </div>
                           </div>
 
@@ -721,7 +733,7 @@ export default function CounterAgentSellTicketPage() {
                               <div className="text-xl sm:text-2xl font-black text-[#E31B23]">
                                 ৳{(sched.fare || 2000).toLocaleString('en-BD')}
                               </div>
-                              <div className="text-[11px] text-gray-400 font-medium">per seat</div>
+                              <div className="text-[11px] text-gray-400 font-medium">{lang === 'BN' ? 'প্রতি আসন' : 'per seat'}</div>
                             </div>
 
                             <button
@@ -729,7 +741,7 @@ export default function CounterAgentSellTicketPage() {
                               onClick={() => handleSelectSchedule(sched)}
                               className="px-6 py-3 bg-[#E31B23] hover:bg-[#c9121a] text-white rounded-2xl font-black text-xs sm:text-sm flex items-center gap-1.5 transition-all shadow-md hover:shadow-red-600/20 active:scale-95"
                             >
-                              Book <HiChevronRight size={16} />
+                              {lang === 'BN' ? 'বুক করুন' : 'Book'} <HiChevronRight size={16} />
                             </button>
                           </div>
                         </div>
@@ -754,10 +766,10 @@ export default function CounterAgentSellTicketPage() {
                   }}
                   className="inline-flex items-center gap-1.5 text-xs font-bold text-[#E31B23] hover:text-[#c9121a] bg-red-50 hover:bg-red-100 px-3.5 py-2 rounded-xl transition-colors"
                 >
-                  <ArrowLeft size={15} /> Back to Schedules
+                  <ArrowLeft size={15} /> {lang === 'BN' ? 'সিডিউলে ফিরে যান' : 'Back to Schedules'}
                 </button>
                 <span className="text-[11px] font-extrabold text-gray-500 uppercase tracking-wider">
-                  Step 2: Seats & Info
+                  {lang === 'BN' ? 'ধাপ ২: আসন ও তথ্য' : 'Step 2: Seats & Info'}
                 </span>
               </div>
 
@@ -780,7 +792,7 @@ export default function CounterAgentSellTicketPage() {
                       {selectedSchedule.route?.origin} ➔ {selectedSchedule.route?.destination}
                     </span>
                     <span className="bg-white text-[#E31B23] px-2.5 py-1 rounded-lg border border-gray-200/80 shadow-2xs inline-flex items-center gap-1">
-                      <Calendar size={13} /> {selectedSchedule.departureDate ? formatDate(selectedSchedule.departureDate, 'dd MMM yyyy') : 'Today'}
+                      <Calendar size={13} /> {selectedSchedule.departureDate ? formatDate(selectedSchedule.departureDate, 'dd MMM yyyy') : (lang === 'BN' ? 'আজ' : 'Today')}
                     </span>
                     <span className="bg-white text-gray-800 px-2.5 py-1 rounded-lg border border-gray-200/80 shadow-2xs inline-flex items-center gap-1">
                       <Clock size={13} className="text-gray-500" /> {formatTime(selectedSchedule.departureTime)}
@@ -789,12 +801,12 @@ export default function CounterAgentSellTicketPage() {
                 </div>
 
                 <div className="w-full sm:w-auto flex items-center justify-between sm:justify-end gap-3 pt-2.5 sm:pt-0 border-t sm:border-t-0 border-gray-200/60 shrink-0">
-                  <span className="text-xs text-gray-500 font-bold sm:hidden">Fare:</span>
+                  <span className="text-xs text-gray-500 font-bold sm:hidden">{lang === 'BN' ? 'ভাড়া:' : 'Fare:'}</span>
                   <div className="text-right">
                     <span className="text-lg sm:text-xl font-black text-[#E31B23]">
                       ৳{(selectedSchedule.fare || 2000).toLocaleString('en-BD')}
                     </span>
-                    <span className="text-[10px] text-gray-400 font-semibold block">per seat</span>
+                    <span className="text-[10px] text-gray-400 font-semibold block">{lang === 'BN' ? 'প্রতি আসন' : 'per seat'}</span>
                   </div>
                 </div>
               </div>
@@ -805,23 +817,25 @@ export default function CounterAgentSellTicketPage() {
               <div className="flex items-center justify-between border-b border-gray-100 pb-3">
                 <div>
                   <h2 className="text-sm font-black text-gray-900 uppercase tracking-wider flex items-center gap-2">
-                    <BsFillTicketPerforatedFill size={18} className="text-[#E31B23]" /> Live Interactive Seat Map
+                    <BsFillTicketPerforatedFill size={18} className="text-[#E31B23]" /> {lang === 'BN' ? 'লাইভ ইন্টারঅ্যাক্টিভ আসন ম্যাপ' : 'Live Interactive Seat Map'}
                   </h2>
                   <p className="text-xs text-gray-500 mt-0.5">
-                    Gray seats are already booked by passengers/customers. Click available seats to select.
+                    {lang === 'BN'
+                      ? 'ধূসর আসনগুলি ইতিমধ্যে বুক করা হয়েছে। নির্বাচন করতে উপলব্ধ আসনে ক্লিক করুন।'
+                      : 'Gray seats are already booked by passengers/customers. Click available seats to select.'}
                   </p>
                 </div>
                 <span className="text-xs font-bold text-gray-600 bg-gray-100 px-3 py-1.5 rounded-xl">
-                  Selected Seats:{' '}
+                  {lang === 'BN' ? 'নির্বাচিত আসন:' : 'Selected Seats:'}{' '}
                   <strong className="text-[#E31B23] font-black">
-                    {selectedSeats.map((s) => s.seatNumber).join(', ') || 'None'}
+                    {selectedSeats.map((s) => s.seatNumber).join(', ') || (lang === 'BN' ? 'কোনোটি নয়' : 'None')}
                   </strong>
                 </span>
               </div>
 
               {loadingSeats ? (
                 <div className="py-12 flex items-center justify-center gap-2 text-xs text-gray-500">
-                  <Loader2 className="w-6 h-6 text-[#E31B23] animate-spin" /> Loading seat map layout...
+                  <Loader2 className="w-6 h-6 text-[#E31B23] animate-spin" /> {lang === 'BN' ? 'আসন ম্যাপ লেআউট লোড হচ্ছে...' : 'Loading seat map layout...'}
                 </div>
               ) : (
                 <div className="max-w-xl mx-auto py-2">
@@ -839,13 +853,13 @@ export default function CounterAgentSellTicketPage() {
             {selectedSeats.length > 0 && (
               <div className="bg-white p-6 rounded-3xl border border-gray-200/80 shadow-xs space-y-4">
                 <h2 className="text-sm font-black text-gray-900 uppercase tracking-wider flex items-center gap-2">
-                  <User size={18} className="text-[#E31B23]" /> Passenger Information
+                  <User size={18} className="text-[#E31B23]" /> {lang === 'BN' ? 'যাত্রীর তথ্যাবলী' : 'Passenger Information'}
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">
-                      Passenger Full Name *
+                      {lang === 'BN' ? 'যাত্রীর পূর্ণ নাম *' : 'Passenger Full Name *'}
                     </label>
                     <div className="relative">
                       <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -862,7 +876,7 @@ export default function CounterAgentSellTicketPage() {
 
                   <div>
                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">
-                      Passenger Mobile Number *
+                      {lang === 'BN' ? 'যাত্রীর মোবাইল নম্বর *' : 'Passenger Mobile Number *'}
                     </label>
                     <div className="relative">
                       <Phone size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -879,7 +893,7 @@ export default function CounterAgentSellTicketPage() {
 
                   <div>
                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">
-                      Email Address (Optional)
+                      {lang === 'BN' ? 'ইমেইল ঠিকানা (ঐচ্ছিক)' : 'Email Address (Optional)'}
                     </label>
                     <div className="relative">
                       <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -895,29 +909,29 @@ export default function CounterAgentSellTicketPage() {
 
                   <div>
                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">
-                      Gender
+                      {lang === 'BN' ? 'লিঙ্গ' : 'Gender'}
                     </label>
                     <select
                       value={gender}
                       onChange={(e: any) => setGender(e.target.value)}
                       className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23]"
                     >
-                      <option value="MALE">Male</option>
-                      <option value="FEMALE">Female</option>
-                      <option value="OTHER">Other</option>
+                      <option value="MALE">{lang === 'BN' ? 'পুরুষ' : 'Male'}</option>
+                      <option value="FEMALE">{lang === 'BN' ? 'নারী' : 'Female'}</option>
+                      <option value="OTHER">{lang === 'BN' ? 'অন্যান্য' : 'Other'}</option>
                     </select>
                   </div>
                 </div>
 
                 <div className="p-4 bg-red-50 rounded-2xl border border-red-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-4">
                   <div>
-                    <span className="text-xs text-red-700 font-medium block">Total Seats Selected:</span>
+                    <span className="text-xs text-red-700 font-medium block">{lang === 'BN' ? 'মোট নির্বাচিত আসন:' : 'Total Seats Selected:'}</span>
                     <strong className="text-lg font-black text-gray-900">
-                      {selectedSeats.length} Ticket(s) ({selectedSeats.map((s) => s.seatNumber).join(', ')})
+                      {selectedSeats.length} {lang === 'BN' ? 'টি টিকিট' : 'Ticket(s)'} ({selectedSeats.map((s) => s.seatNumber).join(', ')})
                     </strong>
                   </div>
                   <div className="text-right">
-                    <span className="text-xs text-gray-500 font-medium block">Total Cash Collected:</span>
+                    <span className="text-xs text-gray-500 font-medium block">{lang === 'BN' ? 'নগদ সংগ্রহীত মোট মূল্য:' : 'Total Cash Collected:'}</span>
                     <span className="text-xl font-black text-[#E31B23]">
                       ৳{((selectedSchedule.fare || 2000) * selectedSeats.length).toLocaleString('en-BD')}
                     </span>
@@ -931,11 +945,11 @@ export default function CounterAgentSellTicketPage() {
                 >
                   {submitting ? (
                     <>
-                      <Loader2 className="w-5 h-5 animate-spin" /> Issuing Ticket...
+                      <Loader2 className="w-5 h-5 animate-spin" /> {lang === 'BN' ? 'টিকিট ইস্যু হচ্ছে...' : 'Issuing Ticket...'}
                     </>
                   ) : (
                     <>
-                      <CheckCircle size={18} /> Sell & Issue Ticket ({selectedSeats.length} Seats)
+                      <CheckCircle size={18} /> {lang === 'BN' ? `টিকিট বিক্রি ও ইস্যু করুন (${selectedSeats.length}টি আসন)` : `Sell & Issue Ticket (${selectedSeats.length} Seats)`}
                     </>
                   )}
                 </button>
@@ -954,12 +968,14 @@ export default function CounterAgentSellTicketPage() {
             </div>
 
             <div>
-              <h3 className="text-xl font-black text-gray-900">Ticket Issued Successfully!</h3>
+              <h3 className="text-xl font-black text-gray-900">
+                {lang === 'BN' ? 'টিকিট সফলভাবে ইস্যু করা হয়েছে!' : 'Ticket Issued Successfully!'}
+              </h3>
               <p className="text-xs text-gray-500 mt-1">
-                Booking Reference: <strong className="text-gray-900 font-black">{successBooking.bookingRef}</strong>
+                {lang === 'BN' ? 'বুকিং রেফারেন্স:' : 'Booking Reference:'} <strong className="text-gray-900 font-black">{successBooking.bookingRef}</strong>
               </p>
               <p className="text-xs text-gray-500 mt-0.5">
-                Remaining Bulk Tickets: <strong className="text-[#E31B23] font-black">{successBooking.remainingBulkQuantity}</strong>
+                {lang === 'BN' ? 'অবশিষ্ট বাল্ক টিকিট:' : 'Remaining Bulk Tickets:'} <strong className="text-[#E31B23] font-black">{successBooking.remainingBulkQuantity}</strong>
               </p>
             </div>
 
@@ -969,7 +985,7 @@ export default function CounterAgentSellTicketPage() {
                 target="_blank"
                 className="w-full py-3 bg-[#111111] hover:bg-black text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center gap-2"
               >
-                <Printer size={16} /> Print Boarding Pass / Ticket
+                <Printer size={16} /> {lang === 'BN' ? 'বোর্ডিং পাস / টিকিট প্রিন্ট করুন' : 'Print Boarding Pass / Ticket'}
               </Link>
               <button
                 type="button"
@@ -983,7 +999,7 @@ export default function CounterAgentSellTicketPage() {
                 }}
                 className="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold text-xs rounded-xl transition-colors"
               >
-                Issue Another Ticket
+                {lang === 'BN' ? 'আরেকটি টিকিট ইস্যু করুন' : 'Issue Another Ticket'}
               </button>
             </div>
           </div>

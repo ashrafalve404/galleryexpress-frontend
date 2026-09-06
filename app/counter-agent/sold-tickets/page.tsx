@@ -3,13 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
-  ArrowLeft,
   Printer,
   Search,
-  Calendar,
-  User,
-  Phone,
-  Bus,
   Loader2,
   ExternalLink,
 } from 'lucide-react';
@@ -33,14 +28,14 @@ export default function CounterAgentSoldTicketsPage() {
         setTickets(Array.isArray(data) ? data : []);
       } catch (e: any) {
         console.error('Failed to load sold tickets:', e);
-        toast.error('Failed to load sold tickets.');
+        toast.error(lang === 'BN' ? 'বিক্রয়কৃত টিকিট লোড করতে ব্যর্থ হয়েছে।' : 'Failed to load sold tickets.');
         setTickets([]);
       } finally {
         setLoading(false);
       }
     }
     loadData();
-  }, []);
+  }, [lang]);
 
   const safeTickets = Array.isArray(tickets) ? tickets : [];
 
@@ -82,7 +77,7 @@ export default function CounterAgentSoldTicketsPage() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search ref #, name, phone..."
+              placeholder={lang === 'BN' ? 'রেফ #, নাম, ফোন নম্বর দিয়ে খুঁজুন...' : 'Search ref #, name, phone...'}
               className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium focus:bg-white focus:border-[#E31B23] outline-none"
             />
           </div>
@@ -93,14 +88,20 @@ export default function CounterAgentSoldTicketsPage() {
           {loading ? (
             <div className="py-12 text-center flex flex-col items-center gap-2">
               <Loader2 className="w-8 h-8 text-[#E31B23] animate-spin" />
-              <p className="text-xs text-gray-500 font-semibold">Loading your sold tickets...</p>
+              <p className="text-xs text-gray-500 font-semibold">
+                {lang === 'BN' ? 'আপনার বিক্রয়কৃত টিকিট লোড হচ্ছে...' : 'Loading your sold tickets...'}
+              </p>
             </div>
           ) : filtered.length === 0 ? (
             <div className="py-12 text-center text-gray-400 space-y-3">
               <BsFillTicketPerforatedFill className="w-12 h-12 mx-auto text-gray-300" />
-              <p className="text-sm font-bold text-gray-600">No sold tickets found.</p>
+              <p className="text-sm font-bold text-gray-600">
+                {lang === 'BN' ? 'কোনো বিক্রয়কৃত টিকিট পাওয়া যায়নি।' : 'No sold tickets found.'}
+              </p>
               <p className="text-xs text-gray-400 max-w-sm mx-auto">
-                When you sell tickets to passengers from your bulk package, they will appear here for easy printing and lookup.
+                {lang === 'BN'
+                  ? 'আপনার বাল্ক প্যাকেজ থেকে যাত্রীদের নিকট টিকিট বিক্রি করলে, মুদ্রণ ও অনুসন্ধানের জন্য তা এখানে প্রদর্শিত হবে।'
+                  : 'When you sell tickets to passengers from your bulk package, they will appear here for easy printing and lookup.'}
               </p>
             </div>
           ) : (
@@ -108,13 +109,13 @@ export default function CounterAgentSoldTicketsPage() {
               <table className="w-full text-left text-xs sm:text-sm">
                 <thead className="bg-gray-50 text-gray-500 font-bold uppercase text-[11px] border-b border-gray-200">
                   <tr>
-                    <th className="py-3.5 px-4">Booking Ref</th>
-                    <th className="py-3.5 px-4">Passenger Name</th>
-                    <th className="py-3.5 px-4">Phone</th>
-                    <th className="py-3.5 px-4">Seats</th>
-                    <th className="py-3.5 px-4">Route & Bus</th>
-                    <th className="py-3.5 px-4">Date</th>
-                    <th className="py-3.5 px-4 text-right">Actions</th>
+                    <th className="py-3.5 px-4">{lang === 'BN' ? 'বুকিং রেফারেন্স' : 'Booking Ref'}</th>
+                    <th className="py-3.5 px-4">{lang === 'BN' ? 'যাত্রীর নাম' : 'Passenger Name'}</th>
+                    <th className="py-3.5 px-4">{lang === 'BN' ? 'ফোন নম্বর' : 'Phone'}</th>
+                    <th className="py-3.5 px-4">{lang === 'BN' ? 'আসন' : 'Seats'}</th>
+                    <th className="py-3.5 px-4">{lang === 'BN' ? 'রুট ও বাস' : 'Route & Bus'}</th>
+                    <th className="py-3.5 px-4">{lang === 'BN' ? 'তারিখ' : 'Date'}</th>
+                    <th className="py-3.5 px-4 text-right">{lang === 'BN' ? 'অ্যাকশন' : 'Actions'}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 text-gray-700">
@@ -137,7 +138,7 @@ export default function CounterAgentSoldTicketsPage() {
                           {ticket.bookingRef || '—'}
                         </td>
                         <td className="py-4 px-4 font-bold text-gray-900">
-                          {passenger?.name || 'Passenger'}
+                          {passenger?.name || (lang === 'BN' ? 'যাত্রী' : 'Passenger')}
                         </td>
                         <td className="py-4 px-4 font-medium text-gray-600">
                           {passenger?.phone || '—'}
@@ -158,7 +159,7 @@ export default function CounterAgentSoldTicketsPage() {
                             target="_blank"
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-[#E31B23] hover:text-white text-gray-700 font-bold text-xs rounded-lg transition-colors shadow-2xs"
                           >
-                            <Printer size={14} /> Print Ticket <ExternalLink size={12} />
+                            <Printer size={14} /> {lang === 'BN' ? 'টিকিট প্রিন্ট' : 'Print Ticket'} <ExternalLink size={12} />
                           </Link>
                         </td>
                       </tr>

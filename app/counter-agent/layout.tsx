@@ -331,17 +331,17 @@ export default function CounterAgentLayout({
 
         {/* Global Agent Portal Footer */}
         <footer className="bg-[#111111] text-gray-400 text-xs py-4 px-6 text-center border-t border-white/10 mt-auto hidden md:block">
-          &copy; {new Date().getFullYear()} Ticket Dorkar Limited. Counter Agent Portal.
+          &copy; {new Date().getFullYear()} Ticket Dorkar Limited. {lang === 'BN' ? 'কাউন্টার এজেন্ট পোর্টাল।' : 'Counter Agent Portal.'}
         </footer>
       </div>
 
       {/* Mobile App Native Bottom Navigation Bar (4 Normal Options with Premium Filled Icons) */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#111111] border-t border-white/10 flex items-center justify-around py-2 px-2 shadow-2xl backdrop-blur-md">
         {[
-          { label: 'Dashboard', href: '/counter-agent/dashboard', icon: RiDashboardFill },
-          { label: 'Sell Ticket', href: '/counter-agent/sell-ticket', icon: RiAddCircleFill },
-          { label: 'My Ticket', href: '/counter-agent/sold-tickets', icon: BsFillTicketPerforatedFill },
-          { label: 'Bulk Ticket', href: '/counter-agent/buy-bulk', icon: RiStackFill },
+          { label: getTranslation(lang, 'dashboard', 'Dashboard'), href: '/counter-agent/dashboard', icon: RiDashboardFill },
+          { label: getTranslation(lang, 'sellTicket', 'Sell Ticket'), href: '/counter-agent/sell-ticket', icon: RiAddCircleFill },
+          { label: getTranslation(lang, 'myTicket', 'My Ticket'), href: '/counter-agent/sold-tickets', icon: BsFillTicketPerforatedFill },
+          { label: getTranslation(lang, 'myBulkTicket', 'Bulk Ticket'), href: '/counter-agent/buy-bulk', icon: RiStackFill },
         ].map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;

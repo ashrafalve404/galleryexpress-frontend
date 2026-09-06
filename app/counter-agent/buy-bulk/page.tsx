@@ -44,9 +44,9 @@ export default function BuyBulkPage() {
         setRoutes(r);
         if (r.length > 0) setRouteId(r[0].id);
       })
-      .catch(() => setError('Failed to load eligible routes.'))
+      .catch(() => setError(lang === 'BN' ? 'অনুমোদিত রুটসমূহ লোড করতে ব্যর্থ হয়েছে।' : 'Failed to load eligible routes.'))
       .finally(() => setRoutesLoading(false));
-  }, []);
+  }, [lang]);
 
   const UNIT_PRICE = 2000;
   const total = quantity * UNIT_PRICE;
@@ -61,15 +61,15 @@ export default function BuyBulkPage() {
   const handleOpenPaymentModal = (e: React.FormEvent) => {
     e.preventDefault();
     if (kycData?.kycStatus !== 'VERIFIED') {
-      setError('KYC Verification Required before purchasing bulk tickets.');
+      setError(lang === 'BN' ? 'বাল্ক টিকিট কেনার আগে কেওয়াইসি ভেরিফিকেশন সম্পন্ন করা আবশ্যক।' : 'KYC Verification Required before purchasing bulk tickets.');
       return;
     }
     if (quantity < 10) {
-      setError('Minimum bulk order quantity is 10 tickets.');
+      setError(lang === 'BN' ? 'সর্বনিম্ন বাল্ক অর্ডারের পরিমাণ ১০টি টিকিট।' : 'Minimum bulk order quantity is 10 tickets.');
       return;
     }
     if (!routeId) {
-      setError('Please select an eligible route.');
+      setError(lang === 'BN' ? 'অনুগ্রহ করে একটি রুট সিলেক্ট করুন।' : 'Please select an eligible route.');
       return;
     }
     setError('');
@@ -82,11 +82,11 @@ export default function BuyBulkPage() {
     e.preventDefault();
     if (paymentType === 'MOBILE_BANKING') {
       if (!senderPhone.trim()) {
-        setError('Please enter your mobile banking sender number.');
+        setError(lang === 'BN' ? 'অনুগ্রহ করে আপনার মোবাইল ব্যাংকিং প্রেরক নম্বর লিখুন।' : 'Please enter your mobile banking sender number.');
         return;
       }
       if (!trxId.trim()) {
-        setError('Please enter the Transaction ID (TrxID).');
+        setError(lang === 'BN' ? 'অনুগ্রহ করে ট্রানজেকশন আইডি (TrxID) লিখুন।' : 'Please enter the Transaction ID (TrxID).');
         return;
       }
     }
@@ -107,13 +107,15 @@ export default function BuyBulkPage() {
 
       setShowPaymentModal(false);
       setSuccess(
-        `Bulk ticket order for ${order.quantity} tickets submitted! Pending Admin payment verification. Once approved, your bulk ticket quota will be activated.`,
+        lang === 'BN'
+          ? `${order.quantity}টি টিকিটের বাল্ক টিকিট অর্ডার জমা দেওয়া হয়েছে! অ্যাডমিনের পেমেন্ট যাচাইকরণের অপেক্ষায় রয়েছে। অনুমোদিত হলে আপনার টিকিট কোটা চালু হবে।`
+          : `Bulk ticket order for ${order.quantity} tickets submitted! Pending Admin payment verification. Once approved, your bulk ticket quota will be activated.`,
       );
       setTimeout(() => router.push('/counter-agent/dashboard'), 3500);
     } catch (err: any) {
       setError(
         err?.response?.data?.message ||
-          'Failed to submit bulk ticket purchase.',
+          (lang === 'BN' ? 'বাল্ক টিকিট কেনাকাটা জমা দিতে ব্যর্থ হয়েছে।' : 'Failed to submit bulk ticket purchase.'),
       );
     } finally {
       setLoading(false);
@@ -121,7 +123,7 @@ export default function BuyBulkPage() {
   };
 
   return (
-    <div className="p-6 sm:p-8 space-y-6">
+    <div className="p-6 sm:p-8 space-y-6 font-sans">
       <div>
         <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight flex items-center gap-2">
           <BsFillTicketPerforatedFill className="text-[#E31B23]" size={28} /> {getTranslation(lang, 'buyBulkTitle', 'Buy Bulk Tickets')}
@@ -135,7 +137,7 @@ export default function BuyBulkPage() {
         <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm flex items-start gap-3 shadow-xs">
           <RiCheckboxCircleFill size={20} className="text-emerald-600 shrink-0 mt-0.5" />
           <div>
-            <strong className="font-bold">Order Submitted for Approval!</strong> {success}
+            <strong className="font-bold">{lang === 'BN' ? 'অর্ডার জমা সম্পন্ন!' : 'Order Submitted for Approval!'}</strong> {success}
           </div>
         </div>
       )}
@@ -144,7 +146,7 @@ export default function BuyBulkPage() {
         <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-sm flex items-start gap-3 shadow-xs">
           <RiErrorWarningFill size={20} className="text-red-600 shrink-0 mt-0.5" />
           <div>
-            <strong className="font-bold">Error:</strong> {error}
+            <strong className="font-bold">{lang === 'BN' ? 'ত্রুটি:' : 'Error:'}</strong> {error}
           </div>
         </div>
       )}
@@ -153,7 +155,7 @@ export default function BuyBulkPage() {
         {/* Purchase Form Card */}
         <div className="lg:col-span-2 bg-white p-6 sm:p-8 rounded-3xl border border-gray-200/80 shadow-sm space-y-6">
           <h2 className="text-lg font-black text-gray-900 tracking-tight border-b border-gray-100 pb-3">
-            Order Configuration
+            {lang === 'BN' ? 'অর্ডার কনফিগারেশন' : 'Order Configuration'}
           </h2>
 
           {routesLoading ? (
@@ -161,12 +163,12 @@ export default function BuyBulkPage() {
               <Loader2 className="w-8 h-8 text-[#E31B23] animate-spin" />
             </div>
           ) : routes.length === 0 ? (
-            <p className="text-sm text-gray-500 py-4">No allowed routes found.</p>
+            <p className="text-sm text-gray-500 py-4">{lang === 'BN' ? 'কোনো অনুমোদিত রুট পাওয়া যায়নি।' : 'No allowed routes found.'}</p>
           ) : (
             <form onSubmit={handleOpenPaymentModal} className="space-y-6">
               <div>
                 <label className="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5 sm:mb-2">
-                  Select Corridor Route
+                  {lang === 'BN' ? 'করিডোর রুট সিলেক্ট করুন' : 'Select Corridor Route'}
                 </label>
                 <select
                   value={routeId}
@@ -175,7 +177,7 @@ export default function BuyBulkPage() {
                 >
                   {routes.map((r) => (
                     <option key={r.id} value={r.id}>
-                      {r.origin} → {r.destination} (৳2,000 / Ticket)
+                      {r.origin} → {r.destination} (৳2,000 / {lang === 'BN' ? 'টিকিট' : 'Ticket'})
                     </option>
                   ))}
                 </select>
@@ -183,7 +185,7 @@ export default function BuyBulkPage() {
 
               <div>
                 <label className="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5 sm:mb-2">
-                  Ticket Quantity <span className="text-red-500 font-normal">(Minimum 10 tickets)</span>
+                  {lang === 'BN' ? 'টিকিটের পরিমাণ' : 'Ticket Quantity'} <span className="text-red-500 font-normal">{lang === 'BN' ? '(সর্বনিম্ন ১০টি টিকিট)' : '(Minimum 10 tickets)'}</span>
                 </label>
                 <div className="flex items-center gap-2.5 sm:gap-3">
                   {/* Decrease 10 tickets */}
@@ -191,7 +193,7 @@ export default function BuyBulkPage() {
                     type="button"
                     onClick={() => setQuantity((q) => Math.max(10, q - 10))}
                     className="p-2.5 sm:p-3 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-xl text-gray-700 font-bold transition-all active:scale-95 shrink-0"
-                    title="Decrease by 10 tickets"
+                    title={lang === 'BN' ? '১০টি কমাইন' : 'Decrease by 10 tickets'}
                   >
                     <Minus size={18} />
                   </button>
@@ -214,7 +216,7 @@ export default function BuyBulkPage() {
                         type="button"
                         onClick={() => setQuantity((q) => q + 1)}
                         className="p-0.5 hover:bg-gray-200 rounded text-gray-600 hover:text-gray-900 transition-colors"
-                        title="Increase 1 ticket"
+                        title={lang === 'BN' ? '১টি বাড়ান' : 'Increase 1 ticket'}
                       >
                         <ChevronUp size={14} className="stroke-[3]" />
                       </button>
@@ -222,7 +224,7 @@ export default function BuyBulkPage() {
                         type="button"
                         onClick={() => setQuantity((q) => Math.max(10, q - 1))}
                         className="p-0.5 hover:bg-gray-200 rounded text-gray-600 hover:text-gray-900 transition-colors"
-                        title="Decrease 1 ticket"
+                        title={lang === 'BN' ? '১টি কমাইন' : 'Decrease 1 ticket'}
                       >
                         <ChevronDown size={14} className="stroke-[3]" />
                       </button>
@@ -234,7 +236,7 @@ export default function BuyBulkPage() {
                     type="button"
                     onClick={() => setQuantity((q) => q + 10)}
                     className="p-2.5 sm:p-3 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-xl text-gray-700 font-bold transition-all active:scale-95 shrink-0"
-                    title="Increase by 10 tickets"
+                    title={lang === 'BN' ? '১০টি বাড়ান' : 'Increase by 10 tickets'}
                   >
                     <Plus size={18} />
                   </button>
@@ -243,15 +245,15 @@ export default function BuyBulkPage() {
 
               <div className="p-3.5 sm:p-4 bg-gray-50 rounded-2xl border border-gray-200 space-y-2">
                 <div className="flex justify-between text-[11px] sm:text-xs text-gray-600 font-medium">
-                  <span>Unit Price:</span>
-                  <span>৳2,000 / ticket</span>
+                  <span>{lang === 'BN' ? 'একক মূল্য:' : 'Unit Price:'}</span>
+                  <span>৳2,000 / {lang === 'BN' ? 'টিকিট' : 'ticket'}</span>
                 </div>
                 <div className="flex justify-between text-[11px] sm:text-xs text-gray-600 font-medium">
-                  <span>Quantity:</span>
-                  <span>{quantity} tickets</span>
+                  <span>{lang === 'BN' ? 'পরিমাণ:' : 'Quantity:'}</span>
+                  <span>{quantity} {lang === 'BN' ? 'টি টিকিট' : 'tickets'}</span>
                 </div>
                 <div className="pt-2 border-t border-gray-200 flex justify-between text-xs sm:text-base font-black text-gray-900">
-                  <span>Total Investment:</span>
+                  <span>{lang === 'BN' ? 'মোট বিনিয়োগ:' : 'Total Investment:'}</span>
                   <span className="text-[#E31B23]">{formatTk(total)}</span>
                 </div>
               </div>
@@ -261,7 +263,7 @@ export default function BuyBulkPage() {
                 disabled={loading || quantity < 10}
                 className="w-full py-3.5 sm:py-4 bg-[#E31B23] hover:bg-[#c9121a] text-white font-extrabold text-xs sm:text-base rounded-2xl transition-all shadow-lg hover:shadow-red-600/30 flex items-center justify-center gap-1.5 sm:gap-2 disabled:opacity-50"
               >
-                Proceed to Payment ({formatTk(total)}) <ArrowRight size={16} className="shrink-0" />
+                {lang === 'BN' ? `পেমেন্টে এগিয়ে যান (${formatTk(total)})` : `Proceed to Payment (${formatTk(total)})`} <ArrowRight size={16} className="shrink-0" />
               </button>
             </form>
           )}
@@ -271,19 +273,25 @@ export default function BuyBulkPage() {
         <div className="space-y-6">
           <div className="bg-white p-6 rounded-3xl border border-gray-200/80 shadow-sm space-y-4">
             <h3 className="text-sm font-black text-gray-900 tracking-tight flex items-center gap-2">
-              <RiInformationFill size={18} className="text-[#E31B23]" /> Bulk Purchase Benefits
+              <RiInformationFill size={18} className="text-[#E31B23]" /> {lang === 'BN' ? 'বাল্ক ক্রয়ের সুবিধাসমূহ' : 'Bulk Purchase Benefits'}
             </h3>
             <ul className="space-y-3 text-xs text-gray-600 font-medium leading-relaxed">
               <li className="flex items-start gap-2">
                 <RiShieldCheckFill size={16} className="text-emerald-600 shrink-0 mt-0.5" />
                 <span>
-                  <strong>Commission Capacity Boost:</strong> Your capacity cap increases by <strong>{formatTk(total)}</strong> upon Admin payment approval.
+                  <strong>{lang === 'BN' ? 'কমিশন ক্যাপাসিটি বৃদ্ধি:' : 'Commission Capacity Boost:'}</strong>{' '}
+                  {lang === 'BN'
+                    ? `অ্যাডমিন পেমেন্ট অনুমোদনের সাথে সাথে আপনার কমিশন সীমা ${formatTk(total)} বৃদ্ধি পাবে।`
+                    : `Your capacity cap increases by ${formatTk(total)} upon Admin payment approval.`}
                 </span>
               </li>
               <li className="flex items-start gap-2">
                 <RiShieldCheckFill size={16} className="text-emerald-600 shrink-0 mt-0.5" />
                 <span>
-                  <strong>Platform-wide Earnings:</strong> Receive split shares of ৳200 commission whenever users book at your counter.
+                  <strong>{lang === 'BN' ? 'প্ল্যাটফর্ম-ব্যাপী আয়:' : 'Platform-wide Earnings:'}</strong>{' '}
+                  {lang === 'BN'
+                    ? 'আপনার কাউন্টার থেকে গ্রাহকরা টিকিট কাটলেই ২০০ টাকা পর্যন্ত শেয়ার পাবেন।'
+                    : 'Receive split shares of ৳200 commission whenever users book at your counter.'}
                 </span>
               </li>
             </ul>
@@ -297,8 +305,12 @@ export default function BuyBulkPage() {
           <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-5 animate-fade-in max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-gray-100 pb-3">
               <div>
-                <h2 className="text-lg font-black text-gray-900">Bulk Payment Confirmation</h2>
-                <p className="text-xs text-gray-500">Order Total: <strong className="text-[#E31B23]">{formatTk(total)}</strong> ({quantity} Tickets)</p>
+                <h2 className="text-lg font-black text-gray-900">
+                  {lang === 'BN' ? 'বাল্ক পেমেন্ট নিশ্চিতকরণ' : 'Bulk Payment Confirmation'}
+                </h2>
+                <p className="text-xs text-gray-500">
+                  {lang === 'BN' ? 'অর্ডার মোট:' : 'Order Total:'} <strong className="text-[#E31B23]">{formatTk(total)}</strong> ({quantity} {lang === 'BN' ? 'টি টিকিট' : 'Tickets'})
+                </p>
               </div>
               <button
                 onClick={() => setShowPaymentModal(false)}
@@ -319,7 +331,7 @@ export default function BuyBulkPage() {
                     : 'border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100'
                 }`}
               >
-                <RiSmartphoneFill size={16} /> Mobile Banking
+                <RiSmartphoneFill size={16} /> {lang === 'BN' ? 'মোবাইল ব্যাংকিং' : 'Mobile Banking'}
               </button>
               <button
                 type="button"
@@ -330,7 +342,7 @@ export default function BuyBulkPage() {
                     : 'border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100'
                 }`}
               >
-                <RiWallet3Fill size={16} /> Direct Counter Cash
+                <RiWallet3Fill size={16} /> {lang === 'BN' ? 'সরাসরি কাউন্টার ক্যাশ' : 'Direct Counter Cash'}
               </button>
             </div>
 
@@ -338,19 +350,23 @@ export default function BuyBulkPage() {
               {paymentType === 'MOBILE_BANKING' ? (
                 <>
                   <div className="bg-slate-50 border border-slate-200 p-4 rounded-2xl space-y-2 text-xs">
-                    <span className="font-bold text-gray-700 block">Admin Send Money Numbers:</span>
+                    <span className="font-bold text-gray-700 block">
+                      {lang === 'BN' ? 'অ্যাডমিন সেন্ড মানি নম্বরসমূহ:' : 'Admin Send Money Numbers:'}
+                    </span>
                     <div className="flex justify-between items-center text-gray-800 font-mono font-bold bg-white p-2 rounded-xl border border-gray-200">
                       <span>bKash / Nagad / Rocket:</span>
                       <span className="text-[#E31B23] text-sm">01739-142959</span>
                     </div>
                     <p className="text-[11px] text-gray-500">
-                      Please send <strong>{formatTk(total)}</strong> to the Admin Send Money number above, then enter your details below.
+                      {lang === 'BN'
+                        ? <>উপরে উল্লিখিত অ্যাডমিন সেন্ড মানি নম্বরে <strong>{formatTk(total)}</strong> টাকা পাঠান, তারপর নিচে বিবরণ প্রদান করুন।</>
+                        : <>Please send <strong>{formatTk(total)}</strong> to the Admin Send Money number above, then enter your details below.</>}
                     </p>
                   </div>
 
                   <div>
                     <label className="block text-xs font-bold text-gray-700 mb-1">
-                      Mobile Banking Provider
+                      {lang === 'BN' ? 'মোবাইল ব্যাংকিং প্রোভাইডার' : 'Mobile Banking Provider'}
                     </label>
                     <div className="flex gap-2">
                       {(['BKASH', 'NAGAD', 'ROCKET'] as const).map((prov) => (
@@ -372,7 +388,7 @@ export default function BuyBulkPage() {
 
                   <div>
                     <label className="block text-xs font-bold text-gray-700 mb-1">
-                      Sender Mobile Number <span className="text-red-500">*</span>
+                      {lang === 'BN' ? 'প্রেরকের মোবাইল নম্বর' : 'Sender Mobile Number'} <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -386,7 +402,7 @@ export default function BuyBulkPage() {
 
                   <div>
                     <label className="block text-xs font-bold text-gray-700 mb-1">
-                      Transaction ID (TrxID) <span className="text-red-500">*</span>
+                      {lang === 'BN' ? 'ট্রানজেকশন আইডি (TrxID)' : 'Transaction ID (TrxID)'} <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -400,18 +416,22 @@ export default function BuyBulkPage() {
                 </>
               ) : (
                 <div className="bg-slate-50 border border-slate-200 p-4 rounded-2xl space-y-2 text-xs">
-                  <span className="font-bold text-gray-700 block">Direct Payment Instructions:</span>
+                  <span className="font-bold text-gray-700 block">
+                    {lang === 'BN' ? 'সরাসরি পেমেন্ট নির্দেশাবলী:' : 'Direct Payment Instructions:'}
+                  </span>
                   <p className="text-gray-600 leading-relaxed">
-                    Hand over cash or submit bank deposit slip directly to Admin Central Accounts Office.
+                    {lang === 'BN'
+                      ? 'অ্যাডমিন সেন্ট্রাল একাউন্ট অফিসে নগদ টাকা প্রদান করুন বা ব্যাংক জমা স্লিপ জমা দিন।'
+                      : 'Hand over cash or submit bank deposit slip directly to Admin Central Accounts Office.'}
                   </p>
                   <div>
                     <label className="block text-xs font-bold text-gray-700 mt-2 mb-1">
-                      Payment Reference / Receipt Notes
+                      {lang === 'BN' ? 'পেমেন্ট রেফারেন্স / রসিদ নোট' : 'Payment Reference / Receipt Notes'}
                     </label>
                     <textarea
                       value={paymentNotes}
                       onChange={(e) => setPaymentNotes(e.target.value)}
-                      placeholder="e.g. Handed ৳20,000 cash to Central Office Admin on 03 Sep"
+                      placeholder={lang === 'BN' ? 'যেমন: সেন্ট্রাল অফিসে নগদ টাকা প্রদান করা হয়েছে' : 'e.g. Handed ৳20,000 cash to Central Office Admin on 03 Sep'}
                       className="w-full p-3 bg-white border border-gray-300 rounded-xl text-xs focus:border-[#E31B23] outline-none"
                       rows={2}
                     />
@@ -426,7 +446,7 @@ export default function BuyBulkPage() {
                   disabled={loading}
                   className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-xl transition-all"
                 >
-                  Cancel
+                  {lang === 'BN' ? 'বাতিল' : 'Cancel'}
                 </button>
                 <button
                   type="submit"
@@ -436,7 +456,7 @@ export default function BuyBulkPage() {
                   {loading ? (
                     <Loader2 size={16} className="animate-spin" />
                   ) : (
-                    'Submit Order'
+                    lang === 'BN' ? 'অর্ডার জমা দিন' : 'Submit Order'
                   )}
                 </button>
               </div>
@@ -447,4 +467,3 @@ export default function BuyBulkPage() {
     </div>
   );
 }
-

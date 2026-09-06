@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import {
   RiStore3Fill,
   RiMapPinFill,
@@ -35,9 +34,9 @@ export default function SelectCounterPage() {
         setCounters(c);
         setStats(s);
       })
-      .catch(() => setError('Failed to load counters.'))
+      .catch(() => setError(lang === 'BN' ? 'কাউন্টার লোড করতে ব্যর্থ হয়েছে।' : 'Failed to load counters.'))
       .finally(() => setLoading(false));
-  }, []);
+  }, [lang]);
 
   const handleSelect = async (counterId: string) => {
     setSaving(counterId);
@@ -47,10 +46,10 @@ export default function SelectCounterPage() {
       await counterAgentApi.assignCounter(counterId);
       const updated = await counterAgentApi.getDashboardStats();
       setStats(updated);
-      setSuccess('Counter assigned successfully!');
+      setSuccess(lang === 'BN' ? 'কাউন্টার সফলভাবে নির্ধারিত হয়েছে!' : 'Counter assigned successfully!');
       setTimeout(() => router.push('/counter-agent/dashboard'), 1500);
     } catch (err: any) {
-      setError(err?.response?.data?.message || 'Failed to assign counter.');
+      setError(err?.response?.data?.message || (lang === 'BN' ? 'কাউন্টার নির্ধারণ করতে ব্যর্থ হয়েছে।' : 'Failed to assign counter.'));
     } finally {
       setSaving('');
     }
@@ -67,7 +66,7 @@ export default function SelectCounterPage() {
   });
 
   return (
-    <div className="p-4 sm:p-8 space-y-6">
+    <div className="p-4 sm:p-8 space-y-6 font-sans">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-3xl font-black text-gray-900 tracking-tight flex items-center gap-2">
@@ -85,7 +84,7 @@ export default function SelectCounterPage() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search counter or location..."
+            placeholder={lang === 'BN' ? 'কাউন্টার বা লোকেশন খুঁজুন...' : 'Search counter or location...'}
             className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs sm:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23] shadow-xs"
           />
         </div>
@@ -94,7 +93,7 @@ export default function SelectCounterPage() {
       {success && (
         <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm flex items-center gap-3">
           <RiCheckboxCircleFill size={18} className="text-emerald-600 shrink-0" />
-          <span>{success} Redirecting to dashboard…</span>
+          <span>{success} {lang === 'BN' ? 'ড্যাশবোর্ডে নেওয়া হচ্ছে…' : 'Redirecting to dashboard…'}</span>
         </div>
       )}
 
@@ -112,8 +111,12 @@ export default function SelectCounterPage() {
       ) : filteredCounters.length === 0 ? (
         <div className="py-16 text-center text-gray-500 bg-white rounded-3xl border border-gray-200/80 p-8 space-y-2">
           <RiStore3Fill className="w-12 h-12 text-gray-300 mx-auto" />
-          <h3 className="text-base font-bold text-gray-800">No Matching Counters</h3>
-          <p className="text-xs text-gray-500">Try searching for another counter name or location.</p>
+          <h3 className="text-base font-bold text-gray-800">
+            {lang === 'BN' ? 'কোনো মিল থাকা কাউন্টার পাওয়া যায়নি' : 'No Matching Counters'}
+          </h3>
+          <p className="text-xs text-gray-500">
+            {lang === 'BN' ? 'অন্য কোনো কাউন্টারের নাম বা স্থান দিয়ে পুনরায় চেষ্টা করুন।' : 'Try searching for another counter name or location.'}
+          </p>
         </div>
       ) : (
         /* 2-column layout on mobile, 4-column layout on PC / desktop */
@@ -136,7 +139,7 @@ export default function SelectCounterPage() {
                     </div>
                     {isActive && (
                       <span className="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider bg-[#E31B23] text-white px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full">
-                        Current
+                        {lang === 'BN' ? 'বর্তমান' : 'Current'}
                       </span>
                     )}
                   </div>
@@ -168,12 +171,12 @@ export default function SelectCounterPage() {
                 >
                   {saving === c.id ? (
                     <>
-                      <Loader2 size={14} className="animate-spin" /> Saving…
+                      <Loader2 size={14} className="animate-spin" /> {lang === 'BN' ? 'সংরক্ষণ হচ্ছে…' : 'Saving…'}
                     </>
                   ) : isActive ? (
-                    'Assigned'
+                    lang === 'BN' ? 'নির্ধারিত' : 'Assigned'
                   ) : (
-                    'Select Counter'
+                    lang === 'BN' ? 'কাউন্টার সিলেক্ট করুন' : 'Select Counter'
                   )}
                 </button>
               </div>
@@ -184,4 +187,3 @@ export default function SelectCounterPage() {
     </div>
   );
 }
-

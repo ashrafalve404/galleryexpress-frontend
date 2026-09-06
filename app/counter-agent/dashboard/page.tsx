@@ -142,9 +142,9 @@ export default function CounterAgentDashboard() {
               ) : (
                 <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 text-amber-300 px-3.5 py-2 rounded-xl text-xs font-bold">
                   <RiErrorWarningFill size={16} className="shrink-0 text-amber-400" />
-                  <span>You have not selected a counter yet — </span>
+                  <span>{getTranslation(lang, 'noCounterAssigned', 'You have not selected a counter yet —')} </span>
                   <Link href="/counter-agent/select-counter" className="underline hover:text-amber-200">
-                    Select Counter
+                    {getTranslation(lang, 'selectCounter', 'Select Counter')}
                   </Link>
                 </div>
               )}
@@ -203,7 +203,9 @@ export default function CounterAgentDashboard() {
               <div className="text-xl sm:text-3xl font-black text-gray-900">
                 {totalTicketsBought}
               </div>
-              <p className="text-[10px] sm:text-[11px] text-gray-400 mt-1">Cumulative bulk quantity</p>
+              <p className="text-[10px] sm:text-[11px] text-gray-400 mt-1">
+                {lang === 'BN' ? 'সর্বমোট কেনা বাল্ক টিকিটের সংখ্যা' : 'Cumulative bulk quantity'}
+              </p>
             </div>
           </div>
 
@@ -220,7 +222,9 @@ export default function CounterAgentDashboard() {
               <div className="text-xl sm:text-3xl font-black text-purple-700">
                 {totalTicketsRemaining}
               </div>
-              <p className="text-[10px] sm:text-[11px] text-gray-400 mt-1">Active bulk allocation</p>
+              <p className="text-[10px] sm:text-[11px] text-gray-400 mt-1">
+                {lang === 'BN' ? 'সক্রিয় বাল্ক টিকিটের স্টক' : 'Active bulk allocation'}
+              </p>
             </div>
           </div>
 
@@ -237,7 +241,9 @@ export default function CounterAgentDashboard() {
               <div className="text-xl sm:text-3xl font-black text-[#E31B23]">
                 {stats.ticketsSold ?? Math.max(0, totalTicketsBought - totalTicketsRemaining)}
               </div>
-              <p className="text-[10px] sm:text-[11px] text-gray-400 mt-1">Issued to passengers</p>
+              <p className="text-[10px] sm:text-[11px] text-gray-400 mt-1">
+                {lang === 'BN' ? 'যাত্রীদের ইস্যু করা মোট টিকিট' : 'Issued to passengers'}
+              </p>
             </div>
           </div>
 
@@ -254,7 +260,9 @@ export default function CounterAgentDashboard() {
               <div className="text-xl sm:text-3xl font-black text-emerald-600">
                 {formatTk(commissionStats.totalEarned)}
               </div>
-              <p className="text-[10px] sm:text-[11px] text-gray-400 mt-1">Total revenue generated</p>
+              <p className="text-[10px] sm:text-[11px] text-gray-400 mt-1">
+                {lang === 'BN' ? 'সর্বমোট উৎপন্ন আয়' : 'Total revenue generated'}
+              </p>
             </div>
           </div>
 
@@ -271,7 +279,9 @@ export default function CounterAgentDashboard() {
               <div className="text-xl sm:text-3xl font-black text-amber-600">
                 {formatTk(stats.referralEarnings || 0)}
               </div>
-              <p className="text-[10px] sm:text-[11px] text-gray-400 mt-1">From {stats.referredCount || 0} referred agent(s)</p>
+              <p className="text-[10px] sm:text-[11px] text-gray-400 mt-1">
+                {lang === 'BN' ? `${stats.referredCount || 0} জন রেফারকৃত এজেন্ট থেকে` : `From ${stats.referredCount || 0} referred agent(s)`}
+              </p>
             </div>
           </div>
 
@@ -288,7 +298,9 @@ export default function CounterAgentDashboard() {
               <div className="text-xl sm:text-3xl font-black text-gray-900">
                 {formatTk(totalInvested)}
               </div>
-              <p className="text-[10px] sm:text-[11px] text-gray-400 mt-1">Max commission cap limit</p>
+              <p className="text-[10px] sm:text-[11px] text-gray-400 mt-1">
+                {lang === 'BN' ? 'সর্বোচ্চ কমিশন সীমা (ক্যাপ)' : 'Max commission cap limit'}
+              </p>
             </div>
           </div>
         </div>
@@ -298,10 +310,13 @@ export default function CounterAgentDashboard() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-4">
             <div>
               <h2 className="text-lg font-black text-gray-900 tracking-tight flex items-center gap-2">
-                <RiWallet3Fill className="text-[#E31B23]" size={22} /> Commission Capacity Tracker
+                <RiWallet3Fill className="text-[#E31B23]" size={22} />
+                {lang === 'BN' ? 'কমিশন ক্যাপাসিটি ট্র্যাকার' : 'Commission Capacity Tracker'}
               </h2>
               <p className="text-xs text-gray-500 mt-0.5">
-                Commission is capped at your cumulative bulk ticket investment amount.
+                {lang === 'BN'
+                  ? 'কমিশন আপনার সর্বমোট বাল্ক টিকিট বিনিয়োগ পরিমাণের সমপরিমাণে সীমাবদ্ধ।'
+                  : 'Commission is capped at your cumulative bulk ticket investment amount.'}
               </p>
             </div>
             <span
@@ -313,11 +328,11 @@ export default function CounterAgentDashboard() {
             >
               {commissionStats.capReached ? (
                 <>
-                  <RiErrorWarningFill size={15} /> Capacity Cap Reached
+                  <RiErrorWarningFill size={15} /> {lang === 'BN' ? 'কমিশন সীমা সমাপ্ত' : 'Capacity Cap Reached'}
                 </>
               ) : (
                 <>
-                  <RiCheckboxCircleFill size={15} /> Commission Active
+                  <RiCheckboxCircleFill size={15} /> {lang === 'BN' ? 'কমিশন সক্রিয়' : 'Commission Active'}
                 </>
               )}
             </span>
@@ -325,19 +340,25 @@ export default function CounterAgentDashboard() {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center sm:text-left">
             <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
-              <span className="text-xs font-bold uppercase text-gray-500">Earned So Far</span>
+              <span className="text-xs font-bold uppercase text-gray-500">
+                {lang === 'BN' ? 'এ পর্যন্ত অর্জিত' : 'Earned So Far'}
+              </span>
               <div className="text-2xl font-extrabold text-emerald-600 mt-1">
                 {formatTk(commissionStats.totalEarned)}
               </div>
             </div>
             <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
-              <span className="text-xs font-bold uppercase text-gray-500">Max Cap</span>
+              <span className="text-xs font-bold uppercase text-gray-500">
+                {lang === 'BN' ? 'সর্বোচ্চ সীমা' : 'Max Cap'}
+              </span>
               <div className="text-2xl font-extrabold text-gray-900 mt-1">
                 {formatTk(commissionStats.commissionCap)}
               </div>
             </div>
             <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
-              <span className="text-xs font-bold uppercase text-gray-500">Remaining Margin</span>
+              <span className="text-xs font-bold uppercase text-gray-500">
+                {lang === 'BN' ? 'অবশিষ্ট মার্জিন' : 'Remaining Margin'}
+              </span>
               <div className="text-2xl font-extrabold text-blue-600 mt-1">
                 {formatTk(commissionStats.remainingCapacity)}
               </div>
@@ -357,8 +378,8 @@ export default function CounterAgentDashboard() {
               />
             </div>
             <div className="flex justify-between text-xs font-semibold text-gray-500">
-              <span>{capPct.toFixed(1)}% Capacity Used</span>
-              <span>{formatTk(commissionStats.remainingCapacity)} Remaining Capacity</span>
+              <span>{capPct.toFixed(1)}% {lang === 'BN' ? 'ক্যাপাসিটি ব্যবহৃত' : 'Capacity Used'}</span>
+              <span>{formatTk(commissionStats.remainingCapacity)} {lang === 'BN' ? 'অবশিষ্ট ক্যাপাসিটি' : 'Remaining Capacity'}</span>
             </div>
           </div>
 
@@ -366,7 +387,10 @@ export default function CounterAgentDashboard() {
             <div className="p-4 bg-amber-50 border border-amber-200 text-amber-800 rounded-2xl text-xs flex items-start gap-3">
               <RiErrorWarningFill size={18} className="shrink-0 text-amber-600 mt-0.5" />
               <div>
-                <strong>Action Required:</strong> Your commission capacity limit has been reached. Purchase more bulk tickets to increase your investment cap and continue earning ৳200 commissions on bookings.
+                <strong>{lang === 'BN' ? 'করণীয়:' : 'Action Required:'}</strong>{' '}
+                {lang === 'BN'
+                  ? 'আপনার কমিশন সক্ষমতার সীমা পূর্ণ হয়েছে। আপনার বিনিয়োগ সীমা বাড়াতে এবং টিকিট বুকিংয়ে ২০০ টাকা কমিশন উপার্জন চালিয়ে যেতে আরও বাল্ক টিকিট সংগ্রহ করুন।'
+                  : 'Your commission capacity limit has been reached. Purchase more bulk tickets to increase your investment cap and continue earning ৳200 commissions on bookings.'}
               </div>
             </div>
           )}
@@ -376,20 +400,25 @@ export default function CounterAgentDashboard() {
         <div className="bg-white rounded-3xl border border-gray-200/80 shadow-sm overflow-hidden space-y-4">
           <div className="p-6 pb-2 border-b border-gray-100 flex items-center justify-between">
             <h2 className="text-lg font-black text-gray-900 tracking-tight flex items-center gap-2">
-              <BsFillTicketPerforatedFill className="text-[#E31B23]" size={22} /> My Bulk Orders
+              <BsFillTicketPerforatedFill className="text-[#E31B23]" size={22} />
+              {lang === 'BN' ? 'আমার বাল্ক অর্ডারসমূহ' : 'My Bulk Orders'}
             </h2>
-            <span className="text-xs text-gray-500 font-bold">{bulkOrders.length} total orders</span>
+            <span className="text-xs text-gray-500 font-bold">
+              {bulkOrders.length} {lang === 'BN' ? 'টি মোট অর্ডার' : 'total orders'}
+            </span>
           </div>
 
           {bulkOrders.length === 0 ? (
             <div className="p-12 text-center text-gray-500 space-y-3">
               <BsFillTicketPerforatedFill className="w-12 h-12 text-gray-300 mx-auto" />
-              <p className="text-sm font-medium">No bulk ticket orders found.</p>
+              <p className="text-sm font-medium">
+                {lang === 'BN' ? 'কোনো বাল্ক টিকিট অর্ডার পাওয়া যায়নি।' : 'No bulk ticket orders found.'}
+              </p>
               <Link
                 href="/counter-agent/buy-bulk"
                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#E31B23] text-white text-xs font-bold rounded-xl"
               >
-                <BsFillTicketPerforatedFill size={16} /> Buy First Bulk Batch
+                <BsFillTicketPerforatedFill size={16} /> {lang === 'BN' ? 'প্রথম বাল্ক ব্যাচ কিনুন' : 'Buy First Bulk Batch'}
               </Link>
             </div>
           ) : (
@@ -397,14 +426,14 @@ export default function CounterAgentDashboard() {
               <table className="w-full text-left text-xs sm:text-sm">
                 <thead className="bg-gray-50 text-gray-500 font-bold uppercase text-[11px] border-b border-gray-200">
                   <tr>
-                    <th className="py-3.5 px-6">Route</th>
-                    <th className="py-3.5 px-4">Qty</th>
-                    <th className="py-3.5 px-4">Remaining</th>
-                    <th className="py-3.5 px-4">Invested</th>
-                    <th className="py-3.5 px-4">Earned</th>
-                    <th className="py-3.5 px-4">Cap</th>
-                    <th className="py-3.5 px-4">Status</th>
-                    <th className="py-3.5 px-6">Date</th>
+                    <th className="py-3.5 px-6">{lang === 'BN' ? 'রুট' : 'Route'}</th>
+                    <th className="py-3.5 px-4">{lang === 'BN' ? 'পরিমাণ' : 'Qty'}</th>
+                    <th className="py-3.5 px-4">{lang === 'BN' ? 'অবশিষ্ট' : 'Remaining'}</th>
+                    <th className="py-3.5 px-4">{lang === 'BN' ? 'বিনিয়োগ' : 'Invested'}</th>
+                    <th className="py-3.5 px-4">{lang === 'BN' ? 'অর্জিত' : 'Earned'}</th>
+                    <th className="py-3.5 px-4">{lang === 'BN' ? 'সীমা' : 'Cap'}</th>
+                    <th className="py-3.5 px-4">{lang === 'BN' ? 'স্ট্যাটাস' : 'Status'}</th>
+                    <th className="py-3.5 px-6">{lang === 'BN' ? 'তারিখ' : 'Date'}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 text-gray-700">
