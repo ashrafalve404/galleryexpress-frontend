@@ -125,13 +125,13 @@ export function AdminSidebar() {
         )}
       </div>
 
-      {/* Quick link to Public Site + Language Toggle */}
-      <div className="px-3 pt-3 flex items-center gap-2">
+      {/* Quick link to Public Site */}
+      <div className="px-3 pt-3">
         <Link
           href={ROUTES.HOME}
           target="_blank"
           rel="noopener noreferrer"
-          className={`flex-1 flex items-center gap-2 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition-all ${collapsed && !isMobile ? 'justify-center' : 'justify-between'}`}
+          className={`w-full flex items-center gap-2 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition-all ${collapsed && !isMobile ? 'justify-center' : 'justify-between'}`}
           title={isBn ? 'পাবলিক ওয়েবসাইটে যান' : 'Visit Public Website'}
         >
           <div className="flex items-center gap-2">
@@ -140,7 +140,6 @@ export function AdminSidebar() {
           </div>
           {(!collapsed || isMobile) && <ExternalLink size={13} className="text-gray-400" />}
         </Link>
-        {(!collapsed || isMobile) && <LanguageToggle />}
       </div>
 
       {/* Nav */}
@@ -166,12 +165,24 @@ export function AdminSidebar() {
         ))}
       </nav>
 
-      {/* User */}
-      <div className="p-3 border-t border-gray-100">
+      {/* User & Language Toggle Below Role */}
+      <div className="p-3 border-t border-gray-100 space-y-2">
         {(!collapsed || isMobile) && user && (
-          <div className="bg-gray-50 rounded-xl p-3 mb-2">
-            <div className="font-bold text-[#111111] text-xs truncate">{user.name || user.email || 'Admin'}</div>
-            <div className="text-[10px] text-gray-400 font-medium truncate">{user.role}</div>
+          <div className="bg-gray-50 rounded-xl p-3 space-y-2">
+            <div>
+              <div className="font-bold text-[#111111] text-xs truncate">{user.name || user.email || 'Admin'}</div>
+              <div className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">{user.role || 'SUPER_ADMIN'}</div>
+            </div>
+            {/* Language Toggle placed directly below Super Admin / Role */}
+            <div className="pt-2 border-t border-gray-200/80 flex items-center justify-between">
+              <span className="text-[11px] font-bold text-gray-600">Language / ভাষা</span>
+              <LanguageToggle />
+            </div>
+          </div>
+        )}
+        {collapsed && !isMobile && (
+          <div className="flex justify-center pb-2">
+            <LanguageToggle />
           </div>
         )}
         <button
