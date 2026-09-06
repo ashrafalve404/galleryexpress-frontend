@@ -143,7 +143,7 @@ export default function LoginPage() {
                   <input
                     {...register('phone')}
                     type="text"
-                    placeholder={lang === 'BN' ? '০১৭XXXXXXXX বা ইমেইল' : '017XXXXXXXX or email'}
+                    placeholder={lang === 'BN' ? '017XXXXXXXX বা ইমেইল' : '017XXXXXXXX or email'}
                     className="w-full pl-10 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold text-[#111111] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23] transition-all"
                   />
                 </div>
