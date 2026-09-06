@@ -113,7 +113,7 @@ export default function AdminNotificationsPage() {
           className="flex items-center gap-2 px-3.5 py-2 bg-gray-50 border border-gray-200 hover:bg-gray-100 rounded-xl text-xs font-semibold text-gray-700 transition-colors shadow-2xs"
         >
           <RefreshCw size={14} className={isLoading ? 'animate-spin' : ''} />
-          Refresh Live
+          {isBn ? 'রিফ্রেশ করুন' : 'Refresh Live'}
         </button>
       </div>
 
@@ -122,13 +122,19 @@ export default function AdminNotificationsPage() {
         {isLoading ? (
           <div className="p-12 text-center">
             <div className="w-8 h-8 border-2 border-[#E31B23] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-            <p className="text-xs text-gray-400 font-medium">Loading notifications...</p>
+            <p className="text-xs text-gray-400 font-medium">
+              {isBn ? 'নোটিফিকেশন লোড হচ্ছে...' : 'Loading notifications...'}
+            </p>
           </div>
         ) : filteredNotifications.length === 0 ? (
           <div className="p-12 text-center">
             <CheckCircle2 size={40} className="mx-auto mb-3 text-emerald-500 opacity-60" />
-            <h3 className="font-bold text-gray-800 text-sm mb-1">All Caught Up!</h3>
-            <p className="text-xs text-gray-400">No pending notifications in this section.</p>
+            <h3 className="font-bold text-gray-800 text-sm mb-1">
+              {isBn ? 'সবকিছু আপ-টু-ডেট!' : 'All Caught Up!'}
+            </h3>
+            <p className="text-xs text-gray-400">
+              {isBn ? 'এই সেকশনে কোনো পেন্ডিং নোটিফিকেশন নেই।' : 'No pending notifications in this section.'}
+            </p>
           </div>
         ) : (
           <div className="divide-y divide-gray-100">
@@ -145,7 +151,7 @@ export default function AdminNotificationsPage() {
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
                       <h3 className="text-sm font-bold text-gray-900">{item.title}</h3>
                       <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
-                        Requires Action
+                        {isBn ? 'পদক্ষেপ প্রয়োজন' : 'Requires Action'}
                       </span>
                     </div>
                     <p className="text-xs text-gray-600 font-medium mb-1.5 leading-relaxed">{item.body}</p>
@@ -158,7 +164,7 @@ export default function AdminNotificationsPage() {
                     href={item.link}
                     className="px-4 py-2.5 bg-[#E31B23] hover:bg-[#C41920] text-white rounded-xl text-xs font-bold transition-all shadow-2xs flex items-center gap-1.5 active:scale-98"
                   >
-                    <span>Take Action</span>
+                    <span>{isBn ? 'পদক্ষেপ নিন' : 'Take Action'}</span>
                     <ArrowRight size={14} />
                   </Link>
                 </div>

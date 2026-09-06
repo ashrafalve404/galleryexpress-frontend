@@ -37,6 +37,17 @@ export function Footer() {
 
   return (
     <footer className="bg-[#111111] text-white" suppressHydrationWarning>
+      {/* Booking Illustration Banner with White Background */}
+      <div className="bg-white py-8 sm:py-12 border-t border-gray-100 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-center items-center">
+          <img
+            src="/booking-illustration.webp"
+            alt="Ticket Dorkar Mobile Booking Illustration"
+            className="w-full max-w-xl sm:max-w-2xl md:max-w-3xl lg:max-w-4xl h-auto object-contain max-h-[300px] sm:max-h-[380px] md:max-h-[440px]"
+          />
+        </div>
+      </div>
+
       {/* Top CTA Band */}
       <div className="bg-[#E31B23]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-14 flex flex-col md:flex-row items-center justify-between gap-6">

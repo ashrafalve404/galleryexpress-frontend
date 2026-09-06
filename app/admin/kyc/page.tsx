@@ -182,20 +182,20 @@ export default function AdminKycPage() {
         {filteredAgents.length === 0 ? (
           <div className="p-12 text-center text-gray-400">
             <RiShieldCheckFill size={36} className="mx-auto mb-2 text-gray-300" />
-            <h3 className="text-sm font-bold text-gray-700">No KYC submissions found</h3>
-            <p className="text-xs text-gray-400 mt-0.5">There are no agent records matching your selected filter.</p>
+            <h3 className="text-sm font-bold text-gray-700">{isBn ? 'কোনো কেওয়াইসি আবেদন পাওয়া যায়নি' : 'No KYC submissions found'}</h3>
+            <p className="text-xs text-gray-400 mt-0.5">{isBn ? 'নির্বাচিত ফিল্টারের সাথে কোনো এজেন্টের রেকর্ড মেলেনি।' : 'There are no agent records matching your selected filter.'}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="bg-gray-50/80 border-b border-gray-100 text-gray-500 font-bold uppercase tracking-wider">
-                  <th className="p-4">Agent Details</th>
-                  <th className="p-4">Assigned Counter</th>
-                  <th className="p-4">NID Number</th>
-                  <th className="p-4">NID Images</th>
-                  <th className="p-4">KYC Status</th>
-                  <th className="p-4 text-right">Actions</th>
+                  <th className="p-4">{isBn ? 'এজেন্টের বিবরণ' : 'Agent Details'}</th>
+                  <th className="p-4">{isBn ? 'বরাদ্দকৃত কাউন্টার' : 'Assigned Counter'}</th>
+                  <th className="p-4">{isBn ? 'এনআইডি নম্বর' : 'NID Number'}</th>
+                  <th className="p-4">{isBn ? 'এনআইডি ছবি' : 'NID Images'}</th>
+                  <th className="p-4">{isBn ? 'কেওয়াইসি স্ট্যাটাস' : 'KYC Status'}</th>
+                  <th className="p-4 text-right">{isBn ? 'অ্যাকশন' : 'Actions'}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 font-medium text-gray-700">
@@ -218,12 +218,12 @@ export default function AdminKycPage() {
                             <span className="text-[10px] text-gray-400 block">{agent.counter.location}</span>
                           </div>
                         ) : (
-                          <span className="text-gray-400 font-medium">Unassigned</span>
+                          <span className="text-gray-400 font-medium">{isBn ? 'অনর্ধারিত' : 'Unassigned'}</span>
                         )}
                       </td>
 
                       <td className="p-4 font-mono font-bold text-gray-900">
-                        {agent.nidNumber || 'Not Entered'}
+                        {agent.nidNumber || (isBn ? 'দেওয়া হয়নি' : 'Not Entered')}
                       </td>
 
                       <td className="p-4">
@@ -235,28 +235,28 @@ export default function AdminKycPage() {
                             }}
                             className="px-3 py-1.5 bg-gray-100 hover:bg-[#E31B23] hover:text-white text-gray-800 rounded-xl text-[11px] font-bold transition-all flex items-center gap-1"
                           >
-                            <RiExternalLinkLine size={13} /> View NID Front & Back
+                            <RiExternalLinkLine size={13} /> {isBn ? 'এনআইডি ছবি দেখুন' : 'View NID Front & Back'}
                           </button>
                         ) : (
-                          <span className="text-gray-400 italic">No Docs Uploaded</span>
+                          <span className="text-gray-400 italic">{isBn ? 'কোনো ডকুমেন্ট নেই' : 'No Docs Uploaded'}</span>
                         )}
                       </td>
 
                       <td className="p-4">
                         {statusLabel === 'VERIFIED' && (
                           <span className="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full text-[10px] font-black inline-flex items-center gap-1">
-                            <RiCheckboxCircleFill size={12} /> VERIFIED
+                            <RiCheckboxCircleFill size={12} /> {isBn ? 'ভেরিফাইড' : 'VERIFIED'}
                           </span>
                         )}
                         {statusLabel === 'PENDING' && (
                           <span className="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full text-[10px] font-black inline-flex items-center gap-1 animate-pulse">
-                            <RiTimeFill size={12} /> PENDING REVIEW
+                            <RiTimeFill size={12} /> {isBn ? 'পর্যালোচনার অপেক্ষায়' : 'PENDING REVIEW'}
                           </span>
                         )}
                         {statusLabel === 'REJECTED' && (
                           <div>
                             <span className="px-2.5 py-1 bg-rose-100 text-rose-800 rounded-full text-[10px] font-black inline-flex items-center gap-1">
-                              <RiCloseCircleFill size={12} /> REJECTED
+                              <RiCloseCircleFill size={12} /> {isBn ? 'বাতিলকৃত' : 'REJECTED'}
                             </span>
                             {agent.kycRejectReason && (
                               <p className="text-[10px] text-rose-600 mt-1 line-clamp-1 max-w-xs" title={agent.kycRejectReason}>
@@ -267,7 +267,7 @@ export default function AdminKycPage() {
                         )}
                         {statusLabel === 'NOT_SUBMITTED' && (
                           <span className="px-2.5 py-1 bg-gray-100 text-gray-600 rounded-full text-[10px] font-bold">
-                            NOT SUBMITTED
+                            {isBn ? 'আবেদন করা হয়নি' : 'NOT SUBMITTED'}
                           </span>
                         )}
                       </td>
@@ -280,7 +280,7 @@ export default function AdminKycPage() {
                               disabled={actionLoading}
                               className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1"
                             >
-                              <RiCheckLine size={14} /> Approve
+                              <RiCheckLine size={14} /> {isBn ? 'অনুমোদন' : 'Approve'}
                             </button>
                           )}
                           {statusLabel !== 'REJECTED' && (agent.nidFrontDocUrl || agent.nidNumber) && (
@@ -293,7 +293,7 @@ export default function AdminKycPage() {
                               disabled={actionLoading}
                               className="px-3 py-1.5 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
                             >
-                              <RiCloseLine size={14} /> Reject
+                              <RiCloseLine size={14} /> {isBn ? 'বাতিল' : 'Reject'}
                             </button>
                           )}
                         </div>
@@ -314,9 +314,9 @@ export default function AdminKycPage() {
             <div className="flex items-center justify-between border-b border-gray-100 pb-3">
               <div>
                 <h3 className="text-base font-black text-gray-900">
-                  NID Verification Documents — {selectedAgent.firstName} {selectedAgent.lastName}
+                  {isBn ? 'এনআইডি ভেরিফিকেশন ডকুমেন্ট' : 'NID Verification Documents'} — {selectedAgent.firstName} {selectedAgent.lastName}
                 </h3>
-                <p className="text-xs text-gray-500">NID Number: {selectedAgent.nidNumber || 'N/A'}</p>
+                <p className="text-xs text-gray-500">{isBn ? 'এনআইডি নম্বর:' : 'NID Number:'} {selectedAgent.nidNumber || 'N/A'}</p>
               </div>
               <button
                 onClick={() => setModalType(null)}
@@ -328,7 +328,7 @@ export default function AdminKycPage() {
 
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <span className="text-xs font-bold text-gray-700 block mb-2">NID Front Side</span>
+                <span className="text-xs font-bold text-gray-700 block mb-2">{isBn ? 'এনআইডি সামনের দিক' : 'NID Front Side'}</span>
                 {selectedAgent.nidFrontDocUrl ? (
                   <img
                     src={selectedAgent.nidFrontDocUrl}
@@ -337,13 +337,13 @@ export default function AdminKycPage() {
                   />
                 ) : (
                   <div className="h-56 bg-gray-100 rounded-2xl flex items-center justify-center text-xs text-gray-400">
-                    No Front Image
+                    {isBn ? 'সামনের ছবি নেই' : 'No Front Image'}
                   </div>
                 )}
               </div>
 
               <div>
-                <span className="text-xs font-bold text-gray-700 block mb-2">NID Back Side</span>
+                <span className="text-xs font-bold text-gray-700 block mb-2">{isBn ? 'এনআইডি পিছনের দিক' : 'NID Back Side'}</span>
                 {selectedAgent.nidBackDocUrl ? (
                   <img
                     src={selectedAgent.nidBackDocUrl}
@@ -352,7 +352,7 @@ export default function AdminKycPage() {
                   />
                 ) : (
                   <div className="h-56 bg-gray-100 rounded-2xl flex items-center justify-center text-xs text-gray-400">
-                    No Back Image
+                    {isBn ? 'পিছনের ছবি নেই' : 'No Back Image'}
                   </div>
                 )}
               </div>
@@ -363,14 +363,14 @@ export default function AdminKycPage() {
                 onClick={() => setModalType(null)}
                 className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-bold"
               >
-                Close
+                {isBn ? 'বন্ধ করুন' : 'Close'}
               </button>
               {selectedAgent.kycStatus !== 'VERIFIED' && (
                 <button
                   onClick={() => handleApprove(selectedAgent)}
                   className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold"
                 >
-                  Approve KYC
+                  {isBn ? 'কেওয়াইসি অনুমোদন করুন' : 'Approve KYC'}
                 </button>
               )}
             </div>
@@ -384,7 +384,7 @@ export default function AdminKycPage() {
           <div className="bg-white rounded-3xl max-w-md w-full p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-gray-100 pb-3">
               <h3 className="text-base font-black text-gray-900">
-                Reject KYC — {selectedAgent.firstName} {selectedAgent.lastName}
+                {isBn ? 'কেওয়াইসি বাতিল করুন' : 'Reject KYC'} — {selectedAgent.firstName} {selectedAgent.lastName}
               </h3>
               <button
                 onClick={() => setModalType(null)}
@@ -397,12 +397,12 @@ export default function AdminKycPage() {
             <form onSubmit={handleRejectSubmit} className="space-y-4">
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1.5">
-                  Rejection Reason (Agent will see this message)
+                  {isBn ? 'বাতিলের কারণ (এজেন্ট এই বার্তাটি দেখতে পাবেন)' : 'Rejection Reason (Agent will see this message)'}
                 </label>
                 <textarea
                   required
                   rows={3}
-                  placeholder="e.g. NID image blurry, front side cropped out, details do not match..."
+                  placeholder={isBn ? 'যেমন: এনআইডি ছবি অস্পষ্ট, তথ্য মিলছে না...' : 'e.g. NID image blurry, front side cropped out, details do not match...'}
                   value={rejectReason}
                   onChange={(e) => setRejectReason(e.target.value)}
                   className="w-full p-3 bg-gray-50 border border-gray-300 rounded-xl text-xs font-medium text-gray-900 focus:border-[#E31B23] outline-none"
@@ -415,14 +415,14 @@ export default function AdminKycPage() {
                   onClick={() => setModalType(null)}
                   className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-bold"
                 >
-                  Cancel
+                  {isBn ? 'বাতিল' : 'Cancel'}
                 </button>
                 <button
                   type="submit"
                   disabled={actionLoading}
                   className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold"
                 >
-                  {actionLoading ? 'Rejecting...' : 'Confirm Rejection'}
+                  {actionLoading ? (isBn ? 'বাতিল করা হচ্ছে...' : 'Rejecting...') : (isBn ? 'বাতিল নিশ্চিত করুন' : 'Confirm Rejection')}
                 </button>
               </div>
             </form>

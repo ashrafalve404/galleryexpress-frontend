@@ -4,8 +4,12 @@ import { useQuery } from '@tanstack/react-query';
 import { BarChart3, TrendingUp, CreditCard, Ticket } from 'lucide-react';
 import client from '@/lib/api/client';
 import { formatCurrency } from '@/lib/utils/currency';
+import { useLanguageStore } from '@/lib/store/languageStore';
 
 export default function AdminReportsPage() {
+  const { lang } = useLanguageStore();
+  const isBn = lang === 'BN';
+
   const { data, isLoading } = useQuery({
     queryKey: ['admin', 'reports', 'dashboard'],
     queryFn: async () => {
@@ -17,17 +21,17 @@ export default function AdminReportsPage() {
   });
 
   const stats = [
-    { label: 'Total Revenue', value: data?.totalRevenue ? formatCurrency(data.totalRevenue) : '৳0', icon: CreditCard, color: 'bg-emerald-500' },
-    { label: 'Monthly Revenue', value: data?.monthlyRevenue ? formatCurrency(data.monthlyRevenue) : '৳0', icon: TrendingUp, color: 'bg-blue-500' },
-    { label: 'Total Bookings', value: data?.totalBookings ?? 0, icon: Ticket, color: 'bg-[#E31B23]' },
-    { label: 'Confirmed', value: data?.confirmedBookings ?? 0, icon: BarChart3, color: 'bg-purple-500' },
+    { label: isBn ? 'মোট আয়' : 'Total Revenue', value: data?.totalRevenue ? formatCurrency(data.totalRevenue) : '৳0', icon: CreditCard, color: 'bg-emerald-500' },
+    { label: isBn ? 'মাসিক আয়' : 'Monthly Revenue', value: data?.monthlyRevenue ? formatCurrency(data.monthlyRevenue) : '৳0', icon: TrendingUp, color: 'bg-blue-500' },
+    { label: isBn ? 'মোট বুকিং' : 'Total Bookings', value: data?.totalBookings ?? 0, icon: Ticket, color: 'bg-[#E31B23]' },
+    { label: isBn ? 'কনফার্মড বুকিং' : 'Confirmed', value: data?.confirmedBookings ?? 0, icon: BarChart3, color: 'bg-purple-500' },
   ];
 
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-black text-[#111111]">Reports</h1>
-        <p className="text-gray-500 text-sm mt-0.5">Business performance overview</p>
+        <h1 className="text-2xl font-black text-[#111111]">{isBn ? 'রিপোর্ট ও বিশ্লেষণ' : 'Reports'}</h1>
+        <p className="text-gray-500 text-sm mt-0.5">{isBn ? 'ব্যবসায়িক পারফরম্যান্সের সামগ্রিক চিত্র' : 'Business performance overview'}</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
@@ -48,8 +52,10 @@ export default function AdminReportsPage() {
 
       <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center">
         <BarChart3 size={48} className="text-gray-300 mx-auto mb-4" />
-        <h2 className="font-bold text-gray-700 mb-2">Revenue Chart</h2>
-        <p className="text-gray-400 text-sm">Detailed revenue charts will be displayed here. Connect to the reports API endpoint for full analytics.</p>
+        <h2 className="font-bold text-gray-700 mb-2">{isBn ? 'রাজস্ব চার্ট' : 'Revenue Chart'}</h2>
+        <p className="text-gray-400 text-sm">
+          {isBn ? 'বিস্তারিত রাজস্ব চার্ট এখানে প্রদর্শিত হবে। সম্পূর্ণ বিশ্লেষণের জন্য রিপোর্ট এপিআই এন্ডপয়েন্টে সংযুক্ত করুন।' : 'Detailed revenue charts will be displayed here. Connect to the reports API endpoint for full analytics.'}
+        </p>
       </div>
     </div>
   );

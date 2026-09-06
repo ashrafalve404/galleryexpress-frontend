@@ -183,26 +183,32 @@ export default function AdminCoachesPage() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-md w-full overflow-hidden shadow-2xl animate-fade-in-up">
             <div className="flex items-center justify-between p-5 border-b border-gray-100">
-              <h2 className="font-bold text-[#111111]">{editing ? 'Edit Coach' : 'Add New Coach'}</h2>
+              <h2 className="font-bold text-[#111111]">
+                {editing ? (isBn ? 'কোচ এডিট করুন' : 'Edit Coach') : (isBn ? 'নতুন কোচ যোগ করুন' : 'Add New Coach')}
+              </h2>
               <button onClick={() => setShowForm(false)} className="p-1 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600">
                 <X size={18} />
               </button>
             </div>
             <form onSubmit={handleSubmit} className="p-5 space-y-4 max-h-[80vh] overflow-y-auto">
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Coach Name</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                  {isBn ? 'কোচের নাম' : 'Coach Name'}
+                </label>
                 <input
                   type="text"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   required
-                  placeholder="e.g. Scania Multi-Axle 01"
+                  placeholder={isBn ? 'যেমন: স্ক্যানিয়া মাল্টি-অ্যাক্সেল ০১' : 'e.g. Scania Multi-Axle 01'}
                   className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Coach Number</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                  {isBn ? 'কোচ নম্বর' : 'Coach Number'}
+                </label>
                 <input
                   type="text"
                   value={form.coachNumber}
@@ -214,7 +220,9 @@ export default function AdminCoachesPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Registration Number</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                  {isBn ? 'রেজিস্ট্রেশন নম্বর' : 'Registration Number'}
+                </label>
                 <input
                   type="text"
                   value={form.registrationNumber}
@@ -226,7 +234,9 @@ export default function AdminCoachesPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Coach Type</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                  {isBn ? 'কোচের ধরন' : 'Coach Type'}
+                </label>
                 <select
                   value={form.coachTypeId}
                   onChange={(e) => setForm({ ...form, coachTypeId: e.target.value })}
@@ -237,16 +247,18 @@ export default function AdminCoachesPage() {
                   ))}
                   {coachTypes.length === 0 && (
                     <>
-                      <option value="00000000-0000-0000-0000-000000000001">AC Executive</option>
-                      <option value="00000000-0000-0000-0000-000000000002">Non-AC Deluxe</option>
-                      <option value="00000000-0000-0000-0000-000000000003">VIP Sleeper</option>
+                      <option value="00000000-0000-0000-0000-000000000001">{isBn ? 'এসি এক্সিকিউটিভ' : 'AC Executive'}</option>
+                      <option value="00000000-0000-0000-0000-000000000002">{isBn ? 'নন-এসি ডিল্যাক্স' : 'Non-AC Deluxe'}</option>
+                      <option value="00000000-0000-0000-0000-000000000003">{isBn ? 'ভিআইপি স্লিপার' : 'VIP Sleeper'}</option>
                     </>
                   )}
                 </select>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Total Seats</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                  {isBn ? 'মোট সিট' : 'Total Seats'}
+                </label>
                 <input
                   type="number"
                   value={form.totalSeats}
@@ -264,19 +276,23 @@ export default function AdminCoachesPage() {
                   onChange={(e) => setForm({ ...form, isAC: e.target.checked })}
                   className="w-4 h-4 text-[#E31B23] rounded focus:ring-[#E31B23]"
                 />
-                <label htmlFor="isAC" className="text-xs font-bold text-gray-700">Air Conditioned (AC)</label>
+                <label htmlFor="isAC" className="text-xs font-bold text-gray-700">
+                  {isBn ? 'এয়ার কন্ডিশনড (এসি)' : 'Air Conditioned (AC)'}
+                </label>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Status</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                  {isBn ? 'স্ট্যাটাস' : 'Status'}
+                </label>
                 <select
                   value={form.status}
                   onChange={(e) => setForm({ ...form, status: e.target.value })}
                   className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold focus:outline-none"
                 >
-                  <option value="ACTIVE">Active</option>
-                  <option value="INACTIVE">Inactive</option>
-                  <option value="MAINTENANCE">Maintenance</option>
+                  <option value="ACTIVE">{isBn ? 'সক্রিয়' : 'Active'}</option>
+                  <option value="INACTIVE">{isBn ? 'নিষ্ক্রিয়' : 'Inactive'}</option>
+                  <option value="MAINTENANCE">{isBn ? 'রক্ষণাবেক্ষণে' : 'Maintenance'}</option>
                 </select>
               </div>
 
@@ -286,14 +302,14 @@ export default function AdminCoachesPage() {
                   onClick={() => setShowForm(false)}
                   className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl text-sm font-bold transition-colors"
                 >
-                  Cancel
+                  {isBn ? 'বাতিল' : 'Cancel'}
                 </button>
                 <button
                   type="submit"
                   disabled={createMutation.isPending || updateMutation.isPending}
                   className="flex-1 bg-[#E31B23] hover:bg-[#C41920] text-white py-3 rounded-xl text-sm font-bold transition-colors shadow-md"
                 >
-                  {editing ? 'Save Changes' : 'Create Coach'}
+                  {editing ? (isBn ? 'পরিবর্তন সংরক্ষণ করুন' : 'Save Changes') : (isBn ? 'কোচ তৈরি করুন' : 'Create Coach')}
                 </button>
               </div>
             </form>
@@ -307,7 +323,15 @@ export default function AdminCoachesPage() {
           <table className="w-full text-xs sm:text-sm min-w-[650px]">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-100">
-                {['Name', 'Coach #', 'Registration #', 'Type', 'Seats', 'Status', 'Actions'].map((h) => (
+                {[
+                  isBn ? 'নাম' : 'Name',
+                  isBn ? 'কোচ #' : 'Coach #',
+                  isBn ? 'রেজিস্ট্রেশন #' : 'Registration #',
+                  isBn ? 'ধরনের' : 'Type',
+                  isBn ? 'সিট সংখ্যা' : 'Seats',
+                  isBn ? 'স্ট্যাটাস' : 'Status',
+                  isBn ? 'অ্যাকশন' : 'Actions'
+                ].map((h) => (
                   <th key={h} className="text-left px-5 py-3.5 font-bold text-gray-500 uppercase tracking-wider text-xs">{h}</th>
                 ))}
               </tr>
@@ -331,10 +355,10 @@ export default function AdminCoachesPage() {
                       ? (c.coachType as { name?: string }).name
                       : String(c.coachType || '').replace('_', ' ')}
                   </td>
-                  <td className="px-5 py-4 text-gray-600 font-semibold">{c.totalSeats} seats</td>
+                  <td className="px-5 py-4 text-gray-600 font-semibold">{c.totalSeats} {isBn ? 'সিট' : 'seats'}</td>
                   <td className="px-5 py-4">
                     <span className={`text-xs px-2.5 py-0.5 rounded-full font-bold ${c.status === 'ACTIVE' ? 'bg-emerald-100 text-emerald-800' : c.status === 'MAINTENANCE' ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-700'}`}>
-                      {c.status}
+                      {c.status === 'ACTIVE' ? (isBn ? 'সক্রিয়' : 'Active') : c.status === 'MAINTENANCE' ? (isBn ? 'রক্ষণাবেক্ষণ' : 'Maintenance') : (isBn ? 'নিষ্ক্রিয়' : 'Inactive')}
                     </span>
                   </td>
                   <td className="px-5 py-4">
@@ -342,16 +366,16 @@ export default function AdminCoachesPage() {
                       <button
                         onClick={() => startEdit(c)}
                         className="p-2 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors"
-                        title="Edit"
+                        title={isBn ? 'এডিট করুন' : 'Edit'}
                       >
                         <Pencil size={14} />
                       </button>
                       <button
                         onClick={() => {
-                          if (confirm('Remove this coach?')) deleteMutation.mutate(c.id);
+                          if (confirm(isBn ? 'এই কোচটি মুছে ফেলবেন?' : 'Remove this coach?')) deleteMutation.mutate(c.id);
                         }}
                         className="p-2 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 transition-colors"
-                        title="Delete"
+                        title={isBn ? 'মুছুন' : 'Delete'}
                       >
                         <Trash2 size={14} />
                       </button>
@@ -361,7 +385,9 @@ export default function AdminCoachesPage() {
               ))}
               {!isLoading && filtered.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-5 py-12 text-center text-gray-400 text-sm font-medium">No coaches found</td>
+                  <td colSpan={7} className="px-5 py-12 text-center text-gray-400 text-sm font-medium">
+                    {isBn ? 'কোনো কোচ পাওয়া যায়নি' : 'No coaches found'}
+                  </td>
                 </tr>
               )}
             </tbody>

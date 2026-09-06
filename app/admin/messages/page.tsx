@@ -7,6 +7,7 @@ import { RiErrorWarningFill } from 'react-icons/ri';
 import client from '@/lib/api/client';
 import { formatDateTime } from '@/lib/utils/date';
 import { toast } from 'sonner';
+import { useLanguageStore } from '@/lib/store/languageStore';
 
 interface ContactMessage {
   id: string;
@@ -19,6 +20,8 @@ interface ContactMessage {
 }
 
 export default function AdminMessagesPage() {
+  const { lang } = useLanguageStore();
+  const isBn = lang === 'BN';
   const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<ContactMessage | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -75,15 +78,15 @@ export default function AdminMessagesPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
           <h1 className="text-xl sm:text-2xl font-black text-[#111111] flex items-center gap-2">
-            Contact Messages
+            {isBn ? 'যোগাযোগের বার্তা' : 'Contact Messages'}
             {unreadCount > 0 && (
               <span className="bg-[#E31B23] text-white text-xs font-bold px-2.5 py-0.5 rounded-full">
-                {unreadCount} New
+                {unreadCount} {isBn ? 'নতুন' : 'New'}
               </span>
             )}
           </h1>
           <p className="text-gray-500 text-xs sm:text-sm mt-0.5 font-medium">
-            Messages submitted by users via the Contact Us form.
+            {isBn ? 'আমাদের সাথে যোগাযোগ ফর্ম থেকে প্রাপ্ত ব্যবহারকারীদের বার্তা।' : 'Messages submitted by users via the Contact Us form.'}
           </p>
         </div>
         <button
@@ -91,7 +94,7 @@ export default function AdminMessagesPage() {
           className="flex items-center justify-center gap-2 bg-white border border-gray-200 hover:bg-gray-50 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-gray-700 transition-colors shadow-xs w-full sm:w-auto"
         >
           <RefreshCw size={14} className={isLoading ? 'animate-spin' : ''} />
-          Refresh
+          {isBn ? 'রিফ্রেশ' : 'Refresh'}
         </button>
       </div>
 
@@ -101,7 +104,14 @@ export default function AdminMessagesPage() {
           <table className="w-full text-xs sm:text-sm min-w-[700px]">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-100">
-                {['Status', 'Sender Name', 'Contact Info', 'Message Snippet', 'Date', 'Actions'].map((h) => (
+                {[
+                  isBn ? 'স্ট্যাটাস' : 'Status',
+                  isBn ? 'প্রেরকের নাম' : 'Sender Name',
+                  isBn ? 'যোগাযোগ তথ্য' : 'Contact Info',
+                  isBn ? 'বার্তার সারাংশ' : 'Message Snippet',
+                  isBn ? 'তারিখ' : 'Date',
+                  isBn ? 'অ্যাকশন' : 'Actions'
+                ].map((h) => (
                   <th key={h} className="text-left px-5 py-3.5 font-bold text-gray-500 text-xs uppercase tracking-wider">
                     {h}
                   </th>
@@ -134,7 +144,7 @@ export default function AdminMessagesPage() {
                           : 'bg-emerald-100 text-emerald-800'
                       }`}
                     >
-                      {msg.status === 'UNREAD' ? 'UNREAD' : <><CheckCircle2 size={12} /> READ</>}
+                      {msg.status === 'UNREAD' ? (isBn ? 'অপঠিত' : 'UNREAD') : <><CheckCircle2 size={12} /> {isBn ? 'পঠিত' : 'READ'}</>}
                     </span>
                   </td>
 
@@ -160,19 +170,19 @@ export default function AdminMessagesPage() {
                       <button
                         onClick={() => handleOpenDetail(msg)}
                         className="p-2 rounded-xl text-gray-600 hover:bg-gray-100 border border-gray-200 transition-colors flex items-center gap-1 font-bold text-xs"
-                        title="View Full Message"
+                        title={isBn ? 'সম্পূর্ণ বার্তা দেখুন' : 'View Full Message'}
                       >
                         <Eye size={14} />
-                        View
+                        {isBn ? 'দেখুন' : 'View'}
                       </button>
 
                       <button
                         onClick={() => setDeleteTarget(msg)}
                         className="p-2 rounded-xl text-rose-600 hover:bg-rose-50 border border-rose-100 transition-colors flex items-center gap-1 font-bold text-xs"
-                        title="Delete Message"
+                        title={isBn ? 'বার্তা মুছুন' : 'Delete Message'}
                       >
                         <Trash2 size={14} />
-                        Delete
+                        {isBn ? 'মুছুন' : 'Delete'}
                       </button>
                     </div>
                   </td>
@@ -182,7 +192,7 @@ export default function AdminMessagesPage() {
               {!isLoading && messages.length === 0 && (
                 <tr>
                   <td colSpan={6} className="px-5 py-12 text-center text-gray-400 text-sm font-medium">
-                    No contact messages found.
+                    {isBn ? 'কোনো বার্তা পাওয়া যায়নি।' : 'No contact messages found.'}
                   </td>
                 </tr>
               )}
@@ -216,17 +226,17 @@ export default function AdminMessagesPage() {
             <div className="space-y-3 mb-6">
               <div className="grid grid-cols-2 gap-3 text-xs bg-gray-50 p-3 rounded-xl border border-gray-100">
                 <div>
-                  <span className="text-gray-400 font-medium">Email:</span>
+                  <span className="text-gray-400 font-medium">{isBn ? 'ইমেইল:' : 'Email:'}</span>
                   <div className="font-bold text-gray-800">{selectedMessage.email}</div>
                 </div>
                 <div>
-                  <span className="text-gray-400 font-medium">Phone:</span>
-                  <div className="font-bold text-gray-800">{selectedMessage.phone || 'N/A'}</div>
+                  <span className="text-gray-400 font-medium">{isBn ? 'ফোন:' : 'Phone:'}</span>
+                  <div className="font-bold text-gray-800">{selectedMessage.phone || (isBn ? 'প্রযোজ্য নয়' : 'N/A')}</div>
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Message Content:</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{isBn ? 'বার্তার বিষয়বস্তু:' : 'Message Content:'}</label>
                 <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs sm:text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">
                   {selectedMessage.message}
                 </div>
@@ -238,7 +248,7 @@ export default function AdminMessagesPage() {
                 onClick={() => setSelectedMessage(null)}
                 className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-colors"
               >
-                Close
+                {isBn ? 'বন্ধ করুন' : 'Close'}
               </button>
             </div>
           </div>
@@ -254,13 +264,13 @@ export default function AdminMessagesPage() {
                 <RiErrorWarningFill size={22} className="text-rose-600" />
               </div>
               <div>
-                <h3 className="font-black text-[#111111] text-base">Delete Message?</h3>
-                <p className="text-gray-500 text-xs mt-0.5">From: {deleteTarget.name}</p>
+                <h3 className="font-black text-[#111111] text-base">{isBn ? 'বার্তা মুছে ফেলবেন?' : 'Delete Message?'}</h3>
+                <p className="text-gray-500 text-xs mt-0.5">{isBn ? 'প্রেরক:' : 'From:'} {deleteTarget.name}</p>
               </div>
             </div>
 
             <p className="text-xs text-gray-600 mb-5">
-              Are you sure you want to delete this message from <span className="font-bold">{deleteTarget.email}</span>? This action cannot be undone.
+              {isBn ? `আপনি কি নিশ্চিত যে আপনি ${deleteTarget.email} থেকে প্রেরিত এই বার্তাটি মুছে ফেলতে চান?` : `Are you sure you want to delete this message from ${deleteTarget.email}? This action cannot be undone.`}
             </p>
 
             <div className="flex gap-3">
@@ -269,7 +279,7 @@ export default function AdminMessagesPage() {
                 disabled={!!deletingId}
                 className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-colors disabled:opacity-60"
               >
-                Cancel
+                {isBn ? 'বাতিল' : 'Cancel'}
               </button>
               <button
                 onClick={handleDelete}
@@ -279,7 +289,7 @@ export default function AdminMessagesPage() {
                 {deletingId ? (
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 ) : (
-                  'Delete Message'
+                  isBn ? 'বার্তা মুছুন' : 'Delete Message'
                 )}
               </button>
             </div>

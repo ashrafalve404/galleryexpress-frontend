@@ -148,37 +148,45 @@ export default function AdminCountersPage() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-md w-full overflow-hidden shadow-2xl animate-fade-in-up">
             <div className="flex items-center justify-between p-5 border-b border-gray-100">
-              <h2 className="font-bold text-[#111111]">{editing ? 'Edit Counter' : 'Add New Counter'}</h2>
+              <h2 className="font-bold text-[#111111]">
+                {editing ? (isBn ? 'কাউন্টার এডিট করুন' : 'Edit Counter') : (isBn ? 'নতুন কাউন্টার যুক্ত করুন' : 'Add New Counter')}
+              </h2>
               <button onClick={() => setShowForm(false)} className="p-1 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600">
                 <X size={18} />
               </button>
             </div>
             <form onSubmit={handleSubmit} className="p-5 space-y-4">
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Counter Name</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                  {isBn ? 'কাউন্টারের নাম' : 'Counter Name'}
+                </label>
                 <input
                   type="text"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   required
-                  placeholder="e.g. Sayedabad Gate 2 Counter"
+                  placeholder={isBn ? 'যেমন: সায়েদাবাদ গেইট ২ কাউন্টার' : 'e.g. Sayedabad Gate 2 Counter'}
                   className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Address / Location</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                  {isBn ? 'ঠিকানা / অবস্থান' : 'Address / Location'}
+                </label>
                 <input
                   type="text"
                   value={form.location}
                   onChange={(e) => setForm({ ...form, location: e.target.value })}
-                  placeholder="e.g. Sayedabad Bus Terminal, Dhaka"
+                  placeholder={isBn ? 'যেমন: সায়েদাবাদ বাস টার্মিনাল, ঢাকা' : 'e.g. Sayedabad Bus Terminal, Dhaka'}
                   className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Phone Number</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                  {isBn ? 'ফোন নম্বর' : 'Phone Number'}
+                </label>
                 <input
                   type="tel"
                   value={form.phone}
@@ -194,14 +202,14 @@ export default function AdminCountersPage() {
                   onClick={() => setShowForm(false)}
                   className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl text-sm font-bold transition-colors"
                 >
-                  Cancel
+                  {isBn ? 'বাতিল' : 'Cancel'}
                 </button>
                 <button
                   type="submit"
                   disabled={createMutation.isPending || updateMutation.isPending}
                   className="flex-1 bg-[#E31B23] hover:bg-[#C41920] text-white py-3 rounded-xl text-sm font-bold transition-colors shadow-md"
                 >
-                  {editing ? 'Save Changes' : 'Create Counter'}
+                  {editing ? (isBn ? 'পরিবর্তন সংরক্ষণ করুন' : 'Save Changes') : (isBn ? 'কাউন্টার তৈরি করুন' : 'Create Counter')}
                 </button>
               </div>
             </form>
@@ -219,17 +227,17 @@ export default function AdminCountersPage() {
               <div className="flex items-center gap-2">
                 <h3 className="font-bold text-[#111111] text-base">{c.name}</h3>
                 <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${c.status === 'ACTIVE' ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-700'}`}>
-                  {c.status}
+                  {c.status === 'ACTIVE' ? (isBn ? 'সক্রিয়' : 'Active') : (isBn ? 'নিষ্ক্রিয়' : 'Inactive')}
                 </span>
               </div>
               <div className="flex items-center gap-1.5">
-                <button onClick={() => startEdit(c)} className="p-1 rounded text-gray-400 hover:text-blue-600 transition-colors" title="Edit Counter">
+                <button onClick={() => startEdit(c)} className="p-1 rounded text-gray-400 hover:text-blue-600 transition-colors" title={isBn ? 'এডিট করুন' : 'Edit Counter'}>
                   <Pencil size={14} />
                 </button>
                 <button
                   onClick={() => {
                     const newStatus = c.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
-                    if (confirm(`Change counter status to ${newStatus}?`)) {
+                    if (confirm(isBn ? `কাউন্টার স্ট্যাটাস পরিবর্তন করে ${newStatus === 'ACTIVE' ? 'সক্রিয়' : 'নিষ্ক্রিয়'} করবেন?` : `Change counter status to ${newStatus}?`)) {
                       if (c.status === 'ACTIVE') {
                         deleteMutation.mutate(c.id);
                       } else {
@@ -242,32 +250,32 @@ export default function AdminCountersPage() {
                       ? 'bg-amber-50 text-amber-700 hover:bg-amber-100'
                       : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
                   }`}
-                  title="Toggle Active/Inactive"
+                  title={isBn ? 'সক্রিয়/নিষ্ক্রিয় টগল করুন' : 'Toggle Active/Inactive'}
                 >
-                  {c.status === 'ACTIVE' ? 'Deactivate' : 'Activate'}
+                  {c.status === 'ACTIVE' ? (isBn ? 'নিষ্ক্রিয় করুন' : 'Deactivate') : (isBn ? 'সক্রিয় করুন' : 'Activate')}
                 </button>
                 <button
                   onClick={() => {
-                    if (confirm('PERMANENT DELETE WARNING:\nThis will permanently delete this counter from database. Proceed?')) {
+                    if (confirm(isBn ? 'স্থায়ীভাবে মুছে ফেলার সতর্কবার্তা:\nএটি ডেটাবেস থেকে কাউন্টারটি স্থায়ীভাবে মুছে ফেলবে। এগিয়ে যাবেন?' : 'PERMANENT DELETE WARNING:\nThis will permanently delete this counter from database. Proceed?')) {
                       permanentDeleteMutation.mutate(c.id);
                     }
                   }}
                   className="p-1 rounded text-gray-400 hover:text-rose-600 transition-colors"
-                  title="Delete Permanently"
+                  title={isBn ? 'স্থায়ীভাবে মুছুন' : 'Delete Permanently'}
                 >
                   <Trash2 size={14} />
                 </button>
               </div>
             </div>
             <div className="space-y-1.5 text-xs text-gray-600 mb-3 font-medium">
-              <div className="flex items-center gap-1.5"><MapPin size={13} className="text-[#E31B23] shrink-0" /> {c.location || 'Terminal Counter'}</div>
-              <div className="flex items-center gap-1.5"><Phone size={13} className="text-gray-400 shrink-0" /> {c.phone || 'N/A'}</div>
+              <div className="flex items-center gap-1.5"><MapPin size={13} className="text-[#E31B23] shrink-0" /> {c.location || (isBn ? 'টার্মিনাল কাউন্টার' : 'Terminal Counter')}</div>
+              <div className="flex items-center gap-1.5"><Phone size={13} className="text-gray-400 shrink-0" /> {c.phone || (isBn ? 'প্রযোজ্য নয়' : 'N/A')}</div>
             </div>
           </div>
         ))}
         {!isLoading && filtered.length === 0 && (
           <div className="col-span-full bg-white rounded-2xl border border-gray-100 p-12 text-center text-gray-400 text-sm font-medium">
-            No counters found
+            {isBn ? 'কোনো কাউন্টার পাওয়া যায়নি' : 'No counters found'}
           </div>
         )}
       </div>

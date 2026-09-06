@@ -5,7 +5,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 import { HiShieldCheck, HiClock, HiLocationMarker, HiCheckCircle, HiChevronDown, HiChevronLeft, HiChevronRight } from 'react-icons/hi';
-import { RiBusFill } from 'react-icons/ri';
+import { RiBusFill, RiFlashlightFill, RiShieldCheckFill, RiRefreshFill } from 'react-icons/ri';
+import { BsFillTicketPerforatedFill } from 'react-icons/bs';
 import { Search, Armchair, CreditCard, QrCode, ArrowRight, Clock, Zap, ShieldCheck, Ticket, RotateCcw } from 'lucide-react';
 import client from '@/lib/api/client';
 import { today } from '@/lib/utils/date';
@@ -356,10 +357,10 @@ export function PopularRoutes() {
 export function WhyChooseUs() {
   const { lang } = useLanguageStore();
   const localizedFeatures = [
-    { icon: Zap, title: getTranslation(lang, 'instantBooking', 'Instant Booking'), desc: getTranslation(lang, 'instantBookingDesc', 'Book your seat online in under 60 seconds with instant confirmation.') },
-    { icon: ShieldCheck, title: getTranslation(lang, 'securePayment', 'Secure Payment'), desc: getTranslation(lang, 'securePaymentDesc', '100% verified SSL payment with bKash, Nagad & Cards.') },
-    { icon: Ticket, title: getTranslation(lang, 'digitalTicket', 'Digital Ticket'), desc: getTranslation(lang, 'digitalTicketDesc', 'Instant QR code mobile boarding ticket sent to your phone.') },
-    { icon: RotateCcw, title: getTranslation(lang, 'easyCancellation', 'Easy Cancellation'), desc: getTranslation(lang, 'easyCancellationDesc', 'Instant online cancellation with transparent refund policies.') },
+    { icon: RiFlashlightFill, title: getTranslation(lang, 'instantBooking', 'Instant Booking'), desc: getTranslation(lang, 'instantBookingDesc', 'Book your seat online in under 60 seconds with instant confirmation.') },
+    { icon: RiShieldCheckFill, title: getTranslation(lang, 'securePayment', 'Secure Payment'), desc: getTranslation(lang, 'securePaymentDesc', '100% verified SSL payment with bKash, Nagad & Cards.') },
+    { icon: BsFillTicketPerforatedFill, title: getTranslation(lang, 'digitalTicket', 'Digital Ticket'), desc: getTranslation(lang, 'digitalTicketDesc', 'Instant QR code mobile boarding ticket sent to your phone.') },
+    { icon: RiRefreshFill, title: getTranslation(lang, 'easyCancellation', 'Easy Cancellation'), desc: getTranslation(lang, 'easyCancellationDesc', 'Instant online cancellation with transparent refund policies.') },
   ];
 
   return (
@@ -381,7 +382,7 @@ export function WhyChooseUs() {
               className="text-center p-4 sm:p-6 rounded-2xl border border-gray-100 hover:border-[#E31B23]/30 hover:shadow-lg transition-all group bg-white"
             >
               <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#E31B23]/10 rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 group-hover:bg-[#E31B23] transition-colors">
-                <Icon size={20} className="text-[#E31B23] group-hover:text-white transition-colors" />
+                <Icon size={22} className="text-[#E31B23] group-hover:text-white transition-colors" />
               </div>
               <h3 className="font-bold text-[#111111] text-xs sm:text-base mb-1 sm:mb-2">{title}</h3>
               <p className="text-gray-500 text-[11px] sm:text-sm leading-relaxed">{desc}</p>

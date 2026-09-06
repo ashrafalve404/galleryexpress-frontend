@@ -178,7 +178,9 @@ export default function AdminCounterAgentsPage() {
     return (
       <div className="py-20 flex flex-col items-center justify-center gap-3">
         <Loader2 className="w-10 h-10 text-[#E31B23] animate-spin" />
-        <p className="text-sm font-semibold text-gray-600">Loading Counter Agent Monitoring Panel...</p>
+        <p className="text-sm font-semibold text-gray-600">
+          {isBn ? 'কাউন্টার এজেন্ট মনিটরিং প্যানেল লোড হচ্ছে...' : 'Loading Counter Agent Monitoring Panel...'}
+        </p>
       </div>
     );
   }
@@ -233,7 +235,7 @@ export default function AdminCounterAgentsPage() {
           <div className="bg-white p-5 rounded-2xl border border-gray-200/80 shadow-xs flex flex-col justify-between">
             <div className="flex items-center justify-between mb-2">
               <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">
-                Bulk Investment
+                {isBn ? 'বাল্ক বিনিয়োগ' : 'Bulk Investment'}
               </span>
               <div className="p-2 bg-[#E31B23]/10 text-[#E31B23] rounded-xl">
                 <Wallet size={18} />
@@ -244,7 +246,7 @@ export default function AdminCounterAgentsPage() {
                 {formatTk(overview.totalInvested)}
               </div>
               <p className="text-[10px] text-gray-400 mt-1">
-                {overview.totalBulkTickets} tickets in {overview.totalBulkOrders} orders
+                {overview.totalBulkTickets} {isBn ? 'টি টিকিট' : 'tickets in'} {overview.totalBulkOrders} {isBn ? 'টি অর্ডারে' : 'orders'}
               </p>
             </div>
           </div>
@@ -252,7 +254,7 @@ export default function AdminCounterAgentsPage() {
           <div className="bg-white p-5 rounded-2xl border border-gray-200/80 shadow-xs flex flex-col justify-between">
             <div className="flex items-center justify-between mb-2">
               <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">
-                Commission Earned
+                {isBn ? 'অর্জিত কমিশন' : 'Commission Earned'}
               </span>
               <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
                 <TrendingUp size={18} />
@@ -262,14 +264,14 @@ export default function AdminCounterAgentsPage() {
               <div className="text-2xl font-black text-emerald-600">
                 {formatTk(overview.totalCommissionEarned)}
               </div>
-              <p className="text-[10px] text-gray-400 mt-1">Platform total earned</p>
+              <p className="text-[10px] text-gray-400 mt-1">{isBn ? 'মোট অর্জিত কমিশন' : 'Platform total earned'}</p>
             </div>
           </div>
 
           <div className="bg-white p-5 rounded-2xl border border-gray-200/80 shadow-xs flex flex-col justify-between">
             <div className="flex items-center justify-between mb-2">
               <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">
-                Pending Payouts
+                {isBn ? 'বকেয়া কমিশন' : 'Pending Payouts'}
               </span>
               <div className="p-2 bg-amber-50 text-amber-600 rounded-xl">
                 <Clock size={18} />
@@ -279,7 +281,7 @@ export default function AdminCounterAgentsPage() {
               <div className="text-2xl font-black text-amber-600">
                 {overview.pendingCommissionsCount}
               </div>
-              <p className="text-[10px] text-gray-400 mt-1">Unpaid commission records</p>
+              <p className="text-[10px] text-gray-400 mt-1">{isBn ? 'পরিশোধ বকেয়া রেকর্ড' : 'Unpaid commission records'}</p>
             </div>
           </div>
         </div>
@@ -297,7 +299,7 @@ export default function AdminCounterAgentsPage() {
                   : 'text-gray-500 hover:text-gray-900'
               }`}
             >
-              Agents List ({agents.length})
+              {isBn ? 'এজেন্ট তালিকা' : 'Agents List'} ({agents.length})
             </button>
             <button
               onClick={() => setActiveTab('orders')}
@@ -307,7 +309,7 @@ export default function AdminCounterAgentsPage() {
                   : 'text-gray-500 hover:text-gray-900'
               }`}
             >
-              Bulk Orders ({bulkOrders.length})
+              {isBn ? 'বাল্ক অর্ডার' : 'Bulk Orders'} ({bulkOrders.length})
             </button>
             <button
               onClick={() => setActiveTab('commissions')}
@@ -317,7 +319,7 @@ export default function AdminCounterAgentsPage() {
                   : 'text-gray-500 hover:text-gray-900'
               }`}
             >
-              Commission Ledger ({commissions.length})
+              {isBn ? 'কমিশন লেজার' : 'Commission Ledger'} ({commissions.length})
             </button>
           </div>
 
@@ -327,7 +329,7 @@ export default function AdminCounterAgentsPage() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search agent name, counter, ref..."
+              placeholder={isBn ? 'এজেন্টের নাম, কাউন্টার দিয়ে খুঁজুন...' : 'Search agent name, counter, ref...'}
               className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:border-[#E31B23] outline-none"
             />
           </div>
@@ -339,22 +341,22 @@ export default function AdminCounterAgentsPage() {
             <table className="w-full text-left text-xs sm:text-sm">
               <thead className="bg-gray-50 text-gray-500 font-bold uppercase text-[11px] border-b border-gray-200">
                 <tr>
-                  <th className="py-3.5 px-4">Agent Name</th>
-                  <th className="py-3.5 px-4">Referral Code</th>
-                  <th className="py-3.5 px-4">Assigned Counter</th>
-                  <th className="py-3.5 px-4">Bulk Tickets</th>
-                  <th className="py-3.5 px-4">Sold</th>
-                  <th className="py-3.5 px-4">Invested</th>
-                  <th className="py-3.5 px-4">Referral Earnings</th>
-                  <th className="py-3.5 px-4">Status</th>
-                  <th className="py-3.5 px-4 text-right">Actions</th>
+                  <th className="py-3.5 px-4">{isBn ? 'এজেন্টের নাম' : 'Agent Name'}</th>
+                  <th className="py-3.5 px-4">{isBn ? 'রেফারেল কোড' : 'Referral Code'}</th>
+                  <th className="py-3.5 px-4">{isBn ? 'বরাদ্দকৃত কাউন্টার' : 'Assigned Counter'}</th>
+                  <th className="py-3.5 px-4">{isBn ? 'বাল্ক টিকিট' : 'Bulk Tickets'}</th>
+                  <th className="py-3.5 px-4">{isBn ? 'বিক্রি' : 'Sold'}</th>
+                  <th className="py-3.5 px-4">{isBn ? 'বিনিয়োগ' : 'Invested'}</th>
+                  <th className="py-3.5 px-4">{isBn ? 'রেফারেল আয়' : 'Referral Earnings'}</th>
+                  <th className="py-3.5 px-4">{isBn ? 'স্ট্যাটাস' : 'Status'}</th>
+                  <th className="py-3.5 px-4 text-right">{isBn ? 'অ্যাকশন' : 'Actions'}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 text-gray-700">
                 {filteredAgents.length === 0 ? (
                   <tr>
                     <td colSpan={9} className="text-center py-8 text-gray-400">
-                      No counter agents found matching search.
+                      {isBn ? 'কোনো কাউন্টার এজেন্ট পাওয়া যায়নি।' : 'No counter agents found matching search.'}
                     </td>
                   </tr>
                 ) : (
@@ -372,7 +374,7 @@ export default function AdminCounterAgentsPage() {
                         ) : '—'}
                         {ag.referredByCode && (
                           <div className="text-[10px] text-gray-400 mt-0.5">
-                            Referred by: <strong className="text-gray-600 font-bold">{ag.referredByCode}</strong>
+                            {isBn ? 'যার মাধ্যমে:' : 'Referred by:'} <strong className="text-gray-600 font-bold">{ag.referredByCode}</strong>
                           </div>
                         )}
                       </td>
@@ -383,11 +385,11 @@ export default function AdminCounterAgentsPage() {
                             {ag.counter.name}
                           </span>
                         ) : (
-                          <span className="text-amber-500 font-normal">Unassigned</span>
+                          <span className="text-amber-500 font-normal">{isBn ? 'অনর্ধারিত' : 'Unassigned'}</span>
                         )}
                       </td>
                       <td className="py-4 px-4 font-semibold text-purple-700">
-                        {ag.totalRemainingTickets} left / {ag.totalTicketsBought} total
+                        {ag.totalRemainingTickets} {isBn ? 'অবশিষ্ট' : 'left'} / {ag.totalTicketsBought} {isBn ? 'মোট' : 'total'}
                       </td>
                       <td className="py-4 px-4 font-bold text-[#E31B23]">
                         {ag.ticketsSold ?? Math.max(0, ag.totalTicketsBought - ag.totalRemainingTickets)}
@@ -406,7 +408,7 @@ export default function AdminCounterAgentsPage() {
                               : 'bg-emerald-100 text-emerald-800'
                           }`}
                         >
-                          {ag.status || 'ACTIVE'}
+                          {ag.status === 'INACTIVE' ? (isBn ? 'নিষ্ক্রিয়' : 'INACTIVE') : (isBn ? 'সক্রিয়' : 'ACTIVE')}
                         </span>
                       </td>
                       <td className="py-4 px-4 text-right">
@@ -419,21 +421,21 @@ export default function AdminCounterAgentsPage() {
                                 ? 'text-emerald-600 hover:bg-emerald-50 border-emerald-200'
                                 : 'text-amber-600 hover:bg-amber-50 border-amber-200'
                             }`}
-                            title={ag.status === 'INACTIVE' ? 'Activate Agent Account' : 'Deactivate Agent Account'}
+                            title={ag.status === 'INACTIVE' ? (isBn ? 'এজেন্ট অ্যাকাউন্ট সক্রিয় করুন' : 'Activate Agent Account') : (isBn ? 'এজেন্ট অ্যাকাউন্ট নিষ্ক্রিয় করুন' : 'Deactivate Agent Account')}
                           >
                             <Power size={13} />
                             <span className="hidden sm:inline">
-                              {ag.status === 'INACTIVE' ? 'Activate' : 'Deactivate'}
+                              {ag.status === 'INACTIVE' ? (isBn ? 'সক্রিয় করুন' : 'Activate') : (isBn ? 'নিষ্ক্রিয় করুন' : 'Deactivate')}
                             </span>
                           </button>
                           <button
                             onClick={() => handleDeleteAgent(ag.id, `${ag.firstName} ${ag.lastName}`)}
                             disabled={actionLoading === ag.id}
                             className="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 border border-rose-100 transition-colors inline-flex items-center gap-1 font-bold text-xs"
-                            title="Delete Agent Account"
+                            title={isBn ? 'এজেন্ট অ্যাকাউন্ট মুছুন' : 'Delete Agent Account'}
                           >
                             <Trash2 size={13} />
-                            <span className="hidden sm:inline">Delete</span>
+                            <span className="hidden sm:inline">{isBn ? 'মুছুন' : 'Delete'}</span>
                           </button>
                         </div>
                       </td>
@@ -451,21 +453,21 @@ export default function AdminCounterAgentsPage() {
             <table className="w-full text-left text-xs sm:text-sm">
               <thead className="bg-gray-50 text-gray-500 font-bold uppercase text-[11px] border-b border-gray-200">
                 <tr>
-                  <th className="py-3.5 px-4">Agent Name</th>
-                  <th className="py-3.5 px-4">Route & Counter</th>
-                  <th className="py-3.5 px-4">Qty</th>
-                  <th className="py-3.5 px-4">Total Amount</th>
-                  <th className="py-3.5 px-4">Payment Details</th>
-                  <th className="py-3.5 px-4">Status</th>
-                  <th className="py-3.5 px-4">Date</th>
-                  <th className="py-3.5 px-4 text-right">Action</th>
+                  <th className="py-3.5 px-4">{isBn ? 'এজেন্টের নাম' : 'Agent Name'}</th>
+                  <th className="py-3.5 px-4">{isBn ? 'রুট ও কাউন্টার' : 'Route & Counter'}</th>
+                  <th className="py-3.5 px-4">{isBn ? 'পরিমাণ' : 'Qty'}</th>
+                  <th className="py-3.5 px-4">{isBn ? 'মোট টাকা' : 'Total Amount'}</th>
+                  <th className="py-3.5 px-4">{isBn ? 'পেমেন্ট বিবরণ' : 'Payment Details'}</th>
+                  <th className="py-3.5 px-4">{isBn ? 'স্ট্যাটাস' : 'Status'}</th>
+                  <th className="py-3.5 px-4">{isBn ? 'তারিখ' : 'Date'}</th>
+                  <th className="py-3.5 px-4 text-right">{isBn ? 'অ্যাকশন' : 'Action'}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 text-gray-700">
                 {filteredOrders.length === 0 ? (
                   <tr>
                     <td colSpan={8} className="text-center py-8 text-gray-400">
-                      No bulk orders recorded.
+                      {isBn ? 'কোনো বাল্ক অর্ডার পাওয়া যায়নি।' : 'No bulk orders recorded.'}
                     </td>
                   </tr>
                 ) : (
@@ -477,11 +479,11 @@ export default function AdminCounterAgentsPage() {
                       </td>
                       <td className="py-4 px-4">
                         <div className="font-bold text-gray-900">{o.route?.origin} → {o.route?.destination}</div>
-                        <div className="text-[11px] text-gray-500">{o.counter?.name ?? 'No counter assigned'}</div>
+                        <div className="text-[11px] text-gray-500">{o.counter?.name ?? (isBn ? 'কাউন্টার অনর্ধারিত' : 'No counter assigned')}</div>
                       </td>
                       <td className="py-4 px-4 font-bold">
-                        {o.quantity} tickets
-                        <div className="text-[11px] text-purple-700 font-semibold">{o.remainingQuantity} remaining</div>
+                        {o.quantity} {isBn ? 'টিকিট' : 'tickets'}
+                        <div className="text-[11px] text-purple-700 font-semibold">{o.remainingQuantity} {isBn ? 'অবশিষ্ট' : 'remaining'}</div>
                       </td>
                       <td className="py-4 px-4 font-black text-gray-900">{formatTk(o.totalAmount)}</td>
                       <td className="py-4 px-4">
@@ -490,7 +492,7 @@ export default function AdminCounterAgentsPage() {
                         </div>
                         {o.senderPhone && (
                           <div className="text-[11px] text-gray-600 font-medium">
-                            Sender: <span className="font-bold text-gray-900">{o.senderPhone}</span>
+                            {isBn ? 'প্রেরক:' : 'Sender:'} <span className="font-bold text-gray-900">{o.senderPhone}</span>
                           </div>
                         )}
                         {o.trxId && (
@@ -516,7 +518,7 @@ export default function AdminCounterAgentsPage() {
                               : 'bg-gray-100 text-gray-600'
                           }`}
                         >
-                          {o.status === 'PENDING_APPROVAL' ? 'Pending Approval' : o.status}
+                          {o.status === 'PENDING_APPROVAL' ? (isBn ? 'অনুমোদনের অপেক্ষায়' : 'Pending Approval') : o.status === 'ACTIVE' ? (isBn ? 'সক্রিয়' : 'ACTIVE') : o.status === 'REJECTED' ? (isBn ? 'প্রত্যাখ্যানিত' : 'REJECTED') : o.status}
                         </span>
                       </td>
                       <td className="py-4 px-4 text-gray-400 text-xs">
@@ -534,7 +536,7 @@ export default function AdminCounterAgentsPage() {
                                 {actionLoading === o.id ? (
                                   <Loader2 size={12} className="animate-spin" />
                                 ) : (
-                                  'Approve'
+                                  isBn ? 'অনুমোদন' : 'Approve'
                                 )}
                               </button>
                               <button
@@ -542,7 +544,7 @@ export default function AdminCounterAgentsPage() {
                                 disabled={actionLoading === o.id}
                                 className="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-lg text-xs font-bold transition-all disabled:opacity-60"
                               >
-                                Reject
+                                {isBn ? 'প্রত্যাখ্যান' : 'Reject'}
                               </button>
                             </>
                           )}
@@ -550,10 +552,10 @@ export default function AdminCounterAgentsPage() {
                             onClick={() => handleDeleteOrder(o.id, o.quantity, Number(o.totalAmount || 0))}
                             disabled={actionLoading === o.id}
                             className="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 border border-rose-100 transition-colors inline-flex items-center gap-1 font-bold text-xs"
-                            title="Delete / Cancel Bulk Order"
+                            title={isBn ? 'মুছুন / বাল্ক অর্ডার বাতিল করুন' : 'Delete / Cancel Bulk Order'}
                           >
                             <Trash2 size={13} />
-                            <span className="hidden sm:inline">Delete</span>
+                            <span className="hidden sm:inline">{isBn ? 'মুছুন' : 'Delete'}</span>
                           </button>
                         </div>
                       </td>
@@ -571,21 +573,21 @@ export default function AdminCounterAgentsPage() {
             <table className="w-full text-left text-xs sm:text-sm">
               <thead className="bg-gray-50 text-gray-500 font-bold uppercase text-[11px] border-b border-gray-200">
                 <tr>
-                  <th className="py-3.5 px-4">Agent Name</th>
-                  <th className="py-3.5 px-4">Booking Ref</th>
-                  <th className="py-3.5 px-4">Pool</th>
-                  <th className="py-3.5 px-4">Agent Share</th>
-                  <th className="py-3.5 px-4">Split</th>
-                  <th className="py-3.5 px-4">Status</th>
-                  <th className="py-3.5 px-4">Date</th>
-                  <th className="py-3.5 px-4 text-right">Action</th>
+                  <th className="py-3.5 px-4">{isBn ? 'এজেন্টের নাম' : 'Agent Name'}</th>
+                  <th className="py-3.5 px-4">{isBn ? 'বুকিং রেফারেন্স' : 'Booking Ref'}</th>
+                  <th className="py-3.5 px-4">{isBn ? 'পুল' : 'Pool'}</th>
+                  <th className="py-3.5 px-4">{isBn ? 'এজেন্ট শেয়ার' : 'Agent Share'}</th>
+                  <th className="py-3.5 px-4">{isBn ? 'বিভাজন' : 'Split'}</th>
+                  <th className="py-3.5 px-4">{isBn ? 'স্ট্যাটাস' : 'Status'}</th>
+                  <th className="py-3.5 px-4">{isBn ? 'তারিখ' : 'Date'}</th>
+                  <th className="py-3.5 px-4 text-right">{isBn ? 'অ্যাকশন' : 'Action'}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 text-gray-700">
                 {filteredCommissions.length === 0 ? (
                   <tr>
                     <td colSpan={8} className="text-center py-8 text-gray-400">
-                      No commission events recorded yet.
+                      {isBn ? 'কোনো কমিশন রেকর্ড এখনো নেই।' : 'No commission events recorded yet.'}
                     </td>
                   </tr>
                 ) : (
@@ -604,7 +606,7 @@ export default function AdminCounterAgentsPage() {
                         {formatTk(c.agentShare)}
                       </td>
                       <td className="py-4 px-4 text-xs text-gray-500">
-                        {c.totalAgents} agents
+                        {c.totalAgents} {isBn ? 'জন এজেন্ট' : 'agents'}
                       </td>
                       <td className="py-4 px-4">
                         <span
@@ -618,7 +620,7 @@ export default function AdminCounterAgentsPage() {
                               : 'bg-rose-100 text-rose-800'
                           }`}
                         >
-                          {c.status === 'HELD_UNTIL_DEPARTURE' ? 'Awaiting Departure' : c.status}
+                          {c.status === 'HELD_UNTIL_DEPARTURE' ? (isBn ? 'যাত্রার অপেক্ষায়' : 'Awaiting Departure') : c.status === 'PAID' ? (isBn ? 'পরিশোধিত' : 'PAID') : c.status === 'PENDING' ? (isBn ? 'বকেয়া' : 'PENDING') : c.status}
                         </span>
                       </td>
                       <td className="py-4 px-4 text-gray-400 text-xs">
@@ -635,11 +637,11 @@ export default function AdminCounterAgentsPage() {
                             disabled={actionLoading === c.id}
                             className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg transition-all disabled:opacity-50"
                           >
-                            {actionLoading === c.id ? 'Saving…' : 'Mark Paid'}
+                            {actionLoading === c.id ? (isBn ? 'সংরক্ষণ হচ্ছে…' : 'Saving…') : (isBn ? 'পরিশোধিত করুন' : 'Mark Paid')}
                           </button>
                         ) : (
                           <span className="text-xs text-gray-400 flex items-center justify-end gap-1 font-semibold">
-                            <CheckCircle2 size={14} className="text-blue-500" /> Settled
+                            <CheckCircle2 size={14} className="text-blue-500" /> {isBn ? 'পরিশোধিত' : 'Settled'}
                           </span>
                         )}
                       </td>

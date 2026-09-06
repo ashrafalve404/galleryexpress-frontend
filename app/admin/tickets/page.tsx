@@ -52,7 +52,7 @@ export default function AdminTicketsPage() {
                 const bookingPassengers = booking?.passengers as Record<string, unknown>[] | undefined;
                 const bookingSeats = (booking?.bookingSeats as Record<string, unknown>[]) || (booking?.seats as Record<string, unknown>[]) || [];
 
-                const passengerName = (passenger?.name as string) || (bookingPassengers?.[0]?.name as string) || 'Passenger';
+                const passengerName = (passenger?.name as string) || (bookingPassengers?.[0]?.name as string) || (isBn ? 'যাত্রী' : 'Passenger');
                 const passengerPhone = (passenger?.phone as string) || (bookingPassengers?.[0]?.phone as string) || '';
 
                 const seatNumbers = bookingSeats
@@ -87,7 +87,9 @@ export default function AdminTicketsPage() {
               })}
               {!isLoading && tickets.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-5 py-12 text-center text-gray-400 text-sm font-medium">No tickets issued yet</td>
+                  <td colSpan={6} className="px-5 py-12 text-center text-gray-400 text-sm font-medium">
+                    {isBn ? 'এখনো কোনো টিকিট ইস্যু করা হয়নি' : 'No tickets issued yet'}
+                  </td>
                 </tr>
               )}
             </tbody>

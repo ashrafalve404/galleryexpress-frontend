@@ -154,10 +154,12 @@ export default function AdminDashboard() {
                     <div className="text-sm font-mono font-bold text-[#111111]">{b.bookingRef as string}</div>
                     {travelDate && (
                       <div className="text-xs text-gray-700 font-semibold mt-0.5">
-                        Journey: {travelDate} {busTime ? `· ${busTime}` : ''}
+                        {isBn ? 'যাত্রার তারিখ:' : 'Journey:'} {travelDate} {busTime ? `· ${busTime}` : ''}
                       </div>
                     )}
-                    <div className="text-[11px] text-gray-400 font-medium">Bought: {b.createdAt ? formatDateTime(b.createdAt as string) : ''}</div>
+                    <div className="text-[11px] text-gray-400 font-medium">
+                      {isBn ? 'ক্রয় সময়:' : 'Bought:'} {b.createdAt ? formatDateTime(b.createdAt as string) : ''}
+                    </div>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="text-sm font-bold text-gray-800">
@@ -171,21 +173,25 @@ export default function AdminDashboard() {
               );
             })}
             {!bookingsLoading && (!recentBookings || recentBookings.length === 0) && (
-              <div className="px-6 py-10 text-center text-gray-400 text-sm font-medium">No bookings recorded yet</div>
+              <div className="px-6 py-10 text-center text-gray-400 text-sm font-medium">
+                {isBn ? 'এখনো কোনো বুকিং রেকর্ড পাওয়া যায়নি' : 'No bookings recorded yet'}
+              </div>
             )}
           </div>
         </div>
 
         {/* Quick Links */}
         <div className="bg-white rounded-2xl border border-gray-100 p-6">
-          <h2 className="font-bold text-[#111111] text-sm mb-4">Quick Actions</h2>
+          <h2 className="font-bold text-[#111111] text-sm mb-4">
+            {isBn ? 'দ্রুত অ্যাকশন' : 'Quick Actions'}
+          </h2>
           <div className="space-y-2">
             {[
-              { href: ROUTES.ADMIN_SCHEDULES, label: 'Add Schedule', icon: RiCalendarEventFill, desc: 'Create new trips' },
-              { href: ROUTES.ADMIN_COACHES, label: 'Manage Coaches', icon: RiBusFill, desc: 'Fleet management' },
-              { href: ROUTES.ADMIN_ROUTES, label: 'Manage Routes', icon: RiMapPinFill, desc: 'Route configuration' },
-              { href: ROUTES.ADMIN_DISCOUNTS, label: 'Add Discount', icon: RiPriceTag3Fill, desc: 'Promo codes' },
-              { href: ROUTES.ADMIN_REPORTS, label: 'View Reports', icon: RiBarChartFill, desc: 'Revenue & analytics' },
+              { href: ROUTES.ADMIN_SCHEDULES, label: isBn ? 'সময়সূচী যোগ করুন' : 'Add Schedule', icon: RiCalendarEventFill, desc: isBn ? 'নতুন ট্রিপ তৈরি করুন' : 'Create new trips' },
+              { href: ROUTES.ADMIN_COACHES, label: isBn ? 'কোচসমূহ পরিচালনা' : 'Manage Coaches', icon: RiBusFill, desc: isBn ? 'বাস বহর ব্যবস্থাপনা' : 'Fleet management' },
+              { href: ROUTES.ADMIN_ROUTES, label: isBn ? 'রুটসমূহ পরিচালনা' : 'Manage Routes', icon: RiMapPinFill, desc: isBn ? 'রুট কনফিগারেশন' : 'Route configuration' },
+              { href: ROUTES.ADMIN_DISCOUNTS, label: isBn ? 'ডিসকাউন্ট যোগ করুন' : 'Add Discount', icon: RiPriceTag3Fill, desc: isBn ? 'প্রোমো কোড' : 'Promo codes' },
+              { href: ROUTES.ADMIN_REPORTS, label: isBn ? 'রিপোর্টস দেখুন' : 'View Reports', icon: RiBarChartFill, desc: isBn ? 'আয় ও এনালিটিক্স' : 'Revenue & analytics' },
             ].map((item) => (
               <Link
                 key={item.href}

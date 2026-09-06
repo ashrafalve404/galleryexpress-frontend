@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import { toast } from 'sonner';
+import { useLanguageStore } from '@/lib/store/languageStore';
 import {
   adminGetOffers, adminCreateOffer, adminUpdateOffer, adminDeleteOffer, type OfferItem
 } from '@/lib/api/offers';
@@ -20,6 +21,8 @@ const SAMPLE_POSTER_PRESETS = [
 ];
 
 export default function AdminOffersPage() {
+  const { lang } = useLanguageStore();
+  const isBn = lang === 'BN';
   const qc = useQueryClient();
   const [modalOpen, setModalOpen] = useState(false);
   const [editingOffer, setEditingOffer] = useState<OfferItem | null>(null);
@@ -85,7 +88,7 @@ export default function AdminOffersPage() {
   const openCreateModal = () => {
     setEditingOffer(null);
     setForm({
-      title: 'Offer Poster #' + (offers.length + 1),
+      title: (isBn ? 'অফার পোস্টার #' : 'Offer Poster #') + (offers.length + 1),
       imageUrl: '/dest-coxsbazar.png',
       orderIndex: offers.length + 1,
       status: 'ACTIVE',
@@ -183,9 +186,9 @@ export default function AdminOffersPage() {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-gray-100 shadow-xs">
         <div>
-          <h1 className="text-xl sm:text-2xl font-black text-[#111111]">Offer Posters Management</h1>
+          <h1 className="text-xl sm:text-2xl font-black text-[#111111]">{isBn ? 'অফার পোস্টার ব্যবস্থাপনা' : 'Offer Posters Management'}</h1>
           <p className="text-gray-500 text-xs sm:text-sm mt-1 font-medium">
-            Upload 1:1 aspect ratio promotional poster images (WebP, PNG, JPG) to display on the public website
+            {isBn ? 'ওয়েবসাইটে প্রদর্শন করার জন্য ১:১ অনুপাতের প্রমোশনাল পোস্টার ইমেজ (WebP, PNG, JPG) আপলোড করুন' : 'Upload 1:1 aspect ratio promotional poster images (WebP, PNG, JPG) to display on the public website'}
           </p>
         </div>
 
@@ -194,7 +197,7 @@ export default function AdminOffersPage() {
           className="inline-flex items-center justify-center gap-2 bg-[#E31B23] hover:bg-[#C41920] text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition-all"
         >
           <Plus size={16} />
-          Upload New Poster
+          {isBn ? 'নতুন পোস্টার আপলোড করুন' : 'Upload New Poster'}
         </button>
       </div>
 
@@ -204,7 +207,7 @@ export default function AdminOffersPage() {
           <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
-            placeholder="Search poster title..."
+            placeholder={isBn ? 'পোস্টার শিরোনাম দিয়ে খুঁজুন...' : 'Search poster title...'}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23]"
@@ -213,7 +216,7 @@ export default function AdminOffersPage() {
         <button
           onClick={() => refetch()}
           className="p-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 text-gray-600 transition-colors shrink-0"
-          title="Refresh List"
+          title={isBn ? 'তালিকা রিফ্রেশ করুন' : 'Refresh List'}
         >
           <RefreshCw size={16} />
         </button>
@@ -229,13 +232,13 @@ export default function AdminOffersPage() {
       ) : filteredOffers.length === 0 ? (
         <div className="bg-white border border-gray-100 rounded-2xl p-12 text-center max-w-md mx-auto">
           <Sparkles size={40} className="text-gray-300 mx-auto mb-3" />
-          <h3 className="font-bold text-gray-800 text-lg mb-1">No Posters Found</h3>
-          <p className="text-gray-500 text-sm mb-5">Click "Upload New Poster" to upload a 1:1 image.</p>
+          <h3 className="font-bold text-gray-800 text-lg mb-1">{isBn ? 'কোনো পোস্টার পাওয়া যায়নি' : 'No Posters Found'}</h3>
+          <p className="text-gray-500 text-sm mb-5">{isBn ? '১:১ অনুপাতের ছবি আপলোড করতে "নতুন পোস্টার আপলোড করুন" এ ক্লিক করুন।' : 'Click "Upload New Poster" to upload a 1:1 image.'}</p>
           <button
             onClick={openCreateModal}
             className="inline-flex items-center gap-2 bg-[#E31B23] text-white px-4 py-2 rounded-xl text-sm font-bold"
           >
-            <Plus size={16} /> Upload First Poster
+            <Plus size={16} /> {isBn ? 'প্রথম পোস্টার আপলোড করুন' : 'Upload First Poster'}
           </button>
         </div>
       ) : (
@@ -274,7 +277,7 @@ export default function AdminOffersPage() {
                         ? 'bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/40'
                         : 'bg-amber-500/20 text-amber-300 hover:bg-amber-500/40'
                     }`}
-                    title={offer.status === 'ACTIVE' ? 'Set Inactive' : 'Set Active'}
+                    title={offer.status === 'ACTIVE' ? (isBn ? 'নিষ্ক্রিয় করুন' : 'Set Inactive') : (isBn ? 'সক্রিয় করুন' : 'Set Active')}
                   >
                     {offer.status === 'ACTIVE' ? <Eye size={14} /> : <EyeOff size={14} />}
                   </button>
@@ -282,19 +285,19 @@ export default function AdminOffersPage() {
                   <button
                     onClick={() => openEditModal(offer)}
                     className="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/20 transition-colors"
-                    title="Edit Poster"
+                    title={isBn ? 'পোস্টার এডিট করুন' : 'Edit Poster'}
                   >
                     <Edit3 size={14} />
                   </button>
 
                   <button
                     onClick={() => {
-                      if (confirm('Delete this poster?')) {
+                      if (confirm(isBn ? 'পোস্টারটি মুছে ফেলবেন?' : 'Delete this poster?')) {
                         deleteMutation.mutate(offer.id);
                       }
                     }}
                     className="p-1.5 rounded-lg text-rose-400 hover:text-rose-200 hover:bg-rose-500/30 transition-colors"
-                    title="Delete Poster"
+                    title={isBn ? 'পোস্টার মুছুন' : 'Delete Poster'}
                   >
                     <Trash2 size={14} />
                   </button>
@@ -311,7 +314,7 @@ export default function AdminOffersPage() {
           <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-gray-100 my-8">
             <div className="flex items-center justify-between pb-4 border-b border-gray-100 mb-5">
               <h2 className="text-lg font-black text-gray-900">
-                {editingOffer ? 'Edit Offer Poster' : 'Upload 1:1 Offer Poster'}
+                {editingOffer ? (isBn ? 'অফার পোস্টার এডিট করুন' : 'Edit Offer Poster') : (isBn ? '১:১ অফার পোস্টার আপলোড করুন' : 'Upload 1:1 Offer Poster')}
               </h2>
               <button
                 onClick={closeModal}
@@ -324,11 +327,11 @@ export default function AdminOffersPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
-                  Poster Label / Title
+                  {isBn ? 'পোস্টার লেবেল / শিরোনাম' : 'Poster Label / Title'}
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. Cox's Bazar Eid Promo Poster"
+                  placeholder={isBn ? 'যেমন: কক্সবাজার ঈদ প্রোমো পোস্টার' : "e.g. Cox's Bazar Eid Promo Poster"}
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
                   className="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold focus:outline-none focus:border-[#E31B23]"
@@ -337,11 +340,11 @@ export default function AdminOffersPage() {
 
               <div>
                 <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
-                  Upload Poster File (WebP, PNG, JPG) *
+                  {isBn ? 'পোস্টার ছবি ফাইল আপলোড করুন (WebP, PNG, JPG) *' : 'Upload Poster File (WebP, PNG, JPG) *'}
                 </label>
                 <div className="flex items-center gap-2 mb-2">
                   <label className="cursor-pointer inline-flex items-center gap-2 bg-[#E31B23]/10 hover:bg-[#E31B23]/20 text-[#E31B23] px-4 py-2 rounded-xl text-xs font-bold transition-colors">
-                    <Upload size={15} /> Choose Image File
+                    <Upload size={15} /> {isBn ? 'ছবি ফাইল বেছে নিন' : 'Choose Image File'}
                     <input
                       type="file"
                       accept="image/webp,image/png,image/jpeg,image/jpg"
@@ -349,7 +352,7 @@ export default function AdminOffersPage() {
                       className="hidden"
                     />
                   </label>
-                  <span className="text-xs text-gray-500 font-medium">or paste image URL below</span>
+                  <span className="text-xs text-gray-500 font-medium">{isBn ? 'অথবা নিচে ছবির URL পেস্ট করুন' : 'or paste image URL below'}</span>
                 </div>
 
                 <input
@@ -376,7 +379,7 @@ export default function AdminOffersPage() {
 
               <div>
                 <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
-                  Display Order Index
+                  {isBn ? 'প্রদর্শনের ক্রমানুসার (Index)' : 'Display Order Index'}
                 </label>
                 <input
                   type="number"
@@ -387,14 +390,14 @@ export default function AdminOffersPage() {
               </div>
 
               <div className="flex items-center gap-3 pt-2">
-                <label className="text-xs font-bold text-gray-700 uppercase">Status:</label>
+                <label className="text-xs font-bold text-gray-700 uppercase">{isBn ? 'স্ট্যাটাস:' : 'Status:'}</label>
                 <select
                   value={form.status}
                   onChange={(e) => setForm({ ...form, status: e.target.value as 'ACTIVE' | 'INACTIVE' })}
                   className="px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-900 focus:outline-none focus:border-[#E31B23]"
                 >
-                  <option value="ACTIVE">ACTIVE (Visible on Homepage)</option>
-                  <option value="INACTIVE">INACTIVE (Hidden)</option>
+                  <option value="ACTIVE">{isBn ? 'সক্রিয় (হোমপেজে দৃশ্যমান)' : 'ACTIVE (Visible on Homepage)'}</option>
+                  <option value="INACTIVE">{isBn ? 'নিষ্ক্রিয় (লুকানো)' : 'INACTIVE (Hidden)'}</option>
                 </select>
               </div>
 
@@ -405,14 +408,14 @@ export default function AdminOffersPage() {
                   onClick={closeModal}
                   className="px-4 py-2 border border-gray-200 text-gray-700 rounded-xl text-sm font-bold hover:bg-gray-50"
                 >
-                  Cancel
+                  {isBn ? 'বাতিল' : 'Cancel'}
                 </button>
                 <button
                   type="submit"
                   disabled={createMutation.isPending || updateMutation.isPending}
                   className="px-5 py-2 bg-[#E31B23] hover:bg-[#C41920] text-white rounded-xl text-sm font-bold shadow-md"
                 >
-                  {editingOffer ? 'Save Poster' : 'Upload Poster'}
+                  {editingOffer ? (isBn ? 'পোস্টার সংরক্ষণ করুন' : 'Save Poster') : (isBn ? 'পোস্টার আপলোড করুন' : 'Upload Poster')}
                 </button>
               </div>
             </form>

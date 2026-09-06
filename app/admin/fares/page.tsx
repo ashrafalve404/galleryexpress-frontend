@@ -7,6 +7,7 @@ import client from '@/lib/api/client';
 import { formatCurrency } from '@/lib/utils/currency';
 import { formatDate, today } from '@/lib/utils/date';
 import { toast } from 'sonner';
+import { useLanguageStore } from '@/lib/store/languageStore';
 
 interface Fare {
   id: string;
@@ -20,6 +21,8 @@ interface Fare {
 }
 
 export default function AdminFaresPage() {
+  const { lang } = useLanguageStore();
+  const isBn = lang === 'BN';
   const qc = useQueryClient();
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
@@ -170,7 +173,7 @@ export default function AdminFaresPage() {
   const handleBulkStatus = async (isActive: boolean) => {
     if (selectedIds.length === 0) return;
     const label = isActive ? 'ACTIVE' : 'INACTIVE';
-    if (!confirm(`Are you sure you want to mark ${selectedIds.length} selected fare(s) as ${label}?`)) return;
+    if (!confirm(isBn ? `আপনি কি সত্যি ${selectedIds.length} টি ভাড়ার স্ট্যাটাস ${isActive ? 'সক্রিয়' : 'নিষ্ক্রিয়'} করতে চান?` : `Are you sure you want to mark ${selectedIds.length} selected fare(s) as ${label}?`)) return;
 
     const toastId = toast.loading(`Updating ${selectedIds.length} fare(s)...`);
     try {
@@ -187,7 +190,7 @@ export default function AdminFaresPage() {
 
   const handleBulkDelete = async () => {
     if (selectedIds.length === 0) return;
-    if (!confirm(`PERMANENT DELETE WARNING:\nThis will permanently delete ${selectedIds.length} selected fare(s) from database. Proceed?`)) return;
+    if (!confirm(isBn ? `স্থায়ীভাবে মুছে ফেলার সতর্কবার্তা:\nএটি ডেটাবেস থেকে ${selectedIds.length} টি নির্বাচিত ভাড়া মুছে ফেলবে। এগিয়ে যাবেন?` : `PERMANENT DELETE WARNING:\nThis will permanently delete ${selectedIds.length} selected fare(s) from database. Proceed?`)) return;
 
     const toastId = toast.loading(`Deleting ${selectedIds.length} fare(s)...`);
     try {
@@ -204,8 +207,8 @@ export default function AdminFaresPage() {
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-xl sm:text-2xl font-black text-[#111111]">Fares & Pricing</h1>
-          <p className="text-gray-500 text-xs sm:text-sm mt-0.5 font-medium">{fares.length} fares configured</p>
+          <h1 className="text-xl sm:text-2xl font-black text-[#111111]">{isBn ? 'ভাড়া এবং মূল্য নির্ধারণ' : 'Fares & Pricing'}</h1>
+          <p className="text-gray-500 text-xs sm:text-sm mt-0.5 font-medium">{isBn ? `মোট ${fares.length} টি ভাড়া কনফিগার করা হয়েছে` : `${fares.length} fares configured`}</p>
         </div>
         <button
           onClick={() => {
@@ -215,7 +218,7 @@ export default function AdminFaresPage() {
           }}
           className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#E31B23] hover:bg-[#C41920] text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm active:scale-95"
         >
-          <Plus size={16} /> Add Fare
+          <Plus size={16} /> {isBn ? 'ভাড়া যোগ করুন' : 'Add Fare'}
         </button>
       </div>
 
@@ -224,7 +227,7 @@ export default function AdminFaresPage() {
           <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
-            placeholder="Search fares by route..."
+            placeholder={isBn ? 'রুট দিয়ে ভাড়া খুঁজুন...' : 'Search fares by route...'}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20"
@@ -237,21 +240,21 @@ export default function AdminFaresPage() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-md w-full overflow-hidden shadow-2xl animate-fade-in-up">
             <div className="flex items-center justify-between p-5 border-b border-gray-100">
-              <h2 className="font-bold text-[#111111]">{editing ? 'Edit Fare' : 'Add New Fare'}</h2>
+              <h2 className="font-bold text-[#111111]">{editing ? (isBn ? 'ভাড়া এডিট করুন' : 'Edit Fare') : (isBn ? 'নতুন ভাড়া যোগ করুন' : 'Add New Fare')}</h2>
               <button onClick={() => setShowForm(false)} className="p-1 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600">
                 <X size={18} />
               </button>
             </div>
             <form onSubmit={handleSubmit} className="p-5 space-y-4">
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Select Route</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">{isBn ? 'রুট নির্বাচন করুন' : 'Select Route'}</label>
                 <select
                   value={form.routeId}
                   onChange={(e) => setForm({ ...form, routeId: e.target.value })}
                   required
                   className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold focus:outline-none"
                 >
-                  <option value="">-- Choose Route --</option>
+                  <option value="">{isBn ? '-- রুট বেছে নিন --' : '-- Choose Route --'}</option>
                   {routes.map((r: { id: string; origin: string; destination: string }) => (
                     <option key={r.id} value={r.id}>
                       {r.origin} → {r.destination}
@@ -261,13 +264,13 @@ export default function AdminFaresPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Coach Type (Optional)</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">{isBn ? 'কোচের ধরণ (ঐচ্ছিক)' : 'Coach Type (Optional)'}</label>
                 <select
                   value={form.coachTypeId}
                   onChange={(e) => setForm({ ...form, coachTypeId: e.target.value })}
                   className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold focus:outline-none"
                 >
-                  <option value="">All Coach Types</option>
+                  <option value="">{isBn ? 'সকল কোচের ধরণ' : 'All Coach Types'}</option>
                   {coachTypes.map((ct: { id: string; name: string }) => (
                     <option key={ct.id} value={ct.id}>{ct.name}</option>
                   ))}
@@ -275,7 +278,7 @@ export default function AdminFaresPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Base Price (BDT)</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">{isBn ? 'মূল ভাড়া (টাকা)' : 'Base Price (BDT)'}</label>
                 <input
                   type="number"
                   step="0.01"
@@ -287,7 +290,7 @@ export default function AdminFaresPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Effective Date</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">{isBn ? 'কার্যকর তারিখ' : 'Effective Date'}</label>
                 <input
                   type="date"
                   value={form.effectiveFrom}
@@ -305,7 +308,7 @@ export default function AdminFaresPage() {
                   onChange={(e) => setForm({ ...form, isActive: e.target.checked })}
                   className="w-4 h-4 text-[#E31B23] rounded focus:ring-[#E31B23]"
                 />
-                <label htmlFor="isActiveFare" className="text-xs font-bold text-gray-700">Is Active</label>
+                <label htmlFor="isActiveFare" className="text-xs font-bold text-gray-700">{isBn ? 'সক্রিয়' : 'Is Active'}</label>
               </div>
 
               <div className="flex gap-3 pt-2">
@@ -314,14 +317,14 @@ export default function AdminFaresPage() {
                   onClick={() => setShowForm(false)}
                   className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl text-sm font-bold transition-colors"
                 >
-                  Cancel
+                  {isBn ? 'বাতিল' : 'Cancel'}
                 </button>
                 <button
                   type="submit"
                   disabled={createMutation.isPending || updateMutation.isPending}
                   className="flex-1 bg-[#E31B23] hover:bg-[#C41920] text-white py-3 rounded-xl text-sm font-bold transition-colors shadow-md"
                 >
-                  {editing ? 'Save Changes' : 'Create Fare'}
+                  {editing ? (isBn ? 'সংরক্ষণ করুন' : 'Save Changes') : (isBn ? 'ভাড়া যোগ করুন' : 'Create Fare')}
                 </button>
               </div>
             </form>
@@ -334,13 +337,13 @@ export default function AdminFaresPage() {
         <div className="bg-[#111111] text-white px-5 py-3.5 rounded-2xl mb-4 flex flex-wrap items-center justify-between gap-4 shadow-lg animate-fade-in">
           <div className="flex items-center gap-3">
             <span className="bg-[#E31B23] text-white text-xs font-extrabold px-2.5 py-1 rounded-lg">
-              {selectedIds.length} Selected
+              {selectedIds.length} {isBn ? 'টি সিলেক্ট করা হয়েছে' : 'Selected'}
             </span>
             <button
               onClick={() => setSelectedIds([])}
               className="text-xs text-gray-400 hover:text-white underline font-semibold"
             >
-              Clear Selection
+              {isBn ? 'সলেকশন মুছুন' : 'Clear Selection'}
             </button>
           </div>
 
@@ -349,19 +352,19 @@ export default function AdminFaresPage() {
               onClick={() => handleBulkStatus(true)}
               className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold transition-all shadow-xs"
             >
-              Set Active
+              {isBn ? 'সক্রিয় করুন' : 'Set Active'}
             </button>
             <button
               onClick={() => handleBulkStatus(false)}
               className="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-extrabold transition-all shadow-xs"
             >
-              Set Inactive
+              {isBn ? 'নিষ্ক্রিয় করুন' : 'Set Inactive'}
             </button>
             <button
               onClick={handleBulkDelete}
               className="px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-extrabold transition-all shadow-xs"
             >
-              Delete Permanently
+              {isBn ? 'স্থায়ীভাবে মুছুন' : 'Delete Permanently'}
             </button>
           </div>
         </div>
@@ -381,7 +384,14 @@ export default function AdminFaresPage() {
                     className="w-4 h-4 rounded text-[#E31B23] focus:ring-[#E31B23] cursor-pointer"
                   />
                 </th>
-                {['Route', 'Coach Type', 'Base Price', 'Effective Date', 'Status', 'Actions'].map((h) => (
+                {[
+                  isBn ? 'রুট' : 'Route',
+                  isBn ? 'কোচের ধরণ' : 'Coach Type',
+                  isBn ? 'মূল ভাড়া' : 'Base Price',
+                  isBn ? 'কার্যকর তারিখ' : 'Effective Date',
+                  isBn ? 'স্ট্যাটাস' : 'Status',
+                  isBn ? 'অ্যাকশন' : 'Actions'
+                ].map((h) => (
                   <th key={h} className="text-left px-5 py-3.5 font-bold text-gray-500 uppercase tracking-wider text-xs">{h}</th>
                 ))}
               </tr>
@@ -411,25 +421,25 @@ export default function AdminFaresPage() {
                     />
                   </td>
                   <td className="px-5 py-4 font-bold text-[#111111]">
-                    {f.route ? `${f.route.origin} → ${f.route.destination}` : 'All Routes'}
+                    {f.route ? `${f.route.origin} → ${f.route.destination}` : (isBn ? 'সকল রুট' : 'All Routes')}
                   </td>
-                  <td className="px-5 py-4 text-gray-600 font-semibold">{f.coachType?.name || 'All Types'}</td>
+                  <td className="px-5 py-4 text-gray-600 font-semibold">{f.coachType?.name || (isBn ? 'সকল ধরণ' : 'All Types')}</td>
                   <td className="px-5 py-4 font-bold text-[#E31B23]">{formatCurrency(Number(f.baseAmount || 0))}</td>
                   <td className="px-5 py-4 text-gray-600 font-medium">{formatDate(f.effectiveFrom)}</td>
                   <td className="px-5 py-4">
                     <span className={`text-xs px-2.5 py-0.5 rounded-full font-bold ${f.isActive ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-700'}`}>
-                      {f.isActive ? 'Active' : 'Inactive'}
+                      {f.isActive ? (isBn ? 'সক্রিয়' : 'Active') : (isBn ? 'নিষ্ক্রিয়' : 'Inactive')}
                     </span>
                   </td>
                   <td className="px-5 py-4">
                     <div className="flex items-center gap-2">
-                      <button onClick={() => startEdit(f)} className="p-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors" title="Edit Fare">
+                      <button onClick={() => startEdit(f)} className="p-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors" title={isBn ? 'এডিট করুন' : 'Edit Fare'}>
                         <Pencil size={14} />
                       </button>
                       <button
                         onClick={() => {
                           const newActive = !f.isActive;
-                          if (confirm(`Change status to ${newActive ? 'Active' : 'Inactive'}?`)) {
+                          if (confirm(isBn ? `স্ট্যাটাস পরিবর্তন করে ${newActive ? 'সক্রিয়' : 'নিষ্ক্রিয়'} করবেন?` : `Change status to ${newActive ? 'Active' : 'Inactive'}?`)) {
                             if (!newActive) {
                               deleteMutation.mutate(f.id);
                             } else {
@@ -442,18 +452,18 @@ export default function AdminFaresPage() {
                             ? 'bg-amber-50 text-amber-700 hover:bg-amber-100'
                             : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
                         }`}
-                        title="Toggle Active/Inactive"
+                        title={isBn ? 'সক্রিয়/নিষ্ক্রিয় টগল করুন' : 'Toggle Active/Inactive'}
                       >
-                        {f.isActive ? 'Deactivate' : 'Activate'}
+                        {f.isActive ? (isBn ? 'নিষ্ক্রিয় করুন' : 'Deactivate') : (isBn ? 'সক্রিয় করুন' : 'Activate')}
                       </button>
                       <button
                         onClick={() => {
-                          if (confirm('PERMANENT DELETE WARNING:\nThis will permanently delete this fare from database. Proceed?')) {
+                          if (confirm(isBn ? 'স্থায়ীভাবে মুছে ফেলার সতর্কবার্তা:\nএটি ডেটাবেস থেকে ভাড়াটি স্থায়ীভাবে মুছে ফেলবে। এগিয়ে যাবেন?' : 'PERMANENT DELETE WARNING:\nThis will permanently delete this fare from database. Proceed?')) {
                             permanentDeleteMutation.mutate(f.id);
                           }
                         }}
                         className="p-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 transition-colors"
-                        title="Delete Permanently"
+                        title={isBn ? 'স্থায়ীভাবে মুছুন' : 'Delete Permanently'}
                       >
                         <Trash2 size={14} />
                       </button>
@@ -463,7 +473,9 @@ export default function AdminFaresPage() {
               ))}
               {!isLoading && filtered.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-5 py-12 text-center text-gray-400 text-sm font-medium">No fares found</td>
+                  <td colSpan={7} className="px-5 py-12 text-center text-gray-400 text-sm font-medium">
+                    {isBn ? 'কোনো ভাড়া পাওয়া যায়নি' : 'No fares found'}
+                  </td>
                 </tr>
               )}
             </tbody>

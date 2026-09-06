@@ -5,6 +5,7 @@ import { Plus, Image as ImageIcon, Pencil, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
 import client from '@/lib/api/client';
 import { toast } from 'sonner';
+import { useLanguageStore } from '@/lib/store/languageStore';
 
 interface SliderItem {
   id: string;
@@ -17,6 +18,8 @@ interface SliderItem {
 }
 
 export default function AdminSlidersPage() {
+  const { lang } = useLanguageStore();
+  const isBn = lang === 'BN';
   const qc = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<SliderItem | null>(null);
@@ -110,8 +113,8 @@ export default function AdminSlidersPage() {
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-xl sm:text-2xl font-black text-[#111111]">Homepage Sliders</h1>
-          <p className="text-gray-500 text-xs sm:text-sm mt-0.5 font-medium">{sliders.length} banner slides configured</p>
+          <h1 className="text-xl sm:text-2xl font-black text-[#111111]">{isBn ? 'হোমপেজ স্লাইডার' : 'Homepage Sliders'}</h1>
+          <p className="text-gray-500 text-xs sm:text-sm mt-0.5 font-medium">{isBn ? `মোট ${sliders.length} টি ব্যানার স্লাইড কনফিগার করা হয়েছে` : `${sliders.length} banner slides configured`}</p>
         </div>
         <button
           onClick={() => {
@@ -121,7 +124,7 @@ export default function AdminSlidersPage() {
           }}
           className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#E31B23] hover:bg-[#C41920] text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm active:scale-95"
         >
-          <Plus size={16} /> Add Slider
+          <Plus size={16} /> {isBn ? 'স্লাইডার যোগ করুন' : 'Add Slider'}
         </button>
       </div>
 
@@ -130,14 +133,14 @@ export default function AdminSlidersPage() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-md w-full overflow-hidden shadow-2xl animate-fade-in-up">
             <div className="flex items-center justify-between p-5 border-b border-gray-100">
-              <h2 className="font-bold text-[#111111]">{editing ? 'Edit Slider' : 'Add New Slider'}</h2>
+              <h2 className="font-bold text-[#111111]">{editing ? (isBn ? 'স্লাইডার এডিট করুন' : 'Edit Slider') : (isBn ? 'নতুন স্লাইডার যোগ করুন' : 'Add New Slider')}</h2>
               <button onClick={() => setShowForm(false)} className="p-1 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600">
                 <X size={18} />
               </button>
             </div>
             <form onSubmit={handleSubmit} className="p-5 space-y-4">
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Image URL</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">{isBn ? 'ছবি URL' : 'Image URL'}</label>
                 <input
                   type="text"
                   value={form.imageUrl}
@@ -149,47 +152,47 @@ export default function AdminSlidersPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Title</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">{isBn ? 'শিরোনাম' : 'Title'}</label>
                 <input
                   type="text"
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  placeholder="e.g. Eid Special Discount"
+                  placeholder={isBn ? 'যেমন: ঈদ স্পেশাল ডিসকাউন্ট' : 'e.g. Eid Special Discount'}
                   className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Subtitle</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">{isBn ? 'উপ-শিরোনাম' : 'Subtitle'}</label>
                 <input
                   type="text"
                   value={form.subtitle}
                   onChange={(e) => setForm({ ...form, subtitle: e.target.value })}
-                  placeholder="e.g. Save 20% on Cox's Bazar tickets"
+                  placeholder={isBn ? 'যেমন: কক্সবাজার টিকিটে ২০% ছাড়' : "e.g. Save 20% on Cox's Bazar tickets"}
                   className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold focus:outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Button Text</label>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">{isBn ? 'বাটন টেক্সট' : 'Button Text'}</label>
                   <input
                     type="text"
                     value={form.ctaText}
                     onChange={(e) => setForm({ ...form, ctaText: e.target.value })}
-                    placeholder="Book Now"
+                    placeholder={isBn ? 'বুক করুন' : 'Book Now'}
                     className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Status</label>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">{isBn ? 'স্ট্যাটাস' : 'Status'}</label>
                   <select
                     value={form.status}
                     onChange={(e) => setForm({ ...form, status: e.target.value as 'ACTIVE' | 'INACTIVE' })}
                     className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold focus:outline-none"
                   >
-                    <option value="ACTIVE">Active</option>
-                    <option value="INACTIVE">Inactive</option>
+                    <option value="ACTIVE">{isBn ? 'সক্রিয়' : 'Active'}</option>
+                    <option value="INACTIVE">{isBn ? 'নিষ্ক্রিয়' : 'Inactive'}</option>
                   </select>
                 </div>
               </div>
@@ -200,14 +203,14 @@ export default function AdminSlidersPage() {
                   onClick={() => setShowForm(false)}
                   className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl text-sm font-bold transition-colors"
                 >
-                  Cancel
+                  {isBn ? 'বাতিল' : 'Cancel'}
                 </button>
                 <button
                   type="submit"
                   disabled={createMutation.isPending || updateMutation.isPending}
                   className="flex-1 bg-[#E31B23] hover:bg-[#C41920] text-white py-3 rounded-xl text-sm font-bold transition-colors shadow-md"
                 >
-                  {editing ? 'Save Changes' : 'Create Slider'}
+                  {editing ? (isBn ? 'সংরক্ষণ করুন' : 'Save Changes') : (isBn ? 'স্লাইডার তৈরি করুন' : 'Create Slider')}
                 </button>
               </div>
             </form>
@@ -226,17 +229,17 @@ export default function AdminSlidersPage() {
                 <img src={slide.imageUrl || '/hero-bus-bd.png'} alt={slide.title || 'Slider'} className="w-full h-full object-cover" />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="font-bold text-[#111111] text-sm truncate">{slide.title || 'Untitled Banner'}</h3>
-                <p className="text-xs text-gray-500 truncate mt-0.5">{slide.subtitle || 'No subtitle'}</p>
+                <h3 className="font-bold text-[#111111] text-sm truncate">{slide.title || (isBn ? 'শিরোনামহীন ব্যানার' : 'Untitled Banner')}</h3>
+                <p className="text-xs text-gray-500 truncate mt-0.5">{slide.subtitle || (isBn ? 'কোনো উপ-শিরোনাম নেই' : 'No subtitle')}</p>
                 <span className={`inline-block mt-2 text-[10px] px-2 py-0.5 rounded-full font-bold ${slide.status === 'ACTIVE' ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-700'}`}>
-                  {slide.status || 'ACTIVE'}
+                  {slide.status === 'ACTIVE' ? (isBn ? 'সক্রিয়' : 'ACTIVE') : (isBn ? 'নিষ্ক্রিয়' : 'INACTIVE')}
                 </span>
               </div>
               <div className="flex items-center gap-1">
-                <button onClick={() => startEdit(slide)} className="p-1 rounded text-gray-400 hover:text-blue-600 transition-colors">
+                <button onClick={() => startEdit(slide)} className="p-1 rounded text-gray-400 hover:text-blue-600 transition-colors" title={isBn ? 'এডিট করুন' : 'Edit'}>
                   <Pencil size={14} />
                 </button>
-                <button onClick={() => { if (confirm('Delete slider?')) deleteMutation.mutate(slide.id); }} className="p-1 rounded text-gray-400 hover:text-rose-600 transition-colors">
+                <button onClick={() => { if (confirm(isBn ? 'স্লাইডারটি মুছে ফেলবেন?' : 'Delete slider?')) deleteMutation.mutate(slide.id); }} className="p-1 rounded text-gray-400 hover:text-rose-600 transition-colors" title={isBn ? 'মুছুন' : 'Delete'}>
                   <Trash2 size={14} />
                 </button>
               </div>
@@ -245,7 +248,7 @@ export default function AdminSlidersPage() {
         ))}
         {!isLoading && sliders.length === 0 && (
           <div className="col-span-full bg-white rounded-2xl border border-gray-100 p-12 text-center text-gray-400 text-sm font-medium">
-            No sliders configured
+            {isBn ? 'কোনো স্লাইডার কনফিগার করা হয়নি' : 'No sliders configured'}
           </div>
         )}
       </div>

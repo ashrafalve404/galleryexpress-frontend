@@ -7,6 +7,7 @@ import client from '@/lib/api/client';
 import { formatCurrency } from '@/lib/utils/currency';
 import { formatDate, today } from '@/lib/utils/date';
 import { toast } from 'sonner';
+import { useLanguageStore } from '@/lib/store/languageStore';
 
 interface Discount {
   id: string;
@@ -21,6 +22,8 @@ interface Discount {
 }
 
 export default function AdminDiscountsPage() {
+  const { lang } = useLanguageStore();
+  const isBn = lang === 'BN';
   const qc = useQueryClient();
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
@@ -130,8 +133,8 @@ export default function AdminDiscountsPage() {
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-xl sm:text-2xl font-black text-[#111111]">Discounts & Coupons</h1>
-          <p className="text-gray-500 text-xs sm:text-sm mt-0.5 font-medium">{discounts.length} coupons configured</p>
+          <h1 className="text-xl sm:text-2xl font-black text-[#111111]">{isBn ? 'ডিসকাউন্ট ও কুপন' : 'Discounts & Coupons'}</h1>
+          <p className="text-gray-500 text-xs sm:text-sm mt-0.5 font-medium">{isBn ? `মোট ${discounts.length} টি কুপন কনফিগার করা হয়েছে` : `${discounts.length} coupons configured`}</p>
         </div>
         <button
           onClick={() => {
@@ -141,7 +144,7 @@ export default function AdminDiscountsPage() {
           }}
           className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#E31B23] hover:bg-[#C41920] text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm active:scale-95"
         >
-          <Plus size={16} /> Add Coupon
+          <Plus size={16} /> {isBn ? 'কুপন যোগ করুন' : 'Add Coupon'}
         </button>
       </div>
 
@@ -150,7 +153,7 @@ export default function AdminDiscountsPage() {
           <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
-            placeholder="Search coupons by code..."
+            placeholder={isBn ? 'কুপন কোড দিয়ে খুঁজুন...' : 'Search coupons by code...'}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20"
@@ -163,14 +166,14 @@ export default function AdminDiscountsPage() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-md w-full overflow-hidden shadow-2xl animate-fade-in-up">
             <div className="flex items-center justify-between p-5 border-b border-gray-100">
-              <h2 className="font-bold text-[#111111]">{editing ? 'Edit Coupon' : 'Add New Coupon'}</h2>
+              <h2 className="font-bold text-[#111111]">{editing ? (isBn ? 'কুপন এডিট করুন' : 'Edit Coupon') : (isBn ? 'নতুন কুপন যোগ করুন' : 'Add New Coupon')}</h2>
               <button onClick={() => setShowForm(false)} className="p-1 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600">
                 <X size={18} />
               </button>
             </div>
             <form onSubmit={handleSubmit} className="p-5 space-y-4">
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Coupon Code</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">{isBn ? 'কুপন কোড' : 'Coupon Code'}</label>
                 <input
                   type="text"
                   value={form.code}
@@ -183,18 +186,18 @@ export default function AdminDiscountsPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Discount Type</label>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">{isBn ? 'ডিসকাউন্টের ধরণ' : 'Discount Type'}</label>
                   <select
                     value={form.type}
                     onChange={(e) => setForm({ ...form, type: e.target.value as 'PERCENTAGE' | 'FIXED' })}
                     className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold focus:outline-none"
                   >
-                    <option value="PERCENTAGE">Percentage (%)</option>
-                    <option value="FIXED">Fixed Amount (BDT)</option>
+                    <option value="PERCENTAGE">{isBn ? 'শতাংশ (%)' : 'Percentage (%)'}</option>
+                    <option value="FIXED">{isBn ? 'নির্দিষ্ট পরিমাণ (টাকা)' : 'Fixed Amount (BDT)'}</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Value</label>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">{isBn ? 'পরিমাণ' : 'Value'}</label>
                   <input
                     type="number"
                     step="0.01"
@@ -208,7 +211,7 @@ export default function AdminDiscountsPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Min Booking Amt</label>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">{isBn ? 'সর্বনিম্ন বুকিং পরিমাণ' : 'Min Booking Amt'}</label>
                   <input
                     type="number"
                     value={form.minAmount}
@@ -217,7 +220,7 @@ export default function AdminDiscountsPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Max Uses</label>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">{isBn ? 'সর্বোচ্চ ব্যবহার' : 'Max Uses'}</label>
                   <input
                     type="number"
                     value={form.maxUses}
@@ -228,7 +231,7 @@ export default function AdminDiscountsPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Valid From</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">{isBn ? 'কার্যকর তারিখ' : 'Valid From'}</label>
                 <input
                   type="date"
                   value={form.validFrom}
@@ -246,7 +249,7 @@ export default function AdminDiscountsPage() {
                   onChange={(e) => setForm({ ...form, isActive: e.target.checked })}
                   className="w-4 h-4 text-[#E31B23] rounded focus:ring-[#E31B23]"
                 />
-                <label htmlFor="isActiveDisc" className="text-xs font-bold text-gray-700">Is Active</label>
+                <label htmlFor="isActiveDisc" className="text-xs font-bold text-gray-700">{isBn ? 'সক্রিয়' : 'Is Active'}</label>
               </div>
 
               <div className="flex gap-3 pt-2">
@@ -255,14 +258,14 @@ export default function AdminDiscountsPage() {
                   onClick={() => setShowForm(false)}
                   className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl text-sm font-bold transition-colors"
                 >
-                  Cancel
+                  {isBn ? 'বাতিল' : 'Cancel'}
                 </button>
                 <button
                   type="submit"
                   disabled={createMutation.isPending || updateMutation.isPending}
                   className="flex-1 bg-[#E31B23] hover:bg-[#C41920] text-white py-3 rounded-xl text-sm font-bold transition-colors shadow-md"
                 >
-                  {editing ? 'Save Changes' : 'Create Coupon'}
+                  {editing ? (isBn ? 'সংরক্ষণ করুন' : 'Save Changes') : (isBn ? 'কুপন তৈরি করুন' : 'Create Coupon')}
                 </button>
               </div>
             </form>
@@ -276,7 +279,14 @@ export default function AdminDiscountsPage() {
           <table className="w-full text-xs sm:text-sm min-w-[650px]">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-100">
-                {['Code', 'Discount', 'Min Booking', 'Valid From', 'Status', 'Actions'].map((h) => (
+                {[
+                  isBn ? 'কোড' : 'Code',
+                  isBn ? 'ডিসকাউন্ট' : 'Discount',
+                  isBn ? 'সর্বনিম্ন বুকিং' : 'Min Booking',
+                  isBn ? 'কার্যকর তারিখ' : 'Valid From',
+                  isBn ? 'স্ট্যাটাস' : 'Status',
+                  isBn ? 'অ্যাকশন' : 'Actions'
+                ].map((h) => (
                   <th key={h} className="text-left px-5 py-3.5 font-bold text-gray-500 uppercase tracking-wider text-xs">{h}</th>
                 ))}
               </tr>
@@ -294,21 +304,21 @@ export default function AdminDiscountsPage() {
                 <tr key={d.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-5 py-4 font-mono font-bold text-[#E31B23]">{d.code}</td>
                   <td className="px-5 py-4 font-bold text-[#111111]">
-                    {d.type === 'PERCENTAGE' ? `${d.value}% OFF` : `${formatCurrency(Number(d.value))} OFF`}
+                    {d.type === 'PERCENTAGE' ? `${d.value}% ${isBn ? 'ছাড়' : 'OFF'}` : `${formatCurrency(Number(d.value))} ${isBn ? 'ছাড়' : 'OFF'}`}
                   </td>
                   <td className="px-5 py-4 text-gray-600 font-semibold">{formatCurrency(Number(d.minAmount || 0))}</td>
                   <td className="px-5 py-4 text-gray-600 font-medium">{formatDate(d.validFrom)}</td>
                   <td className="px-5 py-4">
                     <span className={`text-xs px-2.5 py-0.5 rounded-full font-bold ${d.isActive ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-700'}`}>
-                      {d.isActive ? 'Active' : 'Inactive'}
+                      {d.isActive ? (isBn ? 'সক্রিয়' : 'Active') : (isBn ? 'নিষ্ক্রিয়' : 'Inactive')}
                     </span>
                   </td>
                   <td className="px-5 py-4">
                     <div className="flex gap-2">
-                      <button onClick={() => startEdit(d)} className="p-2 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors" title="Edit">
+                      <button onClick={() => startEdit(d)} className="p-2 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors" title={isBn ? 'এডিট করুন' : 'Edit'}>
                         <Pencil size={14} />
                       </button>
-                      <button onClick={() => { if (confirm('Delete discount?')) deleteMutation.mutate(d.id); }} className="p-2 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 transition-colors" title="Delete">
+                      <button onClick={() => { if (confirm(isBn ? 'ডিসকাউন্ট কুপনটি মুছে ফেলবেন?' : 'Delete discount?')) deleteMutation.mutate(d.id); }} className="p-2 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 transition-colors" title={isBn ? 'মুছুন' : 'Delete'}>
                         <Trash2 size={14} />
                       </button>
                     </div>
@@ -317,7 +327,9 @@ export default function AdminDiscountsPage() {
               ))}
               {!isLoading && filtered.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-5 py-12 text-center text-gray-400 text-sm font-medium">No discounts found</td>
+                  <td colSpan={6} className="px-5 py-12 text-center text-gray-400 text-sm font-medium">
+                    {isBn ? 'কোনো ডিসকাউন্ট কুপন পাওয়া যায়নি' : 'No discounts found'}
+                  </td>
                 </tr>
               )}
             </tbody>

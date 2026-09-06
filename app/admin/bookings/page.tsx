@@ -147,7 +147,17 @@ export default function AdminBookingsPage() {
           <table className="w-full text-xs sm:text-sm min-w-[950px]">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-100">
-                {['Ref #', 'Passenger', 'Route & Bus', 'Journey Date & Bus Time', 'Amount', 'Payment Info', 'Status', 'Booked Date', 'Actions'].map((h) => (
+                {[
+                  isBn ? 'রেফ #' : 'Ref #',
+                  isBn ? 'যাত্রী' : 'Passenger',
+                  isBn ? 'রুট ও বাস' : 'Route & Bus',
+                  isBn ? 'যাত্রার তারিখ ও সময়' : 'Journey Date & Bus Time',
+                  isBn ? 'পরিমাণ' : 'Amount',
+                  isBn ? 'পেমেন্ট তথ্য' : 'Payment Info',
+                  isBn ? 'স্ট্যাটাস' : 'Status',
+                  isBn ? 'বুকিং সময়' : 'Booked Date',
+                  isBn ? 'অ্যাকশন' : 'Actions',
+                ].map((h) => (
                   <th key={h} className="text-left px-5 py-3.5 font-bold text-gray-500 text-xs uppercase tracking-wider">{h}</th>
                 ))}
               </tr>
@@ -194,7 +204,7 @@ export default function AdminBookingsPage() {
                       <div className="text-xs text-gray-400 font-medium">{firstPassenger?.phone as string || '--'}</div>
                       {seatsStr ? (
                         <div className="text-[11px] text-gray-500 font-medium mt-0.5">
-                          Seat(s): <span className="font-bold text-[#E31B23]">{seatsStr}</span>
+                          {isBn ? 'আসন:' : 'Seat(s):'} <span className="font-bold text-[#E31B23]">{seatsStr}</span>
                         </div>
                       ) : null}
                     </td>
@@ -211,7 +221,7 @@ export default function AdminBookingsPage() {
                       {boardingStop && (
                         <div className="text-[11px] text-emerald-700 font-bold flex items-center gap-1 mt-0.5">
                           <MapPin size={11} className="shrink-0 text-emerald-600" />
-                          <span>Counter: {boardingStop}</span>
+                          <span>{isBn ? 'কাউন্টার:' : 'Counter:'} {boardingStop}</span>
                         </div>
                       )}
                     </td>
@@ -222,7 +232,7 @@ export default function AdminBookingsPage() {
                       </div>
                       <div className="flex items-center gap-1.5 text-gray-600 font-medium mt-0.5">
                         <Clock size={13} className="text-gray-400 shrink-0" />
-                        <span>Bus Time: <strong className="text-gray-900 font-bold">{busTime || '--'}</strong></span>
+                        <span>{isBn ? 'বাস সময়:' : 'Bus Time:'} <strong className="text-gray-900 font-bold">{busTime || '--'}</strong></span>
                       </div>
                     </td>
                     <td className="px-5 py-4 font-bold text-[#E31B23] whitespace-nowrap">
@@ -234,7 +244,7 @@ export default function AdminBookingsPage() {
                       </div>
                       {b.senderPhone ? (
                         <div className="text-[11px] text-gray-600 font-medium">
-                          Sender: <span className="font-bold text-gray-900">{b.senderPhone as string}</span>
+                          {isBn ? 'প্রেরক:' : 'Sender:'} <span className="font-bold text-gray-900">{b.senderPhone as string}</span>
                         </div>
                       ) : null}
                       {b.trxId ? (
@@ -256,12 +266,12 @@ export default function AdminBookingsPage() {
                           ? 'bg-amber-100 text-amber-800 animate-pulse'
                           : 'bg-gray-100 text-gray-700'
                       }`}>
-                        {isPending ? 'Pending Approval' : (BOOKING_STATUS_LABELS[b.status as string] || b.status as string)}
+                        {isPending ? (isBn ? 'অনুমোদনের অপেক্ষায়' : 'Pending Approval') : (BOOKING_STATUS_LABELS[b.status as string] || b.status as string)}
                       </span>
                     </td>
                     <td className="px-5 py-4 text-gray-500 text-xs font-medium whitespace-nowrap">
                       <div className="text-gray-900 font-bold">{b.createdAt ? formatDateTime(b.createdAt as string) : '--'}</div>
-                      <div className="text-[10px] text-gray-400 font-semibold uppercase">Purchase Time</div>
+                      <div className="text-[10px] text-gray-400 font-semibold uppercase">{isBn ? 'ক্রয় সময়' : 'Purchase Time'}</div>
                     </td>
                     <td className="px-5 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-2">
@@ -272,14 +282,14 @@ export default function AdminBookingsPage() {
                               disabled={actionLoading === (b.id as string)}
                               className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-all flex items-center gap-1 shadow-2xs disabled:opacity-60"
                             >
-                              Approve
+                              {isBn ? 'অনুমোদন' : 'Approve'}
                             </button>
                             <button
                               onClick={() => handleRejectPayment(b.id as string)}
                               disabled={actionLoading === (b.id as string)}
                               className="px-2 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-lg text-xs font-bold transition-all disabled:opacity-60"
                             >
-                              Reject
+                              {isBn ? 'বাতিল' : 'Reject'}
                             </button>
                           </>
                         )}
@@ -300,7 +310,7 @@ export default function AdminBookingsPage() {
               {!isLoading && bookings.length === 0 && (
                 <tr>
                   <td colSpan={9} className="px-5 py-12 text-center text-gray-400 text-sm font-medium">
-                    No bookings found matching your search.
+                    {isBn ? 'আপনার অনুসন্ধানের সাথে মিল থাকা কোনো বুকিং পাওয়া যায়নি।' : 'No bookings found matching your search.'}
                   </td>
                 </tr>
               )}
@@ -310,21 +320,21 @@ export default function AdminBookingsPage() {
 
         {/* Pagination */}
         <div className="px-5 py-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-500 font-medium">
-          <span>Showing page {page} of {Math.ceil(total / 20) || 1}</span>
+          <span>{isBn ? `পৃষ্ঠা ${page} এর ${Math.ceil(total / 20) || 1}` : `Showing page ${page} of ${Math.ceil(total / 20) || 1}`}</span>
           <div className="flex gap-2">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
               className="flex items-center gap-1 px-3 py-2 bg-gray-100 hover:bg-gray-200 disabled:opacity-50 rounded-xl text-xs font-bold transition-colors"
             >
-              <ChevronLeft size={14} /> Prev
+              <ChevronLeft size={14} /> {isBn ? 'পূর্ববর্তী' : 'Prev'}
             </button>
             <button
               onClick={() => setPage((p) => p + 1)}
               disabled={page >= Math.ceil(total / 20)}
               className="flex items-center gap-1 px-3 py-2 bg-gray-100 hover:bg-gray-200 disabled:opacity-50 rounded-xl text-xs font-bold transition-colors"
             >
-              Next <ChevronRight size={14} />
+              {isBn ? 'পরবর্তী' : 'Next'} <ChevronRight size={14} />
             </button>
           </div>
         </div>
@@ -339,13 +349,18 @@ export default function AdminBookingsPage() {
                 <RiErrorWarningFill size={22} className="text-rose-600" />
               </div>
               <div>
-                <h3 className="font-black text-[#111111] text-base">Delete Booking?</h3>
-                <p className="text-gray-500 text-xs mt-0.5">Permanent system deletion</p>
+                <h3 className="font-black text-[#111111] text-base">
+                  {isBn ? 'বুকিং ডিলিট করবেন?' : 'Delete Booking?'}
+                </h3>
+                <p className="text-gray-500 text-xs mt-0.5">
+                  {isBn ? 'স্থায়ীভাবে ডিলিট' : 'Permanent system deletion'}
+                </p>
               </div>
             </div>
             <p className="text-xs sm:text-sm text-gray-600 mb-5">
-              Are you sure you want to permanently delete booking{' '}
-              <span className="font-mono font-bold text-[#111111]">{deleteTarget.ref}</span>? All associated tickets and seat allocations will be removed.
+              {isBn
+                ? <>আপনি কি নিশ্চিত যে বুকিং <span className="font-mono font-bold text-[#111111]">{deleteTarget.ref}</span> স্থায়ীভাবে ডিলিট করতে চান?</>
+                : <>Are you sure you want to permanently delete booking <span className="font-mono font-bold text-[#111111]">{deleteTarget.ref}</span>? All associated tickets and seat allocations will be removed.</>}
             </p>
             <div className="flex gap-3">
               <button
@@ -353,7 +368,7 @@ export default function AdminBookingsPage() {
                 disabled={!!deletingId}
                 className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-colors disabled:opacity-60"
               >
-                Cancel
+                {isBn ? 'বাতিল' : 'Cancel'}
               </button>
               <button
                 onClick={handleDelete}
@@ -363,7 +378,7 @@ export default function AdminBookingsPage() {
                 {deletingId ? (
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 ) : (
-                  'Delete Forever'
+                  isBn ? 'স্থায়ীভাবে ডিলিট' : 'Delete Forever'
                 )}
               </button>
             </div>

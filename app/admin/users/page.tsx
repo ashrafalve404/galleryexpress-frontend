@@ -5,6 +5,7 @@ import { Plus, Search, Shield, User, Pencil, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
 import client from '@/lib/api/client';
 import { toast } from 'sonner';
+import { useLanguageStore } from '@/lib/store/languageStore';
 
 interface UserItem {
   id: string;
@@ -20,6 +21,8 @@ import { useAuthStore } from '@/lib/store/authStore';
 import { PermissionNotice } from '@/components/admin/PermissionNotice';
 
 export default function AdminUsersPage() {
+  const { lang } = useLanguageStore();
+  const isBn = lang === 'BN';
   const qc = useQueryClient();
   const { user } = useAuthStore();
   const isAdmin = user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN';
@@ -134,8 +137,8 @@ export default function AdminUsersPage() {
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-xl sm:text-2xl font-black text-[#111111]">Users & Staff</h1>
-          <p className="text-gray-500 text-xs sm:text-sm mt-0.5 font-medium">{users.length} registered accounts</p>
+          <h1 className="text-xl sm:text-2xl font-black text-[#111111]">{isBn ? 'ব্যবহারকারী ও কর্মী' : 'Users & Staff'}</h1>
+          <p className="text-gray-500 text-xs sm:text-sm mt-0.5 font-medium">{isBn ? `মোট ${users.length} টি নিবন্ধিত অ্যাকাউন্ট` : `${users.length} registered accounts`}</p>
         </div>
 
       {!isAdmin && (
@@ -149,7 +152,7 @@ export default function AdminUsersPage() {
           }}
           className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#E31B23] hover:bg-[#C41920] text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm active:scale-95"
         >
-          <Plus size={16} /> Add User
+          <Plus size={16} /> {isBn ? 'ব্যবহারকারী যোগ করুন' : 'Add User'}
         </button>
       </div>
 
@@ -158,7 +161,7 @@ export default function AdminUsersPage() {
           <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
-            placeholder="Search users by name, email, or phone..."
+            placeholder={isBn ? 'নাম, ইমেইল বা ফোন দিয়ে ব্যবহারকারী খুঁজুন...' : 'Search users by name, email, or phone...'}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20"
@@ -171,7 +174,7 @@ export default function AdminUsersPage() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-md w-full overflow-hidden shadow-2xl animate-fade-in-up">
             <div className="flex items-center justify-between p-5 border-b border-gray-100">
-              <h2 className="font-bold text-[#111111]">{editing ? 'Edit User' : 'Add New User'}</h2>
+              <h2 className="font-bold text-[#111111]">{editing ? (isBn ? 'ব্যবহারকারী এডিট করুন' : 'Edit User') : (isBn ? 'নতুন ব্যবহারকারী যোগ করুন' : 'Add New User')}</h2>
               <button onClick={() => setShowForm(false)} className="p-1 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600">
                 <X size={18} />
               </button>
@@ -179,7 +182,7 @@ export default function AdminUsersPage() {
             <form onSubmit={handleSubmit} className="p-5 space-y-4 max-h-[80vh] overflow-y-auto">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">First Name</label>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">{isBn ? 'নামের প্রথম অংশ' : 'First Name'}</label>
                   <input
                     type="text"
                     value={form.firstName}
@@ -190,7 +193,7 @@ export default function AdminUsersPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Last Name</label>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">{isBn ? 'নামের শেষ অংশ' : 'Last Name'}</label>
                   <input
                     type="text"
                     value={form.lastName}
@@ -203,7 +206,7 @@ export default function AdminUsersPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Phone Number</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">{isBn ? 'ফোন নম্বর' : 'Phone Number'}</label>
                 <input
                   type="tel"
                   value={form.phone}
@@ -214,7 +217,7 @@ export default function AdminUsersPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Email Address</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">{isBn ? 'ইমেইল ঠিকানা' : 'Email Address'}</label>
                 <input
                   type="email"
                   value={form.email}
@@ -227,30 +230,30 @@ export default function AdminUsersPage() {
 
               {!editing && (
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Password</label>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">{isBn ? 'পাসওয়ার্ড' : 'Password'}</label>
                   <input
                     type="password"
                     value={form.password}
                     onChange={(e) => setForm({ ...form, password: e.target.value })}
                     required
-                    placeholder="Min. 8 characters"
+                    placeholder={isBn ? 'সর্বনিম্ন ৮ অক্ষর' : 'Min. 8 characters'}
                     className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold focus:outline-none"
                   />
                 </div>
               )}
 
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Role</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">{isBn ? 'ভূমিকা' : 'Role'}</label>
                 <select
                   value={form.role}
                   onChange={(e) => setForm({ ...form, role: e.target.value })}
                   className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold focus:outline-none"
                 >
-                  <option value="SUPER_ADMIN">Super Admin</option>
-                  <option value="ADMIN">Admin</option>
-                  <option value="COUNTER_AGENT">Counter Agent</option>
-                  <option value="STAFF">Staff</option>
-                  <option value="CUSTOMER">Customer</option>
+                  <option value="SUPER_ADMIN">{isBn ? 'সুপার অ্যাডমিন' : 'Super Admin'}</option>
+                  <option value="ADMIN">{isBn ? 'অ্যাডমিন' : 'Admin'}</option>
+                  <option value="COUNTER_AGENT">{isBn ? 'কাউন্টার এজেন্ট' : 'Counter Agent'}</option>
+                  <option value="STAFF">{isBn ? 'কর্মী (Staff)' : 'Staff'}</option>
+                  <option value="CUSTOMER">{isBn ? 'গ্রাহক (Customer)' : 'Customer'}</option>
                 </select>
               </div>
 
@@ -260,14 +263,14 @@ export default function AdminUsersPage() {
                   onClick={() => setShowForm(false)}
                   className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl text-sm font-bold transition-colors"
                 >
-                  Cancel
+                  {isBn ? 'বাতিল' : 'Cancel'}
                 </button>
                 <button
                   type="submit"
                   disabled={createMutation.isPending || updateMutation.isPending}
                   className="flex-1 bg-[#E31B23] hover:bg-[#C41920] text-white py-3 rounded-xl text-sm font-bold transition-colors shadow-md"
                 >
-                  {editing ? 'Save Changes' : 'Create User'}
+                  {editing ? (isBn ? 'সংরক্ষণ করুন' : 'Save Changes') : (isBn ? 'ব্যবহারকারী তৈরি করুন' : 'Create User')}
                 </button>
               </div>
             </form>
@@ -281,7 +284,14 @@ export default function AdminUsersPage() {
           <table className="w-full text-xs sm:text-sm min-w-[650px]">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-100">
-                {['User', 'Phone', 'Email', 'Role', 'Status', 'Actions'].map((h) => (
+                {[
+                  isBn ? 'ব্যবহারকারী' : 'User',
+                  isBn ? 'ফোন' : 'Phone',
+                  isBn ? 'ইমেইল' : 'Email',
+                  isBn ? 'ভূমিকা' : 'Role',
+                  isBn ? 'স্ট্যাটাস' : 'Status',
+                  isBn ? 'অ্যাকশন' : 'Actions'
+                ].map((h) => (
                   <th key={h} className="text-left px-5 py-3.5 font-bold text-gray-500 uppercase tracking-wider text-xs">{h}</th>
                 ))}
               </tr>
@@ -309,15 +319,15 @@ export default function AdminUsersPage() {
                   </td>
                   <td className="px-5 py-4">
                     <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800">
-                      {u.status || 'ACTIVE'}
+                      {u.status || (isBn ? 'সক্রিয়' : 'ACTIVE')}
                     </span>
                   </td>
                   <td className="px-5 py-4">
                     <div className="flex gap-2">
-                      <button onClick={() => startEdit(u)} className="p-2 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors" title="Edit">
+                      <button onClick={() => startEdit(u)} className="p-2 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors" title={isBn ? 'এডিট করুন' : 'Edit'}>
                         <Pencil size={14} />
                       </button>
-                      <button onClick={() => { if (confirm('Delete user?')) deleteMutation.mutate(u.id); }} className="p-2 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 transition-colors" title="Delete">
+                      <button onClick={() => { if (confirm(isBn ? 'ব্যবহারকারী মুছে ফেলবেন?' : 'Delete user?')) deleteMutation.mutate(u.id); }} className="p-2 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 transition-colors" title={isBn ? 'মুছুন' : 'Delete'}>
                         <Trash2 size={14} />
                       </button>
                     </div>
@@ -326,7 +336,9 @@ export default function AdminUsersPage() {
               ))}
               {!isLoading && filtered.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-5 py-12 text-center text-gray-400 text-sm font-medium">No users found</td>
+                  <td colSpan={6} className="px-5 py-12 text-center text-gray-400 text-sm font-medium">
+                    {isBn ? 'কোনো ব্যবহারকারী পাওয়া যায়নি' : 'No users found'}
+                  </td>
                 </tr>
               )}
             </tbody>

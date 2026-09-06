@@ -7,11 +7,14 @@ import client from '@/lib/api/client';
 import { toast } from 'sonner';
 
 import { useAuthStore } from '@/lib/store/authStore';
+import { useLanguageStore } from '@/lib/store/languageStore';
 import { PermissionNotice } from '@/components/admin/PermissionNotice';
 
 export default function AdminSettingsPage() {
   const qc = useQueryClient();
   const { user } = useAuthStore();
+  const { lang } = useLanguageStore();
+  const isBn = lang === 'BN';
   const isAdmin = user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN';
 
   const [form, setForm] = useState({
@@ -60,12 +63,12 @@ export default function AdminSettingsPage() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['admin', 'settings'] });
-      toast.success('System settings saved successfully!');
+      toast.success(isBn ? 'সিস্টেম সেটিংস সফলভাবে সংরক্ষণ করা হয়েছে!' : 'System settings saved successfully!');
     },
     onError: (err: any) => {
       const msg = err.response?.status === 403
-        ? 'Access Denied: Only Administrators can modify system settings.'
-        : err.message || 'Failed to save settings';
+        ? (isBn ? 'অ্যাক্সেস প্রত্যাখ্যান করা হয়েছে: কেবল অ্যাডমিনিস্ট্রেটররা সেটিংস পরিবর্তন করতে পারবেন।' : 'Access Denied: Only Administrators can modify system settings.')
+        : err.message || (isBn ? 'সেটিংস সংরক্ষণ ব্যর্থ হয়েছে' : 'Failed to save settings');
       toast.error(msg);
     },
   });
@@ -73,7 +76,7 @@ export default function AdminSettingsPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isAdmin) {
-      toast.error('Access Denied: Administrator role required.');
+      toast.error(isBn ? 'অ্যাক্সেস প্রত্যাখ্যান: অ্যাডমিনিস্ট্রেটর ভূমিকা প্রয়োজন।' : 'Access Denied: Administrator role required.');
       return;
     }
     saveMutation.mutate(form);
@@ -83,24 +86,31 @@ export default function AdminSettingsPage() {
     <div className="max-w-4xl">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-xl sm:text-2xl font-black text-[#111111]">System Settings</h1>
-          <p className="text-gray-500 text-xs sm:text-sm mt-0.5 font-medium">Manage company info and operational preferences</p>
+          <h1 className="text-xl sm:text-2xl font-black text-[#111111]">{isBn ? 'সিস্টেম সেটিংস' : 'System Settings'}</h1>
+          <p className="text-gray-500 text-xs sm:text-sm mt-0.5 font-medium">
+            {isBn ? 'কোম্পানির তথ্য ও অপারেশনাল পছন্দ পরিচালনা করুন' : 'Manage company info and operational preferences'}
+          </p>
         </div>
       </div>
 
       {!isAdmin && (
-        <PermissionNotice moduleName="System Settings & Company Profile" requiredRole="Administrator" />
+        <PermissionNotice
+          moduleName={isBn ? 'সিস্টেম সেটিংস ও কোম্পানি প্রোফাইল' : 'System Settings & Company Profile'}
+          requiredRole={isBn ? 'অ্যাডমিনিস্ট্রেটর' : 'Administrator'}
+        />
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="bg-white rounded-2xl border border-gray-100 p-6 space-y-4 shadow-xs">
           <h2 className="text-base font-bold text-[#111111] flex items-center gap-2 border-b border-gray-100 pb-3">
-            <Building2 size={18} className="text-[#E31B23]" /> Company Profile
+            <Building2 size={18} className="text-[#E31B23]" /> {isBn ? 'কোম্পানি প্রোফাইল' : 'Company Profile'}
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Company Name</label>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                {isBn ? 'কোম্পানির নাম' : 'Company Name'}
+              </label>
               <input
                 type="text"
                 value={form.companyName}
@@ -110,7 +120,9 @@ export default function AdminSettingsPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Support Phone</label>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                {isBn ? 'সাপোর্ট ফোন' : 'Support Phone'}
+              </label>
               <input
                 type="tel"
                 value={form.companyPhone}
@@ -123,7 +135,9 @@ export default function AdminSettingsPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Support Email</label>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                {isBn ? 'সাপোর্ট ইমেইল' : 'Support Email'}
+              </label>
               <input
                 type="email"
                 value={form.companyEmail}
@@ -133,7 +147,9 @@ export default function AdminSettingsPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Website URL</label>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                {isBn ? 'ওয়েবসাইট ইউআরএল' : 'Website URL'}
+              </label>
               <input
                 type="url"
                 value={form.websiteUrl}
@@ -145,7 +161,9 @@ export default function AdminSettingsPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Head Office Address</label>
+            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+              {isBn ? 'প্রধান কার্যালয়ের ঠিকানা' : 'Head Office Address'}
+            </label>
             <input
               type="text"
               value={form.companyAddress}
@@ -160,9 +178,9 @@ export default function AdminSettingsPage() {
           <button
             type="submit"
             disabled={saveMutation.isPending}
-            className="flex items-center gap-2 bg-[#E31B23] hover:bg-[#C41920] text-white px-6 py-3 rounded-xl font-bold text-sm transition-all shadow-md active:scale-95"
+            className="flex items-center gap-2 bg-[#E31B23] hover:bg-[#C41920] text-white px-6 py-3 rounded-xl font-bold text-sm transition-all shadow-md active:scale-95 disabled:opacity-50"
           >
-            <Save size={16} /> Save Settings
+            <Save size={16} /> {saveMutation.isPending ? (isBn ? 'সংরক্ষণ করা হচ্ছে...' : 'Saving...') : (isBn ? 'সেটিংস সংরক্ষণ করুন' : 'Save Settings')}
           </button>
         </div>
       </form>

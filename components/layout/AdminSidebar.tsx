@@ -223,7 +223,6 @@ export function AdminSidebar() {
           </Link>
         </div>
         <div className="flex items-center gap-2">
-          <LanguageToggle />
           <Link
             href={ROUTES.HOME}
             className="text-xs bg-[#E31B23]/10 text-[#E31B23] hover:bg-[#E31B23]/20 px-3 py-1.5 rounded-full font-bold flex items-center gap-1.5 transition-colors"

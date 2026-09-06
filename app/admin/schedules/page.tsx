@@ -251,21 +251,25 @@ export default function AdminSchedulesPage() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-md w-full overflow-hidden shadow-2xl animate-fade-in-up">
             <div className="flex items-center justify-between p-5 border-b border-gray-100">
-              <h2 className="font-bold text-[#111111]">{editing ? 'Edit Schedule' : 'Add New Schedule'}</h2>
+              <h2 className="font-bold text-[#111111]">
+                {editing ? (isBn ? 'সময়সূচী সম্পাদনা করুন' : 'Edit Schedule') : (isBn ? 'নতুন সময়সূচী যোগ করুন' : 'Add New Schedule')}
+              </h2>
               <button onClick={() => setShowForm(false)} className="p-1 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600">
                 <X size={18} />
               </button>
             </div>
             <form onSubmit={handleSubmit} className="p-5 space-y-4 max-h-[80vh] overflow-y-auto">
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Select Coach</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                  {isBn ? 'কোচ সিলেক্ট করুন' : 'Select Coach'}
+                </label>
                 <select
                   value={form.coachId}
                   onChange={(e) => setForm({ ...form, coachId: e.target.value })}
                   required
                   className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold focus:outline-none"
                 >
-                  <option value="">-- Choose Coach --</option>
+                  <option value="">{isBn ? '-- কোচ নির্বাচন করুন --' : '-- Choose Coach --'}</option>
                   {coaches.map((c: { id: string; name: string; registrationNumber?: string }) => (
                     <option key={c.id} value={c.id}>
                       {c.name} ({c.registrationNumber})
@@ -275,14 +279,16 @@ export default function AdminSchedulesPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Select Route</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                  {isBn ? 'রুট সিলেক্ট করুন' : 'Select Route'}
+                </label>
                 <select
                   value={form.routeId}
                   onChange={(e) => setForm({ ...form, routeId: e.target.value })}
                   required
                   className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold focus:outline-none"
                 >
-                  <option value="">-- Choose Route --</option>
+                  <option value="">{isBn ? '-- রুট নির্বাচন করুন --' : '-- Choose Route --'}</option>
                   {routes.map((r: { id: string; origin: string; destination: string }) => (
                     <option key={r.id} value={r.id}>
                       {r.origin} → {r.destination}
@@ -292,7 +298,9 @@ export default function AdminSchedulesPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Departure Date</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                  {isBn ? 'যাত্রার তারিখ' : 'Departure Date'}
+                </label>
                 <input
                   type="date"
                   value={form.departureDate}
@@ -304,7 +312,9 @@ export default function AdminSchedulesPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Departure Time</label>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                    {isBn ? 'ছাড়ার সময়' : 'Departure Time'}
+                  </label>
                   <input
                     type="time"
                     value={form.departureTime}
@@ -314,7 +324,9 @@ export default function AdminSchedulesPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Arrival Time</label>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                    {isBn ? 'পৌঁছানোর সময়' : 'Arrival Time'}
+                  </label>
                   <input
                     type="time"
                     value={form.arrivalTime}
@@ -326,15 +338,17 @@ export default function AdminSchedulesPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Status</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                  {isBn ? 'স্ট্যাটাস' : 'Status'}
+                </label>
                 <select
                   value={form.status}
                   onChange={(e) => setForm({ ...form, status: e.target.value })}
                   className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold focus:outline-none"
                 >
-                  <option value="ACTIVE">Active</option>
-                  <option value="CANCELLED">Cancelled</option>
-                  <option value="COMPLETED">Completed</option>
+                  <option value="ACTIVE">{isBn ? 'সক্রিয়' : 'Active'}</option>
+                  <option value="CANCELLED">{isBn ? 'বাতিলকৃত' : 'Cancelled'}</option>
+                  <option value="COMPLETED">{isBn ? 'সম্পন্ন' : 'Completed'}</option>
                 </select>
               </div>
 
@@ -344,14 +358,14 @@ export default function AdminSchedulesPage() {
                   onClick={() => setShowForm(false)}
                   className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl text-sm font-bold transition-colors"
                 >
-                  Cancel
+                  {isBn ? 'বাতিল' : 'Cancel'}
                 </button>
                 <button
                   type="submit"
                   disabled={createMutation.isPending || updateMutation.isPending}
                   className="flex-1 bg-[#E31B23] hover:bg-[#C41920] text-white py-3 rounded-xl text-sm font-bold transition-colors shadow-md"
                 >
-                  {editing ? 'Save Changes' : 'Create Schedule'}
+                  {editing ? (isBn ? 'পরিবর্তন সংরক্ষণ করুন' : 'Save Changes') : (isBn ? 'সময়সূচী তৈরি করুন' : 'Create Schedule')}
                 </button>
               </div>
             </form>
@@ -364,13 +378,13 @@ export default function AdminSchedulesPage() {
         <div className="bg-[#111111] text-white px-5 py-3.5 rounded-2xl mb-4 flex flex-wrap items-center justify-between gap-4 shadow-lg animate-fade-in">
           <div className="flex items-center gap-3">
             <span className="bg-[#E31B23] text-white text-xs font-extrabold px-2.5 py-1 rounded-lg">
-              {selectedIds.length} Selected
+              {selectedIds.length} {isBn ? 'টি নির্বাচিত' : 'Selected'}
             </span>
             <button
               onClick={() => setSelectedIds([])}
               className="text-xs text-gray-400 hover:text-white underline font-semibold"
             >
-              Clear Selection
+              {isBn ? 'নির্বাচন মুছুন' : 'Clear Selection'}
             </button>
           </div>
 
@@ -379,19 +393,19 @@ export default function AdminSchedulesPage() {
               onClick={() => handleBulkStatus('ACTIVE')}
               className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold transition-all shadow-xs"
             >
-              Set Active
+              {isBn ? 'সক্রিয় করুন' : 'Set Active'}
             </button>
             <button
               onClick={() => handleBulkStatus('CANCELLED')}
               className="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-extrabold transition-all shadow-xs"
             >
-              Cancel Selected
+              {isBn ? 'বাতিল করুন' : 'Cancel Selected'}
             </button>
             <button
               onClick={handleBulkDelete}
               className="px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-extrabold transition-all shadow-xs"
             >
-              Delete Permanently
+              {isBn ? 'স্থায়ীভাবে ডিলিট' : 'Delete Permanently'}
             </button>
           </div>
         </div>
@@ -411,7 +425,14 @@ export default function AdminSchedulesPage() {
                     className="w-4 h-4 rounded text-[#E31B23] focus:ring-[#E31B23] cursor-pointer"
                   />
                 </th>
-                {['Route', 'Coach', 'Date', 'Dep — Arr', 'Status', 'Actions'].map((h) => (
+                {[
+                  isBn ? 'রুট' : 'Route',
+                  isBn ? 'কোচ' : 'Coach',
+                  isBn ? 'তারিখ' : 'Date',
+                  isBn ? 'ছাড়ার — পৌঁছানোর সময়' : 'Dep — Arr',
+                  isBn ? 'স্ট্যাটাস' : 'Status',
+                  isBn ? 'অ্যাকশন' : 'Actions',
+                ].map((h) => (
                   <th key={h} className="text-left px-5 py-3.5 font-bold text-gray-500 uppercase tracking-wider text-xs">{h}</th>
                 ))}
               </tr>
@@ -441,9 +462,9 @@ export default function AdminSchedulesPage() {
                     />
                   </td>
                   <td className="px-5 py-4 font-bold text-[#111111]">
-                    {s.route ? `${s.route.origin} → ${s.route.destination}` : 'Standard Route'}
+                    {s.route ? `${s.route.origin} → ${s.route.destination}` : (isBn ? 'স্ট্যান্ডার্ড রুট' : 'Standard Route')}
                   </td>
-                  <td className="px-5 py-4 text-gray-600 font-medium">{s.coach?.name || 'Luxury Coach'}</td>
+                  <td className="px-5 py-4 text-gray-600 font-medium">{s.coach?.name || (isBn ? 'লক্সারী কোচ' : 'Luxury Coach')}</td>
                   <td className="px-5 py-4 text-gray-600 font-semibold">{formatDate(s.departureDate)}</td>
                   <td className="px-5 py-4 font-mono font-bold text-[#111111]">
                     {formatTime(s.departureTime)} - {formatTime(s.arrivalTime)}
@@ -477,7 +498,7 @@ export default function AdminSchedulesPage() {
                         }`}
                         title={s.status === 'CANCELLED' ? 'Re-activate Trip' : 'Cancel Trip'}
                       >
-                        {s.status === 'CANCELLED' ? 'Activate Trip' : 'Cancel Trip'}
+                        {s.status === 'CANCELLED' ? (isBn ? 'সক্রিয় করুন' : 'Activate Trip') : (isBn ? 'বাতিল করুন' : 'Cancel Trip')}
                       </button>
                       <button
                         onClick={() => {
@@ -496,7 +517,9 @@ export default function AdminSchedulesPage() {
               ))}
               {!isLoading && filtered.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-5 py-12 text-center text-gray-400 text-sm font-medium">No schedules found</td>
+                  <td colSpan={6} className="px-5 py-12 text-center text-gray-400 text-sm font-medium">
+                    {isBn ? 'কোনো সময়সূচী পাওয়া যায়নি' : 'No schedules found'}
+                  </td>
                 </tr>
               )}
             </tbody>
