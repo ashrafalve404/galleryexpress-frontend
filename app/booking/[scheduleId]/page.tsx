@@ -186,7 +186,7 @@ export default function BookingPage() {
               <div className="bg-white rounded-2xl p-5 border border-gray-100">
                 <div className="flex items-center justify-between mb-5">
                   <h2 className="font-bold text-[#111111]">{isBn ? 'আপনার আসন পছন্দ করুন' : 'Select Your Seat'}</h2>
-                  <span className="text-sm text-gray-500">{isBn ? 'যেকোনো খালি আসন বাছুন' : 'Select any available seats'}</span>
+                  <span className="text-sm text-gray-500">{isBn ? 'যেকোনো খালি আসন নির্বাচন করুন' : 'Select any available seats'}</span>
                 </div>
                 {seats && seats.length > 0 ? (
                   <SeatMap
@@ -264,7 +264,7 @@ export default function BookingPage() {
                   className="w-full mt-5 bg-[#E31B23] disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed hover:bg-[#C41920] text-white font-bold py-3.5 rounded-xl transition-all hover:shadow-md text-sm"
                 >
                   {selectedSeats.length === 0
-                    ? (isBn ? 'এগিয়ে যেতে একটি আসন বেছে নিন' : 'Select a Seat to Continue')
+                    ? (isBn ? 'এগিয়ে যেতে একটি আসন নির্বাচন করুন' : 'Select a Seat to Continue')
                     : (isBn ? `${selectedSeats.length}টি আসন নিয়ে এগিয়ে যান` : `Continue with ${selectedSeats.length} Seat${selectedSeats.length > 1 ? 's' : ''}`)}
                 </button>
               </div>
