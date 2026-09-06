@@ -46,26 +46,14 @@ export default function RegisterPage() {
     setFormData(data);
     setOtpError('');
 
-    if (role === 'COUNTER_AGENT') {
-      // Counter Agent registration: No OTP required!
-      registerMutation.mutate({
-        name: data.name,
-        phone: data.phone,
-        email: data.email || undefined,
-        password: data.password,
-        role: 'COUNTER_AGENT',
-        referCode: referCode.trim() || undefined,
-      });
-    } else {
-      // Customer registration: Require mobile OTP verification first
-      sendOtpMutation.mutate(data.phone, {
-        onSuccess: () => {
-          setShowOtpModal(true);
-          setCountdown(60);
-          setCanResend(false);
-        },
-      });
-    }
+    // Send SMS OTP code to the provided phone number
+    sendOtpMutation.mutate(data.phone, {
+      onSuccess: () => {
+        setShowOtpModal(true);
+        setCountdown(60);
+        setCanResend(false);
+      },
+    });
   };
 
   const handleVerifyAndRegister = () => {
@@ -76,14 +64,15 @@ export default function RegisterPage() {
     setOtpError('');
     if (!formData) return;
 
-    // Submit customer registration with verified OTP code
+    // Submit registration with verified OTP code
     registerMutation.mutate(
       {
         name: formData.name,
         phone: formData.phone,
         email: formData.email || undefined,
         password: formData.password,
-        role: 'CUSTOMER',
+        role: role,
+        referCode: referCode.trim() || undefined,
         otp: otpCode.trim(),
       },
       {
@@ -286,8 +275,6 @@ export default function RegisterPage() {
             >
               {sendOtpMutation.isPending || registerMutation.isPending ? (
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : role === 'COUNTER_AGENT' ? (
-                (lang === 'BN' ? 'কাউন্টার এজেন্ট অ্যাকাউন্ট রেজিস্টার করুন' : 'Register Counter Agent Account')
               ) : (
                 (lang === 'BN' ? 'যাচাইকরণ ওটিপি পাঠান' : 'Send Verification OTP')
               )}
