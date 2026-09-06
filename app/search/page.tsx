@@ -12,8 +12,12 @@ import { useSearchSchedules } from '@/lib/hooks/useSchedules';
 import { getRelativeDate, formatDate } from '@/lib/utils/date';
 import { ROUTES } from '@/lib/utils/constants';
 
+import { useLanguageStore } from '@/lib/store/languageStore';
+
 function SearchResults() {
   const searchParams = useSearchParams();
+  const { lang } = useLanguageStore();
+  const isBn = lang === 'BN';
   const from = searchParams.get('from') || '';
   const to = searchParams.get('to') || '';
   const date = searchParams.get('date') || '';
@@ -23,7 +27,7 @@ function SearchResults() {
     !!(from && to && date)
   );
 
-  const displayDate = date ? getRelativeDate(date + 'T00:00:00') : '';
+  const displayDate = date ? getRelativeDate(date + 'T00:00:00', isBn) : '';
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8" suppressHydrationWarning>
@@ -36,7 +40,11 @@ function SearchResults() {
           <h1 className="text-xl font-bold text-[#111111]">
             {from} → {to}
           </h1>
-          <p className="text-sm text-gray-500">{displayDate} · {schedules?.length || 0} buses found</p>
+          <p className="text-sm text-gray-500">
+            {isBn
+              ? `${displayDate} · ${schedules?.length || 0}টি বাস পাওয়া গেছে`
+              : `${displayDate} · ${schedules?.length || 0} buses found`}
+          </p>
         </div>
       </div>
 
@@ -51,22 +59,28 @@ function SearchResults() {
       {isError && !isLoading && (
         <div className="bg-amber-50/80 border border-amber-200/80 rounded-2xl p-8 text-center max-w-xl mx-auto shadow-xs" suppressHydrationWarning>
           <AlertCircle size={36} className="text-amber-500 mx-auto mb-3" />
-          <h3 className="font-bold text-gray-900 text-lg mb-1">No schedules currently available</h3>
+          <h3 className="font-bold text-gray-900 text-lg mb-1">
+            {isBn ? 'কোনো সিডিউল পাওয়া যায়নি' : 'No schedules currently available'}
+          </h3>
           <p className="text-gray-600 text-sm mb-5 leading-relaxed">
-            We couldn't find any trips from <strong>{from}</strong> to <strong>{to}</strong> for the selected date. Try searching for a different date or route.
+            {isBn ? (
+              <>আমরা <strong>{from}</strong> থেকে <strong>{to}</strong> রুটে নির্বাচিত তারিখে কোনো ট্রিপ খুঁজে পাইনি। অন্য তারিখ বা রুট চেষ্টা করুন।</>
+            ) : (
+              <>We couldn't find any trips from <strong>{from}</strong> to <strong>{to}</strong> for the selected date. Try searching for a different date or route.</>
+            )}
           </p>
           <div className="flex justify-center gap-3">
             <button
               onClick={() => refetch()}
               className="inline-flex items-center gap-2 bg-white border border-gray-200 text-gray-700 px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-colors shadow-xs"
             >
-              <RefreshCw size={14} /> Refresh
+              <RefreshCw size={14} /> {isBn ? 'রিফ্রেশ' : 'Refresh'}
             </button>
             <Link
               href={ROUTES.HOME}
               className="inline-flex items-center gap-2 bg-[#E31B23] text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-[#C41920] transition-colors shadow-xs"
             >
-              Try Different Date
+              {isBn ? 'অন্য তারিখ বেছে নিন' : 'Try Different Date'}
             </Link>
           </div>
         </div>
@@ -76,16 +90,21 @@ function SearchResults() {
       {!isLoading && !isError && (!schedules || schedules.length === 0) && (
         <div className="bg-gray-50 border border-gray-100 rounded-2xl p-12 text-center" suppressHydrationWarning>
           <Bus size={48} className="text-gray-300 mx-auto mb-4" />
-          <h3 className="font-bold text-gray-700 text-lg mb-2">No buses found</h3>
+          <h3 className="font-bold text-gray-700 text-lg mb-2">
+            {isBn ? 'কোনো বাস পাওয়া যায়নি' : 'No buses found'}
+          </h3>
           <p className="text-gray-500 text-sm mb-6">
-            No buses available from <strong>{from}</strong> to <strong>{to}</strong> on{' '}
-            <strong>{formatDate(date + 'T00:00:00')}</strong>.
+            {isBn ? (
+              <><strong>{from}</strong> থেকে <strong>{to}</strong> রুটে <strong>{formatDate(date + 'T00:00:00')}</strong> তারিখে কোনো বাস নেই।</>
+            ) : (
+              <>No buses available from <strong>{from}</strong> to <strong>{to}</strong> on <strong>{formatDate(date + 'T00:00:00')}</strong>.</>
+            )}
           </p>
           <Link
             href={ROUTES.HOME}
             className="inline-flex items-center gap-2 bg-[#E31B23] text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-[#C41920] transition-colors"
           >
-            Try Different Dates
+            {isBn ? 'অন্য তারিখ খুঁজুন' : 'Try Different Dates'}
           </Link>
         </div>
       )}

@@ -86,14 +86,14 @@ export function getDurationMinutes(departure: string | Date, arrival: string | D
   }
 }
 
-export function getRelativeDate(date: string | Date | undefined | null): string {
+export function getRelativeDate(date: string | Date | undefined | null, isBn = false): string {
   if (!date) return '';
   try {
     const d = typeof date === 'string' ? parseISO(date) : date;
     if (isNaN(d.getTime())) return String(date);
-    if (isToday(d)) return 'Today';
-    if (isTomorrow(d)) return 'Tomorrow';
-    if (isYesterday(d)) return 'Yesterday';
+    if (isToday(d)) return isBn ? 'আজ' : 'Today';
+    if (isTomorrow(d)) return isBn ? 'আগামীকাল' : 'Tomorrow';
+    if (isYesterday(d)) return isBn ? 'গতকাল' : 'Yesterday';
     return formatDate(d, 'EEE, dd MMM');
   } catch {
     return String(date);

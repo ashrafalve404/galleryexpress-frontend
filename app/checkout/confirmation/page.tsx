@@ -11,8 +11,13 @@ import { formatCurrency } from '@/lib/utils/currency';
 import { formatTime } from '@/lib/utils/date';
 import { ROUTES } from '@/lib/utils/constants';
 
+import { useLanguageStore } from '@/lib/store/languageStore';
+
 export default function ConfirmationPage() {
   const router = useRouter();
+  const { lang } = useLanguageStore();
+  const isBn = lang === 'BN';
+
   const { bookingRef, ticketNumber, schedule, selectedSeats, passengers, getFinalAmount, reset } = useBookingStore();
 
   useEffect(() => {
@@ -36,8 +41,12 @@ export default function ConfirmationPage() {
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle2 size={44} className="text-green-500" />
             </div>
-            <h1 className="text-2xl font-black text-[#111111] mb-2">Booking Confirmed</h1>
-            <p className="text-gray-500 text-sm">Your tickets have been issued. Have a safe journey!</p>
+            <h1 className="text-2xl font-black text-[#111111] mb-2">
+              {isBn ? 'বুকিং নিশ্চিত হয়েছে' : 'Booking Confirmed'}
+            </h1>
+            <p className="text-gray-500 text-sm">
+              {isBn ? 'আপনার টিকিট ইস্যু করা হয়েছে। আপনার যাত্রা শুভ হোক!' : 'Your tickets have been issued. Have a safe journey!'}
+            </p>
           </div>
 
           {/* Booking card */}
@@ -46,13 +55,13 @@ export default function ConfirmationPage() {
             <div className="bg-[#E31B23] px-6 py-4 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-xs opacity-80">Booking Reference</div>
+                  <div className="text-xs opacity-80">{isBn ? 'বুকিং রেফারেন্স' : 'Booking Reference'}</div>
                   <div className="font-black text-xl tracking-widest">{bookingRef}</div>
                 </div>
                 <div className="text-right">
-                  <div className="text-xs opacity-80">Status</div>
+                  <div className="text-xs opacity-80">{isBn ? 'স্ট্যাটাস' : 'Status'}</div>
                   <div className="font-bold text-sm bg-green-500 px-2 py-0.5 rounded-full inline-block mt-0.5">
-                    CONFIRMED
+                    {isBn ? 'নিশ্চিতকৃত' : 'CONFIRMED'}
                   </div>
                 </div>
               </div>
@@ -85,8 +94,8 @@ export default function ConfirmationPage() {
                 {selectedSeats.map((seat, i) => (
                   <div key={seat.id} className="flex items-center justify-between text-sm">
                     <div className="text-gray-700">
-                      <span className="font-medium">{passengers[i]?.name || 'Passenger'}</span>
-                      <span className="text-gray-400 ml-2">· Seat {seat.seatNumber}</span>
+                      <span className="font-medium">{passengers[i]?.name || (isBn ? 'যাত্রী' : 'Passenger')}</span>
+                      <span className="text-gray-400 ml-2">· {isBn ? `আসন ${seat.seatNumber}` : `Seat ${seat.seatNumber}`}</span>
                     </div>
                     <span className="text-gray-600 font-medium">{formatCurrency(seat.price)}</span>
                   </div>
@@ -96,7 +105,7 @@ export default function ConfirmationPage() {
               <hr className="mb-4" />
 
               <div className="flex justify-between font-bold">
-                <span>Total Paid</span>
+                <span>{isBn ? 'মোট পরিশোধিত' : 'Total Paid'}</span>
                 <span className="text-[#E31B23]">{formatCurrency(getFinalAmount())}</span>
               </div>
             </div>
@@ -111,7 +120,7 @@ export default function ConfirmationPage() {
             {/* Ticket number */}
             {ticketNumber && (
               <div className="px-6 py-4 bg-gray-50">
-                <div className="text-xs text-gray-400 mb-1">Ticket Number</div>
+                <div className="text-xs text-gray-400 mb-1">{isBn ? 'টিকিট নম্বর' : 'Ticket Number'}</div>
                 <div className="font-mono font-bold text-[#111111]">{ticketNumber}</div>
               </div>
             )}
@@ -125,7 +134,7 @@ export default function ConfirmationPage() {
                 className="flex items-center justify-center gap-2 bg-[#111111] hover:bg-gray-800 text-white py-3 rounded-xl text-sm font-semibold transition-colors"
               >
                 <Ticket size={15} />
-                View Ticket
+                {isBn ? 'টিকিট দেখুন' : 'View Ticket'}
               </Link>
             )}
             <button
@@ -133,19 +142,19 @@ export default function ConfirmationPage() {
               className="flex items-center justify-center gap-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 py-3 rounded-xl text-sm font-semibold transition-colors"
             >
               <Download size={15} />
-              Print Ticket
+              {isBn ? 'টিকিট প্রিন্ট করুন' : 'Print Ticket'}
             </button>
             <button
               onClick={handleNewBooking}
               className="flex items-center justify-center gap-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 py-3 rounded-xl text-sm font-semibold transition-colors"
             >
               <Home size={15} />
-              New Booking
+              {isBn ? 'নতুন বুকিং' : 'New Booking'}
             </button>
           </div>
 
           <p className="text-center text-xs text-gray-400">
-            Questions? Contact us at{' '}
+            {isBn ? 'যেকোনো প্রশ্নে কল করুন:' : 'Questions? Contact us at'}{' '}
             <a href="tel:01826110036" className="text-[#E31B23]">01826-110036</a>
           </p>
         </div>

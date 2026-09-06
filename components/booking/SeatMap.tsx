@@ -1,17 +1,17 @@
-'use client';
-
 import { useState } from 'react';
 import { RiUserFill, RiBusFill, RiSubtractLine, RiCheckLine, RiSteering2Fill } from 'react-icons/ri';
 import { type Seat } from '@/lib/api/schedules';
+import { useLanguageStore } from '@/lib/store/languageStore';
 
 interface SeatProps {
   seat: Seat;
   displayLabel: string;
   isSelected: boolean;
   onToggle: (seat: Seat) => void;
+  isBn?: boolean;
 }
 
-function SeatComponent({ seat, displayLabel, isSelected, onToggle }: SeatProps) {
+function SeatComponent({ seat, displayLabel, isSelected, onToggle, isBn }: SeatProps) {
   const isUnavailable =
     seat.isBooked ||
     seat.isHeld ||
@@ -25,7 +25,7 @@ function SeatComponent({ seat, displayLabel, isSelected, onToggle }: SeatProps) 
     return (
       <div className="w-12 h-14 rounded-t-xl rounded-b-md bg-slate-100 border border-slate-200 flex flex-col items-center justify-center text-slate-500 shadow-2xs">
         <RiSteering2Fill size={20} className="text-[#E31B23]" />
-        <span className="text-[9px] font-black uppercase mt-0.5 tracking-wider">Driver</span>
+        <span className="text-[9px] font-black uppercase mt-0.5 tracking-wider">{isBn ? 'চালক' : 'Driver'}</span>
       </div>
     );
   }
@@ -34,7 +34,7 @@ function SeatComponent({ seat, displayLabel, isSelected, onToggle }: SeatProps) 
     return (
       <div className="w-12 h-14 rounded-t-xl rounded-b-md bg-slate-100 border border-slate-200 flex flex-col items-center justify-center text-slate-500 shadow-2xs">
         <RiUserFill size={18} />
-        <span className="text-[9px] font-black uppercase mt-0.5 tracking-wider">Helper</span>
+        <span className="text-[9px] font-black uppercase mt-0.5 tracking-wider">{isBn ? 'সহকারী' : 'Helper'}</span>
       </div>
     );
   }
@@ -83,9 +83,9 @@ function SeatComponent({ seat, displayLabel, isSelected, onToggle }: SeatProps) 
       title={
         isUnavailable
           ? seat.isBooked || seat.isHeld
-            ? 'Already booked'
-            : `Not available (${seat.status})`
-          : `Select Seat ${displayLabel}`
+            ? (isBn ? 'ইতিমধ্যে বুক করা হয়েছে' : 'Already booked')
+            : (isBn ? `উপলব্ধ নয় (${seat.status})` : `Not available (${seat.status})`)
+          : (isBn ? `আসন নির্বাচন করুন ${displayLabel}` : `Select Seat ${displayLabel}`)
       }
       role="button"
       tabIndex={isUnavailable ? -1 : 0}
@@ -120,6 +120,8 @@ interface SeatMapProps {
 }
 
 export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatMapProps) {
+  const { lang } = useLanguageStore();
+  const isBn = lang === 'BN';
   const [activeDeckTab, setActiveDeckTab] = useState<'LOWER' | 'UPPER'>('LOWER');
   const selectedIds = new Set(selectedSeats.map((s) => s.id));
 
@@ -216,7 +218,7 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
           <div className="w-8 h-8 rounded-full bg-slate-200 border border-slate-300 flex items-center justify-center text-[#E31B23] shadow-2xs">
             <RiSteering2Fill size={18} />
           </div>
-          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Driver</span>
+          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{isBn ? 'চালক' : 'Driver'}</span>
         </div>
       </div>
 
@@ -239,6 +241,7 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
                     displayLabel={leftCol.expected.label}
                     isSelected={selectedIds.has(leftCol.seat.id)}
                     onToggle={handleToggle}
+                    isBn={isBn}
                   />
                 ) : (
                   <div className="w-10 sm:w-11 h-14" />
@@ -248,7 +251,7 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
               {/* Center Aisle Space */}
               <div className="flex-1 flex items-center justify-center min-w-[24px]">
                 <span className="text-[9px] text-slate-300 font-black uppercase tracking-widest select-none">
-                  Aisle
+                  {isBn ? 'গলি' : 'Aisle'}
                 </span>
               </div>
 
@@ -261,6 +264,7 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
                     displayLabel={item.expected.label}
                     isSelected={selectedIds.has(item.seat.id)}
                     onToggle={handleToggle}
+                    isBn={isBn}
                   />
                 ))}
               </div>
@@ -284,7 +288,7 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
               : 'text-gray-500 hover:text-gray-900'
           }`}
         >
-          <span>Lower Deck</span>
+          <span>{isBn ? 'নিচ তলা' : 'Lower Deck'}</span>
           {lowerSelectedCount > 0 && (
             <span className="px-2 py-0.5 bg-[#E31B23] text-white text-[10px] rounded-full">
               {lowerSelectedCount}
@@ -301,7 +305,7 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
               : 'text-gray-500 hover:text-gray-900'
           }`}
         >
-          <span>Upper Deck</span>
+          <span>{isBn ? 'উপরের তলা' : 'Upper Deck'}</span>
           {upperSelectedCount > 0 && (
             <span className="px-2 py-0.5 bg-[#E31B23] text-white text-[10px] rounded-full">
               {upperSelectedCount}
@@ -313,27 +317,29 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
       {/* Mobile Single Active Deck Display */}
       <div className="lg:hidden">
         {activeDeckTab === 'LOWER'
-          ? renderSingleDeckView('Lower Deck (15 Seats)', lowerRows)
-          : renderSingleDeckView('Upper Deck (15 Seats)', upperRows)}
+          ? renderSingleDeckView(isBn ? 'নিচ তলা (১৫টি আসন)' : 'Lower Deck (15 Seats)', lowerRows)
+          : renderSingleDeckView(isBn ? 'উপরের তলা (১৫টি আসন)' : 'Upper Deck (15 Seats)', upperRows)}
       </div>
 
       {/* Desktop Side-by-Side Deck View */}
       <div className="hidden lg:grid grid-cols-2 gap-6">
-        {renderSingleDeckView('Lower Deck (15 Seats)', lowerRows)}
-        {renderSingleDeckView('Upper Deck (15 Seats)', upperRows)}
+        {renderSingleDeckView(isBn ? 'নিচ তলা (১৫টি আসন)' : 'Lower Deck (15 Seats)', lowerRows)}
+        {renderSingleDeckView(isBn ? 'উপরের তলা (১৫টি আসন)' : 'Upper Deck (15 Seats)', upperRows)}
       </div>
 
       {/* Selection Summary Bar */}
       {selectedSeats.length > 0 && (
         <div className="mt-6 p-4 bg-[#E31B23]/5 rounded-2xl border-2 border-[#E31B23]/20 flex items-center justify-between animate-fade-in-up">
           <div>
-            <span className="text-xs text-gray-500 font-bold uppercase tracking-wider block">Selected Seats</span>
+            <span className="text-xs text-gray-500 font-bold uppercase tracking-wider block">
+              {isBn ? 'নির্বাচিত আসন' : 'Selected Seats'}
+            </span>
             <p className="text-base font-black text-[#E31B23] mt-0.5">
               {selectedSeats.map((s) => s.seatNumber).join(', ')}
             </p>
           </div>
           <span className="text-xs font-black text-gray-800 bg-white px-3 py-1.5 rounded-xl border border-gray-200 shadow-2xs">
-            {selectedSeats.length} seat(s) selected
+            {isBn ? `${selectedSeats.length}টি আসন নির্বাচিত` : `${selectedSeats.length} seat(s) selected`}
           </span>
         </div>
       )}

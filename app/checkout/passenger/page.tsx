@@ -17,6 +17,8 @@ import { useCreateBooking } from '@/lib/hooks/useBooking';
 import client, { withCompany } from '@/lib/api/client';
 import { toast } from 'sonner';
 
+import { useLanguageStore } from '@/lib/store/languageStore';
+
 const passengerSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   phone: z.string().min(11, 'Enter a valid phone number'),
@@ -32,6 +34,9 @@ type FormData = z.infer<typeof formSchema>;
 
 export default function PassengerPage() {
   const router = useRouter();
+  const { lang } = useLanguageStore();
+  const isBn = lang === 'BN';
+
   const [isMounted, setIsMounted] = useState(false);
   const {
     selectedSeats,
@@ -60,12 +65,12 @@ export default function PassengerPage() {
     const isUuid = Boolean(scheduleId && strictUuidRe.test(scheduleId));
     if (!scheduleId || !isUuid || selectedSeats.length === 0) {
       if (scheduleId && !isUuid) {
-        toast.error('Your bus session stored invalid data. Resetting session...');
+        toast.error(isBn ? 'আপনার সংরক্ষিত বাসের সেশন তথ্য অকার্যকর। পুনরায় নির্বাচন করুন...' : 'Your bus session stored invalid data. Resetting session...');
         reset();
       }
       router.replace(ROUTES.HOME);
     }
-  }, [isMounted, scheduleId, selectedSeats.length, router, reset]);
+  }, [isMounted, scheduleId, selectedSeats.length, router, reset, isBn]);
 
   // Fetch counters for origin city
   const originCity = schedule?.origin || '';
@@ -98,15 +103,13 @@ export default function PassengerPage() {
 
     const isUuid = Boolean(scheduleId && strictUuidRe.test(scheduleId));
     if (!scheduleId || !isUuid) {
-      toast.error('Session expired or invalid bus schedule. Please search and select your bus again.');
+      toast.error(isBn ? 'সেশনের সময় শেষ অথবা অকার্যকর বাস শিডিউল। অনুগ্রহ করে আবার বাস খুঁজুন।' : 'Session expired or invalid bus schedule. Please search and select your bus again.');
       reset();
       router.push(ROUTES.HOME);
       return;
     }
 
     try {
-      console.log('[onSubmit] scheduleId from store:', JSON.stringify(scheduleId));
-      console.log('[onSubmit] seatIds:', selectedSeats.map((s) => s.id));
       // Create booking via API
       await createBooking.mutateAsync({
         scheduleId: scheduleId!,
@@ -156,7 +159,7 @@ export default function PassengerPage() {
             <Link href={scheduleId ? ROUTES.BOOKING(scheduleId) : ROUTES.HOME} className="p-1.5 rounded-lg hover:bg-gray-200 transition-colors">
               <ArrowLeft size={18} className="text-gray-600" />
             </Link>
-            <h1 className="font-bold text-[#111111]">Passenger Details</h1>
+            <h1 className="font-bold text-[#111111]">{isBn ? 'যাত্রীর বিবরণ' : 'Passenger Details'}</h1>
           </div>
 
           {/* Progress */}
@@ -173,9 +176,9 @@ export default function PassengerPage() {
                   <div className="w-7 h-7 bg-[#E31B23] rounded-full flex items-center justify-center text-white text-xs font-bold">
                     {index + 1}
                   </div>
-                  Passenger {index + 1}
+                  {isBn ? `যাত্রী ${index + 1}` : `Passenger ${index + 1}`}
                   <span className="text-xs font-normal text-gray-400 ml-1">
-                    (Seat {selectedSeats[index]?.seatNumber})
+                    ({isBn ? `আসন ${selectedSeats[index]?.seatNumber}` : `Seat ${selectedSeats[index]?.seatNumber}`})
                   </span>
                 </h3>
 
@@ -183,13 +186,13 @@ export default function PassengerPage() {
                   {/* Name */}
                   <div>
                     <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
-                      Full Name *
+                      {isBn ? 'পূর্ণ নাম *' : 'Full Name *'}
                     </label>
                     <div className="relative">
                       <User size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                       <input
                         {...register(`passengers.${index}.name`)}
-                        placeholder="Enter full name"
+                        placeholder={isBn ? 'আপনার পূর্ণ নাম লিখুন' : 'Enter full name'}
                         className="w-full pl-9 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23] transition-all"
                       />
                     </div>
@@ -201,7 +204,7 @@ export default function PassengerPage() {
                   {/* Phone */}
                   <div>
                     <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
-                      Phone Number *
+                      {isBn ? 'ফোন নম্বর *' : 'Phone Number *'}
                     </label>
                     <div className="relative">
                       <Phone size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -220,7 +223,7 @@ export default function PassengerPage() {
                   {/* Email */}
                   <div>
                     <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
-                      Email (optional)
+                      {isBn ? 'ইমেইল (ঐচ্ছিক)' : 'Email (optional)'}
                     </label>
                     <div className="relative">
                       <Mail size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -236,15 +239,15 @@ export default function PassengerPage() {
                   {/* Gender */}
                   <div>
                     <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
-                      Gender
+                      {isBn ? 'লিঙ্গ' : 'Gender'}
                     </label>
                     <select
                       {...register(`passengers.${index}.gender`)}
                       className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23] transition-all appearance-none"
                     >
-                      <option value="MALE">Male</option>
-                      <option value="FEMALE">Female</option>
-                      <option value="OTHER">Other</option>
+                      <option value="MALE">{isBn ? 'পুরুষ' : 'Male'}</option>
+                      <option value="FEMALE">{isBn ? 'মহিলা' : 'Female'}</option>
+                      <option value="OTHER">{isBn ? 'অন্যান্য' : 'Other'}</option>
                     </select>
                   </div>
                 </div>
@@ -256,17 +259,17 @@ export default function PassengerPage() {
               <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-2xs">
                 <h3 className="font-bold text-[#111111] mb-1 flex items-center gap-2 text-sm sm:text-base">
                   <Building2 size={18} className="text-[#E31B23]" />
-                  Select Preferred Boarding Counter / Pickup Spot
+                  {isBn ? 'পছন্দের বোর্ডিং কাউন্টার / পিকআপ স্পট নির্বাচন করুন' : 'Select Preferred Boarding Counter / Pickup Spot'}
                 </h3>
                 <p className="text-xs text-gray-500 mb-4 font-medium">
-                  Choose the counter location closest to you where you will board the bus.
+                  {isBn ? 'আপনার নিকটস্থ কাউন্টার অবস্থান পছন্দ করুন যেখানে আপনি বাসে উঠবেন।' : 'Choose the counter location closest to you where you will board the bus.'}
                 </p>
                 <select
                   value={boardingStopId || ''}
                   onChange={(e) => setStops(e.target.value || null, droppingStopId)}
                   className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm font-semibold text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20 focus:border-[#E31B23] transition-all"
                 >
-                  <option value="">-- Select Pickup Counter Location --</option>
+                  <option value="">{isBn ? '-- পিকআপ কাউন্টার অবস্থান বেছে নিন --' : '-- Select Pickup Counter Location --'}</option>
                   {cityCounters.map((c: any) => (
                     <option key={c.id} value={c.id}>
                       {c.name} — {c.location}
@@ -278,18 +281,18 @@ export default function PassengerPage() {
 
             {/* Order summary */}
             <div className="bg-white rounded-2xl p-5 border border-gray-100">
-              <h3 className="font-bold text-[#111111] mb-3">Order Summary</h3>
+              <h3 className="font-bold text-[#111111] mb-3">{isBn ? 'অর্ডার সারসংক্ষেপ' : 'Order Summary'}</h3>
               <div className="space-y-2 text-sm text-gray-600">
                 <div className="flex justify-between">
                   <span>{schedule?.origin} → {schedule?.destination}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>{selectedSeats.length} seat{selectedSeats.length > 1 ? 's' : ''} × {formatCurrency(schedule?.fare || 0)}</span>
+                  <span>{isBn ? `${selectedSeats.length}টি আসন` : `${selectedSeats.length} seat${selectedSeats.length > 1 ? 's' : ''}`} × {formatCurrency(schedule?.fare || 0)}</span>
                 </div>
               </div>
               <hr className="my-3" />
               <div className="flex justify-between font-bold text-base">
-                <span>Total Amount</span>
+                <span>{isBn ? 'সর্বমোট মূল্য' : 'Total Amount'}</span>
                 <span className="text-[#E31B23]">{formatCurrency(totalAmount)}</span>
               </div>
             </div>
@@ -302,10 +305,10 @@ export default function PassengerPage() {
               {createBooking.isPending ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Saving...
+                  {isBn ? 'সংরক্ষণ করা হচ্ছে...' : 'Saving...'}
                 </>
               ) : (
-                <>Continue to Payment <ChevronRight size={16} /></>
+                <>{isBn ? 'পেমেন্টে এগিয়ে যান' : 'Continue to Payment'} <ChevronRight size={16} /></>
               )}
             </button>
           </form>

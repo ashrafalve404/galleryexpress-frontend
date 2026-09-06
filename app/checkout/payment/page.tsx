@@ -25,6 +25,7 @@ const PROVIDER_ICONS: Record<string, React.ComponentType<{ size?: number; classN
 export default function PaymentPage() {
   const router = useRouter();
   const { lang } = useLanguageStore();
+  const isBn = lang === 'BN';
   const { bookingId, bookingRef, schedule, selectedSeats, getFinalAmount, setPaymentProvider, paymentProvider, ticketNumber } = useBookingStore();
   const confirmBooking = useConfirmBooking();
   const [paymentType, setPaymentType] = useState<'MOBILE_BANKING' | 'CASH'>('MOBILE_BANKING');
@@ -47,11 +48,11 @@ export default function PaymentPage() {
 
     if (paymentType === 'MOBILE_BANKING') {
       if (!senderPhone.trim()) {
-        toast.error('Please enter your mobile banking sender number.');
+        toast.error(isBn ? 'অনুগ্রহ করে মোবাইল ব্যাংকিং প্রেরক নম্বর লিখুন।' : 'Please enter your mobile banking sender number.');
         return;
       }
       if (!trxId.trim()) {
-        toast.error('Please enter your Transaction ID (TrxID).');
+        toast.error(isBn ? 'অনুগ্রহ করে ট্রানজেকশন আইডি (TrxID) লিখুন।' : 'Please enter your Transaction ID (TrxID).');
         return;
       }
     }
@@ -92,7 +93,7 @@ export default function PaymentPage() {
             <Link href={ROUTES.CHECKOUT_PASSENGER} className="p-1.5 rounded-lg hover:bg-gray-200 transition-colors">
               <ArrowLeft size={18} className="text-gray-600" />
             </Link>
-            <h1 className="font-bold text-[#111111]">Payment</h1>
+            <h1 className="font-bold text-[#111111]">{isBn ? 'পেমেন্ট' : 'Payment'}</h1>
           </div>
 
           {/* Progress */}
@@ -106,28 +107,32 @@ export default function PaymentPage() {
           <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6 flex items-start gap-3">
             <Timer size={18} className="text-amber-600 shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-semibold text-amber-800">Seats Reserved & Held</p>
+              <p className="text-sm font-semibold text-amber-800">{isBn ? 'আসনসমূহ সংরক্ষিত ও হোল্ড করা হয়েছে' : 'Seats Reserved & Held'}</p>
               <p className="text-xs text-amber-600 mt-0.5">
-                Booking Ref: <strong className="font-mono font-black text-amber-900">{bookingRef}</strong>. Admin will verify your payment and issue your digital boarding pass.
+                {isBn ? (
+                  <>বুকিং রেফারেন্স: <strong className="font-mono font-black text-amber-900">{bookingRef}</strong>। অ্যাডমিন আপনার পেমেন্ট নম্বর ও ট্রানজেকশন আইডি যাচাই করে বোর্ডিং পাস ইস্যু করবেন।</>
+                ) : (
+                  <>Booking Ref: <strong className="font-mono font-black text-amber-900">{bookingRef}</strong>. Admin will verify your payment and issue your digital boarding pass.</>
+                )}
               </p>
             </div>
           </div>
 
           {/* Order Summary */}
           <div className="bg-white rounded-2xl p-5 border border-gray-100 mb-6 shadow-xs">
-            <h3 className="font-bold text-[#111111] mb-3">Order Summary</h3>
+            <h3 className="font-bold text-[#111111] mb-3">{isBn ? 'অর্ডার সারসংক্ষেপ' : 'Order Summary'}</h3>
             <div className="space-y-2 text-sm text-gray-600 mb-3">
               <div className="flex justify-between">
                 <span>{schedule?.origin} → {schedule?.destination}</span>
               </div>
               <div className="flex justify-between">
-                <span>{selectedSeats.length} seat(s) ({selectedSeats.map((s) => s.seatNumber).join(', ')})</span>
+                <span>{isBn ? `${selectedSeats.length}টি আসন (${selectedSeats.map((s) => s.seatNumber).join(', ')})` : `${selectedSeats.length} seat(s) (${selectedSeats.map((s) => s.seatNumber).join(', ')})`}</span>
                 <span>{formatCurrency(totalAmount)}</span>
               </div>
             </div>
             <hr />
             <div className="flex justify-between font-bold text-base mt-3">
-              <span>Total Payable Amount</span>
+              <span>{isBn ? 'সর্বমোট প্রদেয় পরিমাণ' : 'Total Payable Amount'}</span>
               <span className="text-[#E31B23]">{formatCurrency(totalAmount)}</span>
             </div>
           </div>
@@ -135,7 +140,7 @@ export default function PaymentPage() {
           {/* Payment Method Form */}
           <form onSubmit={handleConfirm} className="space-y-6">
             <div className="bg-white rounded-2xl p-5 border border-gray-100 space-y-4 shadow-xs">
-              <h3 className="font-bold text-[#111111]">Select Payment Option</h3>
+              <h3 className="font-bold text-[#111111]">{isBn ? 'পেমেন্ট মাধ্যম বেছে নিন' : 'Select Payment Option'}</h3>
               
               <div className="grid grid-cols-2 gap-3">
                 <button
@@ -147,7 +152,7 @@ export default function PaymentPage() {
                       : 'border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100'
                   }`}
                 >
-                  <RiSmartphoneFill size={16} /> Mobile Banking
+                  <RiSmartphoneFill size={16} /> {isBn ? 'মোবাইল ব্যাংকিং' : 'Mobile Banking'}
                 </button>
                 <button
                   type="button"
@@ -158,26 +163,30 @@ export default function PaymentPage() {
                       : 'border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100'
                   }`}
                 >
-                  <RiWallet3Fill size={16} /> Cash on Counter
+                  <RiWallet3Fill size={16} /> {isBn ? 'কাউন্টারে ক্যাশ' : 'Cash on Counter'}
                 </button>
               </div>
 
               {paymentType === 'MOBILE_BANKING' ? (
                 <div className="space-y-4 pt-2">
                   <div className="bg-slate-50 border border-slate-200 p-4 rounded-2xl space-y-2 text-xs">
-                    <span className="font-bold text-gray-800 block">Admin Send Money Numbers:</span>
+                    <span className="font-bold text-gray-800 block">{isBn ? 'অ্যাডমিন সেন্ড মানি নম্বরসমূহ:' : 'Admin Send Money Numbers:'}</span>
                     <div className="flex justify-between items-center text-gray-900 font-mono font-bold bg-white p-2.5 rounded-xl border border-gray-200">
                       <span>bKash / Nagad / Rocket:</span>
                       <span className="text-[#E31B23] text-sm">01739-142959</span>
                     </div>
                     <p className="text-[11px] text-gray-500">
-                      Send <strong>{formatCurrency(totalAmount)}</strong> to the Admin Send Money number above, then submit your details below.
+                      {isBn ? (
+                        <>উপরের অ্যাডমিন সেন্ড মানি নম্বরে <strong>{formatCurrency(totalAmount)}</strong> পাঠান, তারপর নিচে আপনার পেমেন্টের তথ্য জমা দিন।</>
+                      ) : (
+                        <>Send <strong>{formatCurrency(totalAmount)}</strong> to the Admin Send Money number above, then submit your details below.</>
+                      )}
                     </p>
                   </div>
 
                   <div>
                     <label className="block text-xs font-bold text-gray-700 mb-1.5">
-                      Select Mobile Provider
+                      {isBn ? 'মোবাইল সার্ভিস প্রদানকারী বেছে নিন' : 'Select Mobile Provider'}
                     </label>
                     <div className="flex gap-2">
                       {(['BKASH', 'NAGAD', 'ROCKET'] as const).map((prov) => (
@@ -199,46 +208,46 @@ export default function PaymentPage() {
 
                   <div>
                     <label className="block text-xs font-bold text-gray-700 mb-1">
-                      Sender Phone Number <span className="text-red-500">*</span>
+                      {isBn ? 'প্রেরকের মোবাইল নম্বর' : 'Sender Phone Number'} <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
                       required
                       value={senderPhone}
                       onChange={(e) => setSenderPhone(e.target.value)}
-                      placeholder="e.g. 01712345678"
+                      placeholder={isBn ? 'যেমন: 017XXXXXXXX' : 'e.g. 01712345678'}
                       className="w-full p-3 bg-gray-50 border border-gray-300 rounded-xl text-xs font-semibold focus:border-[#E31B23] outline-none"
                     />
                   </div>
 
                   <div>
                     <label className="block text-xs font-bold text-gray-700 mb-1">
-                      Transaction ID (TrxID) <span className="text-red-500">*</span>
+                      {isBn ? 'ট্রানজেকশন আইডি (TrxID)' : 'Transaction ID (TrxID)'} <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
                       required
                       value={trxId}
                       onChange={(e) => setTrxId(e.target.value)}
-                      placeholder="e.g. BL90XK2191"
+                      placeholder={isBn ? 'যেমন: BL90XK2191' : 'e.g. BL90XK2191'}
                       className="w-full p-3 bg-gray-50 border border-gray-300 rounded-xl text-xs font-mono font-bold uppercase focus:border-[#E31B23] outline-none placeholder:normal-case placeholder:font-sans"
                     />
                   </div>
                 </div>
               ) : (
                 <div className="bg-slate-50 border border-slate-200 p-4 rounded-2xl space-y-2 text-xs">
-                  <span className="font-bold text-gray-800 block">Cash on Counter Instructions:</span>
+                  <span className="font-bold text-gray-800 block">{isBn ? 'কাউন্টারে ক্যাশ নির্দেশনা:' : 'Cash on Counter Instructions:'}</span>
                   <p className="text-gray-600 leading-relaxed">
-                    You can pay in cash at the bus counter before boarding. Please enter any payment notes if you have already deposited cash.
+                    {isBn ? 'বাসে ওঠার পূর্বে কাউন্টারে ক্যাশ পেমেন্ট করতে পারবেন। যদি ইতিমধ্যে ক্যাশ জমা দিয়ে থাকেন তবে নোটে বিবরণ লিখুন।' : 'You can pay in cash at the bus counter before boarding. Please enter any payment notes if you have already deposited cash.'}
                   </p>
                   <div>
                     <label className="block text-xs font-bold text-gray-700 mt-2 mb-1">
-                      Payment Notes / Counter Ref
+                      {isBn ? 'পেমেন্ট নোট / কাউন্টার রেফ' : 'Payment Notes / Counter Ref'}
                     </label>
                     <textarea
                       value={paymentNotes}
                       onChange={(e) => setPaymentNotes(e.target.value)}
-                      placeholder="e.g. Paying cash at Arambagh counter before departure"
+                      placeholder={isBn ? 'যেমন: বাস ছাড়ার আগে আরামবাগ কাউন্টারে ক্যাশ দেওয়া হবে' : 'e.g. Paying cash at Arambagh counter before departure'}
                       className="w-full p-3 bg-white border border-gray-300 rounded-xl text-xs focus:border-[#E31B23] outline-none"
                       rows={2}
                     />
@@ -250,7 +259,7 @@ export default function PaymentPage() {
             {/* Security note */}
             <div className="flex items-center gap-2 text-xs text-gray-400">
               <Shield size={14} />
-              <span>Payment submission is encrypted and securely sent for Admin verification.</span>
+              <span>{isBn ? 'পেমেন্টের তথ্য এনক্রিপ্ট করে সুরক্ষিতভাবে অ্যাডমিন ভেরিফিকেশনের জন্য পাঠানো হয়।' : 'Payment submission is encrypted and securely sent for Admin verification.'}</span>
             </div>
 
             <button
@@ -261,12 +270,12 @@ export default function PaymentPage() {
               {submitting ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Submitting...
+                  {isBn ? 'জমা দেওয়া হচ্ছে...' : 'Submitting...'}
                 </>
               ) : (
                 <>
                   <Shield size={16} />
-                  Submit Payment
+                  {isBn ? 'পেমেন্ট জমা দিন' : 'Submit Payment'}
                 </>
               )}
             </button>

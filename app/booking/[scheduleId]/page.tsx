@@ -14,9 +14,13 @@ import { formatCurrency } from '@/lib/utils/currency';
 import { ROUTES } from '@/lib/utils/constants';
 import type { Seat } from '@/lib/api/schedules';
 
+import { useLanguageStore } from '@/lib/store/languageStore';
+
 export default function BookingPage() {
   const { scheduleId } = useParams<{ scheduleId: string }>();
   const router = useRouter();
+  const { lang } = useLanguageStore();
+  const isBn = lang === 'BN';
 
   const { data: schedule, isLoading: scheduleLoading, isError: scheduleError } = useSchedule(scheduleId);
   const { data: seats, isLoading: seatsLoading, isError: seatsError, refetch } = useScheduleSeats(scheduleId);
@@ -99,9 +103,9 @@ export default function BookingPage() {
         <main className="flex-1 pt-20 min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <AlertCircle size={48} className="text-red-400 mx-auto mb-4" />
-            <h2 className="font-bold text-gray-800 text-xl mb-2">Failed to load</h2>
+            <h2 className="font-bold text-gray-800 text-xl mb-2">{isBn ? 'লোড করতে ব্যর্থ হয়েছে' : 'Failed to load'}</h2>
             <button onClick={() => refetch()} className="mt-4 bg-[#E31B23] text-white px-5 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 mx-auto">
-              <RefreshCw size={14} /> Retry
+              <RefreshCw size={14} /> {isBn ? 'পুনরায় চেষ্টা করুন' : 'Retry'}
             </button>
           </div>
         </main>
@@ -124,15 +128,20 @@ export default function BookingPage() {
               <ArrowLeft size={18} className="text-gray-600" />
             </Link>
             <nav className="flex items-center gap-1 text-sm text-gray-500">
-              <span>Search</span>
+              <span>{isBn ? 'খুঁজুন' : 'Search'}</span>
               <span>/</span>
-              <span className="font-medium text-[#111111]">Select Seat</span>
+              <span className="font-medium text-[#111111]">{isBn ? 'আসন নির্বাচন' : 'Select Seat'}</span>
             </nav>
           </div>
 
           {/* Progress bar */}
           <div className="flex items-center gap-1 mb-8">
-            {['Select Seat', 'Passenger Info', 'Payment', 'Confirmed'].map((s, i) => (
+            {[
+              isBn ? 'আসন পছন্দ' : 'Select Seat',
+              isBn ? 'যাত্রীর তথ্য' : 'Passenger Info',
+              isBn ? 'পেমেন্ট' : 'Payment',
+              isBn ? 'নিশ্চিতকৃত' : 'Confirmed',
+            ].map((s, i) => (
               <div key={s} className="flex items-center gap-1 flex-1">
                 <div className={`h-1.5 rounded-full flex-1 transition-colors ${i === 0 ? 'bg-[#E31B23]' : 'bg-gray-200'}`} />
                 {i < 3 && <div className={`h-1.5 w-1.5 rounded-full ${i === 0 ? 'bg-[#E31B23]' : 'bg-gray-200'}`} />}
@@ -176,8 +185,8 @@ export default function BookingPage() {
               {/* Seat Map */}
               <div className="bg-white rounded-2xl p-5 border border-gray-100">
                 <div className="flex items-center justify-between mb-5">
-                  <h2 className="font-bold text-[#111111]">Select Your Seat</h2>
-                  <span className="text-sm text-gray-500">Select any available seats</span>
+                  <h2 className="font-bold text-[#111111]">{isBn ? 'আপনার আসন পছন্দ করুন' : 'Select Your Seat'}</h2>
+                  <span className="text-sm text-gray-500">{isBn ? 'যেকোনো খালি আসন বাছুন' : 'Select any available seats'}</span>
                 </div>
                 {seats && seats.length > 0 ? (
                   <SeatMap
@@ -198,7 +207,7 @@ export default function BookingPage() {
                 ) : (
                   <div className="text-center py-10 text-gray-400">
                     <Bus size={32} className="mx-auto mb-2" />
-                    <p>No seat data available</p>
+                    <p>{isBn ? 'আসন তথ্য উপলব্ধ নয়' : 'No seat data available'}</p>
                   </div>
                 )}
               </div>
@@ -207,7 +216,7 @@ export default function BookingPage() {
             {/* Right: Summary + Continue */}
             <div className="space-y-4">
               <div className="bg-white rounded-2xl p-5 border border-gray-100 sticky top-24">
-                <h3 className="font-bold text-[#111111] mb-4">Booking Summary</h3>
+                <h3 className="font-bold text-[#111111] mb-4">{isBn ? 'বুকিং সারসংক্ষেপ' : 'Booking Summary'}</h3>
 
                 <div className="space-y-3 text-sm">
                   <div className="flex items-start gap-2 text-gray-600">
@@ -230,20 +239,20 @@ export default function BookingPage() {
                   <div className="space-y-2 mb-4">
                     {selectedSeats.map((s) => (
                       <div key={s.id} className="flex justify-between text-sm">
-                        <span className="text-gray-600">Seat {s.seatNumber}</span>
+                        <span className="text-gray-600">{isBn ? `আসন ${s.seatNumber}` : `Seat ${s.seatNumber}`}</span>
                         <span className="font-medium">{formatCurrency(s.price)}</span>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-400 text-center py-3">No seats selected yet</p>
+                  <p className="text-sm text-gray-400 text-center py-3">{isBn ? 'এখনো কোনো আসন নির্বাচন করা হয়নি' : 'No seats selected yet'}</p>
                 )}
 
                 {selectedSeats.length > 0 && (
                   <>
                     <hr className="my-3" />
                     <div className="flex justify-between font-bold text-base">
-                      <span>Total</span>
+                      <span>{isBn ? 'সর্বমোট' : 'Total'}</span>
                       <span className="text-[#E31B23]">{formatCurrency(totalAmount)}</span>
                     </div>
                   </>
@@ -255,8 +264,8 @@ export default function BookingPage() {
                   className="w-full mt-5 bg-[#E31B23] disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed hover:bg-[#C41920] text-white font-bold py-3.5 rounded-xl transition-all hover:shadow-md text-sm"
                 >
                   {selectedSeats.length === 0
-                    ? 'Select a Seat to Continue'
-                    : `Continue with ${selectedSeats.length} Seat${selectedSeats.length > 1 ? 's' : ''}`}
+                    ? (isBn ? 'এগিয়ে যেতে একটি আসন বেছে নিন' : 'Select a Seat to Continue')
+                    : (isBn ? `${selectedSeats.length}টি আসন নিয়ে এগিয়ে যান` : `Continue with ${selectedSeats.length} Seat${selectedSeats.length > 1 ? 's' : ''}`)}
                 </button>
               </div>
             </div>

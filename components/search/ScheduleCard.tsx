@@ -27,9 +27,13 @@ const AMENITY_MAP: Record<string, { icon: React.ComponentType<{ className?: stri
 
 import { withCompany } from '@/lib/api/client';
 
+import { useLanguageStore } from '@/lib/store/languageStore';
+
 export function ScheduleCard({ schedule }: ScheduleCardProps) {
   const router = useRouter();
   const setSchedule = useBookingStore((s) => s.setSchedule);
+  const { lang } = useLanguageStore();
+  const isBn = lang === 'BN';
 
   // Fetch counters from public endpoint to show boarding counter per origin city
   const { data: countersData } = useQuery({
@@ -141,7 +145,11 @@ export function ScheduleCard({ schedule }: ScheduleCardProps) {
             <div className="mx-2 w-2 h-2 rounded-full bg-[#E31B23] shrink-0" />
             <div className="flex-1 h-px bg-gray-200" />
           </div>
-          <div className="text-xs text-gray-400 font-medium">{route?.stops?.length ? `${route.stops.length} stop(s)` : 'Non-stop'}</div>
+          <div className="text-xs text-gray-400 font-medium">
+            {route?.stops?.length
+              ? (isBn ? `${route.stops.length}টি স্টপ` : `${route.stops.length} stop(s)`)
+              : (isBn ? 'সরাসরি' : 'Non-stop')}
+          </div>
         </div>
 
         <div className="text-center">
@@ -170,10 +178,10 @@ export function ScheduleCard({ schedule }: ScheduleCardProps) {
       <div className="flex items-start gap-2 mb-4 bg-blue-50/60 border border-blue-100 rounded-xl px-3 py-2">
         <Building2 size={14} className="text-blue-500 shrink-0 mt-0.5" />
         <div className="text-xs font-semibold text-blue-800 leading-snug">
-          <span className="font-bold">Main Boarding Counter: </span>
+          <span className="font-bold">{isBn ? 'প্রধান বোর্ডিং কাউন্টার: ' : 'Main Boarding Counter: '}</span>
           {boardingCounter
-            ? <>{boardingCounter.name}<span className="text-blue-600 font-medium"> · All {originCity} Pickup Counters Available</span></>
-            : <span className="text-blue-600">{originCity} Main Terminal</span>
+            ? <>{boardingCounter.name}<span className="text-blue-600 font-medium">{isBn ? ` · সকল ${originCity} পিকআপ কাউন্টার উপলব্ধ` : ` · All ${originCity} Pickup Counters Available`}</span></>
+            : <span className="text-blue-600">{isBn ? `${originCity} প্রধান টার্মিনাল` : `${originCity} Main Terminal`}</span>
           }
         </div>
       </div>
@@ -182,23 +190,25 @@ export function ScheduleCard({ schedule }: ScheduleCardProps) {
       <div className="flex items-center justify-between pt-4 border-t border-gray-50">
         <div>
           <span className={`text-sm font-bold ${seatColor}`}>
-            {seats === 0 ? 'Sold Out' : `${seats} seats left`}
+            {seats === 0
+              ? (isBn ? 'বুকিং শেষ' : 'Sold Out')
+              : (isBn ? `${seats}টি আসন খালি` : `${seats} seats left`)}
           </span>
           {seats > 0 && seats <= 10 && (
-            <div className="text-xs text-amber-600 font-semibold mt-0.5">Filling fast</div>
+            <div className="text-xs text-amber-600 font-semibold mt-0.5">{isBn ? 'দ্রুত বুক হচ্ছে' : 'Filling fast'}</div>
           )}
         </div>
         <div className="flex items-center gap-4">
           <div className="text-right">
             <div className="text-xl font-black text-[#E31B23]">{formatCurrency(price)}</div>
-            <div className="text-[11px] text-gray-400 font-medium">per seat</div>
+            <div className="text-[11px] text-gray-400 font-medium">{isBn ? 'প্রতি আসন' : 'per seat'}</div>
           </div>
           <button
             onClick={handleBook}
             disabled={seats === 0}
             className="bg-[#E31B23] disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-[#C41920] text-white font-bold px-5 py-2.5 rounded-xl flex items-center gap-1 transition-all hover:shadow-md text-sm active:scale-95"
           >
-            {seats === 0 ? 'Full' : 'Book'}
+            {seats === 0 ? (isBn ? 'পূর্ণ' : 'Full') : (isBn ? 'আসন বুক করুন' : 'Book')}
             {seats > 0 && <HiChevronRight className="text-base" />}
           </button>
         </div>
