@@ -5,6 +5,7 @@ import { Search, Ticket, ArrowRight, AlertTriangle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+import { CustomerBottomNav } from '@/components/layout/CustomerBottomNav';
 import { getBookingByRef, getBooking, cancelBooking } from '@/lib/api/bookings';
 import { formatDateTime, formatTime } from '@/lib/utils/date';
 import { formatCurrency } from '@/lib/utils/currency';
@@ -252,6 +253,7 @@ export default function MyBookingPage() {
         </div>
       </main>
 
+      <CustomerBottomNav />
       <Footer />
     </>
   );

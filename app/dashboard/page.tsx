@@ -36,6 +36,7 @@ import { BsFillTicketPerforatedFill } from 'react-icons/bs';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { UserNotificationBell } from '@/components/layout/UserNotificationBell';
+import { CustomerBottomNav } from '@/components/layout/CustomerBottomNav';
 import { useAuthStore } from '@/lib/store/authStore';
 import { useUserBookings } from '@/lib/hooks/useBooking';
 import { cancelBooking } from '@/lib/api/bookings';
@@ -574,40 +575,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Native App-Style Fixed Bottom Navbar for Mobile */}
-      <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#111111]/95 backdrop-blur-md border-t border-white/10 flex items-center justify-around py-2 px-2 shadow-2xl">
-        <Link
-          href="/"
-          className="flex flex-col items-center gap-0.5 py-1 px-3 text-gray-400 hover:text-white transition-all"
-        >
-          <RiHome5Fill size={20} />
-          <span className="text-[10px] font-bold">{lang === 'BN' ? 'হোম' : 'Home'}</span>
-        </Link>
-        
-        <Link
-          href="/"
-          className="flex flex-col items-center gap-0.5 py-1 px-3 text-gray-400 hover:text-white transition-all"
-        >
-          <RiBusFill size={20} />
-          <span className="text-[10px] font-bold">{lang === 'BN' ? 'বাস টিকিট' : 'Book Bus'}</span>
-        </Link>
-
-        <Link
-          href="/dashboard"
-          className="flex flex-col items-center gap-0.5 py-1 px-3 text-[#E31B23] font-black"
-        >
-          <BsFillTicketPerforatedFill size={20} className="text-[#E31B23]" />
-          <span className="text-[10px] font-black">{lang === 'BN' ? 'আমার ট্রিপ' : 'My Trips'}</span>
-        </Link>
-
-        <Link
-          href="/user-notifications"
-          className="flex flex-col items-center gap-0.5 py-1 px-3 text-gray-400 hover:text-white transition-all"
-        >
-          <RiNotification3Fill size={20} />
-          <span className="text-[10px] font-bold">{lang === 'BN' ? 'নোটিফিকেশন' : 'Notifications'}</span>
-        </Link>
-      </nav>
+      <CustomerBottomNav />
       <Footer />
     </>
   );

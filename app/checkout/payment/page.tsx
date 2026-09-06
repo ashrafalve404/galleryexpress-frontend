@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { useBookingStore } from '@/lib/store/bookingStore';
+import { useLanguageStore } from '@/lib/store/languageStore';
 import { useConfirmBooking } from '@/lib/hooks/useBooking';
 import { formatCurrency } from '@/lib/utils/currency';
 import { PAYMENT_PROVIDERS, ROUTES } from '@/lib/utils/constants';
@@ -23,6 +24,7 @@ const PROVIDER_ICONS: Record<string, React.ComponentType<{ size?: number; classN
 
 export default function PaymentPage() {
   const router = useRouter();
+  const { lang } = useLanguageStore();
   const { bookingId, bookingRef, schedule, selectedSeats, getFinalAmount, setPaymentProvider, paymentProvider, ticketNumber } = useBookingStore();
   const confirmBooking = useConfirmBooking();
   const [paymentType, setPaymentType] = useState<'MOBILE_BANKING' | 'CASH'>('MOBILE_BANKING');
@@ -285,39 +287,43 @@ export default function PaymentPage() {
               <RiCheckboxCircleFill size={48} className="relative z-10 text-amber-600" />
             </div>
 
-            <h2 className="text-2xl font-black text-[#111111] mb-1">Payment Submitted!</h2>
+            <h2 className="text-2xl font-black text-[#111111] mb-1">
+              {lang === 'BN' ? 'পেমেন্ট সাবমিট সফল হয়েছে!' : 'Payment Submitted!'}
+            </h2>
             <span className="inline-block px-3 py-1 bg-amber-100 text-amber-800 text-xs font-extrabold rounded-full uppercase tracking-wider mb-4">
-              Pending Admin Approval
+              {lang === 'BN' ? 'অ্যাডমিন পেমেন্ট অনুমোদনের অপেক্ষায়' : 'Pending Admin Approval'}
             </span>
             <p className="text-gray-500 text-xs sm:text-sm font-medium mb-6">
-              Thank you for booking with Ticket Dorkar. Your booking has been received and is pending Admin payment approval. Your seats remain reserved.
+              {lang === 'BN'
+                ? 'টিকিট দরকার-এ বুকিং করার জন্য ধন্যবাদ। আপনার বুকিং গ্রহণ করা হয়েছে এবং অ্যাডমিনের পেমেন্ট অনুমোদনের অপেক্ষায় রয়েছে। আপনার সিট সংরক্ষিত রাখা হয়েছে।'
+                : 'Thank you for booking with Ticket Dorkar. Your booking has been received and is pending Admin payment approval. Your seats remain reserved.'}
             </p>
 
             {/* Payment Details Card */}
             <div className="bg-gray-50 rounded-2xl p-4 text-left border border-gray-100 space-y-2.5 mb-6 text-xs sm:text-sm">
               <div className="flex justify-between items-center">
-                <span className="text-gray-500 font-medium">Booking Ref</span>
+                <span className="text-gray-500 font-medium">{lang === 'BN' ? 'বুকিং রেফারেন্স' : 'Booking Ref'}</span>
                 <span className="font-mono font-black text-[#111111]">{bookingRef}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-500 font-medium">Payment Option</span>
+                <span className="text-gray-500 font-medium">{lang === 'BN' ? 'পেমেন্ট মাধ্যম' : 'Payment Option'}</span>
                 <span className="font-bold text-gray-800">
-                  {paymentType === 'MOBILE_BANKING' ? mobileProvider : 'Cash on Counter'}
+                  {paymentType === 'MOBILE_BANKING' ? mobileProvider : (lang === 'BN' ? 'কাউন্টারে ক্যাশ' : 'Cash on Counter')}
                 </span>
               </div>
               {trxId && (
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-500 font-medium">Transaction ID</span>
+                  <span className="text-gray-500 font-medium">{lang === 'BN' ? 'ট্রানজেকশন আইডি' : 'Transaction ID'}</span>
                   <span className="font-mono font-bold text-blue-700">{trxId}</span>
                 </div>
               )}
               <div className="flex justify-between items-center">
-                <span className="text-gray-500 font-medium">Route</span>
+                <span className="text-gray-500 font-medium">{lang === 'BN' ? 'রুট' : 'Route'}</span>
                 <span className="font-bold text-gray-800">{schedule?.origin} → {schedule?.destination}</span>
               </div>
               <hr className="border-gray-200" />
               <div className="flex justify-between items-center pt-0.5">
-                <span className="font-bold text-gray-700">Total Amount</span>
+                <span className="font-bold text-gray-700">{lang === 'BN' ? 'মোট পরিমাণ' : 'Total Amount'}</span>
                 <span className="font-black text-[#E31B23] text-base">{formatCurrency(totalAmount)}</span>
               </div>
             </div>
@@ -328,7 +334,7 @@ export default function PaymentPage() {
                 onClick={() => router.push(ROUTES.DASHBOARD)}
                 className="w-full bg-[#E31B23] hover:bg-[#C41920] text-[#FFFFFF] font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 text-sm shadow-md transition-all active:scale-98"
               >
-                <RiTicket2Fill size={18} /> Go to My Bookings
+                <RiTicket2Fill size={18} /> {lang === 'BN' ? 'আমার বুকিং সমূহে যান' : 'Go to My Bookings'}
               </button>
             </div>
           </div>

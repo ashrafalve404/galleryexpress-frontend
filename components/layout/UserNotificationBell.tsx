@@ -17,6 +17,7 @@ import {
 import client from '@/lib/api/client';
 import { formatDateTime } from '@/lib/utils/date';
 import { useAuthStore } from '@/lib/store/authStore';
+import { useLanguageStore } from '@/lib/store/languageStore';
 
 export interface UserNotification {
   id: string;
@@ -30,6 +31,7 @@ export interface UserNotification {
 
 export function UserNotificationBell() {
   const { isAuthenticated } = useAuthStore();
+  const { lang } = useLanguageStore();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -112,7 +114,7 @@ export function UserNotificationBell() {
       <button
         onClick={() => setDropdownOpen(!dropdownOpen)}
         className="relative p-2 sm:p-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 transition-all shadow-2xs group flex items-center justify-center"
-        title="My Notifications"
+        title={lang === 'BN' ? 'আমার নোটিফিকেশন' : 'My Notifications'}
       >
         <RiNotification3Fill size={19} className="group-hover:scale-105 transition-transform text-gray-500 hover:text-gray-700" />
         {unreadCount > 0 && (
@@ -128,7 +130,9 @@ export function UserNotificationBell() {
           <div className="p-3 border-b border-gray-100 bg-gray-50/80 flex items-center justify-between">
             <div className="flex items-center gap-1.5">
               <RiNotification3Fill size={16} className="text-[#E31B23]" />
-              <span className="font-bold text-gray-900 text-xs sm:text-sm">Ticket Alerts</span>
+              <span className="font-bold text-gray-900 text-xs sm:text-sm">
+                {lang === 'BN' ? 'টিকিট সতর্কতা' : 'Ticket Alerts'}
+              </span>
               {unreadCount > 0 && (
                 <span className="px-1.5 py-0.5 bg-red-100 text-[#E31B23] rounded-full text-[9px] font-black">
                   {unreadCount}
@@ -140,26 +144,26 @@ export function UserNotificationBell() {
                 <button
                   onClick={markAllRead}
                   className="p-1 rounded-lg hover:bg-gray-200 text-gray-600 transition-colors text-[11px] font-bold flex items-center gap-1"
-                  title="Mark all as read"
+                  title={lang === 'BN' ? 'সব পড়া হয়েছে হিসেবে চিহ্নিত করুন' : 'Mark all as read'}
                 >
                   <RiCheckDoubleFill size={14} className="text-emerald-600" />
-                  <span className="hidden sm:inline">Read</span>
+                  <span className="hidden sm:inline">{lang === 'BN' ? 'পড়া হয়েছে' : 'Read'}</span>
                 </button>
               )}
               {notifications.length > 0 && (
                 <button
                   onClick={clearAllNotifications}
                   className="p-1 rounded-lg hover:bg-rose-100 text-rose-600 transition-colors text-[11px] font-bold flex items-center gap-1"
-                  title="Clear all notifications"
+                  title={lang === 'BN' ? 'সব নোটিফিকেশন মুছুন' : 'Clear all notifications'}
                 >
                   <RiDeleteBin6Fill size={14} />
-                  <span className="hidden sm:inline">Clear</span>
+                  <span className="hidden sm:inline">{lang === 'BN' ? 'মুছুন' : 'Clear'}</span>
                 </button>
               )}
               <button
                 onClick={() => refetch()}
                 className="p-1 rounded-lg hover:bg-gray-200 text-gray-500 transition-colors"
-                title="Refresh"
+                title={lang === 'BN' ? 'রিফ্রেশ' : 'Refresh'}
               >
                 <RiRefreshFill size={14} className={isFetching ? 'animate-spin' : ''} />
               </button>
@@ -177,7 +181,7 @@ export function UserNotificationBell() {
             {notifications.length === 0 ? (
               <div className="p-6 text-center text-gray-400 text-xs">
                 <RiCheckboxCircleFill size={26} className="mx-auto mb-2 text-emerald-500 opacity-60" />
-                <span>No active notifications</span>
+                <span>{lang === 'BN' ? 'কোনো সক্রিয় নোটিফিকেশন নেই' : 'No active notifications'}</span>
               </div>
             ) : (
               notifications.map((item) => {
@@ -205,7 +209,7 @@ export function UserNotificationBell() {
                           {item.title}
                         </Link>
                         {!isRead && (
-                          <span className="w-2 h-2 rounded-full bg-[#E31B23] shrink-0" title="Unread" />
+                          <span className="w-2 h-2 rounded-full bg-[#E31B23] shrink-0" title={lang === 'BN' ? 'অপঠিত' : 'Unread'} />
                         )}
                       </div>
                       <p className="text-[11px] text-gray-500 line-clamp-2 leading-tight mt-0.5">
@@ -223,7 +227,7 @@ export function UserNotificationBell() {
                             }}
                             className="text-[10px] font-bold text-gray-400 hover:text-emerald-600 transition-colors flex items-center gap-0.5"
                           >
-                            <RiCheckDoubleFill size={13} /> Mark read
+                            <RiCheckDoubleFill size={13} /> {lang === 'BN' ? 'পড়া হয়েছে' : 'Mark read'}
                           </button>
                         )}
                       </div>
@@ -241,14 +245,14 @@ export function UserNotificationBell() {
               onClick={() => setDropdownOpen(false)}
               className="text-gray-700 hover:text-[#E31B23] transition-colors flex items-center gap-1"
             >
-              All Notifications ({notifications.length})
+              {lang === 'BN' ? `সকল নোটিফিকেশন (${notifications.length})` : `All Notifications (${notifications.length})`}
             </Link>
             <Link
               href="/dashboard"
               onClick={() => setDropdownOpen(false)}
               className="text-[#E31B23] hover:underline flex items-center gap-1"
             >
-              My Bookings <RiArrowRightSFill size={15} />
+              {lang === 'BN' ? 'আমার বুকিং' : 'My Bookings'} <RiArrowRightSFill size={15} />
             </Link>
           </div>
         </div>
