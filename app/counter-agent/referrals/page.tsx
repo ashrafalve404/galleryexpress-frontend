@@ -17,7 +17,7 @@ export default function CounterAgentReferralPage() {
   const { lang } = useLanguageStore();
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
-  const [stats, setStats] = useState<{ referredCount: number; referralEarnings: number }>({
+  const [stats, setStats] = useState<{ referredCount: number; referralEarnings: number; referralCode?: string }>({
     referredCount: 0,
     referralEarnings: 0,
   });
@@ -29,14 +29,15 @@ export default function CounterAgentReferralPage() {
         setStats({
           referredCount: data?.referredCount || 0,
           referralEarnings: data?.referralEarnings || 0,
+          referralCode: data?.agent?.referralCode || (data as any)?.referralCode,
         });
       })
       .catch(() => {});
   }, []);
 
   const referralCode =
+    stats.referralCode ||
     (user as any)?.referralCode ||
-    (user as any)?.agentCode ||
     `AG-${user?.id?.substring(0, 6)?.toUpperCase() || 'C7D202'}`;
   const referralLink = `https://ticketdorkar.xyz/counter-agent/register?ref=${referralCode}`;
 
