@@ -127,18 +127,18 @@ export default function CounterAgentLayout({
           </div>
 
           {/* Quick Action: Sell Ticket Button */}
-          <div className="px-4 pt-4 pb-2">
+          <div className="px-3 pt-3 pb-1.5">
             <Link
               href="/counter-agent/sell-ticket"
-              className="w-full bg-[#E31B23] hover:bg-[#c9121a] text-white font-extrabold text-xs py-3 px-4 rounded-xl shadow-md flex items-center justify-center gap-2 transition-all active:scale-98 group"
+              className="w-full bg-[#E31B23] hover:bg-[#c9121a] text-white font-black text-xs sm:text-sm py-2.5 px-4 rounded-xl shadow-md flex items-center justify-center gap-2 transition-all active:scale-98 group uppercase tracking-wider"
             >
               <RiAddCircleFill size={18} className="group-hover:rotate-90 transition-transform duration-200" />
-              <span>{getTranslation(lang, 'sellNewTicket', 'Sell New Ticket')}</span>
+              <span>{getTranslation(lang, 'sellNewTicket', 'SELL NEW TICKET')}</span>
             </Link>
           </div>
 
           {/* Sequential Navigation Links */}
-          <nav className="p-4 space-y-1">
+          <nav className="px-3 py-2 space-y-0.5">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href || (item.href === '/counter-agent/profile' && pathname === '/counter-agent/kyc');
@@ -146,15 +146,15 @@ export default function CounterAgentLayout({
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-bold transition-all ${
+                  className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-[13px] font-extrabold transition-all ${
                     isActive
                       ? 'bg-[#E31B23] text-white shadow-md'
                       : 'text-gray-300 hover:text-white hover:bg-white/10'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Icon size={19} className={isActive ? 'text-white' : 'text-gray-400'} />
-                    <span>{item.label}</span>
+                    <Icon size={20} className={isActive ? 'text-white' : 'text-gray-400'} />
+                    <span className={lang === 'EN' ? 'uppercase tracking-wider' : ''}>{item.label}</span>
                   </div>
                   {item.badge ? (
                     <span className="bg-amber-400 text-black text-[9px] font-black px-1.5 py-0.5 rounded-md uppercase">
@@ -171,7 +171,7 @@ export default function CounterAgentLayout({
         <div className="p-4 border-t border-white/10 bg-[#161616] space-y-3">
           {/* Language Switcher Toggle */}
           <div className="flex items-center justify-between px-1 pb-1 border-b border-white/10">
-            <span className="text-[11px] font-extrabold text-gray-300">Language / ভাষা</span>
+            <span className="text-[11px] font-extrabold text-gray-300 uppercase">LANGUAGE / ভাষা</span>
             <LanguageToggle variant="dark" />
           </div>
 
@@ -219,7 +219,7 @@ export default function CounterAgentLayout({
           </span>
         </div>
 
-        <div className="flex items-center gap-1.5 bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 px-2.5 py-1 rounded-full text-[10px] font-black">
+        <div className="flex items-center gap-1.5 bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 px-2.5 py-1 rounded-full text-[10px] font-black uppercase">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
           {getTranslation(lang, 'active', 'Active')}
         </div>
@@ -254,10 +254,10 @@ export default function CounterAgentLayout({
                     />
                   </Link>
                   <div className="flex flex-col">
-                    <span className="text-xs font-black text-white">
+                    <span className="text-xs font-black text-white uppercase">
                       {getTranslation(lang, 'agentPortal', 'Agent Portal')}
                     </span>
-                    <div className="flex items-center gap-1 text-[10px] text-emerald-400 font-bold">
+                    <div className="flex items-center gap-1 text-[10px] text-emerald-400 font-bold uppercase">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                       {getTranslation(lang, 'active', 'Active')}
                     </div>
@@ -272,18 +272,18 @@ export default function CounterAgentLayout({
               </div>
 
               {/* Drawer Quick Action */}
-              <div className="p-4 border-b border-white/10">
+              <div className="p-3 border-b border-white/10">
                 <Link
                   href="/counter-agent/sell-ticket"
                   onClick={() => setMobileDrawerOpen(false)}
-                  className="w-full bg-[#E31B23] hover:bg-[#c9121a] text-white font-black text-xs py-3 px-4 rounded-xl shadow-md flex items-center justify-center gap-2 transition-all active:scale-98"
+                  className="w-full bg-[#E31B23] hover:bg-[#c9121a] text-white font-black text-xs sm:text-sm py-2.5 px-4 rounded-xl shadow-md flex items-center justify-center gap-2 transition-all active:scale-98 uppercase tracking-wider"
                 >
-                  <RiAddCircleFill size={18} /> {getTranslation(lang, 'sellNewTicket', 'Sell New Ticket')}
+                  <RiAddCircleFill size={18} /> {getTranslation(lang, 'sellNewTicket', 'SELL NEW TICKET')}
                 </Link>
               </div>
 
               {/* Sequential Navigation Items */}
-              <nav className="p-4 space-y-1">
+              <nav className="px-3 py-2 space-y-0.5">
                 {navItems.map((item) => {
                   const Icon = item.icon;
                   const isActive = pathname === item.href;
@@ -292,15 +292,15 @@ export default function CounterAgentLayout({
                       key={item.href}
                       href={item.href}
                       onClick={() => setMobileDrawerOpen(false)}
-                      className={`flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-bold transition-all ${
+                      className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-[13px] font-extrabold transition-all ${
                         isActive
                           ? 'bg-[#E31B23] text-white shadow-md'
                           : 'text-gray-300 hover:bg-white/10'
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <Icon size={19} className={isActive ? 'text-white' : 'text-gray-400'} />
-                        <span>{item.label}</span>
+                        <Icon size={20} className={isActive ? 'text-white' : 'text-gray-400'} />
+                        <span className={lang === 'EN' ? 'uppercase tracking-wider' : ''}>{item.label}</span>
                       </div>
                       {item.badge ? (
                         <span className="bg-amber-400 text-black text-[9px] font-black px-1.5 py-0.5 rounded-md uppercase">

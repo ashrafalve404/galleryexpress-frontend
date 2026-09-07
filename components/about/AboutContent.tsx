@@ -49,8 +49,8 @@ export function AboutContent() {
         </h1>
         <p className="text-gray-500 text-sm">
           {lang === 'BN'
-            ? 'এক দশকেরও বেশি সময় ধরে নিরাপদ, আরামদায়ক ও নির্ভরযোগ্য বাস ভ্রমণের মাধ্যমে বাংলাদেশকে যুক্ত করছি।'
-            : 'Over a decade of connecting Bangladesh with safe, comfortable, and reliable bus travel.'}
+            ? 'নিরাপদ, আরামদায়ক ও নির্ভরযোগ্য বাস ভ্রমণের মাধ্যমে বাংলাদেশকে যুক্ত করতে সর্বদা প্রতিশ্রুতিবদ্ধ।'
+            : 'Committed to connecting Bangladesh with safe, comfortable, and reliable bus travel.'}
         </p>
       </div>
 

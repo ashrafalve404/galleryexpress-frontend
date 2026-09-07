@@ -19,23 +19,26 @@ export const dictionary = {
     valuedPassenger: 'Valued Passenger',
 
     // Agent Portal Sidebar & Layout
-    dashboard: 'Dashboard',
-    myTicket: 'My Ticket',
-    myBulkTicket: 'My Bulk Ticket',
-    myCounter: 'My Counter',
-    commission: 'Commission',
-    statement: 'Statement',
-    myProfile: 'My Profile',
-    referral: 'Referral',
-    setting: 'Setting',
-    sellNewTicket: 'Sell New Ticket',
-    sellTicket: 'Sell Ticket',
-    mySoldTickets: 'My Sold Tickets',
-    myBulkOrders: 'Buy Bulk Ticket',
-    buyBulkTicket: 'Buy Bulk Ticket',
-    signOut: 'Sign Out',
-    agentUser: 'Agent User',
-    agentProfile: 'Agent Profile',
+    dashboard: 'DASHBOARD',
+    myTicket: 'MY TICKET',
+    myBulkTicket: 'BUY BULK TICKET',
+    myCounter: 'MY COUNTER',
+    commission: 'COMMISSION',
+    statement: 'STATEMENT',
+    myProfile: 'MY PROFILE',
+    referral: 'REFERRAL',
+    setting: 'SETTING',
+    sellNewTicket: 'SELL NEW TICKET',
+    sellTicket: 'SELL TICKET',
+    mySoldTickets: 'MY TICKETS',
+    myBulkOrders: 'BUY BULK TICKET',
+    buyBulkTicket: 'BUY BULK TICKET',
+    signOut: 'SIGN OUT',
+    agentUser: 'AGENT USER',
+    agentProfile: 'AGENT PROFILE',
+    agentPortal: 'AGENT PORTAL',
+    active: 'ACTIVE',
+    earn: 'EARN',
 
     // Agent Dashboard Header & Banner
     welcome: 'Welcome',
@@ -112,9 +115,6 @@ export const dictionary = {
     popularRoutes: 'Popular Routes',
 
     // General
-    earn: 'Earn',
-    agentPortal: 'Agent Portal',
-    active: 'Active',
     agentNavigation: 'Agent Navigation',
 
     // Counter Agent Page Titles & Subtitles
