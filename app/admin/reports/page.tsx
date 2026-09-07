@@ -11,7 +11,6 @@ import {
   Globe,
   Store,
   MapPin,
-  Sparkles,
 } from 'lucide-react';
 import client from '@/lib/api/client';
 import { formatCurrency } from '@/lib/utils/currency';
@@ -108,13 +107,6 @@ export default function AdminReportsPage() {
       icon: Users,
       color: 'bg-purple-500',
     },
-    {
-      label: isBn ? 'অনলাইন বনাম কাউন্টার' : 'Online vs Counter',
-      value: `${onlinePct}% / ${counterPct}%`,
-      subtext: isBn ? `${onlineBookings}টি অনলাইন / ${counterBookings}টি কাউন্টার` : `${onlineBookings} Online / ${counterBookings} Counter`,
-      icon: BarChart3,
-      color: 'bg-amber-500',
-    },
   ];
 
   return (
@@ -131,8 +123,8 @@ export default function AdminReportsPage() {
         </p>
       </div>
 
-      {/* 6 Key Stat Metrics Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+      {/* 5 Key Stat Metrics Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
         {stats.map((stat) =>
           isSummaryLoading ? (
             <div key={stat.label} className="skeleton h-32 rounded-2xl" />
@@ -213,22 +205,13 @@ export default function AdminReportsPage() {
               </div>
             </div>
           </div>
-
-          <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/80 text-xs text-slate-600 font-medium flex items-center gap-3">
-            <Sparkles size={20} className="text-[#E31B23] shrink-0" />
-            <span>
-              {isBn
-                ? 'স্বয়ংক্রিয় অ্যালগরিদম প্রতিটি টিকিট বিক্রয়ের হিসাব সরাসরি অ্যাডমিন ডাটাবেজে রেকর্ড করে।'
-                : 'All transactions are dynamically reconciled with verified ticket status logs.'}
-            </span>
-          </div>
         </div>
 
         {/* Quick Summary Highlights */}
         <div className="bg-gradient-to-br from-[#111111] via-[#1a1a1a] to-[#222222] text-white rounded-3xl p-6 sm:p-8 border border-gray-800 shadow-xl flex flex-col justify-between relative overflow-hidden">
           <div className="space-y-4 relative z-10">
             <div className="inline-flex items-center gap-2 bg-[#E31B23]/20 border border-[#E31B23]/40 px-3 py-1 rounded-full text-xs font-extrabold text-[#E31B23]">
-              <Sparkles size={14} /> {isBn ? 'লাইভ রিভিনিউ ডাটা' : 'Live Financial Summary'}
+              {isBn ? 'লাইভ রিভিনিউ ডাটা' : 'Live Financial Summary'}
             </div>
 
             <h2 className="text-xl sm:text-2xl font-black text-white leading-tight">
