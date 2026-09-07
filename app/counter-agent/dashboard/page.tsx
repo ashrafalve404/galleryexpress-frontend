@@ -166,7 +166,7 @@ export default function CounterAgentDashboard() {
           </div>
         </div>
 
-        {/* 3 Quick Action Buttons (Outside Card View) */}
+        {/* Quick Action Buttons */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-3.5">
           <Link
             href="/counter-agent/sell-ticket"
@@ -175,16 +175,10 @@ export default function CounterAgentDashboard() {
             <BsFillTicketPerforatedFill size={20} className="text-[#E31B23]" /> {getTranslation(lang, 'sellTicket', 'Sell Ticket')}
           </Link>
           <Link
-            href="/counter-agent/sold-tickets"
-            className="w-full sm:w-auto px-5 py-3.5 sm:py-3 bg-white hover:bg-gray-50 text-gray-800 border border-gray-200/90 font-extrabold text-xs sm:text-sm rounded-2xl transition-all shadow-2xs flex items-center justify-center gap-2.5 active:scale-98"
-          >
-            <BsFillTicketPerforatedFill size={20} className="text-[#E31B23]" /> {getTranslation(lang, 'mySoldTickets', 'My Sold Tickets')}
-          </Link>
-          <Link
             href="/counter-agent/buy-bulk"
             className="w-full sm:w-auto px-5 py-3.5 sm:py-3 bg-white hover:bg-gray-50 text-gray-800 border border-gray-200/90 font-extrabold text-xs sm:text-sm rounded-2xl transition-all shadow-2xs flex items-center justify-center gap-2.5 active:scale-98"
           >
-            <RiShoppingBag3Fill size={20} className="text-purple-600" /> {getTranslation(lang, 'myBulkOrders', 'My Bulk Orders')}
+            <RiShoppingBag3Fill size={20} className="text-purple-600" /> {getTranslation(lang, 'buyBulkTicket', 'Buy Bulk Ticket')}
           </Link>
         </div>
 
@@ -266,7 +260,7 @@ export default function CounterAgentDashboard() {
             </div>
           </div>
 
-          <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col justify-between col-span-2 lg:col-span-1">
+          <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
             <div className="flex items-center justify-between mb-3">
               <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-500">
                 {getTranslation(lang, 'referralEarnings', 'Referral Earnings')}
@@ -284,197 +278,6 @@ export default function CounterAgentDashboard() {
               </p>
             </div>
           </div>
-
-          <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-500">
-                {getTranslation(lang, 'totalInvested', 'Total Invested')}
-              </span>
-              <div className="p-1.5 sm:p-2 bg-red-50 text-[#E31B23] rounded-xl">
-                <RiWallet3Fill size={19} />
-              </div>
-            </div>
-            <div>
-              <div className="text-xl sm:text-3xl font-black text-gray-900">
-                {formatTk(totalInvested)}
-              </div>
-              <p className="text-[10px] sm:text-[11px] text-gray-400 mt-1">
-                {lang === 'BN' ? 'সর্বোচ্চ কমিশন সীমা (ক্যাপ)' : 'Max commission cap limit'}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Commission Progress Panel */}
-        <div className="bg-white p-6 sm:p-8 rounded-3xl border border-gray-200/80 shadow-sm space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-4">
-            <div>
-              <h2 className="text-lg font-black text-gray-900 tracking-tight flex items-center gap-2">
-                <RiWallet3Fill className="text-[#E31B23]" size={22} />
-                {lang === 'BN' ? 'কমিশন ক্যাপাসিটি ট্র্যাকার' : 'Commission Capacity Tracker'}
-              </h2>
-              <p className="text-xs text-gray-500 mt-0.5">
-                {lang === 'BN'
-                  ? 'কমিশন আপনার সর্বমোট বাল্ক টিকিট বিনিয়োগ পরিমাণের সমপরিমাণে সীমাবদ্ধ।'
-                  : 'Commission is capped at your cumulative bulk ticket investment amount.'}
-              </p>
-            </div>
-            <span
-              className={`inline-flex items-center gap-1.5 text-xs font-extrabold px-3 py-1 rounded-full ${
-                commissionStats.capReached
-                  ? 'bg-red-100 text-red-700'
-                  : 'bg-emerald-100 text-emerald-700'
-              }`}
-            >
-              {commissionStats.capReached ? (
-                <>
-                  <RiErrorWarningFill size={15} /> {lang === 'BN' ? 'কমিশন সীমা সমাপ্ত' : 'Capacity Cap Reached'}
-                </>
-              ) : (
-                <>
-                  <RiCheckboxCircleFill size={15} /> {lang === 'BN' ? 'কমিশন সক্রিয়' : 'Commission Active'}
-                </>
-              )}
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center sm:text-left">
-            <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
-              <span className="text-xs font-bold uppercase text-gray-500">
-                {lang === 'BN' ? 'এ পর্যন্ত অর্জিত' : 'Earned So Far'}
-              </span>
-              <div className="text-2xl font-extrabold text-emerald-600 mt-1">
-                {formatTk(commissionStats.totalEarned)}
-              </div>
-            </div>
-            <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
-              <span className="text-xs font-bold uppercase text-gray-500">
-                {lang === 'BN' ? 'সর্বোচ্চ সীমা' : 'Max Cap'}
-              </span>
-              <div className="text-2xl font-extrabold text-gray-900 mt-1">
-                {formatTk(commissionStats.commissionCap)}
-              </div>
-            </div>
-            <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
-              <span className="text-xs font-bold uppercase text-gray-500">
-                {lang === 'BN' ? 'অবশিষ্ট মার্জিন' : 'Remaining Margin'}
-              </span>
-              <div className="text-2xl font-extrabold text-blue-600 mt-1">
-                {formatTk(commissionStats.remainingCapacity)}
-              </div>
-            </div>
-          </div>
-
-          {/* Progress Bar */}
-          <div className="space-y-2">
-            <div className="w-full bg-gray-100 rounded-full h-3.5 overflow-hidden p-0.5 border border-gray-200">
-              <div
-                className={`h-full rounded-full transition-all duration-700 ${
-                  commissionStats.capReached
-                    ? 'bg-red-600'
-                    : 'bg-gradient-to-r from-[#E31B23] to-red-500'
-                }`}
-                style={{ width: `${capPct}%` }}
-              />
-            </div>
-            <div className="flex justify-between text-xs font-semibold text-gray-500">
-              <span>{capPct.toFixed(1)}% {lang === 'BN' ? 'ক্যাপাসিটি ব্যবহৃত' : 'Capacity Used'}</span>
-              <span>{formatTk(commissionStats.remainingCapacity)} {lang === 'BN' ? 'অবশিষ্ট ক্যাপাসিটি' : 'Remaining Capacity'}</span>
-            </div>
-          </div>
-
-          {commissionStats.capReached && (
-            <div className="p-4 bg-amber-50 border border-amber-200 text-amber-800 rounded-2xl text-xs flex items-start gap-3">
-              <RiErrorWarningFill size={18} className="shrink-0 text-amber-600 mt-0.5" />
-              <div>
-                <strong>{lang === 'BN' ? 'করণীয়:' : 'Action Required:'}</strong>{' '}
-                {lang === 'BN'
-                  ? 'আপনার কমিশন সক্ষমতার সীমা পূর্ণ হয়েছে। আপনার বিনিয়োগ সীমা বাড়াতে এবং টিকিট বুকিংয়ে ২০০ টাকা কমিশন উপার্জন চালিয়ে যেতে আরও বাল্ক টিকিট সংগ্রহ করুন।'
-                  : 'Your commission capacity limit has been reached. Purchase more bulk tickets to increase your investment cap and continue earning ৳200 commissions on bookings.'}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Bulk Orders Table */}
-        <div className="bg-white rounded-3xl border border-gray-200/80 shadow-sm overflow-hidden space-y-4">
-          <div className="p-6 pb-2 border-b border-gray-100 flex items-center justify-between">
-            <h2 className="text-lg font-black text-gray-900 tracking-tight flex items-center gap-2">
-              <BsFillTicketPerforatedFill className="text-[#E31B23]" size={22} />
-              {lang === 'BN' ? 'আমার বাল্ক অর্ডারসমূহ' : 'My Bulk Orders'}
-            </h2>
-            <span className="text-xs text-gray-500 font-bold">
-              {bulkOrders.length} {lang === 'BN' ? 'টি মোট অর্ডার' : 'total orders'}
-            </span>
-          </div>
-
-          {bulkOrders.length === 0 ? (
-            <div className="p-12 text-center text-gray-500 space-y-3">
-              <BsFillTicketPerforatedFill className="w-12 h-12 text-gray-300 mx-auto" />
-              <p className="text-sm font-medium">
-                {lang === 'BN' ? 'কোনো বাল্ক টিকিট অর্ডার পাওয়া যায়নি।' : 'No bulk ticket orders found.'}
-              </p>
-              <Link
-                href="/counter-agent/buy-bulk"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#E31B23] text-white text-xs font-bold rounded-xl"
-              >
-                <BsFillTicketPerforatedFill size={16} /> {lang === 'BN' ? 'প্রথম বাল্ক ব্যাচ কিনুন' : 'Buy First Bulk Batch'}
-              </Link>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs sm:text-sm">
-                <thead className="bg-gray-50 text-gray-500 font-bold uppercase text-[11px] border-b border-gray-200">
-                  <tr>
-                    <th className="py-3.5 px-6">{lang === 'BN' ? 'রুট' : 'Route'}</th>
-                    <th className="py-3.5 px-4">{lang === 'BN' ? 'পরিমাণ' : 'Qty'}</th>
-                    <th className="py-3.5 px-4">{lang === 'BN' ? 'অবশিষ্ট' : 'Remaining'}</th>
-                    <th className="py-3.5 px-4">{lang === 'BN' ? 'বিনিয়োগ' : 'Invested'}</th>
-                    <th className="py-3.5 px-4">{lang === 'BN' ? 'অর্জিত' : 'Earned'}</th>
-                    <th className="py-3.5 px-4">{lang === 'BN' ? 'সীমা' : 'Cap'}</th>
-                    <th className="py-3.5 px-4">{lang === 'BN' ? 'স্ট্যাটাস' : 'Status'}</th>
-                    <th className="py-3.5 px-6">{lang === 'BN' ? 'তারিখ' : 'Date'}</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100 text-gray-700">
-                  {bulkOrders.map((order: any) => (
-                    <tr key={order.id} className="hover:bg-gray-50/80 transition-colors">
-                      <td className="py-4 px-6 font-bold text-gray-900">
-                        {order.route?.origin ?? '—'} → {order.route?.destination ?? '—'}
-                      </td>
-                      <td className="py-4 px-4 font-semibold">{order.quantity}</td>
-                      <td className="py-4 px-4 font-semibold text-purple-700">
-                        {order.remainingQuantity}
-                      </td>
-                      <td className="py-4 px-4 font-bold text-gray-900">
-                        {formatTk(order.totalAmount)}
-                      </td>
-                      <td className="py-4 px-4 font-extrabold text-emerald-600">
-                        {formatTk(order.commissionEarned ?? 0)}
-                      </td>
-                      <td className="py-4 px-4 font-semibold text-gray-600">
-                        {formatTk(order.commissionCap ?? order.totalAmount)}
-                      </td>
-                      <td className="py-4 px-4">
-                        <span
-                          className={`inline-block text-[11px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${
-                            order.status === 'ACTIVE'
-                              ? 'bg-emerald-100 text-emerald-800'
-                              : 'bg-gray-100 text-gray-600'
-                          }`}
-                        >
-                          {order.status}
-                        </span>
-                      </td>
-                      <td className="py-4 px-6 text-gray-400 text-xs">
-                        {new Date(order.createdAt).toLocaleDateString('en-GB')}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
         </div>
       </div>
     );
