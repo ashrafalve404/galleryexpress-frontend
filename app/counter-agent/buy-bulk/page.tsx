@@ -50,8 +50,15 @@ export default function BuyBulkPage() {
     counterAgentApi
       .getAllowedRoutes()
       .then((r) => {
-        setRoutes(r);
-        if (r.length > 0) setRouteId(r[0].id);
+        const sorted = [...r].sort((a, b) => {
+          const aDhaka = (a.origin || '').toLowerCase().includes('dhaka');
+          const bDhaka = (b.origin || '').toLowerCase().includes('dhaka');
+          if (aDhaka && !bDhaka) return -1;
+          if (!aDhaka && bDhaka) return 1;
+          return 0;
+        });
+        setRoutes(sorted);
+        if (sorted.length > 0) setRouteId(sorted[0].id);
       })
       .catch(() => setError(lang === 'BN' ? 'অনুমোদিত রুটসমূহ লোড করতে ব্যর্থ হয়েছে।' : 'Failed to load eligible routes.'))
       .finally(() => setRoutesLoading(false));
