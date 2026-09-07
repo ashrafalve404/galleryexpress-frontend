@@ -44,6 +44,8 @@ const rawSlides = [
 export function HeroSlider() {
   const { lang } = useLanguageStore();
   const [current, setCurrent] = useState(0);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
   const slides = rawSlides.map((s) => ({
     image: s.image,
@@ -62,10 +64,39 @@ export function HeroSlider() {
   const prevSlide = () => setCurrent((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
   const nextSlide = () => setCurrent((prev) => (prev + 1) % slides.length);
 
+  // Touch Swipe Handlers for Mobile Manual Sliding
+  const minSwipeDistance = 40;
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    if (distance > minSwipeDistance) {
+      // Swiped Left -> Next Slide
+      nextSlide();
+    } else if (distance < -minSwipeDistance) {
+      // Swiped Right -> Previous Slide
+      prevSlide();
+    }
+  };
+
   return (
     <section className="relative z-20 pt-16 sm:pt-20 bg-gray-50">
       {/* 1. Dedicated Banner Carousel Block (Full Banner Image View on Mobile) */}
-      <div className="relative w-full aspect-[16/8] sm:aspect-auto sm:h-[400px] md:h-[520px] lg:h-[600px] xl:h-[680px] 2xl:h-[740px] overflow-hidden">
+      <div
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        className="relative w-full aspect-[16/8] sm:aspect-auto sm:h-[400px] md:h-[520px] lg:h-[600px] xl:h-[680px] 2xl:h-[740px] overflow-hidden touch-pan-y"
+      >
         {slides.map((s, index) => (
           <div
             key={index}
@@ -96,10 +127,10 @@ export function HeroSlider() {
           </div>
         ))}
 
-        {/* Navigation Arrows */}
+        {/* Navigation Arrows (Hidden on Mobile < sm) */}
         <button
           onClick={prevSlide}
-          className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-30 w-7 h-7 sm:w-10 sm:h-10 rounded-full bg-black/40 hover:bg-[#E31B23] text-white backdrop-blur-md flex items-center justify-center transition-all border border-white/20 shadow-lg"
+          className="hidden sm:flex absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-30 w-7 h-7 sm:w-10 sm:h-10 rounded-full bg-black/40 hover:bg-[#E31B23] text-white backdrop-blur-md items-center justify-center transition-all border border-white/20 shadow-lg"
           aria-label="Previous Slide"
         >
           <HiChevronLeft size={18} />
@@ -107,7 +138,7 @@ export function HeroSlider() {
 
         <button
           onClick={nextSlide}
-          className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-30 w-7 h-7 sm:w-10 sm:h-10 rounded-full bg-black/40 hover:bg-[#E31B23] text-white backdrop-blur-md flex items-center justify-center transition-all border border-white/20 shadow-lg"
+          className="hidden sm:flex absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-30 w-7 h-7 sm:w-10 sm:h-10 rounded-full bg-black/40 hover:bg-[#E31B23] text-white backdrop-blur-md items-center justify-center transition-all border border-white/20 shadow-lg"
           aria-label="Next Slide"
         >
           <HiChevronRight size={18} />

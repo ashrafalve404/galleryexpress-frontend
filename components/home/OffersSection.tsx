@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 import { HiChevronLeft, HiChevronRight } from 'react-icons/hi';
@@ -11,6 +11,8 @@ import { getTranslation } from '@/lib/utils/translations';
 export function OffersSection() {
   const { lang } = useLanguageStore();
   const [current, setCurrent] = useState(0);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
   const { data: offersData, isLoading } = useQuery({
     queryKey: ['public', 'offers'],
@@ -20,18 +22,47 @@ export function OffersSection() {
 
   const offers: OfferItem[] = Array.isArray(offersData) ? offersData : [];
 
+  useEffect(() => {
+    if (offers.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % offers.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [offers.length]);
+
+  // Touch Swipe Handlers for Mobile Manual Sliding
+  const minSwipeDistance = 40;
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    if (distance > minSwipeDistance) {
+      // Swiped Left -> Next Slide
+      setCurrent((prev) => (prev + 1) % (offers.length || 1));
+    } else if (distance < -minSwipeDistance) {
+      // Swiped Right -> Previous Slide
+      setCurrent((prev) => (prev === 0 ? (offers.length || 1) - 1 : prev - 1));
+    }
+  };
+
   // Hide the entire section if loading is complete and there are no active offer posters
   if (!isLoading && offers.length === 0) {
     return null;
   }
 
-  const prevSlide = () => setCurrent((prev) => (prev === 0 ? offers.length - 1 : prev - 1));
-  const nextSlide = () => setCurrent((prev) => (prev + 1) % (offers.length || 1));
-
   return (
     <section className="py-16 bg-white" suppressHydrationWarning>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" suppressHydrationWarning>
-        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 sm:mb-10">
+        <div className="flex flex-col items-center sm:items-start justify-between mb-8 sm:mb-10 text-center sm:text-left">
           <div>
             <h2 className="text-2xl sm:text-3xl font-black text-[#111111]">
               {getTranslation(lang, 'specialOffers', 'Special Offers')}
@@ -42,8 +73,13 @@ export function OffersSection() {
           </div>
         </div>
 
-        {/* ========== MOBILE SLIDER (< sm) WITH HORIZONTAL SLIDE EFFECT ========== */}
-        <div className="sm:hidden relative w-full aspect-square overflow-hidden rounded-3xl shadow-lg border border-gray-100 bg-gray-50">
+        {/* ========== MOBILE SLIDER (< sm) WITH HORIZONTAL TOUCH SWIPE & SLIDE EFFECT ========== */}
+        <div
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+          className="sm:hidden relative w-full aspect-square overflow-hidden rounded-3xl shadow-lg border border-gray-100 bg-gray-50 touch-pan-y"
+        >
           <div
             className="flex w-full h-full transition-transform duration-500 ease-out"
             style={{ transform: `translateX(-${current * 100}%)` }}
@@ -61,38 +97,20 @@ export function OffersSection() {
             ))}
           </div>
 
-          {/* Navigation Arrows */}
+          {/* Dot Indicators */}
           {offers.length > 1 && (
-            <>
-              <button
-                onClick={prevSlide}
-                className="absolute left-3 top-1/2 -translate-y-1/2 z-30 w-8 h-8 rounded-full bg-black/30 hover:bg-black/60 text-white backdrop-blur-xs flex items-center justify-center border border-white/20 transition-all active:scale-90"
-                aria-label="Previous Offer Poster"
-              >
-                <HiChevronLeft size={18} />
-              </button>
-              <button
-                onClick={nextSlide}
-                className="absolute right-3 top-1/2 -translate-y-1/2 z-30 w-8 h-8 rounded-full bg-black/30 hover:bg-black/60 text-white backdrop-blur-xs flex items-center justify-center border border-white/20 transition-all active:scale-90"
-                aria-label="Next Offer Poster"
-              >
-                <HiChevronRight size={18} />
-              </button>
-
-              {/* Dot Indicators */}
-              <div className="absolute top-3 right-3 z-30 flex items-center gap-1.5 bg-black/30 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10">
-                {offers.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setCurrent(i)}
-                    className={`h-1.5 rounded-full transition-all ${
-                      i === current ? 'w-5 bg-[#E31B23]' : 'w-2 bg-white/60'
-                    }`}
-                    aria-label={`Go to offer poster ${i + 1}`}
-                  />
-                ))}
-              </div>
-            </>
+            <div className="absolute top-3 right-3 z-30 flex items-center gap-1.5 bg-black/30 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10">
+              {offers.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrent(i)}
+                  className={`h-1.5 rounded-full transition-all ${
+                    i === current ? 'w-5 bg-[#E31B23]' : 'w-2 bg-white/60'
+                  }`}
+                  aria-label={`Go to offer poster ${i + 1}`}
+                />
+              ))}
+            </div>
           )}
         </div>
 

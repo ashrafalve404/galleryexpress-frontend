@@ -188,7 +188,7 @@ export default function AdminOffersPage() {
         <div>
           <h1 className="text-xl sm:text-2xl font-black text-[#111111]">{isBn ? 'অফার পোস্টার ব্যবস্থাপনা' : 'Offer Posters Management'}</h1>
           <p className="text-gray-500 text-xs sm:text-sm mt-1 font-medium">
-            {isBn ? 'ওয়েবসাইটে প্রদর্শন করার জন্য ১:১ অনুপাতের প্রমোশনাল পোস্টার ইমেজ (WebP, PNG, JPG) আপলোড করুন' : 'Upload 1:1 aspect ratio promotional poster images (WebP, PNG, JPG) to display on the public website'}
+            {isBn ? 'ওয়েবসাইটে প্রদর্শন করার জন্য 1:1 অনুপাতের প্রমোশনাল পোস্টার ইমেজ (WebP, PNG, JPG) আপলোড করুন' : 'Upload 1:1 aspect ratio promotional poster images (WebP, PNG, JPG) to display on the public website'}
           </p>
         </div>
 
@@ -233,7 +233,7 @@ export default function AdminOffersPage() {
         <div className="bg-white border border-gray-100 rounded-2xl p-12 text-center max-w-md mx-auto">
           <Sparkles size={40} className="text-gray-300 mx-auto mb-3" />
           <h3 className="font-bold text-gray-800 text-lg mb-1">{isBn ? 'কোনো পোস্টার পাওয়া যায়নি' : 'No Posters Found'}</h3>
-          <p className="text-gray-500 text-sm mb-5">{isBn ? '১:১ অনুপাতের ছবি আপলোড করতে "নতুন পোস্টার আপলোড করুন" এ ক্লিক করুন।' : 'Click "Upload New Poster" to upload a 1:1 image.'}</p>
+          <p className="text-gray-500 text-sm mb-5">{isBn ? '1:1 অনুপাতের ছবি আপলোড করতে "নতুন পোস্টার আপলোড করুন" এ ক্লিক করুন।' : 'Click "Upload New Poster" to upload a 1:1 image.'}</p>
           <button
             onClick={openCreateModal}
             className="inline-flex items-center gap-2 bg-[#E31B23] text-white px-4 py-2 rounded-xl text-sm font-bold"
@@ -314,7 +314,7 @@ export default function AdminOffersPage() {
           <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-gray-100 my-8">
             <div className="flex items-center justify-between pb-4 border-b border-gray-100 mb-5">
               <h2 className="text-lg font-black text-gray-900">
-                {editingOffer ? (isBn ? 'অফার পোস্টার এডিট করুন' : 'Edit Offer Poster') : (isBn ? '১:১ অফার পোস্টার আপলোড করুন' : 'Upload 1:1 Offer Poster')}
+                {editingOffer ? (isBn ? 'অফার পোস্টার এডিট করুন' : 'Edit Offer Poster') : (isBn ? '1:1 অফার পোস্টার আপলোড করুন' : 'Upload 1:1 Offer Poster')}
               </h2>
               <button
                 onClick={closeModal}

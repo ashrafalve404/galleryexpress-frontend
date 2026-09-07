@@ -100,6 +100,8 @@ function formatMinutes(mins?: number): string {
 export function PopularDestinations() {
   const { lang } = useLanguageStore();
   const [current, setCurrent] = useState(0);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -110,6 +112,30 @@ export function PopularDestinations() {
 
   const prevSlide = () => setCurrent((prev) => (prev === 0 ? destinations.length - 1 : prev - 1));
   const nextSlide = () => setCurrent((prev) => (prev + 1) % destinations.length);
+
+  // Touch Swipe Handlers for Mobile Manual Sliding
+  const minSwipeDistance = 40;
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    if (distance > minSwipeDistance) {
+      // Swiped Left -> Next Slide
+      nextSlide();
+    } else if (distance < -minSwipeDistance) {
+      // Swiped Right -> Previous Slide
+      prevSlide();
+    }
+  };
 
   return (
     <section className="py-16 bg-white" suppressHydrationWarning>
@@ -125,8 +151,13 @@ export function PopularDestinations() {
           </div>
         </div>
 
-        {/* ========== MOBILE MODE SLIDER (< sm) WITH HORIZONTAL TRANSLATE SLIDE EFFECT ========== */}
-        <div className="sm:hidden relative w-full overflow-hidden rounded-2xl shadow-lg border border-gray-100">
+        {/* ========== MOBILE MODE SLIDER (< sm) WITH HORIZONTAL TOUCH SWIPE SLIDE EFFECT ========== */}
+        <div
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+          className="sm:hidden relative w-full overflow-hidden rounded-2xl shadow-lg border border-gray-100 touch-pan-y"
+        >
           <div
             className="flex w-full transition-transform duration-500 ease-out"
             style={{ transform: `translateX(-${current * 100}%)` }}
@@ -181,22 +212,6 @@ export function PopularDestinations() {
               );
             })}
           </div>
-
-          {/* Mobile Navigation Arrows */}
-          <button
-            onClick={prevSlide}
-            className="absolute left-2.5 top-1/2 -translate-y-1/2 z-30 w-7 h-7 rounded-full bg-black/25 hover:bg-black/50 text-white/80 hover:text-white backdrop-blur-xs flex items-center justify-center border border-white/15 transition-all active:scale-90"
-            aria-label="Previous Destination"
-          >
-            <HiChevronLeft size={16} />
-          </button>
-          <button
-            onClick={nextSlide}
-            className="absolute right-2.5 top-1/2 -translate-y-1/2 z-30 w-7 h-7 rounded-full bg-black/25 hover:bg-black/50 text-white/80 hover:text-white backdrop-blur-xs flex items-center justify-center border border-white/15 transition-all active:scale-90"
-            aria-label="Next Destination"
-          >
-            <HiChevronRight size={16} />
-          </button>
 
           {/* Slide Dot Indicators */}
           <div className="absolute top-3 right-3 z-30 flex items-center gap-1.5">

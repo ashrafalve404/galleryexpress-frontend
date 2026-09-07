@@ -344,18 +344,18 @@ export default function DashboardPage() {
           )}
 
           {/* Filter Tabs & History Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6 text-center sm:text-left">
             <div>
               <h2 className="text-lg sm:text-xl font-black text-[#111111]">
                 {lang === 'BN' ? 'আমার বুকিং ইতিহাস' : 'My Booking History'}
               </h2>
-              <p className="text-xs text-gray-500 font-medium">
+              <p className="text-xs text-gray-500 font-medium mt-0.5">
                 {lang === 'BN' ? 'আপনার সকল বাস বুকিং পরিচালনা ও দেখুন।' : 'Manage and view all your bus reservations.'}
               </p>
             </div>
 
             {/* Filter Tabs */}
-            <div className="flex bg-white p-1 rounded-xl border border-gray-200 shadow-2xs overflow-x-auto scrollbar-hide self-start sm:self-auto max-w-full">
+            <div className="flex bg-white p-1 rounded-xl border border-gray-200 shadow-2xs overflow-x-auto scrollbar-hide self-center sm:self-auto max-w-full justify-center">
               {[
                 { id: 'all', label: lang === 'BN' ? 'সকল ট্রিপ' : 'All Trips' },
                 { id: 'upcoming', label: lang === 'BN' ? 'আসন্ন' : 'Upcoming' },
