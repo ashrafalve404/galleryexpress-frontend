@@ -1,22 +1,38 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   RiFileCopyFill,
   RiCheckFill,
   RiGroupFill,
   RiCoinFill,
-  RiAwardFill,
 } from 'react-icons/ri';
 import { toast } from 'sonner';
 import { useAuthStore } from '@/lib/store/authStore';
 import { useLanguageStore } from '@/lib/store/languageStore';
+import { counterAgentApi } from '@/lib/api/counterAgent';
 
 export default function CounterAgentReferralPage() {
   const { user } = useAuthStore();
   const { lang } = useLanguageStore();
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
+  const [stats, setStats] = useState<{ referredCount: number; referralEarnings: number }>({
+    referredCount: 0,
+    referralEarnings: 0,
+  });
+
+  useEffect(() => {
+    counterAgentApi
+      .getDashboardStats()
+      .then((data) => {
+        setStats({
+          referredCount: data?.referredCount || 0,
+          referralEarnings: data?.referralEarnings || 0,
+        });
+      })
+      .catch(() => {});
+  }, []);
 
   const referralCode =
     (user as any)?.referralCode ||
@@ -109,27 +125,26 @@ export default function CounterAgentReferralPage() {
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-xs">
-            <div className="text-gray-400 text-xs font-bold uppercase mb-1 flex items-center gap-1.5">
-              <RiGroupFill size={16} className="text-blue-500" /> {lang === 'BN' ? 'মোট রেফারকৃত এজেন্ট' : 'Total Referred Agents'}
+        {/* Live Referral Stats Grid (2 Cards) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="bg-white p-6 rounded-2xl border border-gray-200/80 shadow-xs flex flex-col justify-between">
+            <div className="text-gray-500 text-xs font-bold uppercase mb-2 flex items-center gap-2">
+              <RiGroupFill size={18} className="text-blue-600" />
+              <span>{lang === 'BN' ? 'মোট রেফারকৃত এজেন্ট' : 'Total Referred Agents'}</span>
             </div>
-            <div className="text-2xl font-black text-gray-900">0 {lang === 'BN' ? 'জন পার্টনার এজেন্ট' : 'Partner Agents'}</div>
+            <div className="text-2xl sm:text-3xl font-black text-gray-900 mt-1">
+              {stats.referredCount} <span className="text-sm font-bold text-gray-500">{lang === 'BN' ? 'জন পার্টনার এজেন্ট' : 'Partner Agents'}</span>
+            </div>
           </div>
 
-          <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-xs">
-            <div className="text-gray-400 text-xs font-bold uppercase mb-1 flex items-center gap-1.5">
-              <RiCoinFill size={16} className="text-emerald-500" /> {lang === 'BN' ? 'মোট উপার্জিত বোনাস' : 'Total Bonus Earned'}
+          <div className="bg-white p-6 rounded-2xl border border-gray-200/80 shadow-xs flex flex-col justify-between">
+            <div className="text-gray-500 text-xs font-bold uppercase mb-2 flex items-center gap-2">
+              <RiCoinFill size={18} className="text-emerald-600" />
+              <span>{lang === 'BN' ? 'মোট উপার্জিত বোনাস' : 'Total Bonus Earned'}</span>
             </div>
-            <div className="text-2xl font-black text-[#E31B23]">৳ 0</div>
-          </div>
-
-          <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-xs">
-            <div className="text-gray-400 text-xs font-bold uppercase mb-1 flex items-center gap-1.5">
-              <RiAwardFill size={16} className="text-amber-500" /> {lang === 'BN' ? 'কমিশন টায়ার' : 'Commission Tier'}
+            <div className="text-2xl sm:text-3xl font-black text-[#E31B23] mt-1">
+              ৳ {stats.referralEarnings.toLocaleString('en-BD')}
             </div>
-            <div className="text-2xl font-black text-gray-900">{lang === 'BN' ? 'সিলভার এজেন্ট' : 'Silver Agent'}</div>
           </div>
         </div>
       </div>
