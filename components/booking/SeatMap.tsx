@@ -315,54 +315,53 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
     <div className="space-y-6">
       {/* Seat Color Indicator / Legend */}
       <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-gray-200/80 shadow-2xs">
-        <div className="text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-2.5 text-center sm:text-left">
+        <div className="text-[11px] font-extrabold uppercase tracking-wider text-gray-500 mb-3 text-center sm:text-left">
           {isBn ? 'আসন নির্দেশিকা (Seat Indicator)' : 'Seat Legend'}
         </div>
-        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 sm:gap-5 text-xs font-semibold text-gray-700">
+
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap sm:items-center gap-2 sm:gap-5 text-xs font-semibold text-gray-700">
           {/* Available */}
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-6 rounded-t-md rounded-b-xs bg-sky-50 border border-sky-300 flex items-center justify-center text-[9px] font-black text-sky-900 shadow-2xs">
-              L1
+          <div className="flex items-center gap-2.5 p-2 sm:p-0 rounded-xl bg-slate-50/80 sm:bg-transparent border border-slate-200/60 sm:border-0">
+            <div className="w-5 h-6 rounded-t-md rounded-b-xs bg-sky-50 border border-sky-300 flex items-center justify-center shadow-2xs">
+              <div className="w-2.5 h-1 rounded-full bg-sky-200" />
             </div>
-            <span>{isBn ? 'খালি' : 'Available'}</span>
+            <span className="truncate">{isBn ? 'খালি' : 'Available'}</span>
           </div>
 
           {/* Selected */}
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-6 rounded-t-md rounded-b-xs bg-[#E31B23] border border-[#C41920] flex items-center justify-center text-[9px] font-black text-white shadow-2xs">
+          <div className="flex items-center gap-2.5 p-2 sm:p-0 rounded-xl bg-slate-50/80 sm:bg-transparent border border-slate-200/60 sm:border-0">
+            <div className="w-5 h-6 rounded-t-md rounded-b-xs bg-[#E31B23] border border-[#C41920] flex items-center justify-center text-[10px] font-black text-white shadow-2xs">
               ✓
             </div>
-            <span>{isBn ? 'নির্বাচিত' : 'Selected'}</span>
+            <span className="truncate">{isBn ? 'নির্বাচিত' : 'Selected'}</span>
           </div>
 
           {/* Male Booked */}
-          <div className="flex items-center gap-2">
-            <div className="relative w-5 h-6 rounded-t-md rounded-b-xs bg-indigo-100 border border-indigo-400 flex items-center justify-center text-[9px] font-black text-indigo-950 shadow-2xs">
-              <span className="text-[8px]">L2</span>
-              <div className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[8px] font-black">
+          <div className="flex items-center gap-2.5 p-2 sm:p-0 rounded-xl bg-slate-50/80 sm:bg-transparent border border-slate-200/60 sm:border-0">
+            <div className="relative w-5 h-6 rounded-t-md rounded-b-xs bg-indigo-100 border border-indigo-400 flex items-center justify-center shadow-2xs">
+              <div className="w-3.5 h-3.5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[8px] font-black">
                 M
               </div>
             </div>
-            <span>{isBn ? 'পুরুষের বুকড' : 'Male Booked'}</span>
+            <span className="truncate">{isBn ? 'পুরুষের বুকড' : 'Male Booked'}</span>
           </div>
 
           {/* Female Booked */}
-          <div className="flex items-center gap-2">
-            <div className="relative w-5 h-6 rounded-t-md rounded-b-xs bg-pink-100 border border-pink-400 flex items-center justify-center text-[9px] font-black text-pink-950 shadow-2xs">
-              <span className="text-[8px]">L3</span>
-              <div className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-pink-600 text-white flex items-center justify-center text-[8px] font-black">
+          <div className="flex items-center gap-2.5 p-2 sm:p-0 rounded-xl bg-slate-50/80 sm:bg-transparent border border-slate-200/60 sm:border-0">
+            <div className="relative w-5 h-6 rounded-t-md rounded-b-xs bg-pink-100 border border-pink-400 flex items-center justify-center shadow-2xs">
+              <div className="w-3.5 h-3.5 rounded-full bg-pink-600 text-white flex items-center justify-center text-[8px] font-black">
                 F
               </div>
             </div>
-            <span>{isBn ? 'মহিলার বুকড' : 'Female Booked'}</span>
+            <span className="truncate">{isBn ? 'মহিলার বুকড' : 'Female Booked'}</span>
           </div>
 
           {/* Booked / Sold */}
-          <div className="flex items-center gap-2">
+          <div className="col-span-2 sm:col-span-1 flex items-center justify-start gap-2.5 p-2 sm:p-0 rounded-xl bg-slate-50/80 sm:bg-transparent border border-slate-200/60 sm:border-0">
             <div className="w-5 h-6 rounded-t-md rounded-b-xs bg-slate-100 border border-slate-300 flex items-center justify-center text-[9px] font-black text-slate-500 shadow-2xs">
               ✕
             </div>
-            <span>{isBn ? 'বুকড' : 'Booked'}</span>
+            <span className="truncate">{isBn ? 'বুকড' : 'Booked'}</span>
           </div>
         </div>
       </div>
