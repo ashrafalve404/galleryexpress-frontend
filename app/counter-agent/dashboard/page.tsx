@@ -170,15 +170,15 @@ export default function CounterAgentDashboard() {
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-3.5">
           <Link
             href="/counter-agent/sell-ticket"
-            className="w-full sm:w-auto px-5 py-3.5 sm:py-3 bg-white hover:bg-gray-50 text-gray-800 border border-gray-200/90 font-extrabold text-xs sm:text-sm rounded-2xl transition-all shadow-2xs flex items-center justify-center gap-2.5 active:scale-98"
+            className="w-full sm:w-auto px-6 py-4 sm:py-3.5 bg-white hover:bg-gray-50 text-gray-900 border border-gray-200/90 font-black text-sm sm:text-base rounded-2xl transition-all shadow-2xs flex items-center justify-center gap-2.5 active:scale-98"
           >
-            <BsFillTicketPerforatedFill size={20} className="text-[#E31B23]" /> {getTranslation(lang, 'sellTicket', 'Sell Ticket')}
+            <BsFillTicketPerforatedFill size={22} className="text-[#E31B23]" /> {getTranslation(lang, 'sellTicket', 'Sell Ticket')}
           </Link>
           <Link
             href="/counter-agent/buy-bulk"
-            className="w-full sm:w-auto px-5 py-3.5 sm:py-3 bg-white hover:bg-gray-50 text-gray-800 border border-gray-200/90 font-extrabold text-xs sm:text-sm rounded-2xl transition-all shadow-2xs flex items-center justify-center gap-2.5 active:scale-98"
+            className="w-full sm:w-auto px-6 py-4 sm:py-3.5 bg-white hover:bg-gray-50 text-gray-900 border border-gray-200/90 font-black text-sm sm:text-base rounded-2xl transition-all shadow-2xs flex items-center justify-center gap-2.5 active:scale-98"
           >
-            <RiStackFill size={20} className="text-purple-600" /> {getTranslation(lang, 'buyBulkTicket', 'Buy Bulk Ticket')}
+            <RiStackFill size={22} className="text-purple-600" /> {getTranslation(lang, 'buyBulkTicket', 'Buy Bulk Ticket')}
           </Link>
         </div>
 
