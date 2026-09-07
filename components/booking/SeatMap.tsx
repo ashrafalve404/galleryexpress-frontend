@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { RiUserFill, RiBusFill, RiSubtractLine, RiCheckLine, RiSteering2Fill } from 'react-icons/ri';
+import { FaMale, FaFemale } from 'react-icons/fa';
 import { type Seat } from '@/lib/api/schedules';
 import { useLanguageStore } from '@/lib/store/languageStore';
 
@@ -58,7 +59,7 @@ function SeatComponent({ seat, displayLabel, isSelected, onToggle, isBn }: SeatP
           headrest: 'bg-indigo-300',
           cushion: 'bg-indigo-200',
           badge: 'text-indigo-950 font-black',
-          genderBadge: 'M',
+          GenderIcon: FaMale,
           genderClass: 'bg-indigo-600 text-white',
           tooltip: isBn ? 'পুরুষের বুকড (Male Booked)' : 'Male Booked',
         };
@@ -69,7 +70,7 @@ function SeatComponent({ seat, displayLabel, isSelected, onToggle, isBn }: SeatP
           headrest: 'bg-pink-300',
           cushion: 'bg-pink-200',
           badge: 'text-pink-950 font-black',
-          genderBadge: 'F',
+          GenderIcon: FaFemale,
           genderClass: 'bg-pink-600 text-white',
           tooltip: isBn ? 'মহিলার বুকড (Female Booked)' : 'Female Booked',
         };
@@ -79,7 +80,7 @@ function SeatComponent({ seat, displayLabel, isSelected, onToggle, isBn }: SeatP
         headrest: 'bg-slate-300',
         cushion: 'bg-slate-200',
         badge: 'text-slate-500 font-extrabold',
-        genderBadge: null,
+        GenderIcon: null,
         genderClass: '',
         tooltip: seat.isBooked || seat.isHeld
           ? (isBn ? 'ইতিমধ্যে বুক করা হয়েছে' : 'Already booked')
@@ -92,7 +93,7 @@ function SeatComponent({ seat, displayLabel, isSelected, onToggle, isBn }: SeatP
         headrest: 'bg-red-950/60',
         cushion: 'bg-red-900/50',
         badge: 'text-white font-black',
-        genderBadge: null,
+        GenderIcon: null,
         genderClass: '',
         tooltip: isBn ? `নির্বাচিত আসন ${displayLabel}` : `Selected Seat ${displayLabel}`,
       };
@@ -103,7 +104,7 @@ function SeatComponent({ seat, displayLabel, isSelected, onToggle, isBn }: SeatP
       headrest: 'bg-sky-200/90',
       cushion: 'bg-sky-100',
       badge: 'text-sky-950 font-black',
-      genderBadge: null,
+      GenderIcon: null,
       genderClass: '',
       tooltip: isBn ? `সিট নির্বাচন করুন ${displayLabel}` : `Select Seat ${displayLabel}`,
     };
@@ -131,10 +132,10 @@ function SeatComponent({ seat, displayLabel, isSelected, onToggle, isBn }: SeatP
       {/* Bottom Seat Cushion */}
       <div className={`w-9 h-2.5 rounded-sm ${style.cushion}`} />
 
-      {/* Gender Indicator Badge (M for Male, F for Female) */}
-      {style.genderBadge && (
+      {/* Gender Indicator Badge (FaMale for Male, FaFemale for Female) */}
+      {style.GenderIcon && (
         <div className={`absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-black shadow-xs border border-white ${style.genderClass}`}>
-          {style.genderBadge}
+          <style.GenderIcon size={9} />
         </div>
       )}
 
@@ -319,7 +320,7 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
           {isBn ? 'আসন নির্দেশিকা (Seat Indicator)' : 'Seat Legend'}
         </div>
 
-        <div className="flex items-center justify-between sm:justify-start gap-1 sm:gap-5 text-[10px] sm:text-xs font-semibold text-gray-700 overflow-x-auto no-scrollbar py-0.5">
+        <div className="flex items-center justify-between sm:justify-start gap-1 sm:gap-6 text-[10px] sm:text-xs font-semibold text-gray-700 overflow-x-auto no-scrollbar py-0.5">
           {/* Available */}
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             <div className="w-4 sm:w-5 h-5 sm:h-6 rounded-t-md rounded-b-xs bg-sky-50 border border-sky-300 flex items-center justify-center shadow-2xs">
@@ -328,19 +329,11 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
             <span className="whitespace-nowrap">{isBn ? 'খালি' : 'Available'}</span>
           </div>
 
-          {/* Selected */}
-          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-            <div className="w-4 sm:w-5 h-5 sm:h-6 rounded-t-md rounded-b-xs bg-[#E31B23] border border-[#C41920] flex items-center justify-center text-[9px] sm:text-[10px] font-black text-white shadow-2xs">
-              ✓
-            </div>
-            <span className="whitespace-nowrap">{isBn ? 'নির্বাচিত' : 'Selected'}</span>
-          </div>
-
           {/* Male */}
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             <div className="relative w-4 sm:w-5 h-5 sm:h-6 rounded-t-md rounded-b-xs bg-indigo-100 border border-indigo-400 flex items-center justify-center shadow-2xs">
-              <div className="w-3 sm:w-3.5 h-3 sm:h-3.5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[7px] sm:text-[8px] font-black">
-                M
+              <div className="w-3 sm:w-3.5 h-3 sm:h-3.5 rounded-full bg-indigo-600 text-white flex items-center justify-center">
+                <FaMale size={9} />
               </div>
             </div>
             <span className="whitespace-nowrap">{isBn ? 'পুরুষ' : 'Male'}</span>
@@ -349,8 +342,8 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
           {/* Female */}
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             <div className="relative w-4 sm:w-5 h-5 sm:h-6 rounded-t-md rounded-b-xs bg-pink-100 border border-pink-400 flex items-center justify-center shadow-2xs">
-              <div className="w-3 sm:w-3.5 h-3 sm:h-3.5 rounded-full bg-pink-600 text-white flex items-center justify-center text-[7px] sm:text-[8px] font-black">
-                F
+              <div className="w-3 sm:w-3.5 h-3 sm:h-3.5 rounded-full bg-pink-600 text-white flex items-center justify-center">
+                <FaFemale size={9} />
               </div>
             </div>
             <span className="whitespace-nowrap">{isBn ? 'মহিলা' : 'Female'}</span>
