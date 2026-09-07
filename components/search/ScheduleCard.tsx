@@ -67,11 +67,12 @@ export function ScheduleCard({ schedule }: ScheduleCardProps) {
   const fallbackPrice = isCoxRoute ? 2000 : isCtgRoute ? 1200 : 800;
 
   const price = rawPrice > 0 ? rawPrice : fallbackPrice;
-  const totalCoachSeats = schedule?.coach?.totalSeats || schedule?.coach?._count?.seats || 36;
-  const bookedCount = schedule?._count?.bookings || 0;
+  const totalCoachSeats = schedule?.coach?.totalSeats || (schedule as any)?.totalSeats || (schedule as any)?.coach?._count?.seats || 30;
   const seats = schedule?.availableSeats !== undefined
     ? schedule.availableSeats
-    : Math.max(0, totalCoachSeats - bookedCount);
+    : (schedule as any)?.availableSeatsCount !== undefined
+    ? (schedule as any).availableSeatsCount
+    : Math.max(0, totalCoachSeats - ((schedule as any)?.bookedSeatsCount || 0));
   const coach = schedule?.coach;
   const route = schedule?.route;
   const amenities: string[] = coach?.amenities || [];

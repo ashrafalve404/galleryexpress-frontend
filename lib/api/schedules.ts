@@ -42,6 +42,9 @@ export interface Schedule {
     currency?: string;
   };
   availableSeats?: number;
+  availableSeatsCount?: number;
+  bookedSeatsCount?: number;
+  totalSeats?: number;
   status: string;
   _count?: { bookings?: number };
 }
@@ -54,6 +57,7 @@ export interface Seat {
   availability?: 'AVAILABLE' | 'BOOKED' | 'LOCKED';
   isBooked: boolean;
   isHeld: boolean;
+  bookedGender?: 'MALE' | 'FEMALE' | 'OTHER' | string | null;
   price: number;
   row: number;
   column: number;

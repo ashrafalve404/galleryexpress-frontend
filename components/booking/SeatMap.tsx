@@ -21,6 +21,8 @@ function SeatComponent({ seat, displayLabel, isSelected, onToggle, isBn }: SeatP
     seat.status === 'LOCKED' ||
     (seat.status && seat.status !== 'AVAILABLE' && seat.status !== 'ACTIVE');
 
+  const bookedGender = (seat as any)?.bookedGender || (seat as any)?.gender || null;
+
   if (seat.seatType === 'DRIVER') {
     return (
       <div className="w-12 h-14 rounded-t-xl rounded-b-md bg-slate-100 border border-slate-200 flex flex-col items-center justify-center text-slate-500 shadow-2xs">
@@ -50,11 +52,38 @@ function SeatComponent({ seat, displayLabel, isSelected, onToggle, isBn }: SeatP
   // Realistic Bus Seat Style (Headrest + Contoured Seat Backrest + Bottom Cushion)
   const getStyles = () => {
     if (isUnavailable) {
+      if (bookedGender === 'MALE') {
+        return {
+          outer: 'bg-indigo-100/90 border-indigo-400 text-indigo-950 cursor-not-allowed pointer-events-none opacity-90 shadow-2xs',
+          headrest: 'bg-indigo-300',
+          cushion: 'bg-indigo-200',
+          badge: 'text-indigo-950 font-black',
+          genderBadge: 'M',
+          genderClass: 'bg-indigo-600 text-white',
+          tooltip: isBn ? 'পুরুষের বুকড (Male Booked)' : 'Male Booked',
+        };
+      }
+      if (bookedGender === 'FEMALE') {
+        return {
+          outer: 'bg-pink-100/90 border-pink-400 text-pink-950 cursor-not-allowed pointer-events-none opacity-90 shadow-2xs',
+          headrest: 'bg-pink-300',
+          cushion: 'bg-pink-200',
+          badge: 'text-pink-950 font-black',
+          genderBadge: 'F',
+          genderClass: 'bg-pink-600 text-white',
+          tooltip: isBn ? 'মহিলার বুকড (Female Booked)' : 'Female Booked',
+        };
+      }
       return {
         outer: 'bg-slate-100 border-slate-300 text-slate-400 cursor-not-allowed pointer-events-none opacity-80 shadow-2xs',
         headrest: 'bg-slate-300',
         cushion: 'bg-slate-200',
         badge: 'text-slate-500 font-extrabold',
+        genderBadge: null,
+        genderClass: '',
+        tooltip: seat.isBooked || seat.isHeld
+          ? (isBn ? 'ইতিমধ্যে বুক করা হয়েছে' : 'Already booked')
+          : (isBn ? `উপলব্ধ নয় (${seat.status})` : `Not available (${seat.status})`),
       };
     }
     if (isSelected) {
@@ -63,6 +92,9 @@ function SeatComponent({ seat, displayLabel, isSelected, onToggle, isBn }: SeatP
         headrest: 'bg-red-950/60',
         cushion: 'bg-red-900/50',
         badge: 'text-white font-black',
+        genderBadge: null,
+        genderClass: '',
+        tooltip: isBn ? `নির্বাচিত আসন ${displayLabel}` : `Selected Seat ${displayLabel}`,
       };
     }
     // Available seat
@@ -71,6 +103,9 @@ function SeatComponent({ seat, displayLabel, isSelected, onToggle, isBn }: SeatP
       headrest: 'bg-sky-200/90',
       cushion: 'bg-sky-100',
       badge: 'text-sky-950 font-black',
+      genderBadge: null,
+      genderClass: '',
+      tooltip: isBn ? `সিট নির্বাচন করুন ${displayLabel}` : `Select Seat ${displayLabel}`,
     };
   };
 
@@ -80,13 +115,7 @@ function SeatComponent({ seat, displayLabel, isSelected, onToggle, isBn }: SeatP
     <div
       onClick={() => !isUnavailable && onToggle(seat)}
       className={`relative w-12 h-14 rounded-t-2xl rounded-b-lg border-2 flex flex-col items-center justify-between p-1 transition-all select-none ${style.outer}`}
-      title={
-        isUnavailable
-          ? seat.isBooked || seat.isHeld
-            ? (isBn ? 'ইতিমধ্যে বুক করা হয়েছে' : 'Already booked')
-            : (isBn ? `উপলব্ধ নয় (${seat.status})` : `Not available (${seat.status})`)
-          : (isBn ? `সিট নির্বাচন করুন ${displayLabel}` : `Select Seat ${displayLabel}`)
-      }
+      title={style.tooltip}
       role="button"
       tabIndex={isUnavailable ? -1 : 0}
       onKeyDown={(e) => e.key === 'Enter' && !isUnavailable && onToggle(seat)}
@@ -101,6 +130,13 @@ function SeatComponent({ seat, displayLabel, isSelected, onToggle, isBn }: SeatP
 
       {/* Bottom Seat Cushion */}
       <div className={`w-9 h-2.5 rounded-sm ${style.cushion}`} />
+
+      {/* Gender Indicator Badge (M for Male, F for Female) */}
+      {style.genderBadge && (
+        <div className={`absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-black shadow-xs border border-white ${style.genderClass}`}>
+          {style.genderBadge}
+        </div>
+      )}
 
       {/* Selected Check Mark Indicator */}
       {isSelected && (
@@ -277,6 +313,60 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
 
   return (
     <div className="space-y-6">
+      {/* Seat Color Indicator / Legend */}
+      <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-gray-200/80 shadow-2xs">
+        <div className="text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-2.5 text-center sm:text-left">
+          {isBn ? 'আসন নির্দেশিকা (Seat Indicator)' : 'Seat Legend'}
+        </div>
+        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 sm:gap-5 text-xs font-semibold text-gray-700">
+          {/* Available */}
+          <div className="flex items-center gap-2">
+            <div className="w-5 h-6 rounded-t-md rounded-b-xs bg-sky-50 border border-sky-300 flex items-center justify-center text-[9px] font-black text-sky-900 shadow-2xs">
+              L1
+            </div>
+            <span>{isBn ? 'খালি' : 'Available'}</span>
+          </div>
+
+          {/* Selected */}
+          <div className="flex items-center gap-2">
+            <div className="w-5 h-6 rounded-t-md rounded-b-xs bg-[#E31B23] border border-[#C41920] flex items-center justify-center text-[9px] font-black text-white shadow-2xs">
+              ✓
+            </div>
+            <span>{isBn ? 'নির্বাচিত' : 'Selected'}</span>
+          </div>
+
+          {/* Male Booked */}
+          <div className="flex items-center gap-2">
+            <div className="relative w-5 h-6 rounded-t-md rounded-b-xs bg-indigo-100 border border-indigo-400 flex items-center justify-center text-[9px] font-black text-indigo-950 shadow-2xs">
+              <span className="text-[8px]">L2</span>
+              <div className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[8px] font-black">
+                M
+              </div>
+            </div>
+            <span>{isBn ? 'পুরুষের বুকড' : 'Male Booked'}</span>
+          </div>
+
+          {/* Female Booked */}
+          <div className="flex items-center gap-2">
+            <div className="relative w-5 h-6 rounded-t-md rounded-b-xs bg-pink-100 border border-pink-400 flex items-center justify-center text-[9px] font-black text-pink-950 shadow-2xs">
+              <span className="text-[8px]">L3</span>
+              <div className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-pink-600 text-white flex items-center justify-center text-[8px] font-black">
+                F
+              </div>
+            </div>
+            <span>{isBn ? 'মহিলার বুকড' : 'Female Booked'}</span>
+          </div>
+
+          {/* Booked / Sold */}
+          <div className="flex items-center gap-2">
+            <div className="w-5 h-6 rounded-t-md rounded-b-xs bg-slate-100 border border-slate-300 flex items-center justify-center text-[9px] font-black text-slate-500 shadow-2xs">
+              ✕
+            </div>
+            <span>{isBn ? 'বুকড' : 'Booked'}</span>
+          </div>
+        </div>
+      </div>
+
       {/* Mobile Deck Tabs Header */}
       <div className="lg:hidden flex bg-gray-100 p-1.5 rounded-2xl border border-gray-200/80">
         <button
