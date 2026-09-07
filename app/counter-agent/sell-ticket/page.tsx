@@ -520,12 +520,12 @@ export default function CounterAgentSellTicketPage() {
               <div className="flex items-center justify-between border-b border-gray-100 pb-2">
                 <span className="text-xs font-black text-gray-900 uppercase tracking-wider flex items-center gap-1.5">
                   <SlidersHorizontal size={16} className="text-[#E31B23]" />
-                  {lang === 'BN' ? 'বাস সিডিউল অনুসন্ধান ও ফিল্টার' : 'Search & Filter Bus Schedules'}
+                  {lang === 'BN' ? 'ফিল্টার ও অনুসন্ধান' : 'Search & Filter'}
                 </span>
                 <span className="text-xs font-bold text-gray-500">
                   {lang === 'BN'
-                    ? `${schedules.length}টি বাসের মধ্যে ${filteredSchedules.length}টি দেখানো হচ্ছে`
-                    : `Showing ${filteredSchedules.length} of ${schedules.length} bus(es)`}
+                    ? `${filteredSchedules.length}/${schedules.length}টি বাস`
+                    : `${filteredSchedules.length}/${schedules.length} Buses`}
                 </span>
               </div>
 
