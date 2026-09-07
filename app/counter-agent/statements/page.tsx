@@ -64,7 +64,7 @@ export default function CounterAgentStatementPage() {
   const agentName = overview?.agent
     ? `${overview.agent.firstName || ''} ${overview.agent.lastName || ''}`.trim()
     : user?.name || 'Valued Agent';
-  const agentEmail = overview?.agent?.email || user?.email || 'N/A';
+  const agentPhone = overview?.agent?.phone || user?.phone || overview?.agent?.email || user?.email || 'N/A';
   const counterName = overview?.counter?.name || 'Main Counter';
   const counterLoc = overview?.counter?.location || '';
   const referralCode = overview?.agent?.referralCode || 'N/A';
@@ -140,9 +140,7 @@ export default function CounterAgentStatementPage() {
         <div className="bg-white p-6 sm:p-8 rounded-3xl border border-gray-200/80 shadow-xs space-y-6 print-break-inside">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-gray-100 pb-6">
             <div className="flex items-center gap-4">
-              <div className="bg-white p-2 border border-gray-200 rounded-2xl shadow-2xs">
-                <img src="/ticketdrkrlogo.png" alt="Ticket Dorkar" className="h-10 w-auto object-contain" />
-              </div>
+              <img src="/ticketdrkrlogo.png" alt="Ticket Dorkar" className="h-10 sm:h-12 w-auto object-contain shrink-0" />
               <div>
                 <h2 className="text-lg font-black text-gray-900 uppercase tracking-tight">
                   TICKET DORKAR LIMITED
@@ -171,7 +169,7 @@ export default function CounterAgentStatementPage() {
                 {isBn ? 'এজেন্ট এর নাম' : 'Agent Name'}
               </span>
               <p className="font-extrabold text-gray-900 text-sm truncate">{agentName}</p>
-              <p className="text-gray-500 truncate">{agentEmail}</p>
+              <p className="text-gray-600 font-mono font-bold text-xs truncate">{agentPhone}</p>
             </div>
 
             <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 space-y-1">

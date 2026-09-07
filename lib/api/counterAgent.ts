@@ -41,6 +41,7 @@ export interface DashboardStats {
     firstName: string;
     lastName: string;
     email: string;
+    phone?: string;
     assignedCounterId?: string;
     referralCode?: string;
   };
