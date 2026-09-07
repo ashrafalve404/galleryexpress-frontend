@@ -8,7 +8,7 @@ import {
   RiStore3Fill,
   RiWallet3Fill,
   RiFundsFill,
-  RiShoppingBag3Fill,
+  RiStackFill,
   RiAddCircleFill,
   RiErrorWarningFill,
   RiCheckboxCircleFill,
@@ -178,7 +178,7 @@ export default function CounterAgentDashboard() {
             href="/counter-agent/buy-bulk"
             className="w-full sm:w-auto px-5 py-3.5 sm:py-3 bg-white hover:bg-gray-50 text-gray-800 border border-gray-200/90 font-extrabold text-xs sm:text-sm rounded-2xl transition-all shadow-2xs flex items-center justify-center gap-2.5 active:scale-98"
           >
-            <RiShoppingBag3Fill size={20} className="text-purple-600" /> {getTranslation(lang, 'buyBulkTicket', 'Buy Bulk Ticket')}
+            <RiStackFill size={20} className="text-purple-600" /> {getTranslation(lang, 'buyBulkTicket', 'Buy Bulk Ticket')}
           </Link>
         </div>
 
