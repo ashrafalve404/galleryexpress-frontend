@@ -30,7 +30,7 @@ function formatTk(amount: number) {
 
 export default function CounterAgentDashboard() {
   const router = useRouter();
-  const { clearAuth } = useAuthStore();
+  const { user, clearAuth } = useAuthStore();
   const { lang } = useLanguageStore();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -113,6 +113,10 @@ export default function CounterAgentDashboard() {
     ? Math.min((commissionStats.totalEarned / commissionStats.commissionCap) * 100, 100)
     : 0;
 
+  const agentFullName = agent
+    ? `${agent.firstName || ''} ${agent.lastName || ''}`.trim()
+    : user?.name || 'Agent';
+
   return (
     <div className="p-6 sm:p-8 space-y-8">
 
@@ -122,7 +126,7 @@ export default function CounterAgentDashboard() {
           
           <div className="space-y-3 z-10 relative">
             <h1 className="text-xl sm:text-3xl font-black tracking-tight text-white">
-              {getTranslation(lang, 'welcome', 'Welcome')}, {agent?.firstName || 'Agent'}! 👋
+              {getTranslation(lang, 'welcome', 'Welcome')}, {agentFullName}! 👋
             </h1>
 
             <div className="flex flex-wrap items-center gap-2 sm:gap-3">
@@ -146,20 +150,6 @@ export default function CounterAgentDashboard() {
                   <Link href="/counter-agent/select-counter" className="underline hover:text-amber-200">
                     {getTranslation(lang, 'selectCounter', 'Select Counter')}
                   </Link>
-                </div>
-              )}
-
-              {agent.referralCode && (
-                <div className="inline-flex items-center gap-2 bg-[#E31B23]/10 border border-[#E31B23]/30 px-3.5 py-2 rounded-2xl text-xs font-bold text-white">
-                  <span className="text-gray-400 font-medium">{getTranslation(lang, 'referralCode', 'Referral Code')}:</span>
-                  <strong className="text-[#E31B23] font-black tracking-wider text-xs sm:text-sm">{agent.referralCode}</strong>
-                  <button
-                    onClick={() => handleCopyRefCode(agent.referralCode!)}
-                    className="p-1 hover:bg-white/10 rounded-lg text-gray-300 hover:text-white transition-colors"
-                    title="Copy referral code"
-                  >
-                    {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
-                  </button>
                 </div>
               )}
             </div>

@@ -52,6 +52,16 @@ export interface DashboardStats {
   totalInvested: number;
   referredCount?: number;
   referralEarnings?: number;
+  referredAgents?: Array<{
+    id: string;
+    name: string;
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    phone?: string;
+    createdAt?: string;
+    status?: string;
+  }>;
   commissionStats: {
     totalEarned: number;
     commissionCap: number;
@@ -197,6 +207,21 @@ export const counterAgentApi = {
 
   async getActiveSchedules(): Promise<any[]> {
     const res = await apiClient.get(`${BASE}/schedules`);
+    return res.data?.data ?? res.data ?? [];
+  },
+
+  async updateProfile(dto: {
+    name?: string;
+    email?: string;
+    currentPassword?: string;
+    newPassword?: string;
+  }): Promise<{ message: string; user: { id: string; name: string; email: string; phone?: string; role: string } }> {
+    const res = await apiClient.patch(`${BASE}/profile`, dto);
+    return res.data?.data ?? res.data;
+  },
+
+  async getReferredAgents(): Promise<any[]> {
+    const res = await apiClient.get(`${BASE}/referred-agents`);
     return res.data?.data ?? res.data ?? [];
   },
 };
