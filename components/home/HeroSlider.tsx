@@ -45,7 +45,7 @@ const rawSlides = [
     subtitleEn: 'Instant Seat Allocation with Instant E-Ticket Confirmation',
     titleBn: 'নিরাপদ ও সহজ অনলাইন বুকিং',
     subtitleBn: 'তাৎক্ষণিক সিট সিলেক্ট ও ই-টিকিট নিশ্চিতকরণ',
-    position: 'object-center',
+    position: 'object-bottom',
   },
 ];
 
