@@ -189,8 +189,8 @@ export default function CounterAgentReferralPage() {
               </h2>
               <p className="text-xs text-gray-500 mt-0.5">
                 {isBn
-                  ? 'আপনার রেফারেল কোড ব্যবহার করে নিবন্ধিত সকল কাউন্টার এজেন্টের নাম ও ফোন নম্বর।'
-                  : 'Full names and mobile numbers of counter agents registered with your referral code.'}
+                  ? 'আপনার রেফারেল কোডে নিবন্ধিত এজেন্টসমূহ।'
+                  : 'Agents registered with your referral code.'}
               </p>
             </div>
             <span className="text-xs font-extrabold text-[#E31B23] bg-red-50 px-3 py-1 rounded-full border border-red-100">
