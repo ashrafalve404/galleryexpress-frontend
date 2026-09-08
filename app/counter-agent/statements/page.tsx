@@ -64,7 +64,7 @@ export default function CounterAgentStatementPage() {
   const agentName = overview?.agent
     ? `${overview.agent.firstName || ''} ${overview.agent.lastName || ''}`.trim()
     : user?.name || 'Valued Agent';
-  const agentPhone = overview?.agent?.phone || user?.phone || overview?.agent?.email || user?.email || 'N/A';
+  const agentPhone = overview?.agent?.phone || user?.phone || 'N/A';
   const counterName = overview?.counter?.name || 'Main Counter';
   const counterLoc = overview?.counter?.location || '';
   const referralCode = overview?.agent?.referralCode || 'N/A';

@@ -23,6 +23,8 @@ import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { counterAgentApi, type AgentKycStatus, type DashboardStats } from '@/lib/api/counterAgent';
 
+import { formatDisplayEmail } from '@/lib/utils/email';
+
 export default function CounterAgentProfilePage() {
   const { user, accessToken, refreshToken, setAuth } = useAuthStore();
   const { lang } = useLanguageStore();
@@ -55,7 +57,8 @@ export default function CounterAgentProfilePage() {
           ? `${statsData.agent.firstName || ''} ${statsData.agent.lastName || ''}`.trim()
           : user?.name || '';
         setName(agentFullName || user?.name || '');
-        setEmail(statsData?.agent?.email || user?.email || '');
+        const rawEmail = statsData?.agent?.email || user?.email || '';
+        setEmail(formatDisplayEmail(rawEmail, ''));
       } catch (e) {
         console.error('Failed to load profile details:', e);
       } finally {
@@ -273,32 +276,22 @@ export default function CounterAgentProfilePage() {
               />
             </div>
 
-            {/* Phone Number (NON-EDITABLE / LOCKED) */}
+            {/* Phone Number (Read-Only) */}
             <div className="space-y-1.5 md:col-span-2">
-              <div className="flex items-center justify-between">
-                <label className="font-extrabold text-gray-800 flex items-center gap-1.5">
-                  <RiPhoneFill size={15} className="text-gray-400" />
-                  {isBn ? 'ফোন নম্বর (ফিক্সড একাউন্ট আইডি)' : 'Phone Number (Fixed Account ID)'}
-                </label>
-                <span className="text-[10px] font-extrabold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full flex items-center gap-1 border border-amber-200">
-                  <RiLock2Fill size={12} /> {isBn ? 'পরিবর্তনযোগ্য নয়' : 'Non-Editable Field'}
-                </span>
-              </div>
+              <label className="font-extrabold text-gray-800 flex items-center gap-1.5">
+                <RiPhoneFill size={15} className="text-gray-400" />
+                {isBn ? 'ফোন নম্বর' : 'Phone Number'}
+              </label>
               <div className="relative">
                 <input
                   type="text"
                   value={agentPhone}
                   readOnly
                   disabled
-                  className="w-full px-4 py-3 bg-slate-100 border border-slate-200 rounded-xl font-mono font-black text-slate-700 cursor-not-allowed select-none"
+                  className="w-full px-4 py-3 bg-slate-100 border border-slate-200 rounded-xl font-mono font-bold text-slate-600 cursor-not-allowed select-none"
                 />
                 <RiLock2Fill className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
               </div>
-              <p className="text-[11px] text-gray-400 font-medium pt-0.5">
-                {isBn
-                  ? 'নিরাপত্তা সংক্রান্ত কারণে ফোন নম্বর স্থায়ীভাবে আপনার এজেন্ট আইডির সাথে নিবন্ধিত এবং এটি পরিবর্তন করা যাবে না।'
-                  : 'For security verification, your phone number is permanently bound to your agent account and cannot be changed.'}
-              </p>
             </div>
           </div>
 

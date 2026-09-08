@@ -7,6 +7,8 @@ import client from '@/lib/api/client';
 import { toast } from 'sonner';
 import { useLanguageStore } from '@/lib/store/languageStore';
 
+import { formatDisplayEmail, isInternalEmail } from '@/lib/utils/email';
+
 interface UserItem {
   id: string;
   firstName: string;
@@ -38,6 +40,7 @@ export default function AdminUsersPage() {
     phone: '',
     password: 'Password123!',
     role: 'COUNTER_AGENT',
+    referredByCode: '',
   });
 
   const { data: usersData, isLoading } = useQuery({
@@ -91,6 +94,7 @@ export default function AdminUsersPage() {
       phone: '',
       password: 'Password123!',
       role: 'COUNTER_AGENT',
+      referredByCode: '',
     });
   };
 
@@ -99,10 +103,11 @@ export default function AdminUsersPage() {
     setForm({
       firstName: u.firstName || '',
       lastName: u.lastName || '',
-      email: u.email || '',
+      email: isInternalEmail(u.email) ? '' : u.email || '',
       phone: u.phone || '',
       password: '',
       role: u.role || 'COUNTER_AGENT',
+      referredByCode: '',
     });
     setShowForm(true);
   };
@@ -217,13 +222,14 @@ export default function AdminUsersPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">{isBn ? 'ইমেইল ঠিকানা' : 'Email Address'}</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                  {isBn ? 'ইমেইল ঠিকানা (ঐচ্ছিক)' : 'Email Address (Optional)'}
+                </label>
                 <input
                   type="email"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  required
-                  placeholder="e.g. user@galleryexpress.com"
+                  placeholder="e.g. agent@ticketdorkar.xyz"
                   className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold focus:outline-none"
                 />
               </div>
@@ -256,6 +262,26 @@ export default function AdminUsersPage() {
                   <option value="CUSTOMER">{isBn ? 'গ্রাহক (Customer)' : 'Customer'}</option>
                 </select>
               </div>
+
+              {form.role === 'COUNTER_AGENT' && !editing && (
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1 text-amber-700">
+                    {isBn ? 'রেফারেল কোড (ঐচ্ছিক)' : 'Referral Code (Optional)'}
+                  </label>
+                  <input
+                    type="text"
+                    value={form.referredByCode}
+                    onChange={(e) => setForm({ ...form, referredByCode: e.target.value })}
+                    placeholder="e.g. AG-5YPIC2"
+                    className="w-full px-4 py-2.5 bg-amber-50/50 border border-amber-200 rounded-xl text-sm font-extrabold text-amber-900 focus:outline-none uppercase font-mono tracking-wider"
+                  />
+                  <p className="text-[11px] text-gray-400 mt-1">
+                    {isBn
+                      ? 'এজেন্ট অন্য কোনো রেফারারের রেফারেল কোড দিয়ে যুক্ত হলে কোডটি দিন।'
+                      : 'If this agent was referred by another agent, enter their referral code here.'}
+                  </p>
+                </div>
+              )}
 
               <div className="flex gap-3 pt-2">
                 <button
@@ -311,7 +337,7 @@ export default function AdminUsersPage() {
                     {u.firstName} {u.lastName}
                   </td>
                   <td className="px-5 py-4 font-mono text-gray-600 font-semibold">{u.phone || 'N/A'}</td>
-                  <td className="px-5 py-4 text-gray-600 font-medium">{u.email}</td>
+                  <td className="px-5 py-4 text-gray-600 font-medium">{formatDisplayEmail(u.email)}</td>
                   <td className="px-5 py-4">
                     <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-slate-100 text-slate-800">
                       {u.role}

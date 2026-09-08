@@ -224,7 +224,6 @@ export default function CounterAgentReferralPage() {
                   <tr>
                     <th className="py-3.5 px-4">{isBn ? 'এজেন্টের নাম' : 'Agent Name'}</th>
                     <th className="py-3.5 px-4">{isBn ? 'ফোন নম্বর' : 'Phone Number'}</th>
-                    <th className="py-3.5 px-4">{isBn ? 'ইমেইল' : 'Email Address'}</th>
                     <th className="py-3.5 px-4 text-center">{isBn ? 'স্ট্যাটাস' : 'Status'}</th>
                     <th className="py-3.5 px-4 text-right">{isBn ? 'যোগদানের তারিখ' : 'Joined Date'}</th>
                   </tr>
@@ -242,12 +241,6 @@ export default function CounterAgentReferralPage() {
                         <span className="flex items-center gap-1.5 text-gray-900">
                           <RiPhoneFill size={14} className="text-gray-400" />
                           {agent.phone || 'N/A'}
-                        </span>
-                      </td>
-                      <td className="py-3.5 px-4 text-gray-600 font-medium">
-                        <span className="flex items-center gap-1.5">
-                          <RiMailFill size={14} className="text-gray-400" />
-                          {agent.email || '—'}
                         </span>
                       </td>
                       <td className="py-3.5 px-4 text-center">
