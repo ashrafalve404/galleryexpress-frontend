@@ -34,7 +34,6 @@ export default function CounterAgentReferralPage() {
   const isBn = lang === 'BN';
 
   const [copiedLink, setCopiedLink] = useState(false);
-  const [copiedCode, setCopiedCode] = useState(false);
   const [loading, setLoading] = useState(true);
   const [referredAgents, setReferredAgents] = useState<ReferredAgent[]>([]);
   const [stats, setStats] = useState<{ referredCount: number; referralEarnings: number; referralCode?: string }>({
@@ -79,13 +78,6 @@ export default function CounterAgentReferralPage() {
     setTimeout(() => setCopiedLink(false), 2500);
   };
 
-  const handleCopyCode = () => {
-    navigator.clipboard.writeText(referralCode);
-    setCopiedCode(true);
-    toast.success(isBn ? 'রেফারেল কোড ক্লিপবোর্ডে কপি করা হয়েছে!' : 'Referral code copied to clipboard!');
-    setTimeout(() => setCopiedCode(false), 2500);
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-8 font-sans pb-16">
       <div className="max-w-4xl mx-auto space-y-6">
@@ -97,41 +89,14 @@ export default function CounterAgentReferralPage() {
             </h1>
             <p className="text-xs text-gray-300 leading-relaxed font-medium">
               {isBn
-                ? 'অন্যান্য কাউন্টার অপারেটরদের সাথে আপনার অনন্য রেফারেল লিংক ও রেফারেল কোড শেয়ার করুন এবং টিকিট দরকার প্ল্যাটফর্মে এজেন্ট যুক্ত করুন।'
-                : 'Share your unique referral link and referral code with other counter operators to connect new agents.'}
+                ? 'অন্যান্য কাউন্টার অপারেটরদের সাথে আপনার অনন্য রেফারেল লিংক শেয়ার করুন এবং টিকিট দরকার প্ল্যাটফর্মে নতুন এজেন্ট যুক্ত করুন।'
+                : 'Share your unique referral link with other counter operators to connect new agents.'}
             </p>
           </div>
         </div>
 
-        {/* Referral Code & Link Section */}
-        <div className="bg-white p-6 sm:p-8 rounded-3xl border border-gray-200/80 shadow-xs space-y-6">
-          {/* Referral Code Box */}
-          <div className="space-y-2">
-            <h2 className="text-xs font-black text-gray-500 uppercase tracking-wider">
-              {isBn ? 'আপনার রেফারেল কোড' : 'Your Referral Code'}
-            </h2>
-            <div className="flex flex-col sm:flex-row items-center gap-3">
-              <div className="flex-1 w-full bg-red-50 border border-red-200 px-4 py-3 rounded-xl font-mono text-base sm:text-lg font-black text-[#E31B23] tracking-widest text-center sm:text-left select-all">
-                {referralCode}
-              </div>
-              <button
-                type="button"
-                onClick={handleCopyCode}
-                className="w-full sm:w-auto px-5 py-3.5 bg-gray-900 hover:bg-black text-white text-xs font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 active:scale-95 shrink-0"
-              >
-                {copiedCode ? <RiCheckFill size={18} /> : <RiFileCopyFill size={18} />}
-                <span>
-                  {copiedCode
-                    ? (isBn ? 'কোড কপি সম্পন্ন!' : 'Copied Code!')
-                    : (isBn ? 'কোড কপি করুন' : 'Copy Code')}
-                </span>
-              </button>
-            </div>
-          </div>
-
-          <div className="border-t border-gray-100" />
-
-          {/* Referral Link Box */}
+        {/* Referral Link Section */}
+        <div className="bg-white p-6 sm:p-8 rounded-3xl border border-gray-200/80 shadow-xs">
           <div className="space-y-2">
             <h2 className="text-xs font-black text-gray-500 uppercase tracking-wider">
               {isBn ? 'আপনার রেফারেল লিংক' : 'Your Referral Link'}
