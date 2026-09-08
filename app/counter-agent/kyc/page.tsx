@@ -225,11 +225,13 @@ export default function AgentKycPage() {
                 <div className="border-2 border-dashed border-gray-300 hover:border-[#E31B23] bg-gray-50/50 rounded-2xl p-4 text-center transition-all">
                   {nidFrontUrl ? (
                     <div className="space-y-3">
-                      <img
-                        src={nidFrontUrl}
-                        alt="NID Front Preview"
-                        className="h-36 w-full object-cover rounded-xl border border-gray-200"
-                      />
+                      <div className="h-44 w-full bg-slate-950/5 rounded-xl border border-gray-200 p-2 flex items-center justify-center overflow-hidden">
+                        <img
+                          src={nidFrontUrl}
+                          alt="NID Front Preview"
+                          className="max-h-full max-w-full object-contain rounded-lg shadow-xs"
+                        />
+                      </div>
                       <button
                         type="button"
                         onClick={() => setNidFrontUrl('')}
@@ -264,11 +266,13 @@ export default function AgentKycPage() {
                 <div className="border-2 border-dashed border-gray-300 hover:border-[#E31B23] bg-gray-50/50 rounded-2xl p-4 text-center transition-all">
                   {nidBackUrl ? (
                     <div className="space-y-3">
-                      <img
-                        src={nidBackUrl}
-                        alt="NID Back Preview"
-                        className="h-36 w-full object-cover rounded-xl border border-gray-200"
-                      />
+                      <div className="h-44 w-full bg-slate-950/5 rounded-xl border border-gray-200 p-2 flex items-center justify-center overflow-hidden">
+                        <img
+                          src={nidBackUrl}
+                          alt="NID Back Preview"
+                          className="max-h-full max-w-full object-contain rounded-lg shadow-xs"
+                        />
+                      </div>
                       <button
                         type="button"
                         onClick={() => setNidBackUrl('')}

@@ -310,7 +310,7 @@ export default function AdminKycPage() {
       {/* Image Modal Lightbox */}
       {modalType === 'IMAGE' && selectedAgent && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-xs z-[9999] flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-3xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-3xl max-w-4xl w-full p-6 space-y-4 max-h-[92vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-gray-100 pb-3">
               <div>
                 <h3 className="text-base font-black text-gray-900">
@@ -328,30 +328,58 @@ export default function AdminKycPage() {
 
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <span className="text-xs font-bold text-gray-700 block mb-2">{isBn ? 'এনআইডি সামনের দিক' : 'NID Front Side'}</span>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-bold text-gray-700">{isBn ? 'এনআইডি সামনের দিক' : 'NID Front Side'}</span>
+                  {selectedAgent.nidFrontDocUrl && (
+                    <a
+                      href={selectedAgent.nidFrontDocUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] font-bold text-[#E31B23] hover:underline flex items-center gap-1"
+                    >
+                      <RiExternalLinkLine size={12} /> {isBn ? 'মূল ছবি দেখুন' : 'View Full Image'}
+                    </a>
+                  )}
+                </div>
                 {selectedAgent.nidFrontDocUrl ? (
-                  <img
-                    src={selectedAgent.nidFrontDocUrl}
-                    alt="NID Front"
-                    className="w-full h-56 object-cover rounded-2xl border border-gray-200 shadow-xs"
-                  />
+                  <div className="w-full h-64 sm:h-80 bg-slate-950/5 border border-gray-200 rounded-2xl p-2 flex items-center justify-center overflow-hidden">
+                    <img
+                      src={selectedAgent.nidFrontDocUrl}
+                      alt="NID Front"
+                      className="max-h-full max-w-full object-contain rounded-xl shadow-xs"
+                    />
+                  </div>
                 ) : (
-                  <div className="h-56 bg-gray-100 rounded-2xl flex items-center justify-center text-xs text-gray-400">
+                  <div className="h-64 sm:h-80 bg-gray-100 rounded-2xl flex items-center justify-center text-xs text-gray-400">
                     {isBn ? 'সামনের ছবি নেই' : 'No Front Image'}
                   </div>
                 )}
               </div>
 
               <div>
-                <span className="text-xs font-bold text-gray-700 block mb-2">{isBn ? 'এনআইডি পিছনের দিক' : 'NID Back Side'}</span>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-bold text-gray-700">{isBn ? 'এনআইডি পিছনের দিক' : 'NID Back Side'}</span>
+                  {selectedAgent.nidBackDocUrl && (
+                    <a
+                      href={selectedAgent.nidBackDocUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] font-bold text-[#E31B23] hover:underline flex items-center gap-1"
+                    >
+                      <RiExternalLinkLine size={12} /> {isBn ? 'মূল ছবি দেখুন' : 'View Full Image'}
+                    </a>
+                  )}
+                </div>
                 {selectedAgent.nidBackDocUrl ? (
-                  <img
-                    src={selectedAgent.nidBackDocUrl}
-                    alt="NID Back"
-                    className="w-full h-56 object-cover rounded-2xl border border-gray-200 shadow-xs"
-                  />
+                  <div className="w-full h-64 sm:h-80 bg-slate-950/5 border border-gray-200 rounded-2xl p-2 flex items-center justify-center overflow-hidden">
+                    <img
+                      src={selectedAgent.nidBackDocUrl}
+                      alt="NID Back"
+                      className="max-h-full max-w-full object-contain rounded-xl shadow-xs"
+                    />
+                  </div>
                 ) : (
-                  <div className="h-56 bg-gray-100 rounded-2xl flex items-center justify-center text-xs text-gray-400">
+                  <div className="h-64 sm:h-80 bg-gray-100 rounded-2xl flex items-center justify-center text-xs text-gray-400">
                     {isBn ? 'পিছনের ছবি নেই' : 'No Back Image'}
                   </div>
                 )}
