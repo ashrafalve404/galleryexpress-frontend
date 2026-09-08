@@ -32,6 +32,10 @@ export default function AdminSchedulesPage() {
   const [editing, setEditing] = useState<Schedule | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
+  const [routeFilter, setRouteFilter] = useState<string>('ALL');
+  const [statusFilter, setStatusFilter] = useState<'ALL' | 'ACTIVE' | 'CANCELLED'>('ALL');
+  const [sortBy, setSortBy] = useState<'DATE_ASC' | 'DATE_DESC' | 'COACH'>('DATE_ASC');
+
   const [form, setForm] = useState({
     coachId: '',
     routeId: '',
@@ -92,7 +96,7 @@ export default function AdminSchedulesPage() {
     onError: (err: Error) => toast.error(err.message || 'Failed to update schedule'),
   });
 
-  const cancelMutation = useMutation({
+  const deleteMutation = useMutation({
     mutationFn: (id: string) => client.delete(`/api/v1/admin/schedules/${id}`),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['admin', 'schedules'] });
@@ -150,16 +154,37 @@ export default function AdminSchedulesPage() {
   };
 
   const schedules: Schedule[] = Array.isArray(schedulesData) ? schedulesData : [];
-  const filtered = schedules.filter((s) => {
-    if (!search) return true;
+  let filtered = schedules.filter((s) => {
     const coachName = s.coach?.name || '';
     const origin = s.route?.origin || '';
     const dest = s.route?.destination || '';
-    return (
+    const matchesSearch =
+      !search ||
       coachName.toLowerCase().includes(search.toLowerCase()) ||
       origin.toLowerCase().includes(search.toLowerCase()) ||
-      dest.toLowerCase().includes(search.toLowerCase())
-    );
+      dest.toLowerCase().includes(search.toLowerCase());
+
+    const matchesRoute = routeFilter === 'ALL' || s.routeId === routeFilter;
+    const matchesStatus = statusFilter === 'ALL' || (s.status || 'ACTIVE') === statusFilter;
+
+    return matchesSearch && matchesRoute && matchesStatus;
+  });
+
+  filtered = [...filtered].sort((a, b) => {
+    if (sortBy === 'DATE_ASC') {
+      const dateA = `${a.departureDate?.split('T')[0]} ${a.departureTime}`;
+      const dateB = `${b.departureDate?.split('T')[0]} ${b.departureTime}`;
+      return dateA.localeCompare(dateB);
+    }
+    if (sortBy === 'DATE_DESC') {
+      const dateA = `${a.departureDate?.split('T')[0]} ${a.departureTime}`;
+      const dateB = `${b.departureDate?.split('T')[0]} ${b.departureTime}`;
+      return dateB.localeCompare(dateA);
+    }
+    if (sortBy === 'COACH') {
+      return (a.coach?.name || '').localeCompare(b.coach?.name || '');
+    }
+    return 0;
   });
 
   const handleSelectAll = (checked: boolean) => {
@@ -233,16 +258,52 @@ export default function AdminSchedulesPage() {
         </button>
       </div>
 
+      {/* Filter Control Toolbar */}
       <div className="bg-white rounded-2xl border border-gray-100 p-4 mb-6">
-        <div className="relative">
-          <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            placeholder={isBn ? 'সময়সূচী দিয়ে খুঁজুন...' : 'Search schedules...'}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+          <div className="relative">
+            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder={isBn ? 'বাস বা রুট দিয়ে খুঁজুন...' : 'Search coach or route...'}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#E31B23]"
+            />
+          </div>
+
+          <select
+            value={routeFilter}
+            onChange={(e) => setRouteFilter(e.target.value)}
+            className="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-extrabold text-gray-700 focus:outline-none focus:border-[#E31B23]"
+          >
+            <option value="ALL">{isBn ? 'সকল রুট' : 'All Routes'}</option>
+            {routes.map((r) => (
+              <option key={r.id} value={r.id}>
+                {r.origin} ➔ {r.destination}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value as any)}
+            className="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-extrabold text-gray-700 focus:outline-none focus:border-[#E31B23]"
+          >
+            <option value="ALL">{isBn ? 'সকল স্ট্যাটাস' : 'All Statuses'}</option>
+            <option value="ACTIVE">{isBn ? 'সক্রিয় (Active)' : 'Active Schedules'}</option>
+            <option value="CANCELLED">{isBn ? 'বাতিলকৃত (Cancelled)' : 'Cancelled Schedules'}</option>
+          </select>
+
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as any)}
+            className="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-extrabold text-gray-700 focus:outline-none focus:border-[#E31B23]"
+          >
+            <option value="DATE_ASC">{isBn ? 'যাত্রার সময় (আগে থেকে পরে)' : 'Departure Time (Earliest First)'}</option>
+            <option value="DATE_DESC">{isBn ? 'যাত্রার সময় (পরে থেকে আগে)' : 'Departure Time (Latest First)'}</option>
+            <option value="COACH">{isBn ? 'কোচের নাম (A-Z)' : 'Coach Name (A-Z)'}</option>
+          </select>
         </div>
       </div>
 
@@ -487,7 +548,7 @@ export default function AdminSchedulesPage() {
                             if (isCancelled) {
                               updateMutation.mutate({ id: s.id, dto: { status: 'ACTIVE' } as any });
                             } else {
-                              cancelMutation.mutate(s.id);
+                              deleteMutation.mutate(s.id);
                             }
                           }
                         }}

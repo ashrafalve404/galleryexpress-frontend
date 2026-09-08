@@ -34,6 +34,10 @@ export default function AdminCoachesPage() {
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<Coach | null>(null);
 
+  const [acFilter, setAcFilter] = useState<'ALL' | 'AC' | 'NON_AC'>('ALL');
+  const [statusFilter, setStatusFilter] = useState<'ALL' | 'ACTIVE' | 'INACTIVE'>('ALL');
+  const [sortBy, setSortBy] = useState<'NEWEST' | 'NAME' | 'SEATS_DESC' | 'SEATS_ASC'>('NEWEST');
+
   const [form, setForm] = useState({
     name: '',
     coachNumber: '',
@@ -139,12 +143,29 @@ export default function AdminCoachesPage() {
   };
 
   const coaches: Coach[] = Array.isArray(coachesData) ? coachesData : [];
-  const filtered = coaches.filter(
-    (c) =>
+  let filtered = coaches.filter((c) => {
+    const matchesSearch =
       !search ||
       c.name.toLowerCase().includes(search.toLowerCase()) ||
-      (c.registrationNumber || '').toLowerCase().includes(search.toLowerCase())
-  );
+      (c.registrationNumber || '').toLowerCase().includes(search.toLowerCase()) ||
+      (c.coachNumber || '').toLowerCase().includes(search.toLowerCase());
+
+    const matchesAc =
+      acFilter === 'ALL' ||
+      (acFilter === 'AC' && c.isAC) ||
+      (acFilter === 'NON_AC' && !c.isAC);
+
+    const matchesStatus = statusFilter === 'ALL' || (c.status || 'ACTIVE') === statusFilter;
+
+    return matchesSearch && matchesAc && matchesStatus;
+  });
+
+  filtered = [...filtered].sort((a, b) => {
+    if (sortBy === 'NAME') return a.name.localeCompare(b.name);
+    if (sortBy === 'SEATS_DESC') return (b.totalSeats || 0) - (a.totalSeats || 0);
+    if (sortBy === 'SEATS_ASC') return (a.totalSeats || 0) - (b.totalSeats || 0);
+    return 0;
+  });
 
   return (
     <div>
@@ -165,16 +186,50 @@ export default function AdminCoachesPage() {
         </button>
       </div>
 
+      {/* Filter Toolbar */}
       <div className="bg-white rounded-2xl border border-gray-100 p-4 mb-6">
-        <div className="relative">
-          <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            placeholder={isBn ? 'কোচের নাম বা রেজিস্ট্রেশন নম্বর দিয়ে খুঁজুন...' : 'Search coaches by name or reg number...'}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+          <div className="relative">
+            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder={isBn ? 'কোচের নাম বা রেজিস্ট্রেশন দিয়ে খুঁজুন...' : 'Search coaches...'}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#E31B23]"
+            />
+          </div>
+
+          <select
+            value={acFilter}
+            onChange={(e) => setAcFilter(e.target.value as any)}
+            className="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-extrabold text-gray-700 focus:outline-none focus:border-[#E31B23]"
+          >
+            <option value="ALL">{isBn ? 'সকল ক্যাটাগরি (AC & Non-AC)' : 'All AC Types'}</option>
+            <option value="AC">{isBn ? 'এসি কোচ (AC Only)' : 'AC Coaches Only'}</option>
+            <option value="NON_AC">{isBn ? 'নন-এসি কোচ (Non-AC)' : 'Non-AC Coaches Only'}</option>
+          </select>
+
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value as any)}
+            className="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-extrabold text-gray-700 focus:outline-none focus:border-[#E31B23]"
+          >
+            <option value="ALL">{isBn ? 'সকল স্ট্যাটাস' : 'All Statuses'}</option>
+            <option value="ACTIVE">{isBn ? 'সক্রিয় কোচ (Active)' : 'Active Coaches'}</option>
+            <option value="INACTIVE">{isBn ? 'নিষ্ক্রিয় কোচ (Inactive)' : 'Inactive Coaches'}</option>
+          </select>
+
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as any)}
+            className="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-extrabold text-gray-700 focus:outline-none focus:border-[#E31B23]"
+          >
+            <option value="NEWEST">{isBn ? 'নতুন যোগ করা' : 'Sort: Newest Added'}</option>
+            <option value="NAME">{isBn ? 'কোচের নাম (A-Z)' : 'Sort: Name (A-Z)'}</option>
+            <option value="SEATS_DESC">{isBn ? 'আসন সংখ্যা: বেশি ➔ কম' : 'Sort: Seats (High ➔ Low)'}</option>
+            <option value="SEATS_ASC">{isBn ? 'আসন সংখ্যা: কম ➔ বেশি' : 'Sort: Seats (Low ➔ High)'}</option>
+          </select>
         </div>
       </div>
 

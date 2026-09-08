@@ -26,6 +26,9 @@ export default function AdminRoutesPage() {
   const [editing, setEditing] = useState<RouteItem | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
+  const [statusFilter, setStatusFilter] = useState<'ALL' | 'ACTIVE' | 'INACTIVE'>('ALL');
+  const [sortBy, setSortBy] = useState<'NEWEST' | 'ORIGIN' | 'DISTANCE_ASC' | 'DISTANCE_DESC' | 'DURATION_ASC'>('NEWEST');
+
   const [form, setForm] = useState({
     origin: '',
     destination: '',
@@ -110,11 +113,22 @@ export default function AdminRoutesPage() {
   };
 
   const routes: RouteItem[] = Array.isArray(data) ? data : [];
-  const filtered = routes.filter((r) =>
-    !search ||
-    r.origin.toLowerCase().includes(search.toLowerCase()) ||
-    r.destination.toLowerCase().includes(search.toLowerCase())
-  );
+  let filtered = routes.filter((r) => {
+    const matchesSearch =
+      !search ||
+      r.origin.toLowerCase().includes(search.toLowerCase()) ||
+      r.destination.toLowerCase().includes(search.toLowerCase());
+    const matchesStatus = statusFilter === 'ALL' || (r.status || 'ACTIVE') === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  filtered = [...filtered].sort((a, b) => {
+    if (sortBy === 'ORIGIN') return a.origin.localeCompare(b.origin);
+    if (sortBy === 'DISTANCE_ASC') return (a.distanceKm || 0) - (b.distanceKm || 0);
+    if (sortBy === 'DISTANCE_DESC') return (b.distanceKm || 0) - (a.distanceKm || 0);
+    if (sortBy === 'DURATION_ASC') return (a.durationMins || 0) - (b.durationMins || 0);
+    return 0;
+  });
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -231,16 +245,41 @@ export default function AdminRoutesPage() {
         </div>
       )}
 
+      {/* Filter & Sorting Control Toolbar */}
       <div className="bg-white rounded-2xl border border-gray-100 p-4 mb-6">
-        <div className="relative">
-          <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            placeholder={isBn ? 'যাত্রা ও গন্তব্য দিয়ে রুট খুঁজুন...' : 'Search routes by origin, destination...'}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+          <div className="relative md:col-span-2">
+            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder={isBn ? 'রুট খুঁজুন (যাত্রা বা গন্তব্য)...' : 'Search routes by origin or destination...'}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#E31B23]/20"
+            />
+          </div>
+
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value as any)}
+            className="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-extrabold text-gray-700 focus:outline-none focus:border-[#E31B23]"
+          >
+            <option value="ALL">{isBn ? 'সকল স্ট্যাটাস' : 'All Statuses'}</option>
+            <option value="ACTIVE">{isBn ? 'সক্রিয় রুট (Active)' : 'Active Routes'}</option>
+            <option value="INACTIVE">{isBn ? 'নিষ্ক্রিয় রুট (Inactive)' : 'Inactive Routes'}</option>
+          </select>
+
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as any)}
+            className="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-extrabold text-gray-700 focus:outline-none focus:border-[#E31B23]"
+          >
+            <option value="NEWEST">{isBn ? 'নতুন যোগ করা' : 'Sort: Newest Added'}</option>
+            <option value="ORIGIN">{isBn ? 'যাত্রা স্থান (A-Z)' : 'Sort: Origin (A-Z)'}</option>
+            <option value="DISTANCE_ASC">{isBn ? 'দূরত্ব: কম ➔ বেশি' : 'Sort: Distance (Shortest)'}</option>
+            <option value="DISTANCE_DESC">{isBn ? 'দূরত্ব: বেশি ➔ কম' : 'Sort: Distance (Longest)'}</option>
+            <option value="DURATION_ASC">{isBn ? 'সময়: কম ➔ বেশি' : 'Sort: Duration (Fastest)'}</option>
+          </select>
         </div>
       </div>
 
