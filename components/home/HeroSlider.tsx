@@ -39,6 +39,14 @@ const rawSlides = [
     subtitleBn: 'ঢাকা, চট্টগ্রাম ও কক্সবাজারের মধ্যে প্রতিদিনের বিশ্বস্ত যাতায়াত',
     position: 'object-bottom',
   },
+  {
+    image: '/hero-image4.webp',
+    titleEn: 'Safe & Seamless Online Booking',
+    subtitleEn: 'Instant Seat Allocation with Instant E-Ticket Confirmation',
+    titleBn: 'নিরাপদ ও সহজ অনলাইন বুকিং',
+    subtitleBn: 'তাৎক্ষণিক সিট সিলেক্ট ও ই-টিকিট নিশ্চিতকরণ',
+    position: 'object-center',
+  },
 ];
 
 export function HeroSlider() {
