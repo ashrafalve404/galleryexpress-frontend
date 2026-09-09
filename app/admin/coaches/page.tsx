@@ -36,7 +36,16 @@ export default function AdminCoachesPage() {
   const [editing, setEditing] = useState<Coach | null>(null);
   const [selectedCoachForMap, setSelectedCoachForMap] = useState<Coach | null>(null);
 
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<{
+    name: string;
+    coachNumber: string;
+    registrationNumber: string;
+    coachTypeId: string;
+    seatLayoutId?: string;
+    isAC: boolean;
+    totalSeats: number;
+    status: string;
+  }>({
     name: '',
     coachNumber: '',
     registrationNumber: '',
@@ -134,6 +143,7 @@ export default function AdminCoachesPage() {
       ...form,
       coachNumber: form.coachNumber || `GE-${form.registrationNumber.slice(-4)}`,
       coachTypeId: form.coachTypeId || coachTypes[0]?.id || '00000000-0000-0000-0000-000000000001',
+      seatLayoutId: form.seatLayoutId === 'CUSTOM' ? undefined : form.seatLayoutId,
     };
 
     if (editing) {
