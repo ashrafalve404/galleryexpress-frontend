@@ -466,9 +466,9 @@ export default function BuyBulkPage() {
                     <span className="font-bold text-gray-700 block">
                       {lang === 'BN' ? 'অ্যাডমিন সেন্ড মানি নম্বরসমূহ:' : 'Admin Send Money Numbers:'}
                     </span>
-                    <div className="flex justify-between items-center text-gray-800 font-mono font-bold bg-white p-2 rounded-xl border border-gray-200">
-                      <span>bKash / Nagad / Rocket:</span>
-                      <span className="text-[#E31B23] text-sm">01739-142959</span>
+                    <div className="flex items-center justify-between gap-2 text-gray-800 font-mono font-bold bg-white p-2.5 rounded-xl border border-gray-200 text-xs">
+                      <span className="truncate text-[11px] sm:text-xs">bKash / Nagad / Rocket:</span>
+                      <span className="text-[#E31B23] text-xs sm:text-sm font-black shrink-0 whitespace-nowrap">01739-142959</span>
                     </div>
                     <p className="text-[11px] text-gray-500">
                       {lang === 'BN'
