@@ -13,6 +13,12 @@ import { today } from '@/lib/utils/date';
 import { useLanguageStore } from '@/lib/store/languageStore';
 import { getTranslation, TranslationKey } from '@/lib/utils/translations';
 
+interface BackendFare {
+  id: string;
+  baseAmount: number;
+  coachType?: { id: string; name: string };
+}
+
 interface BackendRoute {
   id: string;
   origin: string;
@@ -20,6 +26,7 @@ interface BackendRoute {
   distanceKm?: number;
   durationMins?: number;
   status: string;
+  fares?: BackendFare[];
 }
 
 const DEFAULT_POPULAR_ROUTES = [
@@ -30,7 +37,7 @@ const DEFAULT_POPULAR_ROUTES = [
   { from: 'Chittagong', to: 'Dhaka', duration: '5h', fare: '৳1,200', departures: '2 daily' },
 ];
 
-const destinations = [
+const baseDestinations = [
   {
     name: "Cox's Bazar",
     nameBn: 'কক্সবাজার',
@@ -39,8 +46,6 @@ const destinations = [
     desc: "World's longest natural sandy sea beach & scenic marine drive highway.",
     descBn: 'বিশ্বের দীর্ঘতম প্রাকৃতিক বালুকাময় সমুদ্র সৈকত ও মেরিন ড্রাইভ হাইওয়ে।',
     image: '/coxbazar.webp',
-    fare: 'From ৳2,000',
-    fareBn: '৳২,০০০ থেকে',
   },
   {
     name: 'Chittagong',
@@ -50,8 +55,6 @@ const destinations = [
     desc: "Bangladesh's major port city — Patenga sea beach & lush hill tracts scenery.",
     descBn: 'বাংলাদেশের প্রধান বন্দর নগরী — পতেঙ্গা সমুদ্র সৈকত ও পাহাড়ী প্রাকৃতিক সৌন্দর্য।',
     image: '/chittagong.webp',
-    fare: 'From ৳1,200',
-    fareBn: '৳১,২০০ থেকে',
   },
 ];
 
@@ -103,12 +106,48 @@ export function PopularDestinations() {
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
+  const { data: apiRoutes } = useQuery({
+    queryKey: ['public', 'routes'],
+    queryFn: async () => {
+      const { data } = await client.get('/api/v1/routes');
+      const list = data?.data || data || [];
+      return Array.isArray(list) ? list : [];
+    },
+  });
+
+  const getMinFareForDestination = (destName: string): string => {
+    if (!Array.isArray(apiRoutes)) return destName === 'Chittagong' ? '৳1,200' : '৳2,000';
+    const matchingRoutes = apiRoutes.filter((r: BackendRoute) => r.destination === destName && r.status === 'ACTIVE');
+    const allFares: number[] = [];
+    matchingRoutes.forEach((r: BackendRoute) => {
+      if (Array.isArray(r.fares)) {
+        r.fares.forEach((f) => {
+          if (f.baseAmount) allFares.push(Number(f.baseAmount));
+        });
+      }
+    });
+    if (allFares.length > 0) {
+      const min = Math.min(...allFares);
+      return '৳' + Number(min).toLocaleString('en-BD');
+    }
+    return destName === 'Chittagong' ? '৳1,200' : '৳2,000';
+  };
+
+  const destinations = baseDestinations.map((d) => {
+    const minFare = getMinFareForDestination(d.name);
+    return {
+      ...d,
+      fare: `From ${minFare}`,
+      fareBn: `${minFare} থেকে`,
+    };
+  });
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrent((prev) => (prev + 1) % destinations.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, []);
+  }, [destinations.length]);
 
   const prevSlide = () => setCurrent((prev) => (prev === 0 ? destinations.length - 1 : prev - 1));
   const nextSlide = () => setCurrent((prev) => (prev + 1) % destinations.length);
@@ -295,27 +334,33 @@ export function PopularRoutes() {
     },
   });
 
-  // Fare lookup based on known corridor prices
-  const fareLookup: Record<string, string> = {
-    "Dhaka→Cox's Bazar": '৳2,000',
-    "Cox's Bazar→Dhaka": '৳2,000',
-    'Dhaka→Chittagong': '৳1,200',
-    'Chittagong→Dhaka': '৳1,200',
-    "Chittagong→Cox's Bazar": '৳800',
-    "Cox's Bazar→Chittagong": '৳800',
-  };
-
   const activeRoutes = Array.isArray(apiRoutes) && apiRoutes.length > 0
     ? apiRoutes
         .filter((r: BackendRoute) => r.status === 'ACTIVE' && r.origin !== 'Comilla' && r.destination !== 'Comilla')
         .slice(0, 6)
-        .map((r: BackendRoute) => ({
-          from: r.origin,
-          to: r.destination,
-          duration: formatMinutes(r.durationMins),
-          fare: `${getTranslation(lang, 'fromFare', 'From')} ${fareLookup[`${r.origin}→${r.destination}`] || '৳350'}`,
-          departures: 'Daily',
-        }))
+        .map((r: BackendRoute) => {
+          let lowestFareAmount: number | null = null;
+          if (Array.isArray(r.fares) && r.fares.length > 0) {
+            const validAmounts = r.fares
+              .map((f) => Number(f.baseAmount || 0))
+              .filter((a) => a > 0);
+            if (validAmounts.length > 0) {
+              lowestFareAmount = Math.min(...validAmounts);
+            }
+          }
+
+          const formattedFare = lowestFareAmount
+            ? '৳' + Number(lowestFareAmount).toLocaleString('en-BD')
+            : '৳1,200';
+
+          return {
+            from: r.origin,
+            to: r.destination,
+            duration: formatMinutes(r.durationMins),
+            fare: `${getTranslation(lang, 'fromFare', 'From')} ${formattedFare}`,
+            departures: 'Daily',
+          };
+        })
     : DEFAULT_POPULAR_ROUTES;
 
   return (

@@ -86,7 +86,7 @@ export const dictionary = {
 
     // Sell Ticket & Search Filters
     searchBusPlaceholder: 'Search bus name...',
-    allRoutes: 'All Routes (Dhaka ↔ Cox)',
+    allRoutes: "All Corridor Routes (Dhaka ↔ Cox's Bazar)",
     dhakaToCox: "Dhaka ➔ Cox's Bazar",
     coxToDhaka: "Cox's Bazar ➔ Dhaka",
     allDepartureDate: 'All Dates',
@@ -257,7 +257,7 @@ export const dictionary = {
 
     // Sell Ticket & Search Filters
     searchBusPlaceholder: 'বাসের নাম দিয়ে খুঁজুন...',
-    allRoutes: 'সকল রুট (ঢাকা ↔ কক্সবাজার)',
+    allRoutes: 'সকল করিডোর রুট (ঢাকা ↔ কক্সবাজার)',
     dhakaToCox: 'ঢাকা ➔ কক্সবাজার',
     coxToDhaka: 'কক্সবাজার ➔ ঢাকা',
     allDepartureDate: 'সকল তারিখ',

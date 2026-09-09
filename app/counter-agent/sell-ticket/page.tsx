@@ -429,11 +429,26 @@ export default function CounterAgentSellTicketPage() {
 
   const remainingBulk = stats?.totalTicketsRemaining || 0;
 
-  // Extract unique available dates from schedules
-  const uniqueDates = Array.from(new Set(schedules.map((s) => s.departureDate).filter(Boolean)));
+  // Filter schedules strictly for Dhaka <-> Cox's Bazar corridor only
+  const corridorSchedules = schedules.filter((sched) => {
+    const origin = (sched.route?.origin || '').trim();
+    const destination = (sched.route?.destination || '').trim();
+    return (
+      (origin === 'Dhaka' && destination === "Cox's Bazar") ||
+      (origin === "Cox's Bazar" && destination === 'Dhaka')
+    );
+  });
+
+  // Extract unique available dates from corridor schedules
+  const uniqueDates = Array.from(new Set(corridorSchedules.map((s) => s.departureDate).filter(Boolean)));
 
   // Filtered schedules list
-  const filteredSchedules = schedules.filter((sched) => {
+  const filteredSchedules = corridorSchedules.filter((sched) => {
+    const origin = (sched.route?.origin || '').trim();
+    const destination = (sched.route?.destination || '').trim();
+    const isDhakaToCox = origin === 'Dhaka' && destination === "Cox's Bazar";
+    const isCoxToDhaka = origin === "Cox's Bazar" && destination === 'Dhaka';
+
     if (filterSearch.trim()) {
       const q = filterSearch.toLowerCase();
       const coachName = (sched.coach?.name || '').toLowerCase();
@@ -446,9 +461,9 @@ export default function CounterAgentSellTicketPage() {
     }
 
     if (filterRoute === 'DHAKA_COX') {
-      if (sched.route?.origin !== 'Dhaka' || sched.route?.destination !== "Cox's Bazar") return false;
+      if (!isDhakaToCox) return false;
     } else if (filterRoute === 'COX_DHAKA') {
-      if (sched.route?.origin !== "Cox's Bazar" || sched.route?.destination !== 'Dhaka') return false;
+      if (!isCoxToDhaka) return false;
     }
 
     if (filterDate !== 'ALL' && sched.departureDate) {
@@ -524,8 +539,8 @@ export default function CounterAgentSellTicketPage() {
                 </span>
                 <span className="text-xs font-bold text-gray-500">
                   {lang === 'BN'
-                    ? `${filteredSchedules.length}/${schedules.length}টি বাস`
-                    : `${filteredSchedules.length}/${schedules.length} Buses`}
+                    ? `${filteredSchedules.length}/${corridorSchedules.length}টি বাস`
+                    : `${filteredSchedules.length}/${corridorSchedules.length} Buses`}
                 </span>
               </div>
 
@@ -548,7 +563,7 @@ export default function CounterAgentSellTicketPage() {
                   onChange={(e) => setFilterRoute(e.target.value)}
                   className="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-extrabold text-gray-800 focus:outline-none focus:border-[#E31B23]"
                 >
-                  <option value="ALL">{getTranslation(lang, 'allRoutes', 'All Routes (Dhaka ↔ Cox)')}</option>
+                  <option value="ALL">{getTranslation(lang, 'allRoutes', "All Corridor Routes (Dhaka ↔ Cox's Bazar)")}</option>
                   <option value="DHAKA_COX">{getTranslation(lang, 'dhakaToCox', "Dhaka ➔ Cox's Bazar")}</option>
                   <option value="COX_DHAKA">{getTranslation(lang, 'coxToDhaka', "Cox's Bazar ➔ Dhaka")}</option>
                 </select>
