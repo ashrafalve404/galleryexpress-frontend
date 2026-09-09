@@ -19,6 +19,7 @@ import { counterAgentApi, type AllowedRoute, type AgentKycStatus, type BulkOrder
 import { useAuthStore } from '@/lib/store/authStore';
 import { useLanguageStore } from '@/lib/store/languageStore';
 import { getTranslation } from '@/lib/utils/translations';
+import { toast } from 'sonner';
 
 function formatTk(n: number) {
   return '৳' + Number(n).toLocaleString('en-BD');
@@ -73,6 +74,8 @@ export default function BuyBulkPage() {
   const [senderPhone, setSenderPhone] = useState('');
   const [trxId, setTrxId] = useState('');
   const [paymentNotes, setPaymentNotes] = useState('');
+  const [submittedOrder, setSubmittedOrder] = useState<BulkOrder | null>(null);
+  const [modalError, setModalError] = useState('');
 
   const handleOpenPaymentModal = (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,6 +92,8 @@ export default function BuyBulkPage() {
       return;
     }
     setError('');
+    setModalError('');
+    setSubmittedOrder(null);
     setShowPaymentModal(true);
   };
 
@@ -98,16 +103,19 @@ export default function BuyBulkPage() {
     e.preventDefault();
     if (paymentType === 'MOBILE_BANKING') {
       if (!senderPhone.trim()) {
-        setError(lang === 'BN' ? 'অনুগ্রহ করে আপনার মোবাইল ব্যাংকিং প্রেরক নম্বর লিখুন।' : 'Please enter your mobile banking sender number.');
+        const msg = lang === 'BN' ? 'অনুগ্রহ করে আপনার মোবাইল ব্যাংকিং প্রেরক নম্বর লিখুন।' : 'Please enter your mobile banking sender number.';
+        setModalError(msg);
         return;
       }
       if (!trxId.trim()) {
-        setError(lang === 'BN' ? 'অনুগ্রহ করে ট্রানজেকশন আইডি (TrxID) লিখুন।' : 'Please enter the Transaction ID (TrxID).');
+        const msg = lang === 'BN' ? 'অনুগ্রহ করে ট্রানজেকশন আইডি (TrxID) লিখুন।' : 'Please enter the Transaction ID (TrxID).';
+        setModalError(msg);
         return;
       }
     }
 
     setError('');
+    setModalError('');
     setSuccess('');
     setLoading(true);
 
@@ -121,19 +129,24 @@ export default function BuyBulkPage() {
         paymentNotes: paymentNotes.trim() || undefined,
       });
 
-      setShowPaymentModal(false);
       setMyBulkOrders((prev) => [order, ...prev]);
+      setSubmittedOrder(order);
       setSuccess(
         lang === 'BN'
           ? `${order.quantity}টি টিকিটের বাল্ক টিকিট অর্ডার জমা দেওয়া হয়েছে! অ্যাডমিনের পেমেন্ট যাচাইকরণের অপেক্ষায় রয়েছে। অনুমোদিত হলে আপনার টিকিট কোটা চালু হবে।`
           : `Bulk ticket order for ${order.quantity} tickets submitted! Pending Admin payment verification. Once approved, your bulk ticket quota will be activated.`,
       );
-      setTimeout(() => router.push('/counter-agent/dashboard'), 3500);
-    } catch (err: any) {
-      setError(
-        err?.response?.data?.message ||
-          (lang === 'BN' ? 'বাল্ক টিকিট কেনাকাটা জমা দিতে ব্যর্থ হয়েছে।' : 'Failed to submit bulk ticket purchase.'),
+      toast.success(
+        lang === 'BN'
+          ? 'বাল্ক টিকিট অর্ডার সফলভাবে জমা দেওয়া হয়েছে!'
+          : 'Bulk ticket order submitted successfully!'
       );
+    } catch (err: any) {
+      const msg = err?.response?.data?.message ||
+        (lang === 'BN' ? 'বাল্ক টিকিট কেনাকাটা জমা দিতে ব্যর্থ হয়েছে।' : 'Failed to submit bulk ticket purchase.');
+      setModalError(msg);
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -416,164 +429,245 @@ export default function BuyBulkPage() {
       {showPaymentModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs px-4">
           <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-5 animate-fade-in max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-              <div>
-                <h2 className="text-lg font-black text-gray-900">
-                  {lang === 'BN' ? 'বাল্ক পেমেন্ট নিশ্চিতকরণ' : 'Bulk Payment Confirmation'}
-                </h2>
-                <p className="text-xs text-gray-500">
-                  {lang === 'BN' ? 'অর্ডার মোট:' : 'Order Total:'} <strong className="text-[#E31B23]">{formatTk(total)}</strong> ({quantity} {lang === 'BN' ? 'টি টিকিট' : 'Tickets'})
-                </p>
-              </div>
-              <button
-                onClick={() => setShowPaymentModal(false)}
-                className="text-gray-400 hover:text-gray-600 text-sm font-bold p-1"
-              >
-                ✕
-              </button>
-            </div>
+            {submittedOrder ? (
+              /* Success Screen Popup inside Modal */
+              <div className="text-center py-2 space-y-5">
+                <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-md">
+                  <RiCheckboxCircleFill size={42} />
+                </div>
 
-            {/* Payment Method Selector */}
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                onClick={() => setPaymentType('MOBILE_BANKING')}
-                className={`py-3 px-4 rounded-2xl border text-xs font-bold transition-all flex items-center justify-center gap-2 ${
-                  paymentType === 'MOBILE_BANKING'
-                    ? 'border-[#E31B23] bg-red-50 text-[#E31B23] shadow-xs'
-                    : 'border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100'
-                }`}
-              >
-                <RiSmartphoneFill size={16} /> {lang === 'BN' ? 'মোবাইল ব্যাংকিং' : 'Mobile Banking'}
-              </button>
-              <button
-                type="button"
-                onClick={() => setPaymentType('DIRECT_CASH')}
-                className={`py-3 px-4 rounded-2xl border text-xs font-bold transition-all flex items-center justify-center gap-2 ${
-                  paymentType === 'DIRECT_CASH'
-                    ? 'border-[#E31B23] bg-red-50 text-[#E31B23] shadow-xs'
-                    : 'border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100'
-                }`}
-              >
-                <RiWallet3Fill size={16} /> {lang === 'BN' ? 'সরাসরি কাউন্টার ক্যাশ' : 'Direct Counter Cash'}
-              </button>
-            </div>
-
-            <form onSubmit={handleFinalPaymentSubmit} className="space-y-4">
-              {paymentType === 'MOBILE_BANKING' ? (
-                <>
-                  <div className="bg-slate-50 border border-slate-200 p-4 rounded-2xl space-y-2 text-xs">
-                    <span className="font-bold text-gray-700 block">
-                      {lang === 'BN' ? 'অ্যাডমিন সেন্ড মানি নম্বরসমূহ:' : 'Admin Send Money Numbers:'}
-                    </span>
-                    <div className="flex items-center justify-between gap-2 text-gray-800 font-mono font-bold bg-white p-2.5 rounded-xl border border-gray-200 text-xs">
-                      <span className="truncate text-[11px] sm:text-xs">bKash / Nagad / Rocket:</span>
-                      <span className="text-[#E31B23] text-xs sm:text-sm font-black shrink-0 whitespace-nowrap">01739-142959</span>
-                    </div>
-                    <p className="text-[11px] text-gray-500">
-                      {lang === 'BN'
-                        ? <>উপরে উল্লিখিত অ্যাডমিন সেন্ড মানি নম্বরে <strong>{formatTk(total)}</strong> টাকা পাঠান, তারপর নিচে বিবরণ প্রদান করুন।</>
-                        : <>Please send <strong>{formatTk(total)}</strong> to the Admin Send Money number above, then enter your details below.</>}
-                    </p>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1">
-                      {lang === 'BN' ? 'মোবাইল ব্যাংকিং প্রোভাইডার' : 'Mobile Banking Provider'}
-                    </label>
-                    <div className="flex gap-2">
-                      {(['BKASH', 'NAGAD', 'ROCKET'] as const).map((prov) => (
-                        <button
-                          key={prov}
-                          type="button"
-                          onClick={() => setMobileProvider(prov)}
-                          className={`flex-1 py-2 rounded-xl text-xs font-extrabold border transition-all ${
-                            mobileProvider === prov
-                              ? 'border-[#E31B23] bg-[#E31B23] text-white'
-                              : 'border-gray-200 bg-gray-50 text-gray-700'
-                          }`}
-                        >
-                          {prov}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1">
-                      {lang === 'BN' ? 'প্রেরকের মোবাইল নম্বর' : 'Sender Mobile Number'} <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={senderPhone}
-                      onChange={(e) => setSenderPhone(e.target.value)}
-                      placeholder="e.g. 01712345678"
-                      className="w-full p-3 bg-gray-50 border border-gray-300 rounded-xl text-xs font-semibold focus:border-[#E31B23] outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1">
-                      {lang === 'BN' ? 'ট্রানজেকশন আইডি (TrxID)' : 'Transaction ID (TrxID)'} <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={trxId}
-                      onChange={(e) => setTrxId(e.target.value)}
-                      placeholder="e.g. BL90XK2191"
-                      className="w-full p-3 bg-gray-50 border border-gray-300 rounded-xl text-xs font-mono font-bold uppercase focus:border-[#E31B23] outline-none placeholder:normal-case placeholder:font-sans"
-                    />
-                  </div>
-                </>
-              ) : (
-                <div className="bg-slate-50 border border-slate-200 p-4 rounded-2xl space-y-2 text-xs">
-                  <span className="font-bold text-gray-700 block">
-                    {lang === 'BN' ? 'সরাসরি পেমেন্ট নির্দেশাবলী:' : 'Direct Payment Instructions:'}
-                  </span>
-                  <p className="text-gray-600 leading-relaxed">
+                <div>
+                  <h2 className="text-xl font-black text-gray-900">
+                    {lang === 'BN' ? 'অর্ডার জমা সম্পন্ন হয়েছে!' : 'Order Submitted Successfully!'}
+                  </h2>
+                  <p className="text-xs text-gray-500 mt-1 max-w-sm mx-auto font-medium">
                     {lang === 'BN'
-                      ? 'অ্যাডমিন সেন্ট্রাল একাউন্ট অফিসে নগদ টাকা প্রদান করুন বা ব্যাংক জমা স্লিপ জমা দিন।'
-                      : 'Hand over cash or submit bank deposit slip directly to Admin Central Accounts Office.'}
+                      ? 'আপনার পেমেন্ট বিবরণী অ্যাডমিন অনুসন্ধানের অপেক্ষায় রয়েছে। অ্যাডমিন পেমেন্ট চেক করে বুকিং কোটা সক্রিয় করে দেবেন।'
+                      : 'Your order has been submitted! It is pending Admin payment verification before quota activation.'}
                   </p>
-                  <div>
-                    <label className="block text-xs font-bold text-gray-700 mt-2 mb-1">
-                      {lang === 'BN' ? 'পেমেন্ট রেফারেন্স / রসিদ নোট' : 'Payment Reference / Receipt Notes'}
-                    </label>
-                    <textarea
-                      value={paymentNotes}
-                      onChange={(e) => setPaymentNotes(e.target.value)}
-                      placeholder={lang === 'BN' ? 'যেমন: সেন্ট্রাল অফিসে নগদ টাকা প্রদান করা হয়েছে' : 'e.g. Handed ৳20,000 cash to Central Office Admin on 03 Sep'}
-                      className="w-full p-3 bg-white border border-gray-300 rounded-xl text-xs focus:border-[#E31B23] outline-none"
-                      rows={2}
-                    />
+                </div>
+
+                <div className="bg-slate-50 border border-slate-200 p-4 rounded-2xl space-y-2.5 text-left text-xs font-semibold text-gray-700">
+                  <div className="flex justify-between items-center border-b border-gray-200 pb-2">
+                    <span className="text-gray-500">{lang === 'BN' ? 'অর্ডার আইডি:' : 'Order ID:'}</span>
+                    <span className="font-mono font-bold text-gray-900">{submittedOrder.id.slice(0, 8).toUpperCase()}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-500">{lang === 'BN' ? 'টিকিটের পরিমাণ:' : 'Quantity:'}</span>
+                    <span className="font-black text-gray-900">{submittedOrder.quantity} {lang === 'BN' ? 'টি টিকিট' : 'Tickets'}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-500">{lang === 'BN' ? 'মোট বিনিয়োগ:' : 'Total Amount:'}</span>
+                    <span className="font-black text-[#E31B23]">{formatTk(submittedOrder.totalAmount)}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-500">{lang === 'BN' ? 'পেমেন্ট মাধ্যম:' : 'Payment Method:'}</span>
+                    <span className="font-bold text-blue-600">{submittedOrder.paymentMethod || paymentType}</span>
+                  </div>
+                  {submittedOrder.trxId && (
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-500">TrxID:</span>
+                      <span className="font-mono font-bold text-gray-900">{submittedOrder.trxId}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between items-center pt-1 border-t border-gray-200">
+                    <span className="text-gray-500">{lang === 'BN' ? 'স্ট্যাটাস:' : 'Status:'}</span>
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-amber-100 text-amber-800 border border-amber-200">
+                      {lang === 'BN' ? 'অনুমোদনের অপেক্ষায়' : 'Pending Approval'}
+                    </span>
                   </div>
                 </div>
-              )}
 
-              <div className="flex gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowPaymentModal(false)}
-                  disabled={loading}
-                  className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-xl transition-all"
-                >
-                  {lang === 'BN' ? 'বাতিল' : 'Cancel'}
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="flex-1 py-3 bg-[#E31B23] hover:bg-[#c9121a] text-white text-xs font-extrabold rounded-xl transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-60"
-                >
-                  {loading ? (
-                    <Loader2 size={16} className="animate-spin" />
-                  ) : (
-                    lang === 'BN' ? 'অর্ডার জমা দিন' : 'Submit Order'
-                  )}
-                </button>
+                <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSubmittedOrder(null);
+                      setShowPaymentModal(false);
+                    }}
+                    className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-bold rounded-xl transition-all"
+                  >
+                    {lang === 'BN' ? 'আরেকটি অর্ডার করুন' : 'Place Another Order'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => router.push('/counter-agent/dashboard')}
+                    className="flex-1 py-3 bg-[#E31B23] hover:bg-[#c9121a] text-white text-xs font-extrabold rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5"
+                  >
+                    {lang === 'BN' ? 'ড্যাশবোর্ডে যান' : 'Go to Dashboard'} <ArrowRight size={14} />
+                  </button>
+                </div>
               </div>
-            </form>
+            ) : (
+              /* Payment Form View inside Modal */
+              <>
+                <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+                  <div>
+                    <h2 className="text-lg font-black text-gray-900">
+                      {lang === 'BN' ? 'বাল্ক পেমেন্ট নিশ্চিতকরণ' : 'Bulk Payment Confirmation'}
+                    </h2>
+                    <p className="text-xs text-gray-500">
+                      {lang === 'BN' ? 'অর্ডার মোট:' : 'Order Total:'} <strong className="text-[#E31B23]">{formatTk(total)}</strong> ({quantity} {lang === 'BN' ? 'টি টিকিট' : 'Tickets'})
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setShowPaymentModal(false)}
+                    className="text-gray-400 hover:text-gray-600 text-sm font-bold p-1"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                {modalError && (
+                  <div className="p-3 bg-red-50 border border-red-200 text-red-800 text-xs font-bold rounded-xl flex items-center gap-2">
+                    <RiErrorWarningFill size={16} className="text-red-600 shrink-0" />
+                    <span>{modalError}</span>
+                  </div>
+                )}
+
+                {/* Payment Method Selector */}
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setPaymentType('MOBILE_BANKING')}
+                    className={`py-3 px-4 rounded-2xl border text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+                      paymentType === 'MOBILE_BANKING'
+                        ? 'border-[#E31B23] bg-red-50 text-[#E31B23] shadow-xs'
+                        : 'border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    <RiSmartphoneFill size={16} /> {lang === 'BN' ? 'মোবাইল ব্যাংকিং' : 'Mobile Banking'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPaymentType('DIRECT_CASH')}
+                    className={`py-3 px-4 rounded-2xl border text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+                      paymentType === 'DIRECT_CASH'
+                        ? 'border-[#E31B23] bg-red-50 text-[#E31B23] shadow-xs'
+                        : 'border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    <RiWallet3Fill size={16} /> {lang === 'BN' ? 'সরাসরি কাউন্টার ক্যাশ' : 'Direct Counter Cash'}
+                  </button>
+                </div>
+
+                <form onSubmit={handleFinalPaymentSubmit} className="space-y-4">
+                  {paymentType === 'MOBILE_BANKING' ? (
+                    <>
+                      <div className="bg-slate-50 border border-slate-200 p-4 rounded-2xl space-y-2 text-xs">
+                        <span className="font-bold text-gray-700 block">
+                          {lang === 'BN' ? 'অ্যাডমিন সেন্ড মানি নম্বরসমূহ:' : 'Admin Send Money Numbers:'}
+                        </span>
+                        <div className="flex items-center justify-between gap-2 text-gray-800 font-mono font-bold bg-white p-2.5 rounded-xl border border-gray-200 text-xs">
+                          <span className="truncate text-[11px] sm:text-xs">bKash / Nagad / Rocket:</span>
+                          <span className="text-[#E31B23] text-xs sm:text-sm font-black shrink-0 whitespace-nowrap">01739-142959</span>
+                        </div>
+                        <p className="text-[11px] text-gray-500">
+                          {lang === 'BN'
+                            ? <>উপরে উল্লিখিত অ্যাডমিন সেন্ড মানি নম্বরে <strong>{formatTk(total)}</strong> টাকা পাঠান, তারপর নিচে বিবরণ প্রদান করুন।</>
+                            : <>Please send <strong>{formatTk(total)}</strong> to the Admin Send Money number above, then enter your details below.</>}
+                        </p>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-gray-700 mb-1">
+                          {lang === 'BN' ? 'মোবাইল ব্যাংকিং প্রোভাইডার' : 'Mobile Banking Provider'}
+                        </label>
+                        <div className="flex gap-2">
+                          {(['BKASH', 'NAGAD', 'ROCKET'] as const).map((prov) => (
+                            <button
+                              key={prov}
+                              type="button"
+                              onClick={() => setMobileProvider(prov)}
+                              className={`flex-1 py-2 rounded-xl text-xs font-extrabold border transition-all ${
+                                mobileProvider === prov
+                                  ? 'border-[#E31B23] bg-[#E31B23] text-white'
+                                  : 'border-gray-200 bg-gray-50 text-gray-700'
+                              }`}
+                            >
+                              {prov}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-gray-700 mb-1">
+                          {lang === 'BN' ? 'প্রেরকের মোবাইল নম্বর' : 'Sender Mobile Number'} <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={senderPhone}
+                          onChange={(e) => setSenderPhone(e.target.value)}
+                          placeholder="e.g. 01712345678"
+                          className="w-full p-3 bg-gray-50 border border-gray-300 rounded-xl text-xs font-semibold focus:border-[#E31B23] outline-none"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-gray-700 mb-1">
+                          {lang === 'BN' ? 'ট্রানজেকশন আইডি (TrxID)' : 'Transaction ID (TrxID)'} <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={trxId}
+                          onChange={(e) => setTrxId(e.target.value)}
+                          placeholder="e.g. BL90XK2191"
+                          className="w-full p-3 bg-gray-50 border border-gray-300 rounded-xl text-xs font-mono font-bold uppercase focus:border-[#E31B23] outline-none placeholder:normal-case placeholder:font-sans"
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <div className="bg-slate-50 border border-slate-200 p-4 rounded-2xl space-y-2 text-xs">
+                      <span className="font-bold text-gray-700 block">
+                        {lang === 'BN' ? 'সরাসরি পেমেন্ট নির্দেশাবলী:' : 'Direct Payment Instructions:'}
+                      </span>
+                      <p className="text-gray-600 leading-relaxed">
+                        {lang === 'BN'
+                          ? 'অ্যাডমিন সেন্ট্রাল একাউন্ট অফিসে নগদ টাকা প্রদান করুন বা ব্যাংক জমা স্লিপ জমা দিন।'
+                          : 'Hand over cash or submit bank deposit slip directly to Admin Central Accounts Office.'}
+                      </p>
+                      <div>
+                        <label className="block text-xs font-bold text-gray-700 mt-2 mb-1">
+                          {lang === 'BN' ? 'পেমেন্ট রেফারেন্স / রসিদ নোট' : 'Payment Reference / Receipt Notes'}
+                        </label>
+                        <textarea
+                          value={paymentNotes}
+                          onChange={(e) => setPaymentNotes(e.target.value)}
+                          placeholder={lang === 'BN' ? 'যেমন: সেন্ট্রাল অফিসে নগদ টাকা প্রদান করা হয়েছে' : 'e.g. Handed ৳20,000 cash to Central Office Admin on 03 Sep'}
+                          className="w-full p-3 bg-white border border-gray-300 rounded-xl text-xs focus:border-[#E31B23] outline-none"
+                          rows={2}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowPaymentModal(false)}
+                      disabled={loading}
+                      className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-xl transition-all"
+                    >
+                      {lang === 'BN' ? 'বাতিল' : 'Cancel'}
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="flex-1 py-3 bg-[#E31B23] hover:bg-[#c9121a] text-white text-xs font-extrabold rounded-xl transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-60"
+                    >
+                      {loading ? (
+                        <Loader2 size={16} className="animate-spin" />
+                      ) : (
+                        lang === 'BN' ? 'অর্ডার জমা দিন' : 'Submit Order'
+                      )}
+                    </button>
+                  </div>
+                </form>
+              </>
+            )}
           </div>
         </div>
       )}
