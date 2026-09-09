@@ -30,7 +30,7 @@ export default function BuyBulkPage() {
   const { lang } = useLanguageStore();
   const [routes, setRoutes] = useState<AllowedRoute[]>([]);
   const [routeId, setRouteId] = useState('');
-  const [quantity, setQuantity] = useState(10);
+  const [quantity, setQuantity] = useState(2);
   const [loading, setLoading] = useState(false);
   const [routesLoading, setRoutesLoading] = useState(true);
   const [success, setSuccess] = useState('');
@@ -80,8 +80,8 @@ export default function BuyBulkPage() {
       setError(lang === 'BN' ? 'বাল্ক টিকিট কেনার আগে কেওয়াইসি ভেরিফিকেশন সম্পন্ন করা আবশ্যক।' : 'KYC Verification Required before purchasing bulk tickets.');
       return;
     }
-    if (quantity < 10) {
-      setError(lang === 'BN' ? 'সর্বনিম্ন বাল্ক অর্ডারের পরিমাণ 10টি টিকিট।' : 'Minimum bulk order quantity is 10 tickets.');
+    if (quantity < 2) {
+      setError(lang === 'BN' ? 'সর্বনিম্ন বাল্ক অর্ডারের পরিমাণ 2টি টিকিট।' : 'Minimum bulk order quantity is 2 tickets.');
       return;
     }
     if (!routeId) {
@@ -202,15 +202,15 @@ export default function BuyBulkPage() {
 
               <div>
                 <label className="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5 sm:mb-2">
-                  {lang === 'BN' ? 'টিকিটের পরিমাণ' : 'Ticket Quantity'} <span className="text-red-500 font-normal">{lang === 'BN' ? '(সর্বনিম্ন 10টি টিকিট)' : '(Minimum 10 tickets)'}</span>
+                  {lang === 'BN' ? 'টিকিটের পরিমাণ' : 'Ticket Quantity'} <span className="text-red-500 font-normal">{lang === 'BN' ? '(সর্বনিম্ন 2টি টিকিট)' : '(Minimum 2 tickets)'}</span>
                 </label>
                 <div className="flex items-center gap-2.5 sm:gap-3">
-                  {/* Decrease 10 tickets */}
+                  {/* Decrease 1 ticket */}
                   <button
                     type="button"
-                    onClick={() => setQuantity((q) => Math.max(10, q - 10))}
+                    onClick={() => setQuantity((q) => Math.max(2, q - 1))}
                     className="p-2.5 sm:p-3 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-xl text-gray-700 font-bold transition-all active:scale-95 shrink-0"
-                    title={lang === 'BN' ? '10টি কমাইন' : 'Decrease by 10 tickets'}
+                    title={lang === 'BN' ? '১টি কমাইন' : 'Decrease 1 ticket'}
                   >
                     <Minus size={18} />
                   </button>
@@ -219,11 +219,11 @@ export default function BuyBulkPage() {
                   <div className="relative flex items-center w-32 sm:w-36">
                     <input
                       type="number"
-                      min={10}
+                      min={2}
                       value={quantity}
                       onChange={(e) => {
                         const val = parseInt(e.target.value);
-                        setQuantity(isNaN(val) ? 10 : Math.max(10, val));
+                        setQuantity(isNaN(val) ? 2 : Math.max(2, val));
                       }}
                       className="w-full py-2.5 sm:py-3 pl-3 pr-8 bg-gray-50 border border-gray-300 rounded-xl text-center text-base sm:text-lg font-black text-gray-900 focus:bg-white focus:border-[#E31B23] outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     />
@@ -239,7 +239,7 @@ export default function BuyBulkPage() {
                       </button>
                       <button
                         type="button"
-                        onClick={() => setQuantity((q) => Math.max(10, q - 1))}
+                        onClick={() => setQuantity((q) => Math.max(2, q - 1))}
                         className="p-0.5 hover:bg-gray-200 rounded text-gray-600 hover:text-gray-900 transition-colors"
                         title={lang === 'BN' ? '১টি কমাইন' : 'Decrease 1 ticket'}
                       >
@@ -248,12 +248,12 @@ export default function BuyBulkPage() {
                     </div>
                   </div>
 
-                  {/* Increase 10 tickets */}
+                  {/* Increase 1 ticket */}
                   <button
                     type="button"
-                    onClick={() => setQuantity((q) => q + 10)}
+                    onClick={() => setQuantity((q) => q + 1)}
                     className="p-2.5 sm:p-3 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-xl text-gray-700 font-bold transition-all active:scale-95 shrink-0"
-                    title={lang === 'BN' ? '10টি বাড়ান' : 'Increase by 10 tickets'}
+                    title={lang === 'BN' ? '১টি বাড়ান' : 'Increase 1 ticket'}
                   >
                     <Plus size={18} />
                   </button>
@@ -277,7 +277,7 @@ export default function BuyBulkPage() {
 
               <button
                 type="submit"
-                disabled={loading || quantity < 10}
+                disabled={loading || quantity < 2}
                 className="w-full py-3.5 sm:py-4 bg-[#E31B23] hover:bg-[#c9121a] text-white font-extrabold text-xs sm:text-base rounded-2xl transition-all shadow-lg hover:shadow-red-600/30 flex items-center justify-center gap-1.5 sm:gap-2 disabled:opacity-50"
               >
                 {lang === 'BN' ? `পেমেন্টে এগিয়ে যান (${formatTk(total)})` : `Proceed to Payment (${formatTk(total)})`} <ArrowRight size={16} className="shrink-0" />

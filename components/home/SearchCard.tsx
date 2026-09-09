@@ -47,10 +47,17 @@ export const LOCATION_OPTIONS: LocationOption[] = [
   // Chittagong
   { city: 'Chittagong', name: 'Chittagong', nameBn: 'চট্টগ্রাম', sub: 'All Terminals & Counters', subBn: 'সকল টার্মিনাল ও কাউন্টার', type: 'city' },
   { city: 'Chittagong', name: 'Chittagong - Dampara', nameBn: 'চট্টগ্রাম - দামপাড়া', sub: 'Dampara Bus Terminal, Station Road', subBn: 'দামপাড়া বাস টার্মিনাল, স্টেশন রোড', type: 'counter' },
+  { city: 'Chittagong', name: 'Chittagong - AK Khan', nameBn: 'চট্টগ্রাম - একে খান', sub: 'AK Khan Bus Stop, Pahartali', subBn: 'একে খান বাস স্টপ, পাহাড়তলী', type: 'counter' },
 
   // Cox's Bazar
   { city: "Cox's Bazar", name: "Cox's Bazar", nameBn: 'কক্সবাজার', sub: 'All Terminals & Counters', subBn: 'সকল টার্মিনাল ও কাউন্টার', type: 'city' },
   { city: "Cox's Bazar", name: "Cox's Bazar - Kolatoli", nameBn: "কক্সবাজার - কলাতলী", sub: 'Kolatoli Road, Near Sea Beach', subBn: 'কলাতলী রোড, সমুদ্র সৈকতের কাছে', type: 'counter' },
+  { city: "Cox's Bazar", name: "Cox's Bazar - Dolphin More", nameBn: 'কক্সবাজার - ডলফিন মোড়', sub: 'Dolphin Circle, Kolatoli', subBn: 'ডলফিন মোড়, কলাতলী', type: 'counter' },
+  { city: "Cox's Bazar", name: "Cox's Bazar - Sugandha", nameBn: 'কক্সবাজার - সুগন্ধা', sub: 'Sugandha Point, Sea Beach Road', subBn: 'সুগন্ধা পয়েন্ট, সি বিচ রোড', type: 'counter' },
+  { city: "Cox's Bazar", name: "Cox's Bazar - Bus Terminal", nameBn: 'কক্সবাজার - টার্মিনাল', sub: 'Central Bus Terminal, Larpara', subBn: 'কেন্দ্রীয় বাস টার্মিনাল, লারপাড়া', type: 'counter' },
+  { city: "Cox's Bazar", name: "Cox's Bazar - Ramu", nameBn: 'কক্সবাজার - রামু', sub: 'Ramu Bypass, Highway', subBn: 'রামু বাইপাস, হাইওয়ে', type: 'counter' },
+  { city: "Cox's Bazar", name: "Cox's Bazar - Eidgah", nameBn: 'কক্সবাজার - ঈদগাহ', sub: 'Eidgah Bus Stop, Highway', subBn: 'ঈদগাহ বাস স্টপ, হাইওয়ে', type: 'counter' },
+  { city: "Cox's Bazar", name: "Cox's Bazar - Chakaria", nameBn: 'কক্সবাজার - চকরিয়া', sub: 'Chakaria Bus Terminal, Highway', subBn: 'চকরিয়া বাস টার্মিনাল, হাইওয়ে', type: 'counter' },
 ];
 
 

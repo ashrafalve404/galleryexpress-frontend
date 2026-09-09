@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, Ticket, Bus, MapPin, Calendar, BadgeDollarSign,
   Tag, Building2, Users, BarChart3, Settings, ChevronLeft, ChevronRight,
-  FileText, Image as ImageIcon, LogOut, Menu, X, Globe, ExternalLink, Mail, Sparkles, Bell, ShieldCheck
+  FileText, Image as ImageIcon, LogOut, Menu, X, Globe, ExternalLink, Mail, Sparkles, Bell, ShieldCheck, LayoutGrid
 } from 'lucide-react';
 import { useAuthStore } from '@/lib/store/authStore';
 import { useLogout } from '@/lib/hooks/useAuth';
@@ -31,6 +31,7 @@ function getNavGroups(lang: string) {
         { href: ROUTES.ADMIN_TICKETS, label: isBn ? 'টিকিটসমূহ' : 'Tickets', icon: FileText },
         { href: ROUTES.ADMIN_SCHEDULES, label: isBn ? 'সময়সূচী' : 'Schedules', icon: Calendar },
         { href: ROUTES.ADMIN_COACHES, label: isBn ? 'কোচসমূহ' : 'Coaches', icon: Bus },
+        { href: '/admin/seat-layouts', label: isBn ? 'সিট লেআউটসমূহ' : 'Seat Layouts', icon: LayoutGrid },
         { href: ROUTES.ADMIN_ROUTES, label: isBn ? 'রুটসমূহ' : 'Routes', icon: MapPin },
       ],
     },

@@ -76,6 +76,17 @@ export default function AdminCoachesPage() {
 
   const coachTypes: CoachType[] = Array.isArray(coachTypesData) ? coachTypesData : [];
 
+  // Fetch database seat layouts
+  const { data: seatLayoutsData } = useQuery({
+    queryKey: ['admin', 'seat-layouts'],
+    queryFn: async () => {
+      const { data } = await client.get('/api/v1/admin/coaches/layouts');
+      return data?.data || data || [];
+    },
+  });
+
+  const dbLayouts: Array<{ id: string; name: string; rows: number; columns: number }> = Array.isArray(seatLayoutsData) ? seatLayoutsData : [];
+
   const createMutation = useMutation({
     mutationFn: (dto: typeof form) => client.post('/api/v1/admin/coaches', dto),
     onSuccess: () => {
@@ -319,23 +330,35 @@ export default function AdminCoachesPage() {
                   value={form.seatLayoutId}
                   onChange={(e) => {
                     const selectedId = e.target.value;
+                    const matched = dbLayouts.find((l) => l.id === selectedId);
                     let seats = form.totalSeats;
-                    if (selectedId === '00000000-0000-4000-a000-000000000020') seats = 40;
-                    if (selectedId === '00000000-0000-4000-a000-000000000030') seats = 30;
-                    if (selectedId === '00000000-0000-4000-a000-000000000010') seats = 30;
+                    if (matched) {
+                      seats = matched.rows * matched.columns;
+                    } else if (selectedId === '00000000-0000-4000-a000-000000000020') seats = 40;
+                    else if (selectedId === '00000000-0000-4000-a000-000000000030') seats = 30;
+                    else if (selectedId === '00000000-0000-4000-a000-000000000010') seats = 30;
                     setForm({ ...form, seatLayoutId: selectedId, totalSeats: seats });
                   }}
                   className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold focus:outline-none"
                 >
-                  <option value="00000000-0000-4000-a000-000000000020">
-                    {isBn ? '৪০-সিট ২+২ চেয়ার কোচ (A1-J4)' : '40-Seat 2+2 Standard Chair (A1-J4)'}
-                  </option>
-                  <option value="00000000-0000-4000-a000-000000000030">
-                    {isBn ? '৩০-সিট ২+১ বিজনেস ভিআইপি (A1-J3)' : '30-Seat 2+1 Business Class VIP (A1-J3)'}
-                  </option>
-                  <option value="00000000-0000-4000-a000-000000000010">
-                    {isBn ? '৩০-বেড ডাবল ডেক স্লিপার (L1-L15, U1-U15)' : '30-Bed Double Deck Sleeper (L1-L15, U1-U15)'}
-                  </option>
+                  {dbLayouts.map((layout) => (
+                    <option key={layout.id} value={layout.id}>
+                      {layout.name} ({layout.rows * layout.columns} Seats)
+                    </option>
+                  ))}
+                  {dbLayouts.length === 0 && (
+                    <>
+                      <option value="00000000-0000-4000-a000-000000000020">
+                        {isBn ? '৪০-সিট ২+২ চেয়ার কোচ (A1-J4)' : '40-Seat 2+2 Standard Chair (A1-J4)'}
+                      </option>
+                      <option value="00000000-0000-4000-a000-000000000030">
+                        {isBn ? '৩০-সিট ২+১ বিজনেস ভিআইপি (A1-J3)' : '30-Seat 2+1 Business Class VIP (A1-J3)'}
+                      </option>
+                      <option value="00000000-0000-4000-a000-000000000010">
+                        {isBn ? '৩০-বেড ডাবল ডেক স্লিপার (L1-L15, U1-U15)' : '30-Bed Double Deck Sleeper (L1-L15, U1-U15)'}
+                      </option>
+                    </>
+                  )}
                   <option value="CUSTOM">
                     {isBn ? 'কাস্টম লেআউট (ইচ্ছামতো সিট সংখ্যা নির্ধারণ করুন)' : 'Custom Layout (Define Custom Seat Count)'}
                   </option>

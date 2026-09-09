@@ -316,8 +316,12 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
 
   // --- CHAIR COACH (2+2 OR 2+1) RENDERING ---
   const renderChairCoachView = () => {
-    const rowLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
-    const totalRowsCount = isVip2x1 ? 10 : 10;
+    const rowLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P'];
+    const cols = isVip2x1 ? 3 : 4;
+    const totalRowsCount = Math.max(
+      1,
+      seats.length > 0 ? Math.ceil(seats.length / cols) : 10
+    );
     const seatMapByLabel = new Map<string, Seat>();
     seats.forEach((s) => {
       if (s.seatNumber) seatMapByLabel.set(s.seatNumber.toUpperCase(), s);
@@ -369,8 +373,8 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
             <RiBusFill className="text-[#E31B23] text-xl" />
             <span>
               {isVip2x1
-                ? (isBn ? '৩০-সিট ২+১ বিজনেস ভিআইপি কোচ' : '30-Seat 2+1 Business Class VIP')
-                : (isBn ? '৪০-সিট ২+২ স্ট্যান্ডার্ড চেয়ার কোচ' : '40-Seat 2+2 Standard Chair Coach')}
+                ? (isBn ? `${seats.length || 30}-সিট ২+১ বিজনেস ভিআইপি কোচ` : `${seats.length || 30}-Seat 2+1 Business Class VIP`)
+                : (isBn ? `${seats.length || 40}-সিট ২+২ স্ট্যান্ডার্ড চেয়ার কোচ` : `${seats.length || 40}-Seat 2+2 Standard Chair Coach`)}
             </span>
           </div>
           <div className="flex items-center gap-2">
