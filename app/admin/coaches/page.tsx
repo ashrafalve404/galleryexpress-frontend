@@ -1,13 +1,14 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, Search, Pencil, Trash2, X } from 'lucide-react';
+import { Plus, Search, Pencil, Trash2, X, Eye } from 'lucide-react';
 import { useState } from 'react';
 import client from '@/lib/api/client';
 import { toast } from 'sonner';
 
 import { AdminHeader } from '@/components/layout/AdminHeader';
 import { useLanguageStore } from '@/lib/store/languageStore';
+import { SeatMap } from '@/components/booking/SeatMap';
 
 interface CoachType {
   id: string;
@@ -33,6 +34,7 @@ export default function AdminCoachesPage() {
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<Coach | null>(null);
+  const [selectedCoachForMap, setSelectedCoachForMap] = useState<Coach | null>(null);
 
   const [form, setForm] = useState({
     name: '',
@@ -139,6 +141,47 @@ export default function AdminCoachesPage() {
     } else {
       createMutation.mutate(payload);
     }
+  };
+
+  const getCoachSeats = (coach: Coach) => {
+    if (Array.isArray((coach as any).seats) && (coach as any).seats.length > 0) {
+      return (coach as any).seats;
+    }
+    const layoutId = (coach as any).seatLayoutId || (coach as any).seatLayout?.id || '';
+    const total = coach.totalSeats || 40;
+
+    if (layoutId === '00000000-0000-4000-a000-000000000010' || (total === 30 && coach.name.toLowerCase().includes('sleeper'))) {
+      const list: any[] = [];
+      for (let i = 1; i <= 15; i++) list.push({ id: `L${i}`, seatNumber: `L${i}`, deck: 'LOWER', row: Math.ceil(i / 3), column: ((i - 1) % 3) + 1, status: 'AVAILABLE' });
+      for (let i = 1; i <= 15; i++) list.push({ id: `U${i}`, seatNumber: `U${i}`, deck: 'UPPER', row: Math.ceil(i / 3), column: ((i - 1) % 3) + 1, status: 'AVAILABLE' });
+      return list;
+    }
+
+    if (layoutId === '00000000-0000-4000-a000-000000000030' || total === 30) {
+      const rowLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+      const list: any[] = [];
+      rowLetters.forEach((letter, rIdx) => {
+        [1, 2, 3].forEach((col) => {
+          list.push({ id: `${letter}${col}`, seatNumber: `${letter}${col}`, row: rIdx + 1, column: col, status: 'AVAILABLE' });
+        });
+      });
+      return list;
+    }
+
+    const rowLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'];
+    const cols = total <= 30 ? 3 : 4;
+    const totalRows = Math.ceil(total / cols);
+    const list: any[] = [];
+    let count = 0;
+    for (let r = 0; r < totalRows; r++) {
+      const letter = rowLetters[r] || `R${r + 1}`;
+      for (let c = 1; c <= cols; c++) {
+        if (count >= total) break;
+        list.push({ id: `${letter}${c}`, seatNumber: `${letter}${c}`, row: r + 1, column: c, status: 'AVAILABLE' });
+        count++;
+      }
+    }
+    return list;
   };
 
   const coaches: Coach[] = Array.isArray(coachesData) ? coachesData : [];
@@ -396,7 +439,15 @@ export default function AdminCoachesPage() {
                     </span>
                   </td>
                   <td className="px-5 py-4">
-                    <div className="flex gap-2">
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        onClick={() => setSelectedCoachForMap(c)}
+                        className="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold transition-colors flex items-center gap-1 text-xs shrink-0"
+                        title={isBn ? 'সিট ম্যাপ প্রিভিউ' : 'View Seat Map'}
+                      >
+                        <Eye size={14} />
+                        <span>{isBn ? 'সিট ম্যাপ' : 'Seat Map'}</span>
+                      </button>
                       <button
                         onClick={() => startEdit(c)}
                         className="p-2 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors"
@@ -428,6 +479,49 @@ export default function AdminCoachesPage() {
           </table>
         </div>
       </div>
+
+      {/* Seat Map Preview Lightbox Modal */}
+      {selectedCoachForMap && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto shadow-2xl animate-fade-in-up">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+              <div>
+                <h3 className="text-base font-black text-gray-900 flex items-center gap-2">
+                  <Eye className="text-[#E31B23]" size={20} />
+                  {selectedCoachForMap.name} — {isBn ? 'সিট ম্যাপ প্রিভিউ' : 'Seat Map Preview'}
+                </h3>
+                <p className="text-xs text-gray-500 mt-0.5 font-medium">
+                  {selectedCoachForMap.coachNumber} • {selectedCoachForMap.registrationNumber} • {selectedCoachForMap.totalSeats} {isBn ? 'সিট' : 'Seats'}
+                </p>
+              </div>
+              <button
+                onClick={() => setSelectedCoachForMap(null)}
+                className="p-1.5 rounded-xl hover:bg-gray-100 text-gray-400 hover:text-gray-600"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="py-2">
+              <SeatMap
+                seats={getCoachSeats(selectedCoachForMap)}
+                selectedSeats={[]}
+                onToggle={() => {}}
+                maxSeats={selectedCoachForMap.totalSeats}
+              />
+            </div>
+
+            <div className="flex justify-end pt-2 border-t border-gray-100">
+              <button
+                onClick={() => setSelectedCoachForMap(null)}
+                className="px-5 py-2.5 bg-gray-900 hover:bg-black text-white text-xs font-bold rounded-xl transition-all"
+              >
+                {isBn ? 'বন্ধ করুন' : 'Close Preview'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
