@@ -52,7 +52,10 @@ export default function AdminSeatLayoutsPage() {
       setShowCreateModal(false);
       resetForm();
     },
-    onError: (err: Error) => toast.error(err.message || 'Failed to create seat layout'),
+    onError: (err: any) => {
+      const msg = err?.response?.data?.message || err?.message || 'Failed to create seat layout';
+      toast.error(Array.isArray(msg) ? msg.join(', ') : msg);
+    },
   });
 
   const deleteLayoutMutation = useMutation({
@@ -61,7 +64,10 @@ export default function AdminSeatLayoutsPage() {
       qc.invalidateQueries({ queryKey: ['admin', 'seat-layouts'] });
       toast.success(isBn ? 'সিট লেআউট মুছে ফেলা হয়েছে।' : 'Seat layout deleted.');
     },
-    onError: (err: Error) => toast.error(err.message || 'Failed to delete layout'),
+    onError: (err: any) => {
+      const msg = err?.response?.data?.message || err?.message || 'Failed to delete layout';
+      toast.error(Array.isArray(msg) ? msg.join(', ') : msg);
+    },
   });
 
   const resetForm = () => {
@@ -236,7 +242,7 @@ export default function AdminSeatLayoutsPage() {
                   isBn ? 'বিবরণ' : 'Description',
                   isBn ? 'অ্যাকশন' : 'Actions',
                 ].map((h) => (
-                  <th key={h} className="text-left px-5 py-3.5 font-bold text-gray-500 uppercase tracking-wider text-xs">
+                  <th key={h} className="text-left px-5 py-3.5 font-bold text-gray-500 uppercase tracking-wider text-xs whitespace-nowrap">
                     {h}
                   </th>
                 ))}
@@ -247,7 +253,7 @@ export default function AdminSeatLayoutsPage() {
                 [1, 2, 3].map((i) => (
                   <tr key={i}>
                     {[1, 2, 3, 4, 5].map((j) => (
-                      <td key={j} className="px-5 py-4">
+                      <td key={j} className="px-5 py-4 whitespace-nowrap">
                         <div className="skeleton h-4 rounded w-24" />
                       </td>
                     ))}
@@ -259,26 +265,26 @@ export default function AdminSeatLayoutsPage() {
                   : l.rows * l.columns;
                 return (
                   <tr key={l.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-5 py-4 font-bold text-[#111111]">
+                    <td className="px-5 py-4 font-bold text-[#111111] whitespace-nowrap">
                       <div className="flex items-center gap-2">
                         <LayoutGrid size={16} className="text-[#E31B23]" />
                         <span>{l.name}</span>
                       </div>
                     </td>
-                    <td className="px-5 py-4 font-mono text-gray-600 font-bold">
+                    <td className="px-5 py-4 font-mono text-gray-600 font-bold whitespace-nowrap">
                       {l.rows} × {l.columns}
                     </td>
-                    <td className="px-5 py-4 font-black text-gray-900">
-                      <span className="bg-slate-100 text-slate-800 px-2.5 py-1 rounded-lg border border-slate-200">
+                    <td className="px-5 py-4 font-black text-gray-900 whitespace-nowrap">
+                      <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-800 px-2.5 py-1 rounded-lg border border-slate-200 text-xs font-black whitespace-nowrap">
                         {totalSeats} {isBn ? 'সিট' : 'Seats'}
                       </span>
                     </td>
                     <td className="px-5 py-4 text-gray-500 text-xs">{l.description || '--'}</td>
-                    <td className="px-5 py-4">
+                    <td className="px-5 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => setSelectedLayoutForPreview(l)}
-                          className="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold transition-colors flex items-center gap-1.5 text-xs"
+                          className="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold transition-colors flex items-center gap-1.5 text-xs whitespace-nowrap"
                           title={isBn ? 'সিট লেআউট ম্যাপ দেখুন' : 'Preview Seat Map'}
                         >
                           <Eye size={14} />
