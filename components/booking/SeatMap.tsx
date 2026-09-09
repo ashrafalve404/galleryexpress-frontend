@@ -162,7 +162,27 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
   const [activeDeckTab, setActiveDeckTab] = useState<'LOWER' | 'UPPER'>('LOWER');
   const selectedIds = new Set(selectedSeats.map((s) => s.id));
 
-  // Expected 15 seat layouts for Lower (L1-L15) & Upper (U1-U15)
+  // 1. Detect Layout Mode:
+  // - 'SLEEPER': Has L/U prefix seats or deck LOWER/UPPER
+  // - 'VIP_2X1': Max column is 3, seat labels A1-J3
+  // - 'CHAIR_2X2': Standard 2+2 layout (A1-J4)
+  const isSleeper = seats.some(
+    (s) =>
+      (s.seatNumber || '').toUpperCase().startsWith('L') ||
+      (s.seatNumber || '').toUpperCase().startsWith('U') ||
+      (s as any).deck === 'LOWER' ||
+      (s as any).deck === 'UPPER'
+  );
+
+  const maxCol = seats.reduce((max, s) => Math.max(max, s.column || 0), 0);
+  const isVip2x1 = !isSleeper && (maxCol === 3 || seats.length <= 30);
+
+  // Layout Builders
+  const handleToggle = (seat: Seat) => {
+    onToggle(seat);
+  };
+
+  // --- SLEEPER DOUBLE DECK RENDERING ---
   const lowerDeckExpected = [
     { label: 'L1', row: 1, col: 1 }, { label: 'L2', row: 1, col: 2 }, { label: 'L3', row: 1, col: 3 },
     { label: 'L4', row: 2, col: 1 }, { label: 'L5', row: 2, col: 2 }, { label: 'L6', row: 2, col: 3 },
@@ -179,7 +199,6 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
     { label: 'U13', row: 5, col: 1 }, { label: 'U14', row: 5, col: 2 }, { label: 'U15', row: 5, col: 3 },
   ];
 
-  // Separate seats into Lower & Upper deck arrays
   const lowerSeatsList: Seat[] = [];
   const upperSeatsList: Seat[] = [];
 
@@ -189,18 +208,14 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
       lowerSeatsList.push(seat);
     } else if (num.startsWith('U') || (seat as any).deck === 'UPPER') {
       upperSeatsList.push(seat);
+    } else if (idx < 15) {
+      lowerSeatsList.push(seat);
     } else {
-      // Fallback: assign first 15 to lower deck, next 15 to upper deck
-      if (idx < 15) {
-        lowerSeatsList.push(seat);
-      } else {
-        upperSeatsList.push(seat);
-      }
+      upperSeatsList.push(seat);
     }
   });
 
-  // Map each deck array into 4 rows of 1+2 (Col 1: Left, Col 2&3: Right)
-  const mapDeckRows = (expectedList: Array<{ label: string; row: number; col: number }>, seatList: Seat[]) => {
+  const mapSleeperDeckRows = (expectedList: Array<{ label: string; row: number; col: number }>, seatList: Seat[]) => {
     const seatMapByLabel = new Map<string, Seat>();
     seatList.forEach((s) => {
       if (s.seatNumber) seatMapByLabel.set(s.seatNumber.toUpperCase(), s);
@@ -210,10 +225,7 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
 
     expectedList.forEach((exp, idx) => {
       let seat = seatMapByLabel.get(exp.label);
-      if (!seat && seatList[idx]) {
-        seat = seatList[idx];
-      }
-      // Create fallback dummy seat object if missing
+      if (!seat && seatList[idx]) seat = seatList[idx];
       if (!seat) {
         seat = {
           id: `virtual-${exp.label}`,
@@ -233,19 +245,14 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
     return Array.from(rowsMap.entries()).sort(([r1], [r2]) => r1 - r2);
   };
 
-  const lowerRows = mapDeckRows(lowerDeckExpected, lowerSeatsList);
-  const upperRows = mapDeckRows(upperDeckExpected, upperSeatsList);
-
-  const handleToggle = (seat: Seat) => {
-    onToggle(seat);
-  };
+  const lowerRows = mapSleeperDeckRows(lowerDeckExpected, lowerSeatsList);
+  const upperRows = mapSleeperDeckRows(upperDeckExpected, upperSeatsList);
 
   const lowerSelectedCount = selectedSeats.filter((s) => (s.seatNumber || '').toUpperCase().startsWith('L')).length;
   const upperSelectedCount = selectedSeats.filter((s) => (s.seatNumber || '').toUpperCase().startsWith('U')).length;
 
-  const renderSingleDeckView = (deckTitle: string, rows: typeof lowerRows) => (
+  const renderDeckView = (deckTitle: string, rows: typeof lowerRows) => (
     <div className="border-2 border-gray-200 rounded-3xl overflow-hidden bg-white shadow-xs">
-      {/* Bus Front Header & Driver Cabin */}
       <div className="bg-slate-100 border-b border-slate-200 px-5 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2 text-xs text-slate-800 font-extrabold">
           <RiBusFill className="text-[#E31B23] text-lg" />
@@ -259,10 +266,8 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
         </div>
       </div>
 
-      {/* Windshield Glass Accent */}
       <div className="h-1.5 bg-gradient-to-r from-sky-400/30 via-sky-300/50 to-sky-400/30 border-b border-sky-100" />
 
-      {/* 1+2 Seat Matrix Grid */}
       <div className="px-4 py-6 sm:px-6 bg-slate-50/50 space-y-3.5">
         {rows.map(([rowNum, items]) => {
           const leftCol = items.find((i) => i.expected.col === 1);
@@ -270,7 +275,6 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
 
           return (
             <div key={rowNum} className="flex items-center justify-center gap-2 sm:gap-3 max-w-[250px] mx-auto">
-              {/* Left Column (Single Seat) */}
               <div className="w-10 sm:w-11 flex justify-center shrink-0">
                 {leftCol ? (
                   <SeatComponent
@@ -285,14 +289,12 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
                 )}
               </div>
 
-              {/* Center Aisle Space */}
               <div className="flex-1 flex items-center justify-center min-w-[24px]">
                 <span className="text-[9px] text-slate-300 font-black uppercase tracking-widest select-none">
                   {isBn ? 'গলি' : 'Aisle'}
                 </span>
               </div>
 
-              {/* Right Column (Double Seats) */}
               <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
                 {rightCols.map((item) => (
                   <SeatComponent
@@ -312,6 +314,120 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
     </div>
   );
 
+  // --- CHAIR COACH (2+2 OR 2+1) RENDERING ---
+  const renderChairCoachView = () => {
+    const rowLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+    const totalRowsCount = isVip2x1 ? 10 : 10;
+    const seatMapByLabel = new Map<string, Seat>();
+    seats.forEach((s) => {
+      if (s.seatNumber) seatMapByLabel.set(s.seatNumber.toUpperCase(), s);
+    });
+
+    const rowsArray: Array<{ letter: string; rowNum: number; leftSeats: Seat[]; rightSeats: Seat[] }> = [];
+
+    for (let r = 0; r < totalRowsCount; r++) {
+      const letter = rowLetters[r] || `R${r + 1}`;
+      const leftSeats: Seat[] = [];
+      const rightSeats: Seat[] = [];
+
+      if (isVip2x1) {
+        // 2+1 Layout: Col 1 on Left | Col 2 & 3 on Right
+        const col1Label = `${letter}1`;
+        const col2Label = `${letter}2`;
+        const col3Label = `${letter}3`;
+
+        const s1 = seatMapByLabel.get(col1Label) || ({ id: `v-${col1Label}`, seatNumber: col1Label } as Seat);
+        const s2 = seatMapByLabel.get(col2Label) || ({ id: `v-${col2Label}`, seatNumber: col2Label } as Seat);
+        const s3 = seatMapByLabel.get(col3Label) || ({ id: `v-${col3Label}`, seatNumber: col3Label } as Seat);
+
+        leftSeats.push(s1);
+        rightSeats.push(s2, s3);
+      } else {
+        // 2+2 Layout: Col 1 & 2 on Left | Col 3 & 4 on Right
+        const col1Label = `${letter}1`;
+        const col2Label = `${letter}2`;
+        const col3Label = `${letter}3`;
+        const col4Label = `${letter}4`;
+
+        const s1 = seatMapByLabel.get(col1Label) || ({ id: `v-${col1Label}`, seatNumber: col1Label } as Seat);
+        const s2 = seatMapByLabel.get(col2Label) || ({ id: `v-${col2Label}`, seatNumber: col2Label } as Seat);
+        const s3 = seatMapByLabel.get(col3Label) || ({ id: `v-${col3Label}`, seatNumber: col3Label } as Seat);
+        const s4 = seatMapByLabel.get(col4Label) || ({ id: `v-${col4Label}`, seatNumber: col4Label } as Seat);
+
+        leftSeats.push(s1, s2);
+        rightSeats.push(s3, s4);
+      }
+
+      rowsArray.push({ letter, rowNum: r + 1, leftSeats, rightSeats });
+    }
+
+    return (
+      <div className="border-2 border-gray-200 rounded-3xl overflow-hidden bg-white shadow-xs max-w-md mx-auto">
+        {/* Front Header */}
+        <div className="bg-slate-100 border-b border-slate-200 px-5 py-3.5 flex items-center justify-between">
+          <div className="flex items-center gap-2 text-xs text-slate-800 font-extrabold">
+            <RiBusFill className="text-[#E31B23] text-xl" />
+            <span>
+              {isVip2x1
+                ? (isBn ? '৩০-সিট ২+১ বিজনেস ভিআইপি কোচ' : '30-Seat 2+1 Business Class VIP')
+                : (isBn ? '৪০-সিট ২+২ স্ট্যান্ডার্ড চেয়ার কোচ' : '40-Seat 2+2 Standard Chair Coach')}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-slate-200 border border-slate-300 flex items-center justify-center text-[#E31B23] shadow-2xs">
+              <RiSteering2Fill size={18} />
+            </div>
+            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{isBn ? 'ড্রাইভার' : 'Driver'}</span>
+          </div>
+        </div>
+
+        <div className="h-1.5 bg-gradient-to-r from-sky-400/30 via-sky-300/50 to-sky-400/30 border-b border-sky-100" />
+
+        {/* Seat Rows Grid */}
+        <div className="px-4 py-6 sm:px-6 bg-slate-50/50 space-y-3">
+          {rowsArray.map((row) => (
+            <div key={row.letter} className="flex items-center justify-center gap-3">
+              {/* Left Side Seats */}
+              <div className="flex items-center gap-2">
+                {row.leftSeats.map((s) => (
+                  <SeatComponent
+                    key={s.seatNumber}
+                    seat={s}
+                    displayLabel={s.seatNumber}
+                    isSelected={selectedIds.has(s.id)}
+                    onToggle={handleToggle}
+                    isBn={isBn}
+                  />
+                ))}
+              </div>
+
+              {/* Aisle */}
+              <div className="w-8 text-center">
+                <span className="text-[9px] text-slate-300 font-black uppercase tracking-widest select-none">
+                  {isBn ? 'গলি' : 'Aisle'}
+                </span>
+              </div>
+
+              {/* Right Side Seats */}
+              <div className="flex items-center gap-2">
+                {row.rightSeats.map((s) => (
+                  <SeatComponent
+                    key={s.seatNumber}
+                    seat={s}
+                    displayLabel={s.seatNumber}
+                    isSelected={selectedIds.has(s.id)}
+                    onToggle={handleToggle}
+                    isBn={isBn}
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-6">
       {/* Seat Color Indicator / Legend */}
@@ -321,7 +437,6 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
         </div>
 
         <div className="flex items-center justify-between sm:justify-start gap-1 sm:gap-6 text-[10px] sm:text-xs font-semibold text-gray-700 overflow-x-auto no-scrollbar py-0.5">
-          {/* Available */}
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             <div className="w-4 sm:w-5 h-5 sm:h-6 rounded-t-md rounded-b-xs bg-sky-50 border border-sky-300 flex items-center justify-center shadow-2xs">
               <div className="w-2 sm:w-2.5 h-1 rounded-full bg-sky-200" />
@@ -329,7 +444,6 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
             <span className="whitespace-nowrap">{isBn ? 'খালি' : 'Available'}</span>
           </div>
 
-          {/* Male */}
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             <div className="relative w-4 sm:w-5 h-5 sm:h-6 rounded-t-md rounded-b-xs bg-indigo-100 border border-indigo-400 flex items-center justify-center shadow-2xs">
               <div className="w-3 sm:w-3.5 h-3 sm:h-3.5 rounded-full bg-indigo-600 text-white flex items-center justify-center">
@@ -339,7 +453,6 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
             <span className="whitespace-nowrap">{isBn ? 'পুরুষ' : 'Male'}</span>
           </div>
 
-          {/* Female */}
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             <div className="relative w-4 sm:w-5 h-5 sm:h-6 rounded-t-md rounded-b-xs bg-pink-100 border border-pink-400 flex items-center justify-center shadow-2xs">
               <div className="w-3 sm:w-3.5 h-3 sm:h-3.5 rounded-full bg-pink-600 text-white flex items-center justify-center">
@@ -349,7 +462,6 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
             <span className="whitespace-nowrap">{isBn ? 'মহিলা' : 'Female'}</span>
           </div>
 
-          {/* Booked / Sold */}
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             <div className="w-4 sm:w-5 h-5 sm:h-6 rounded-t-md rounded-b-xs bg-slate-100 border border-slate-300 flex items-center justify-center text-[8px] sm:text-[9px] font-black text-slate-500 shadow-2xs">
               ✕
@@ -359,59 +471,63 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
         </div>
       </div>
 
-      {/* Mobile Deck Tabs Header */}
-      <div className="lg:hidden flex bg-gray-100 p-1.5 rounded-2xl border border-gray-200/80">
-        <button
-          type="button"
-          onClick={() => setActiveDeckTab('LOWER')}
-          className={`flex-1 py-2.5 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 ${
-            activeDeckTab === 'LOWER'
-              ? 'bg-white text-gray-900 shadow-xs border border-gray-200/80'
-              : 'text-gray-500 hover:text-gray-900'
-          }`}
-        >
-          <span>{isBn ? 'লোয়ার ডেক' : 'Lower Deck'}</span>
-          {lowerSelectedCount > 0 && (
-            <span className="px-2 py-0.5 bg-[#E31B23] text-white text-[10px] rounded-full">
-              {lowerSelectedCount}
-            </span>
-          )}
-        </button>
+      {/* Main Seat Map Content */}
+      {isSleeper ? (
+        <>
+          <div className="lg:hidden flex bg-gray-100 p-1.5 rounded-2xl border border-gray-200/80">
+            <button
+              type="button"
+              onClick={() => setActiveDeckTab('LOWER')}
+              className={`flex-1 py-2.5 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 ${
+                activeDeckTab === 'LOWER'
+                  ? 'bg-white text-gray-900 shadow-xs border border-gray-200/80'
+                  : 'text-gray-500 hover:text-gray-900'
+              }`}
+            >
+              <span>{isBn ? 'লোয়ার ডেক' : 'Lower Deck'}</span>
+              {lowerSelectedCount > 0 && (
+                <span className="px-2 py-0.5 bg-[#E31B23] text-white text-[10px] rounded-full">
+                  {lowerSelectedCount}
+                </span>
+              )}
+            </button>
 
-        <button
-          type="button"
-          onClick={() => setActiveDeckTab('UPPER')}
-          className={`flex-1 py-2.5 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 ${
-            activeDeckTab === 'UPPER'
-              ? 'bg-white text-gray-900 shadow-xs border border-gray-200/80'
-              : 'text-gray-500 hover:text-gray-900'
-          }`}
-        >
-          <span>{isBn ? 'আপার ডেক' : 'Upper Deck'}</span>
-          {upperSelectedCount > 0 && (
-            <span className="px-2 py-0.5 bg-[#E31B23] text-white text-[10px] rounded-full">
-              {upperSelectedCount}
-            </span>
-          )}
-        </button>
-      </div>
+            <button
+              type="button"
+              onClick={() => setActiveDeckTab('UPPER')}
+              className={`flex-1 py-2.5 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 ${
+                activeDeckTab === 'UPPER'
+                  ? 'bg-white text-gray-900 shadow-xs border border-gray-200/80'
+                  : 'text-gray-500 hover:text-gray-900'
+              }`}
+            >
+              <span>{isBn ? 'আপার ডেক' : 'Upper Deck'}</span>
+              {upperSelectedCount > 0 && (
+                <span className="px-2 py-0.5 bg-[#E31B23] text-white text-[10px] rounded-full">
+                  {upperSelectedCount}
+                </span>
+              )}
+            </button>
+          </div>
 
-      {/* Mobile Single Active Deck Display */}
-      <div className="lg:hidden">
-        {activeDeckTab === 'LOWER'
-          ? renderSingleDeckView(isBn ? 'লোয়ার ডেক (১৫টি সিট)' : 'Lower Deck (15 Seats)', lowerRows)
-          : renderSingleDeckView(isBn ? 'আপার ডেক (১৫টি সিট)' : 'Upper Deck (15 Seats)', upperRows)}
-      </div>
+          <div className="lg:hidden">
+            {activeDeckTab === 'LOWER'
+              ? renderDeckView(isBn ? 'লোয়ার ডেক (১৫টি সিট)' : 'Lower Deck (15 Seats)', lowerRows)
+              : renderDeckView(isBn ? 'আপার ডেক (১৫টি সিট)' : 'Upper Deck (15 Seats)', upperRows)}
+          </div>
 
-      {/* Desktop Side-by-Side Deck View */}
-      <div className="hidden lg:grid grid-cols-2 gap-6">
-        {renderSingleDeckView(isBn ? 'লোয়ার ডেক (১৫টি সিট)' : 'Lower Deck (15 Seats)', lowerRows)}
-        {renderSingleDeckView(isBn ? 'আপার ডেক (১৫টি সিট)' : 'Upper Deck (15 Seats)', upperRows)}
-      </div>
+          <div className="hidden lg:grid grid-cols-2 gap-6">
+            {renderDeckView(isBn ? 'লোয়ার ডেক (১৫টি সিট)' : 'Lower Deck (15 Seats)', lowerRows)}
+            {renderDeckView(isBn ? 'আপার ডেক (১৫টি সিট)' : 'Upper Deck (15 Seats)', upperRows)}
+          </div>
+        </>
+      ) : (
+        renderChairCoachView()
+      )}
 
       {/* Selection Summary Bar */}
       {selectedSeats.length > 0 && (
-        <div className="mt-6 p-4 bg-[#E31B23]/5 rounded-2xl border-2 border-[#E31B23]/20 flex items-center justify-between animate-fade-in-up">
+        <div className="mt-6 p-4 bg-[#E31B23]/5 rounded-2xl border-2 border-[#E31B23]/20 flex items-center justify-between animate-fade-in-up max-w-md mx-auto">
           <div>
             <span className="text-xs text-gray-500 font-bold uppercase tracking-wider block">
               {isBn ? 'নির্বাচিত সিট' : 'Selected Seats'}

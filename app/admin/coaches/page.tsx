@@ -39,6 +39,7 @@ export default function AdminCoachesPage() {
     coachNumber: '',
     registrationNumber: '',
     coachTypeId: '',
+    seatLayoutId: '00000000-0000-4000-a000-000000000020',
     isAC: true,
     totalSeats: 40,
     status: 'ACTIVE',
@@ -103,6 +104,7 @@ export default function AdminCoachesPage() {
       coachNumber: '',
       registrationNumber: '',
       coachTypeId: coachTypes[0]?.id || '',
+      seatLayoutId: '00000000-0000-4000-a000-000000000020',
       isAC: true,
       totalSeats: 40,
       status: 'ACTIVE',
@@ -116,6 +118,7 @@ export default function AdminCoachesPage() {
       coachNumber: c.coachNumber || `GE-${c.registrationNumber}`,
       registrationNumber: c.registrationNumber,
       coachTypeId: typeof c.coachType === 'object' ? c.coachType?.id || '' : c.coachTypeId,
+      seatLayoutId: (c as any).seatLayoutId || (c as any).seatLayout?.id || '00000000-0000-4000-a000-000000000020',
       isAC: c.isAC ?? true,
       totalSeats: c.totalSeats || 40,
       status: c.status || 'ACTIVE',
@@ -252,6 +255,37 @@ export default function AdminCoachesPage() {
                       <option value="00000000-0000-0000-0000-000000000003">{isBn ? 'ভিআইপি স্লিপার' : 'VIP Sleeper'}</option>
                     </>
                   )}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                  {isBn ? 'সিট লেআউট ফরম্যাট (ডিজাইন)' : 'Seat Layout Format'}
+                </label>
+                <select
+                  value={form.seatLayoutId}
+                  onChange={(e) => {
+                    const selectedId = e.target.value;
+                    let seats = form.totalSeats;
+                    if (selectedId === '00000000-0000-4000-a000-000000000020') seats = 40;
+                    if (selectedId === '00000000-0000-4000-a000-000000000030') seats = 30;
+                    if (selectedId === '00000000-0000-4000-a000-000000000010') seats = 30;
+                    setForm({ ...form, seatLayoutId: selectedId, totalSeats: seats });
+                  }}
+                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold focus:outline-none"
+                >
+                  <option value="00000000-0000-4000-a000-000000000020">
+                    {isBn ? '৪০-সিট ২+২ চেয়ার কোচ (A1-J4)' : '40-Seat 2+2 Standard Chair (A1-J4)'}
+                  </option>
+                  <option value="00000000-0000-4000-a000-000000000030">
+                    {isBn ? '৩০-সিট ২+১ বিজনেস ভিআইপি (A1-J3)' : '30-Seat 2+1 Business Class VIP (A1-J3)'}
+                  </option>
+                  <option value="00000000-0000-4000-a000-000000000010">
+                    {isBn ? '৩০-বেড ডাবল ডেক স্লিপার (L1-L15, U1-U15)' : '30-Bed Double Deck Sleeper (L1-L15, U1-U15)'}
+                  </option>
+                  <option value="CUSTOM">
+                    {isBn ? 'কাস্টম লেআউট (ইচ্ছামতো সিট সংখ্যা নির্ধারণ করুন)' : 'Custom Layout (Define Custom Seat Count)'}
+                  </option>
                 </select>
               </div>
 
