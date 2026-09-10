@@ -85,7 +85,7 @@ export default function AdminCoachesPage() {
     },
   });
 
-  const dbLayouts: Array<{ id: string; name: string; rows: number; columns: number }> = Array.isArray(seatLayoutsData) ? seatLayoutsData : [];
+  const dbLayouts: Array<{ id: string; name: string; rows: number; columns: number; layoutConfig?: any[] }> = Array.isArray(seatLayoutsData) ? seatLayoutsData : [];
 
   const createMutation = useMutation({
     mutationFn: (dto: typeof form) => client.post('/api/v1/admin/coaches', dto),
@@ -333,7 +333,9 @@ export default function AdminCoachesPage() {
                     const matched = dbLayouts.find((l) => l.id === selectedId);
                     let seats = form.totalSeats;
                     if (matched) {
-                      seats = matched.rows * matched.columns;
+                      seats = Array.isArray(matched.layoutConfig) && matched.layoutConfig.length > 0
+                        ? matched.layoutConfig.length
+                        : matched.rows * matched.columns;
                     } else if (selectedId === '00000000-0000-4000-a000-000000000020') seats = 40;
                     else if (selectedId === '00000000-0000-4000-a000-000000000030') seats = 30;
                     else if (selectedId === '00000000-0000-4000-a000-000000000010') seats = 30;
@@ -341,11 +343,16 @@ export default function AdminCoachesPage() {
                   }}
                   className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold focus:outline-none"
                 >
-                  {dbLayouts.map((layout) => (
-                    <option key={layout.id} value={layout.id}>
-                      {layout.name} ({layout.rows * layout.columns} Seats)
-                    </option>
-                  ))}
+                  {dbLayouts.map((layout) => {
+                    const layoutSeatCount = Array.isArray(layout.layoutConfig) && layout.layoutConfig.length > 0
+                      ? layout.layoutConfig.length
+                      : layout.rows * layout.columns;
+                    return (
+                      <option key={layout.id} value={layout.id}>
+                        {layout.name} ({layoutSeatCount} Seats)
+                      </option>
+                    );
+                  })}
                   {dbLayouts.length === 0 && (
                     <>
                       <option value="00000000-0000-4000-a000-000000000020">

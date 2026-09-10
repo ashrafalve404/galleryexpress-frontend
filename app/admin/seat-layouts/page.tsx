@@ -495,7 +495,11 @@ export default function AdminSeatLayoutsPage() {
                 seats={getLayoutSeatsForPreview(selectedLayoutForPreview)}
                 selectedSeats={[]}
                 onToggle={() => {}}
-                maxSeats={selectedLayoutForPreview.rows * selectedLayoutForPreview.columns}
+                maxSeats={
+                  Array.isArray(selectedLayoutForPreview.layoutConfig) && selectedLayoutForPreview.layoutConfig.length > 0
+                    ? selectedLayoutForPreview.layoutConfig.length
+                    : selectedLayoutForPreview.rows * selectedLayoutForPreview.columns
+                }
               />
             </div>
 
