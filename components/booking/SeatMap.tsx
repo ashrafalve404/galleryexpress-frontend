@@ -175,7 +175,10 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
   );
 
   const maxCol = seats.reduce((max, s) => Math.max(max, s.column || 0), 0);
-  const isVip2x1 = !isSleeper && (maxCol === 3 || seats.length <= 30);
+  const isVip2x1 = !isSleeper && (
+    maxCol === 3 ||
+    (maxCol === 0 && seats.some((s) => (s.seatNumber || '').toUpperCase().endsWith('3') && !seats.some((s2) => (s2.seatNumber || '').toUpperCase().endsWith('4'))))
+  );
 
   // Layout Builders
   const handleToggle = (seat: Seat) => {
@@ -183,37 +186,40 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
   };
 
   // --- SLEEPER DOUBLE DECK RENDERING ---
-  const lowerDeckExpected = [
-    { label: 'L1', row: 1, col: 1 }, { label: 'L2', row: 1, col: 2 }, { label: 'L3', row: 1, col: 3 },
-    { label: 'L4', row: 2, col: 1 }, { label: 'L5', row: 2, col: 2 }, { label: 'L6', row: 2, col: 3 },
-    { label: 'L7', row: 3, col: 1 }, { label: 'L8', row: 3, col: 2 }, { label: 'L9', row: 3, col: 3 },
-    { label: 'L10', row: 4, col: 1 }, { label: 'L11', row: 4, col: 2 }, { label: 'L12', row: 4, col: 3 },
-    { label: 'L13', row: 5, col: 1 }, { label: 'L14', row: 5, col: 2 }, { label: 'L15', row: 5, col: 3 },
-  ];
-
-  const upperDeckExpected = [
-    { label: 'U1', row: 1, col: 1 }, { label: 'U2', row: 1, col: 2 }, { label: 'U3', row: 1, col: 3 },
-    { label: 'U4', row: 2, col: 1 }, { label: 'U5', row: 2, col: 2 }, { label: 'U6', row: 2, col: 3 },
-    { label: 'U7', row: 3, col: 1 }, { label: 'U8', row: 3, col: 2 }, { label: 'U9', row: 3, col: 3 },
-    { label: 'U10', row: 4, col: 1 }, { label: 'U11', row: 4, col: 2 }, { label: 'U12', row: 4, col: 3 },
-    { label: 'U13', row: 5, col: 1 }, { label: 'U14', row: 5, col: 2 }, { label: 'U15', row: 5, col: 3 },
-  ];
-
   const lowerSeatsList: Seat[] = [];
   const upperSeatsList: Seat[] = [];
 
+  const halfSeatsCount = Math.ceil(seats.length / 2) || 15;
   seats.forEach((seat, idx) => {
     const num = (seat.seatNumber || '').toUpperCase();
     if (num.startsWith('L') || (seat as any).deck === 'LOWER') {
       lowerSeatsList.push(seat);
     } else if (num.startsWith('U') || (seat as any).deck === 'UPPER') {
       upperSeatsList.push(seat);
-    } else if (idx < 15) {
+    } else if (idx < halfSeatsCount) {
       lowerSeatsList.push(seat);
     } else {
       upperSeatsList.push(seat);
     }
   });
+
+  const buildSleeperDeckExpected = (seatList: Seat[], prefix: 'L' | 'U') => {
+    if (seatList.length > 0) {
+      return seatList.map((s, idx) => ({
+        label: s.seatNumber || `${prefix}${idx + 1}`,
+        row: s.row || Math.ceil((idx + 1) / 3),
+        col: s.column || ((idx % 3) + 1),
+      }));
+    }
+    return Array.from({ length: 15 }, (_, idx) => ({
+      label: `${prefix}${idx + 1}`,
+      row: Math.ceil((idx + 1) / 3),
+      col: (idx % 3) + 1,
+    }));
+  };
+
+  const lowerDeckExpected = buildSleeperDeckExpected(lowerSeatsList, 'L');
+  const upperDeckExpected = buildSleeperDeckExpected(upperSeatsList, 'U');
 
   const mapSleeperDeckRows = (expectedList: Array<{ label: string; row: number; col: number }>, seatList: Seat[]) => {
     const seatMapByLabel = new Map<string, Seat>();
@@ -316,7 +322,7 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
 
   // --- CHAIR COACH (2+2 OR 2+1) RENDERING ---
   const renderChairCoachView = () => {
-    const rowLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P'];
+    const rowLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
     const cols = isVip2x1 ? 3 : 4;
     const totalRowsCount = Math.max(
       1,
@@ -373,8 +379,8 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
             <RiBusFill className="text-[#E31B23] text-xl" />
             <span>
               {isVip2x1
-                ? (isBn ? `${seats.length || 30}-সিট ২+১ বিজনেস ভিআইপি কোচ` : `${seats.length || 30}-Seat 2+1 Business Class VIP`)
-                : (isBn ? `${seats.length || 40}-সিট ২+২ স্ট্যান্ডার্ড চেয়ার কোচ` : `${seats.length || 40}-Seat 2+2 Standard Chair Coach`)}
+                ? (isBn ? `${seats.length}-সিট ২+১ বিজনেস ভিআইপি কোচ` : `${seats.length}-Seat 2+1 Business Class VIP`)
+                : (isBn ? `${seats.length}-সিট ২+২ স্ট্যান্ডার্ড চেয়ার কোচ` : `${seats.length}-Seat 2+2 Standard Chair Coach`)}
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -516,13 +522,13 @@ export function SeatMap({ seats, selectedSeats, onToggle, maxSeats = 40 }: SeatM
 
           <div className="lg:hidden">
             {activeDeckTab === 'LOWER'
-              ? renderDeckView(isBn ? 'লোয়ার ডেক (১৫টি সিট)' : 'Lower Deck (15 Seats)', lowerRows)
-              : renderDeckView(isBn ? 'আপার ডেক (১৫টি সিট)' : 'Upper Deck (15 Seats)', upperRows)}
+              ? renderDeckView(isBn ? `লোয়ার ডেক (${lowerSeatsList.length}টি সিট)` : `Lower Deck (${lowerSeatsList.length} Seats)`, lowerRows)
+              : renderDeckView(isBn ? `আপার ডেক (${upperSeatsList.length}টি সিট)` : `Upper Deck (${upperSeatsList.length} Seats)`, upperRows)}
           </div>
 
           <div className="hidden lg:grid grid-cols-2 gap-6">
-            {renderDeckView(isBn ? 'লোয়ার ডেক (১৫টি সিট)' : 'Lower Deck (15 Seats)', lowerRows)}
-            {renderDeckView(isBn ? 'আপার ডেক (১৫টি সিট)' : 'Upper Deck (15 Seats)', upperRows)}
+            {renderDeckView(isBn ? `লোয়ার ডেক (${lowerSeatsList.length}টি সিট)` : `Lower Deck (${lowerSeatsList.length} Seats)`, lowerRows)}
+            {renderDeckView(isBn ? `আপার ডেক (${upperSeatsList.length}টি সিট)` : `Upper Deck (${upperSeatsList.length} Seats)`, upperRows)}
           </div>
         </>
       ) : (

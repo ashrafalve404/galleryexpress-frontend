@@ -94,7 +94,7 @@ export default function AdminSeatLayoutsPage() {
   };
 
   const generateLayoutConfig = () => {
-    const rowLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P'];
+    const rowLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
     const config: Array<{ label: string; row: number; column: number; deck: string }> = [];
 
     if (form.pattern === 'SLEEPER_DOUBLE') {
