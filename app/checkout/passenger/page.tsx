@@ -6,7 +6,7 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft, User, Phone, Mail, ChevronRight, Building2 } from 'lucide-react';
+import { ArrowLeft, User, Phone, Mail, ChevronRight, Building2, Tag } from 'lucide-react';
 import Link from 'next/link';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -47,10 +47,52 @@ export default function PassengerPage() {
     droppingStopId,
     setStops,
     discountCode,
+    discountAmount,
+    setDiscount,
     getFinalAmount,
     reset,
   } = useBookingStore();
   const createBooking = useCreateBooking();
+
+  const [couponInput, setCouponInput] = useState(discountCode || '');
+  const [validatingCoupon, setValidatingCoupon] = useState(false);
+
+  const handleApplyCoupon = async () => {
+    if (!couponInput.trim()) {
+      toast.error(isBn ? 'অনুগ্রহ করে কুপন কোড লিখুন' : 'Please enter a coupon code');
+      return;
+    }
+    setValidatingCoupon(true);
+    try {
+      const subtotal = selectedSeats.reduce((sum, st) => sum + (st.price || schedule?.fare || 0), 0);
+      const res = await client.get('/api/v1/discounts/validate', {
+        params: {
+          code: couponInput.trim().toUpperCase(),
+          companyId: '00000000-0000-4000-a000-000000000001',
+          amount: subtotal,
+        },
+      });
+      const disc = res.data?.data || res.data;
+      let calculatedDiscount = 0;
+      if (disc.type === 'PERCENTAGE') {
+        calculatedDiscount = (subtotal * Number(disc.value)) / 100;
+      } else {
+        calculatedDiscount = Number(disc.value);
+      }
+      setDiscount(disc.code, calculatedDiscount);
+      toast.success(isBn ? `কুপন সফলভাবে প্রয়োগ হয়েছে! ৳${calculatedDiscount} ছাড় পাওয়া গেছে` : `Coupon applied! ৳${calculatedDiscount} discount added.`);
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || err?.message || (isBn ? 'অকার্যকর অথবা মেয়াউত্তীর্ণ কুপন কোড' : 'Invalid or expired coupon code'));
+    } finally {
+      setValidatingCoupon(false);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setDiscount('', 0);
+    setCouponInput('');
+    toast.info(isBn ? 'কুপনটি সরানো হয়েছে' : 'Coupon removed');
+  };
 
   useEffect(() => {
     setIsMounted(true);
@@ -280,7 +322,7 @@ export default function PassengerPage() {
             )}
 
             {/* Order summary */}
-            <div className="bg-white rounded-2xl p-5 border border-gray-100">
+            <div className="bg-white rounded-2xl p-5 border border-gray-100 space-y-3">
               <h3 className="font-bold text-[#111111] mb-3">{isBn ? 'অর্ডার সারসংক্ষেপ' : 'Order Summary'}</h3>
               <div className="space-y-2 text-sm text-gray-600">
                 <div className="flex justify-between">
@@ -289,10 +331,57 @@ export default function PassengerPage() {
                 <div className="flex justify-between">
                   <span>{isBn ? `${selectedSeats.length}টি আসন` : `${selectedSeats.length} seat${selectedSeats.length > 1 ? 's' : ''}`} × {formatCurrency(schedule?.fare || 0)}</span>
                 </div>
+                {discountAmount > 0 && (
+                  <div className="flex justify-between text-emerald-600 font-bold">
+                    <span>{isBn ? 'ডিসকাউন্ট ছাড় (' : 'Discount ('}{discountCode})</span>
+                    <span>-{formatCurrency(discountAmount)}</span>
+                  </div>
+                )}
               </div>
+
+              {/* Coupon Code Input Widget */}
+              <div className="pt-3 border-t border-gray-100 space-y-2">
+                <label className="block text-xs font-bold text-gray-700">
+                  {isBn ? 'কুপন বা প্রোমো কোড ব্যবহার করুন' : 'Have a Promo / Coupon Code?'}
+                </label>
+                {discountCode ? (
+                  <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 p-2.5 rounded-xl text-xs text-emerald-900 font-bold">
+                    <div className="flex items-center gap-2">
+                      <Tag size={15} className="text-emerald-600" />
+                      <span>{discountCode} (-{formatCurrency(discountAmount)})</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleRemoveCoupon}
+                      className="text-red-500 hover:text-red-700 font-bold text-[11px] underline"
+                    >
+                      {isBn ? 'সরান' : 'Remove'}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={couponInput}
+                      onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                      placeholder={isBn ? 'যেমন: COX15' : 'e.g. COX15'}
+                      className="flex-1 px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-mono font-bold uppercase focus:outline-none focus:border-[#E31B23]"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleApplyCoupon}
+                      disabled={validatingCoupon}
+                      className="px-4 py-2.5 bg-gray-900 hover:bg-black disabled:opacity-50 text-white rounded-xl text-xs font-bold transition-all shadow-xs"
+                    >
+                      {validatingCoupon ? (isBn ? 'যাচাই...' : 'Applying...') : (isBn ? 'প্রয়োগ করুন' : 'Apply')}
+                    </button>
+                  </div>
+                )}
+              </div>
+
               <hr className="my-3" />
               <div className="flex justify-between font-bold text-base">
-                <span>{isBn ? 'সর্বমোট মূল্য' : 'Total Amount'}</span>
+                <span>{isBn ? 'সর্বমোট প্রদেয় মূল্য' : 'Total Payable Amount'}</span>
                 <span className="text-[#E31B23]">{formatCurrency(totalAmount)}</span>
               </div>
             </div>
