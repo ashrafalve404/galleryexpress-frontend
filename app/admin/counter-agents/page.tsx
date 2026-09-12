@@ -933,21 +933,6 @@ export default function AdminCounterAgentsPage() {
                                 {agentDetails.agent?.counter?.name || 'Unassigned'}
                               </span>
                             </div>
-                            <div className="col-span-2">
-                              <span className="text-gray-400 font-bold block mb-1">{isBn ? 'এনআইডি ডকুমেন্টস' : 'NID Verification Documents'}</span>
-                              <div className="flex gap-3">
-                                {agentDetails.agent?.nidFrontDocUrl ? (
-                                  <a href={agentDetails.agent.nidFrontDocUrl} target="_blank" rel="noreferrer" className="text-xs text-blue-600 underline font-bold flex items-center gap-1">
-                                    NID Front Document <ArrowUpRight size={12} />
-                                  </a>
-                                ) : <span className="text-gray-400">No Front Image</span>}
-                                {agentDetails.agent?.nidBackDocUrl ? (
-                                  <a href={agentDetails.agent.nidBackDocUrl} target="_blank" rel="noreferrer" className="text-xs text-blue-600 underline font-bold flex items-center gap-1">
-                                    NID Back Document <ArrowUpRight size={12} />
-                                  </a>
-                                ) : null}
-                              </div>
-                            </div>
                           </div>
                         </div>
                       </div>
