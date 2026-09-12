@@ -19,6 +19,11 @@ import {
   Loader2,
   Trash2,
   Power,
+  Eye,
+  X,
+  ShieldCheck,
+  Phone,
+  Mail,
 } from 'lucide-react';
 import apiClient from '@/lib/api/client';
 import { useLanguageStore } from '@/lib/store/languageStore';
@@ -40,6 +45,26 @@ export default function AdminCounterAgentsPage() {
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+
+  // Agent Details Modal States
+  const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
+  const [agentDetails, setAgentDetails] = useState<any | null>(null);
+  const [detailsLoading, setDetailsLoading] = useState(false);
+  const [modalTab, setModalTab] = useState<'overview' | 'bulk' | 'referrals' | 'sales' | 'ledger'>('overview');
+
+  const handleOpenAgentDetails = async (agentId: string) => {
+    setSelectedAgentId(agentId);
+    setModalTab('overview');
+    setDetailsLoading(true);
+    try {
+      const res = await apiClient.get(`/api/v1/counter-agent/admin/agents/${agentId}/details`);
+      setAgentDetails(res.data?.data ?? res.data);
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || 'Failed to load agent full details.');
+    } finally {
+      setDetailsLoading(false);
+    }
+  };
 
   const handleToggleAgentStatus = async (agentId: string, name: string, currentStatus: string) => {
     const newStatus = currentStatus === 'INACTIVE' ? 'ACTIVE' : 'INACTIVE';
@@ -363,8 +388,17 @@ export default function AdminCounterAgentsPage() {
                   filteredAgents.map((ag) => (
                     <tr key={ag.id} className="hover:bg-gray-50/80 transition-colors">
                       <td className="py-4 px-4 font-bold text-gray-900">
-                        <div>{ag.firstName} {ag.lastName}</div>
-                        <div className="text-xs text-gray-400 font-normal">{ag.phone || ag.email}</div>
+                        <button
+                          onClick={() => handleOpenAgentDetails(ag.id)}
+                          className="text-left font-bold text-gray-900 hover:text-[#E31B23] transition-colors group flex flex-col"
+                          title={isBn ? 'এজেন্টের বিস্তারিত তথ্য দেখুন' : 'Click to view full agent details'}
+                        >
+                          <span className="group-hover:underline flex items-center gap-1.5">
+                            {ag.firstName} {ag.lastName}
+                            <Eye size={13} className="text-gray-400 group-hover:text-[#E31B23] transition-colors shrink-0" />
+                          </span>
+                          <span className="text-xs text-gray-400 font-normal">{ag.phone || ag.email}</span>
+                        </button>
                       </td>
                       <td className="py-4 px-4 text-xs font-semibold text-gray-800">
                         {ag.referralCode ? (
@@ -413,6 +447,14 @@ export default function AdminCounterAgentsPage() {
                       </td>
                       <td className="py-4 px-4 text-right">
                         <div className="flex justify-end items-center gap-1.5">
+                          <button
+                            onClick={() => handleOpenAgentDetails(ag.id)}
+                            className="p-1.5 rounded-lg border border-blue-200 text-blue-600 hover:bg-blue-50 transition-colors inline-flex items-center gap-1 font-bold text-xs"
+                            title={isBn ? 'এজেন্টের সকল তথ্য ও অ্যাক্টিভিটি দেখুন' : 'View full agent details and activity'}
+                          >
+                            <Eye size={13} />
+                            <span className="hidden sm:inline">{isBn ? 'বিস্তারিত' : 'Details'}</span>
+                          </button>
                           <button
                             onClick={() => handleToggleAgentStatus(ag.id, `${ag.firstName} ${ag.lastName}`, ag.status || 'ACTIVE')}
                             disabled={actionLoading === ag.id}
@@ -653,6 +695,469 @@ export default function AdminCounterAgentsPage() {
           </div>
         )}
       </div>
+
+      {/* Agent Full Details Modal */}
+      {selectedAgentId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200 overflow-y-auto">
+          <div className="bg-white rounded-3xl border border-gray-200 shadow-2xl w-full max-w-5xl my-8 overflow-hidden flex flex-col max-h-[90vh]">
+            
+            {/* Modal Header */}
+            <div className="p-6 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shrink-0">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#E31B23] to-red-700 text-white font-black text-xl flex items-center justify-center shadow-lg shrink-0">
+                  {agentDetails?.agent?.firstName?.[0] || 'A'}{agentDetails?.agent?.lastName?.[0] || 'G'}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h2 className="text-xl font-black tracking-tight text-white">
+                      {agentDetails?.agent ? `${agentDetails.agent.firstName} ${agentDetails.agent.lastName}` : 'Agent Details'}
+                    </h2>
+                    {agentDetails?.agent?.status && (
+                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase ${
+                        agentDetails.agent.status === 'INACTIVE' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                      }`}>
+                        {agentDetails.agent.status}
+                      </span>
+                    )}
+                    {agentDetails?.agent?.kycStatus && (
+                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase flex items-center gap-1 ${
+                        agentDetails.agent.kycStatus === 'VERIFIED' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                      }`}>
+                        <ShieldCheck size={12} />
+                        KYC: {agentDetails.agent.kycStatus}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-4 text-xs text-gray-300 mt-1 flex-wrap font-medium">
+                    {agentDetails?.agent?.phone && (
+                      <span className="flex items-center gap-1"><Phone size={12} className="text-[#E31B23]" /> {agentDetails.agent.phone}</span>
+                    )}
+                    {agentDetails?.agent?.email && (
+                      <span className="flex items-center gap-1"><Mail size={12} className="text-[#E31B23]" /> {agentDetails.agent.email}</span>
+                    )}
+                    {agentDetails?.agent?.counter && (
+                      <span className="flex items-center gap-1 text-amber-400 font-bold"><Building2 size={12} /> {agentDetails.agent.counter.name}</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={() => { setSelectedAgentId(null); setAgentDetails(null); }}
+                className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition-colors shrink-0"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Modal Tabs Navigation */}
+            <div className="bg-gray-100 p-2 border-b border-gray-200 flex items-center gap-2 overflow-x-auto shrink-0">
+              <button
+                onClick={() => setModalTab('overview')}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${
+                  modalTab === 'overview' ? 'bg-white text-gray-900 shadow-xs' : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <TrendingUp size={14} className="text-[#E31B23]" /> {isBn ? 'সারসংক্ষেপ ও আয়' : 'Overview & Financials'}
+              </button>
+              <button
+                onClick={() => setModalTab('bulk')}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${
+                  modalTab === 'bulk' ? 'bg-white text-gray-900 shadow-xs' : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <Package size={14} className="text-purple-600" /> {isBn ? 'বাল্ক টিকিট অর্ডার' : 'Bulk Ticket Orders'} ({agentDetails?.bulkOrders?.length || 0})
+              </button>
+              <button
+                onClick={() => setModalTab('referrals')}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${
+                  modalTab === 'referrals' ? 'bg-white text-gray-900 shadow-xs' : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <Users size={14} className="text-amber-600" /> {isBn ? 'রেফারেল নেটওয়ার্ক' : 'Referral Network'} ({agentDetails?.referredAgents?.length || 0})
+              </button>
+              <button
+                onClick={() => setModalTab('sales')}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${
+                  modalTab === 'sales' ? 'bg-white text-gray-900 shadow-xs' : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <Ticket size={14} className="text-blue-600" /> {isBn ? 'বিক্রিকৃত টিকিট' : 'Tickets Sold'} ({agentDetails?.soldBookings?.length || 0})
+              </button>
+              <button
+                onClick={() => setModalTab('ledger')}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${
+                  modalTab === 'ledger' ? 'bg-white text-gray-900 shadow-xs' : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <DollarSign size={14} className="text-emerald-600" /> {isBn ? 'কমিশন লেজার' : 'Commission Ledger'} ({agentDetails?.commissions?.length || 0})
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 overflow-y-auto space-y-6 flex-1 bg-gray-50/50">
+              {detailsLoading ? (
+                <div className="py-16 flex flex-col items-center justify-center gap-3">
+                  <Loader2 className="w-8 h-8 text-[#E31B23] animate-spin" />
+                  <p className="text-xs font-bold text-gray-500">
+                    {isBn ? 'এজেন্টের বিস্তারিত তথ্য লোড হচ্ছে...' : 'Loading complete agent details & activity ledger...'}
+                  </p>
+                </div>
+              ) : agentDetails ? (
+                <>
+                  {/* TAB 1: OVERVIEW */}
+                  {modalTab === 'overview' && (
+                    <div className="space-y-6">
+                      {/* Metric Cards */}
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div className="bg-gradient-to-br from-emerald-50 to-teal-50/50 p-4 rounded-2xl border border-emerald-200/80">
+                          <span className="text-[10px] font-extrabold uppercase text-emerald-700 tracking-wider">
+                            {isBn ? 'মোট উপার্জিত আয়' : 'Total Earnings'}
+                          </span>
+                          <div className="text-2xl font-black text-emerald-700 mt-1">
+                            {formatTk(agentDetails.stats?.totalEarnings || 0)}
+                          </div>
+                          <div className="text-[10px] text-emerald-600 mt-1 font-medium flex items-center justify-between">
+                            <span>{isBn ? 'রেফারেল:' : 'Ref:'} {formatTk(agentDetails.stats?.referralCommissionsTotal || 0)}</span>
+                            <span>{isBn ? 'বোনাস:' : 'Bonus:'} {formatTk(agentDetails.stats?.monthlyBonusesTotal || 0)}</span>
+                          </div>
+                        </div>
+
+                        <div className="bg-gradient-to-br from-purple-50 to-indigo-50/50 p-4 rounded-2xl border border-purple-200/80">
+                          <span className="text-[10px] font-extrabold uppercase text-purple-700 tracking-wider">
+                            {isBn ? 'বাল্ক টিকিট কোটা' : 'Bulk Ticket Quota'}
+                          </span>
+                          <div className="text-2xl font-black text-purple-700 mt-1">
+                            {agentDetails.stats?.totalBulkRemaining || 0} / {agentDetails.stats?.totalBulkTicketsBought || 0}
+                          </div>
+                          <p className="text-[10px] text-purple-600 mt-1 font-medium">
+                            {isBn ? 'অবশিষ্ট কোটা টিকিট' : 'Remaining available tickets'}
+                          </p>
+                        </div>
+
+                        <div className="bg-gradient-to-br from-blue-50 to-cyan-50/50 p-4 rounded-2xl border border-blue-200/80">
+                          <span className="text-[10px] font-extrabold uppercase text-blue-700 tracking-wider">
+                            {isBn ? 'মোট বিক্রিকৃত টিকিট' : 'Total Tickets Sold'}
+                          </span>
+                          <div className="text-2xl font-black text-blue-700 mt-1">
+                            {agentDetails.stats?.totalTicketsSold || 0}
+                          </div>
+                          <p className="text-[10px] text-blue-600 mt-1 font-medium">
+                            {isBn ? 'প্যাকেজ থেকে বিক্রিত' : 'Sold to passengers'}
+                          </p>
+                        </div>
+
+                        <div className="bg-gradient-to-br from-amber-50 to-orange-50/50 p-4 rounded-2xl border border-amber-200/80">
+                          <span className="text-[10px] font-extrabold uppercase text-amber-700 tracking-wider">
+                            {isBn ? 'মোট বিনিয়োগ' : 'Total Investment'}
+                          </span>
+                          <div className="text-2xl font-black text-amber-700 mt-1">
+                            {formatTk(agentDetails.stats?.totalInvested || 0)}
+                          </div>
+                          <p className="text-[10px] text-amber-600 mt-1 font-medium">
+                            {agentDetails.bulkOrders?.length || 0} {isBn ? 'টি বাল্ক ক্রয়ে' : 'bulk purchases'}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Detailed Agent Info */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-xs space-y-4">
+                          <h3 className="text-sm font-extrabold text-gray-900 flex items-center gap-2 border-b pb-3">
+                            <Users size={16} className="text-[#E31B23]" />
+                            {isBn ? 'এজেন্ট প্রোফাইল ও পরিচিতি' : 'Agent Identity & Profile'}
+                          </h3>
+                          <div className="grid grid-cols-2 gap-3 text-xs">
+                            <div>
+                              <span className="text-gray-400 font-bold block">{isBn ? 'রেফারেল কোড' : 'Referral Code'}</span>
+                              <span className="font-mono font-black text-[#E31B23] bg-red-50 px-2 py-0.5 rounded border border-red-100 inline-block mt-0.5">
+                                {agentDetails.agent?.referralCode || '—'}
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-gray-400 font-bold block">{isBn ? 'যার রেফারেলে যুক্ত' : 'Referred By'}</span>
+                              <span className="font-semibold text-gray-800 mt-0.5 block">
+                                {agentDetails.agent?.referredByCode || 'Direct Sign-up'}
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-gray-400 font-bold block">{isBn ? 'এনআইডি নম্বর' : 'NID Number'}</span>
+                              <span className="font-semibold text-gray-800 mt-0.5 block">
+                                {agentDetails.agent?.nidNumber || 'Not submitted'}
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-gray-400 font-bold block">{isBn ? 'নিবন্ধনের তারিখ' : 'Joined Date'}</span>
+                              <span className="font-semibold text-gray-800 mt-0.5 block">
+                                {new Date(agentDetails.agent?.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-xs space-y-4">
+                          <h3 className="text-sm font-extrabold text-gray-900 flex items-center gap-2 border-b pb-3">
+                            <ShieldCheck size={16} className="text-emerald-600" />
+                            {isBn ? 'কেওয়াইসি যাচাই ও কাউন্টার' : 'KYC Verification & Counter'}
+                          </h3>
+                          <div className="grid grid-cols-2 gap-3 text-xs">
+                            <div>
+                              <span className="text-gray-400 font-bold block">{isBn ? 'কেওয়াইসি স্ট্যাটাস' : 'KYC Status'}</span>
+                              <span className={`font-black text-xs inline-block mt-0.5 ${
+                                agentDetails.agent?.kycStatus === 'VERIFIED' ? 'text-emerald-600' : 'text-amber-600'
+                              }`}>
+                                {agentDetails.agent?.kycStatus || 'NOT_SUBMITTED'}
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-gray-400 font-bold block">{isBn ? 'কাউন্টার' : 'Counter'}</span>
+                              <span className="font-semibold text-gray-800 mt-0.5 block">
+                                {agentDetails.agent?.counter?.name || 'Unassigned'}
+                              </span>
+                            </div>
+                            <div className="col-span-2">
+                              <span className="text-gray-400 font-bold block mb-1">{isBn ? 'এনআইডি ডকুমেন্টস' : 'NID Verification Documents'}</span>
+                              <div className="flex gap-3">
+                                {agentDetails.agent?.nidFrontDocUrl ? (
+                                  <a href={agentDetails.agent.nidFrontDocUrl} target="_blank" rel="noreferrer" className="text-xs text-blue-600 underline font-bold flex items-center gap-1">
+                                    NID Front Document <ArrowUpRight size={12} />
+                                  </a>
+                                ) : <span className="text-gray-400">No Front Image</span>}
+                                {agentDetails.agent?.nidBackDocUrl ? (
+                                  <a href={agentDetails.agent.nidBackDocUrl} target="_blank" rel="noreferrer" className="text-xs text-blue-600 underline font-bold flex items-center gap-1">
+                                    NID Back Document <ArrowUpRight size={12} />
+                                  </a>
+                                ) : null}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* TAB 2: BULK ORDERS */}
+                  {modalTab === 'bulk' && (
+                    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-xs">
+                      <div className="p-4 border-b border-gray-100 font-bold text-xs text-gray-700 bg-gray-50 flex items-center justify-between">
+                        <span>{isBn ? 'এজেন্টের সকল বাল্ক টিকিট ক্রয় ইতিহাস' : 'All Bulk Ticket Purchase History'}</span>
+                        <span className="text-gray-400 font-normal">{agentDetails.bulkOrders?.length || 0} records</span>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left text-xs">
+                          <thead className="bg-gray-50 text-gray-500 font-bold uppercase text-[10px] border-b">
+                            <tr>
+                              <th className="py-3 px-4">Route</th>
+                              <th className="py-3 px-4">Purchased Qty</th>
+                              <th className="py-3 px-4">Remaining</th>
+                              <th className="py-3 px-4">Total Price</th>
+                              <th className="py-3 px-4">Payment</th>
+                              <th className="py-3 px-4">Status</th>
+                              <th className="py-3 px-4">Date</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-gray-100 text-gray-700">
+                            {(!agentDetails.bulkOrders || agentDetails.bulkOrders.length === 0) ? (
+                              <tr>
+                                <td colSpan={7} className="text-center py-6 text-gray-400">No bulk orders found for this agent.</td>
+                              </tr>
+                            ) : (
+                              agentDetails.bulkOrders.map((o: any) => (
+                                <tr key={o.id} className="hover:bg-gray-50">
+                                  <td className="py-3 px-4 font-bold text-gray-900">
+                                    {o.route?.origin} ↔ {o.route?.destination}
+                                  </td>
+                                  <td className="py-3 px-4 font-bold text-purple-700">{o.quantity} tickets</td>
+                                  <td className="py-3 px-4 font-bold text-emerald-700">{o.remainingQuantity} remaining</td>
+                                  <td className="py-3 px-4 font-bold text-gray-900">{formatTk(o.totalAmount)}</td>
+                                  <td className="py-3 px-4 font-medium text-gray-600">
+                                    {o.paymentMethod || 'bKash'} {o.trxId && <span className="font-mono text-[10px] text-gray-400 block">Trx: {o.trxId}</span>}
+                                  </td>
+                                  <td className="py-3 px-4">
+                                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${
+                                      o.status === 'ACTIVE' ? 'bg-emerald-100 text-emerald-800' : o.status === 'EXHAUSTED' ? 'bg-gray-100 text-gray-600' : 'bg-amber-100 text-amber-800'
+                                    }`}>
+                                      {o.status}
+                                    </span>
+                                  </td>
+                                  <td className="py-3 px-4 text-gray-400">
+                                    {new Date(o.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                  </td>
+                                </tr>
+                              ))
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* TAB 3: REFERRAL NETWORK */}
+                  {modalTab === 'referrals' && (
+                    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-xs">
+                      <div className="p-4 border-b border-gray-100 font-bold text-xs text-gray-700 bg-gray-50 flex items-center justify-between">
+                        <span>{isBn ? 'এই এজেন্টের রেফারেলে সাইনআপকৃত এজেন্ট তালিকা' : 'Sub-Agents Joined Via Referral'}</span>
+                        <span className="text-gray-400 font-normal">{agentDetails.referredAgents?.length || 0} sub-agents</span>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left text-xs">
+                          <thead className="bg-gray-50 text-gray-500 font-bold uppercase text-[10px] border-b">
+                            <tr>
+                              <th className="py-3 px-4">Agent Name</th>
+                              <th className="py-3 px-4">Contact</th>
+                              <th className="py-3 px-4">Total Bought</th>
+                              <th className="py-3 px-4">Tickets Sold</th>
+                              <th className="py-3 px-4">Ref Commission Generated</th>
+                              <th className="py-3 px-4">Joined Date</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-gray-100 text-gray-700">
+                            {(!agentDetails.referredAgents || agentDetails.referredAgents.length === 0) ? (
+                              <tr>
+                                <td colSpan={6} className="text-center py-6 text-gray-400">No agents joined using this agent's referral code yet.</td>
+                              </tr>
+                            ) : (
+                              agentDetails.referredAgents.map((ref: any) => (
+                                <tr key={ref.id} className="hover:bg-gray-50">
+                                  <td className="py-3 px-4 font-bold text-gray-900">
+                                    {ref.firstName} {ref.lastName}
+                                  </td>
+                                  <td className="py-3 px-4 text-gray-600">{ref.phone || ref.email}</td>
+                                  <td className="py-3 px-4 font-semibold">{ref.totalBought || 0} tickets</td>
+                                  <td className="py-3 px-4 font-bold text-blue-600">{ref.totalSold || 0} sold</td>
+                                  <td className="py-3 px-4 font-bold text-emerald-600">{formatTk(ref.referralCommissionGenerated || 0)}</td>
+                                  <td className="py-3 px-4 text-gray-400">
+                                    {new Date(ref.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                  </td>
+                                </tr>
+                              ))
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* TAB 4: TICKETS SOLD */}
+                  {modalTab === 'sales' && (
+                    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-xs">
+                      <div className="p-4 border-b border-gray-100 font-bold text-xs text-gray-700 bg-gray-50 flex items-center justify-between">
+                        <span>{isBn ? 'এজেন্ট দ্বারা যাত্রীদের কাছে বিক্রিকৃত টিকিট' : 'Recent Ticket Bookings Sold'}</span>
+                        <span className="text-gray-400 font-normal">{agentDetails.soldBookings?.length || 0} bookings</span>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left text-xs">
+                          <thead className="bg-gray-50 text-gray-500 font-bold uppercase text-[10px] border-b">
+                            <tr>
+                              <th className="py-3 px-4">Booking Ref</th>
+                              <th className="py-3 px-4">Route</th>
+                              <th className="py-3 px-4">Travel Date</th>
+                              <th className="py-3 px-4">Amount</th>
+                              <th className="py-3 px-4">Status</th>
+                              <th className="py-3 px-4">Sold Date</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-gray-100 text-gray-700">
+                            {(!agentDetails.soldBookings || agentDetails.soldBookings.length === 0) ? (
+                              <tr>
+                                <td colSpan={6} className="text-center py-6 text-gray-400">No sold ticket bookings found for this agent.</td>
+                              </tr>
+                            ) : (
+                              agentDetails.soldBookings.map((b: any) => (
+                                <tr key={b.id} className="hover:bg-gray-50">
+                                  <td className="py-3 px-4 font-mono font-bold text-[#E31B23]">{b.bookingRef}</td>
+                                  <td className="py-3 px-4 font-semibold text-gray-900">
+                                    {b.schedule?.route ? `${b.schedule.route.origin} ↔ ${b.schedule.route.destination}` : 'Bus Route'}
+                                  </td>
+                                  <td className="py-3 px-4 text-gray-600 font-medium">{b.schedule?.departureDate || '—'}</td>
+                                  <td className="py-3 px-4 font-bold text-gray-900">{formatTk(b.totalAmount)}</td>
+                                  <td className="py-3 px-4">
+                                    <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-100 text-emerald-800">
+                                      {b.status || 'CONFIRMED'}
+                                    </span>
+                                  </td>
+                                  <td className="py-3 px-4 text-gray-400">
+                                    {new Date(b.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                  </td>
+                                </tr>
+                              ))
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* TAB 5: COMMISSION LEDGER */}
+                  {modalTab === 'ledger' && (
+                    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-xs">
+                      <div className="p-4 border-b border-gray-100 font-bold text-xs text-gray-700 bg-gray-50 flex items-center justify-between">
+                        <span>{isBn ? 'এজেন্টের সকল রেফারেল ও মাসিক বোনাস লেজার' : 'Commissions & Monthly Sales Bonus Ledger'}</span>
+                        <span className="text-gray-400 font-normal">{agentDetails.commissions?.length || 0} records</span>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left text-xs">
+                          <thead className="bg-gray-50 text-gray-500 font-bold uppercase text-[10px] border-b">
+                            <tr>
+                              <th className="py-3 px-4">Commission Type</th>
+                              <th className="py-3 px-4">Amount</th>
+                              <th className="py-3 px-4">Status</th>
+                              <th className="py-3 px-4">Description / Notes</th>
+                              <th className="py-3 px-4">Date</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-gray-100 text-gray-700">
+                            {(!agentDetails.commissions || agentDetails.commissions.length === 0) ? (
+                              <tr>
+                                <td colSpan={5} className="text-center py-6 text-gray-400">No commission or bonus ledger entries found.</td>
+                              </tr>
+                            ) : (
+                              agentDetails.commissions.map((c: any) => (
+                                <tr key={c.id} className="hover:bg-gray-50">
+                                  <td className="py-3 px-4 font-bold">
+                                    {c.type === 'MONTHLY_SALES_BONUS' ? (
+                                      <span className="px-2.5 py-0.5 rounded-md bg-purple-100 text-purple-800 font-extrabold text-[10px]">MONTHLY SALES BONUS</span>
+                                    ) : (
+                                      <span className="px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-800 font-extrabold text-[10px]">REFERRAL COMMISSION</span>
+                                    )}
+                                  </td>
+                                  <td className="py-3 px-4 font-black text-emerald-600 text-sm">{formatTk(c.amount)}</td>
+                                  <td className="py-3 px-4">
+                                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${
+                                      c.status === 'PAID' ? 'bg-blue-100 text-blue-800' : 'bg-emerald-100 text-emerald-800'
+                                    }`}>
+                                      {c.status}
+                                    </span>
+                                  </td>
+                                  <td className="py-3 px-4 text-gray-600">{c.notes || (c.triggerBooking ? `Triggered by booking ${c.triggerBooking.bookingRef}` : '—')}</td>
+                                  <td className="py-3 px-4 text-gray-400">
+                                    {new Date(c.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                  </td>
+                                </tr>
+                              ))
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : null}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 bg-gray-100 border-t border-gray-200 flex justify-end shrink-0">
+              <button
+                onClick={() => { setSelectedAgentId(null); setAgentDetails(null); }}
+                className="px-5 py-2.5 bg-gray-900 hover:bg-black text-white font-bold text-xs rounded-xl transition-all"
+              >
+                {isBn ? 'বন্ধ করুন' : 'Close Details'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
