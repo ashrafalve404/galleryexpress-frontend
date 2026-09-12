@@ -31,6 +31,7 @@ export interface Commission {
   totalCommission: number;
   totalAgents: number;
   status: string;
+  notes?: string;
   createdAt: string;
   triggerBooking?: { bookingRef: string; totalAmount: number; createdAt: string };
 }
@@ -52,6 +53,15 @@ export interface DashboardStats {
   totalInvested: number;
   referredCount?: number;
   referralEarnings?: number;
+  monthlySalesBonus?: {
+    currentMonthTicketsSold: number;
+    currentBonusTier: string;
+    currentTargetBonus: number;
+    nextTierTickets: number;
+    nextTierBonus: number;
+    progressPct: number;
+    monthlyBonusesEarnedTotal: number;
+  };
   referredAgents?: Array<{
     id: string;
     name: string;

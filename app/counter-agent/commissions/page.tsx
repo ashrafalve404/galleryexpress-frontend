@@ -128,50 +128,62 @@ export default function CommissionsPage() {
               <thead className="bg-gray-50 text-gray-500 font-bold uppercase text-[11px] border-b border-gray-200">
                 <tr>
                   <th className="py-3.5 px-6">{lang === 'BN' ? 'আপনার অংশ' : 'Your Share'}</th>
+                  <th className="py-3.5 px-4">{lang === 'BN' ? 'বিবরণ / ধরণ' : 'Type / Details'}</th>
                   <th className="py-3.5 px-4">{lang === 'BN' ? 'মোট পুল' : 'Total Pool'}</th>
-                  <th className="py-3.5 px-4">{lang === 'BN' ? 'এজেন্ট ভাগ' : 'Split'}</th>
                   <th className="py-3.5 px-4">{lang === 'BN' ? 'স্ট্যাটাস' : 'Status'}</th>
                   <th className="py-3.5 px-6">{lang === 'BN' ? 'তারিখ' : 'Date'}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 text-gray-700">
-                {commissions.map((c) => (
-                  <tr key={c.id} className="hover:bg-gray-50/80 transition-colors">
-                    <td className="py-4 px-6 font-extrabold text-emerald-600 text-sm">
-                      {formatTk(c.agentShare)}
-                    </td>
-                    <td className="py-4 px-4 font-semibold text-gray-700">
-                      {formatTk(c.totalCommission)}
-                    </td>
-                    <td className="py-4 px-4 text-xs text-gray-500">
-                      {c.totalAgents} {lang === 'BN' ? 'জন এজেন্ট' : 'agents'}
-                    </td>
-                    <td className="py-4 px-4">
-                      <span
-                        className={`inline-block text-[11px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${
-                          c.status === 'PAID'
-                            ? 'bg-blue-100 text-blue-800'
-                            : c.status === 'PENDING'
-                            ? 'bg-emerald-100 text-emerald-800'
-                            : c.status === 'HELD_UNTIL_DEPARTURE'
-                            ? 'bg-purple-100 text-purple-800'
-                            : 'bg-rose-100 text-rose-800'
-                        }`}
-                      >
-                        {c.status === 'HELD_UNTIL_DEPARTURE'
-                          ? (lang === 'BN' ? 'যাত্রার অপেক্ষায়' : 'Awaiting Departure')
-                          : c.status}
-                      </span>
-                    </td>
-                    <td className="py-4 px-6 text-gray-400 text-xs">
-                      {new Date(c.createdAt).toLocaleDateString('en-GB', {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric',
-                      })}
-                    </td>
-                  </tr>
-                ))}
+                {commissions.map((c) => {
+                  const isBonus = c.notes?.toLowerCase().includes('monthly sales bonus') || !c.triggerBooking;
+                  return (
+                    <tr key={c.id} className="hover:bg-gray-50/80 transition-colors">
+                      <td className="py-4 px-6 font-extrabold text-emerald-600 text-sm">
+                        {formatTk(c.agentShare)}
+                      </td>
+                      <td className="py-4 px-4 font-semibold text-gray-800">
+                        {isBonus ? (
+                          <span className="px-2.5 py-0.5 rounded-md bg-purple-100 text-purple-800 font-extrabold text-[10px]">
+                            MONTHLY SALES BONUS
+                          </span>
+                        ) : (
+                          <span className="px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-800 font-extrabold text-[10px]">
+                            REFERRAL COMMISSION
+                          </span>
+                        )}
+                        {c.notes && <div className="text-[11px] text-gray-500 font-normal mt-0.5">{c.notes}</div>}
+                      </td>
+                      <td className="py-4 px-4 font-semibold text-gray-700">
+                        {formatTk(c.totalCommission)}
+                      </td>
+                      <td className="py-4 px-4">
+                        <span
+                          className={`inline-block text-[11px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${
+                            c.status === 'PAID'
+                              ? 'bg-blue-100 text-blue-800'
+                              : c.status === 'PENDING'
+                              ? 'bg-emerald-100 text-emerald-800'
+                              : c.status === 'HELD_UNTIL_DEPARTURE'
+                              ? 'bg-purple-100 text-purple-800'
+                              : 'bg-rose-100 text-rose-800'
+                          }`}
+                        >
+                          {c.status === 'HELD_UNTIL_DEPARTURE'
+                            ? (lang === 'BN' ? 'যাত্রার অপেক্ষায়' : 'Awaiting Departure')
+                            : c.status}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6 text-gray-400 text-xs">
+                        {new Date(c.createdAt).toLocaleDateString('en-GB', {
+                          day: '2-digit',
+                          month: 'short',
+                          year: 'numeric',
+                        })}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
