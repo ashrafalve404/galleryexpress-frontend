@@ -172,216 +172,123 @@ export default function CounterAgentDashboard() {
           </Link>
         </div>
 
-        {/* 5 Stat Cards Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
-          <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
+        {/* 6 Stat Cards Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+          <div className="bg-white p-4 sm:p-5 rounded-2xl border border-gray-200/80 shadow-xs flex flex-col justify-between">
             <div className="flex items-center justify-between mb-3">
               <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-500">
                 {getTranslation(lang, 'totalTicketsBought', 'Total Tickets Bought')}
               </span>
               <div className="p-1.5 sm:p-2 bg-blue-50 text-blue-600 rounded-xl">
-                <BsFillTicketPerforatedFill size={19} />
+                <BsFillTicketPerforatedFill size={18} />
               </div>
             </div>
             <div>
-              <div className="text-xl sm:text-3xl font-black text-gray-900">
+              <div className="text-xl sm:text-2xl font-black text-gray-900">
                 {totalTicketsBought}
               </div>
-              <p className="text-[10px] sm:text-[11px] text-gray-400 mt-1">
-                {lang === 'BN' ? 'সর্বমোট কেনা বাল্ক টিকিটের সংখ্যা' : 'Cumulative bulk quantity'}
+              <p className="text-[10px] text-gray-400 mt-1">
+                {lang === 'BN' ? 'সর্বমোট কেনা টিকিট' : 'Cumulative bulk quantity'}
               </p>
             </div>
           </div>
 
-          <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
+          <div className="bg-white p-4 sm:p-5 rounded-2xl border border-gray-200/80 shadow-xs flex flex-col justify-between">
             <div className="flex items-center justify-between mb-3">
               <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-500">
                 {getTranslation(lang, 'remainingTickets', 'Remaining Tickets')}
               </span>
               <div className="p-1.5 sm:p-2 bg-purple-50 text-purple-600 rounded-xl">
-                <BsFillTicketPerforatedFill size={19} />
+                <BsFillTicketPerforatedFill size={18} />
               </div>
             </div>
             <div>
-              <div className="text-xl sm:text-3xl font-black text-purple-700">
+              <div className="text-xl sm:text-2xl font-black text-purple-700">
                 {totalTicketsRemaining}
               </div>
-              <p className="text-[10px] sm:text-[11px] text-gray-400 mt-1">
-                {lang === 'BN' ? 'সক্রিয় বাল্ক টিকিটের স্টক' : 'Active bulk allocation'}
+              <p className="text-[10px] text-gray-400 mt-1">
+                {lang === 'BN' ? 'সক্রিয় স্টক' : 'Active bulk allocation'}
               </p>
             </div>
           </div>
 
-          <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
+          <div className="bg-white p-4 sm:p-5 rounded-2xl border border-gray-200/80 shadow-xs flex flex-col justify-between">
             <div className="flex items-center justify-between mb-3">
               <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-500">
                 {getTranslation(lang, 'ticketsSold', 'Tickets Sold')}
               </span>
               <div className="p-1.5 sm:p-2 bg-red-50 text-[#E31B23] rounded-xl">
-                <BsFillTicketPerforatedFill size={19} />
+                <BsFillTicketPerforatedFill size={18} />
               </div>
             </div>
             <div>
-              <div className="text-xl sm:text-3xl font-black text-[#E31B23]">
+              <div className="text-xl sm:text-2xl font-black text-[#E31B23]">
                 {stats.ticketsSold ?? Math.max(0, totalTicketsBought - totalTicketsRemaining)}
               </div>
-              <p className="text-[10px] sm:text-[11px] text-gray-400 mt-1">
+              <p className="text-[10px] text-gray-400 mt-1">
                 {lang === 'BN' ? 'যাত্রীদের ইস্যু করা মোট টিকিট' : 'Issued to passengers'}
               </p>
             </div>
           </div>
 
-          <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
+          <div className="bg-white p-4 sm:p-5 rounded-2xl border border-gray-200/80 shadow-xs flex flex-col justify-between">
             <div className="flex items-center justify-between mb-3">
               <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-500">
                 {getTranslation(lang, 'commissionEarned', 'Commission Earned')}
               </span>
               <div className="p-1.5 sm:p-2 bg-emerald-50 text-emerald-600 rounded-xl">
-                <RiFundsFill size={19} />
+                <RiFundsFill size={18} />
               </div>
             </div>
             <div>
-              <div className="text-xl sm:text-3xl font-black text-emerald-600">
+              <div className="text-xl sm:text-2xl font-black text-emerald-600">
                 {formatTk(commissionStats.totalEarned)}
               </div>
-              <p className="text-[10px] sm:text-[11px] text-gray-400 mt-1">
+              <p className="text-[10px] text-gray-400 mt-1">
                 {lang === 'BN' ? 'সর্বমোট উৎপন্ন আয়' : 'Total revenue generated'}
               </p>
             </div>
           </div>
 
-          <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
+          <div className="bg-white p-4 sm:p-5 rounded-2xl border border-gray-200/80 shadow-xs flex flex-col justify-between">
             <div className="flex items-center justify-between mb-3">
               <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-500">
                 {getTranslation(lang, 'referralEarnings', 'Referral Earnings')}
               </span>
               <div className="p-1.5 sm:p-2 bg-amber-50 text-amber-600 rounded-xl">
-                <RiWallet3Fill size={19} />
+                <RiWallet3Fill size={18} />
               </div>
             </div>
             <div>
-              <div className="text-xl sm:text-3xl font-black text-amber-600">
+              <div className="text-xl sm:text-2xl font-black text-amber-600">
                 {formatTk(stats.referralEarnings || 0)}
               </div>
-              <p className="text-[10px] sm:text-[11px] text-gray-400 mt-1">
+              <p className="text-[10px] text-gray-400 mt-1">
                 {lang === 'BN' ? `${stats.referredCount || 0} জন রেফারকৃত এজেন্ট থেকে` : `From ${stats.referredCount || 0} referred agent(s)`}
               </p>
             </div>
           </div>
-        </div>
 
-        {/* Monthly Sales Bonus Banner & Target Progress */}
-        {stats.monthlySalesBonus && (
-          <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white p-6 sm:p-8 rounded-3xl border border-gray-800 shadow-xl space-y-6 relative overflow-hidden">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-gray-700/60 pb-5">
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="px-3 py-1 rounded-full bg-[#E31B23] text-white text-[11px] font-black uppercase tracking-wider">
-                    {lang === 'BN' ? 'মাসিক সেলস বোনাস' : 'Monthly Sales Bonus'}
-                  </span>
-                  <span className="text-xs text-gray-400 font-semibold">
-                    {lang === 'BN' ? 'প্রতি মাসের ১ তারিখে হিসাব করা হয়' : 'Calculated on the 1st of every month'}
-                  </span>
-                </div>
-                <h2 className="text-xl sm:text-2xl font-black text-white mt-2 tracking-tight">
-                  {lang === 'BN' ? 'আপনার বর্তমান মাসের টিকিট বিক্রি এবং বোনাস টার্গেট' : 'Your Monthly Ticket Sales & Bonus Target Progress'}
-                </h2>
-              </div>
-              <div className="bg-white/10 px-5 py-3 rounded-2xl border border-white/10 text-right self-start sm:self-auto">
-                <span className="text-[10px] font-extrabold uppercase text-gray-400 block">
-                  {lang === 'BN' ? 'চলতি মাসের বিক্রি' : 'Current Month Sales'}
-                </span>
-                <span className="text-2xl font-black text-amber-400">
-                  {stats.monthlySalesBonus.currentMonthTicketsSold} <span className="text-xs text-gray-300 font-normal">{lang === 'BN' ? 'টি টিকিট' : 'tickets'}</span>
-                </span>
+          {/* Monthly Sales Bonus Stat Box */}
+          <div className="bg-white p-4 sm:p-5 rounded-2xl border border-gray-200/80 shadow-xs flex flex-col justify-between">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-500">
+                {lang === 'BN' ? 'মাসিক সেলস বোনাস' : 'Monthly Sales Bonus'}
+              </span>
+              <div className="p-1.5 sm:p-2 bg-purple-50 text-purple-600 rounded-xl">
+                <RiStackFill size={18} />
               </div>
             </div>
-
-            {/* Target Tiers Overview Grid */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-              <div className={`p-4 rounded-2xl border transition-all ${
-                stats.monthlySalesBonus.currentMonthTicketsSold >= 100
-                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
-                  : 'bg-white/5 border-white/10 text-gray-300'
-              }`}>
-                <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider mb-1">
-                  <span>Target 1</span>
-                  {stats.monthlySalesBonus.currentMonthTicketsSold >= 100 && (
-                    <span className="px-2 py-0.5 rounded-md bg-emerald-500 text-white font-extrabold text-[9px]">ACHIEVED</span>
-                  )}
-                </div>
-                <div className="text-lg font-black text-white">100 Tickets</div>
-                <div className="text-xs font-bold text-emerald-400 mt-1">৳5,000 Bonus</div>
+            <div>
+              <div className="text-xl sm:text-2xl font-black text-purple-700">
+                {stats.monthlySalesBonus?.currentMonthTicketsSold || 0} <span className="text-xs font-medium text-gray-400">tickets</span>
               </div>
-
-              <div className={`p-4 rounded-2xl border transition-all ${
-                stats.monthlySalesBonus.currentMonthTicketsSold >= 500
-                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
-                  : 'bg-white/5 border-white/10 text-gray-300'
-              }`}>
-                <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider mb-1">
-                  <span>Target 2</span>
-                  {stats.monthlySalesBonus.currentMonthTicketsSold >= 500 && (
-                    <span className="px-2 py-0.5 rounded-md bg-emerald-500 text-white font-extrabold text-[9px]">ACHIEVED</span>
-                  )}
-                </div>
-                <div className="text-lg font-black text-white">500 Tickets</div>
-                <div className="text-xs font-bold text-emerald-400 mt-1">৳25,000 Bonus</div>
-              </div>
-
-              <div className={`p-4 rounded-2xl border transition-all ${
-                stats.monthlySalesBonus.currentMonthTicketsSold >= 1000
-                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
-                  : 'bg-white/5 border-white/10 text-gray-300'
-              }`}>
-                <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider mb-1">
-                  <span>Target 3</span>
-                  {stats.monthlySalesBonus.currentMonthTicketsSold >= 1000 && (
-                    <span className="px-2 py-0.5 rounded-md bg-emerald-500 text-white font-extrabold text-[9px]">ACHIEVED</span>
-                  )}
-                </div>
-                <div className="text-lg font-black text-white">1,000 Tickets</div>
-                <div className="text-xs font-bold text-emerald-400 mt-1">৳50,000 Bonus</div>
-              </div>
-
-              <div className={`p-4 rounded-2xl border transition-all ${
-                stats.monthlySalesBonus.currentMonthTicketsSold >= 5000
-                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
-                  : 'bg-white/5 border-white/10 text-gray-300'
-              }`}>
-                <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider mb-1">
-                  <span>Target 4</span>
-                  {stats.monthlySalesBonus.currentMonthTicketsSold >= 5000 && (
-                    <span className="px-2 py-0.5 rounded-md bg-emerald-500 text-white font-extrabold text-[9px]">ACHIEVED</span>
-                  )}
-                </div>
-                <div className="text-lg font-black text-white">5,000 Tickets</div>
-                <div className="text-xs font-bold text-emerald-400 mt-1">৳250,000 Bonus</div>
-              </div>
-            </div>
-
-            {/* Next Milestone Progress Bar */}
-            <div className="space-y-2 pt-2">
-              <div className="flex items-center justify-between text-xs font-bold text-gray-300">
-                <span>
-                  {lang === 'BN' ? 'পরবর্তী টার্গেটের অগ্রগতি:' : 'Progress to next tier:'} {stats.monthlySalesBonus.currentMonthTicketsSold} / {stats.monthlySalesBonus.nextTierTickets} {lang === 'BN' ? 'টিকিট' : 'tickets'}
-                </span>
-                <span className="text-amber-400 font-extrabold">{stats.monthlySalesBonus.progressPct}%</span>
-              </div>
-              <div className="w-full bg-gray-700 rounded-full h-3 overflow-hidden p-0.5">
-                <div
-                  className="bg-gradient-to-r from-[#E31B23] via-amber-500 to-emerald-500 h-full rounded-full transition-all duration-500"
-                  style={{ width: `${stats.monthlySalesBonus.progressPct}%` }}
-                />
-              </div>
-              <p className="text-[11px] text-gray-400">
-                {lang === 'BN'
-                  ? 'দ্রষ্টব্য: টার্গেট পূরণ না করতে পারলে কোনো বোনাস দেওয়া হবে না। সকল মাসের ১ তারিখে গত মাসের বিক্রির উপর বোনাস বিতরণ করা হয়।'
-                  : 'Note: If monthly target is not reached, no bonus is granted. Bonus is calculated & disbursed on the 1st date of each month for the preceding month.'}
+              <p className="text-[10px] text-gray-400 mt-1">
+                {lang === 'BN' ? 'কমিশন পেজে বিস্তারিত দেখুন' : 'View progress in Commissions'}
               </p>
             </div>
           </div>
-        )}
+        </div>
       </div>
     );
   }

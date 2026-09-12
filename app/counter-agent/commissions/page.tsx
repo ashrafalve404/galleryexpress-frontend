@@ -8,9 +8,10 @@ import {
   RiErrorWarningFill,
   RiCheckboxCircleFill,
   RiTimeFill,
+  RiAwardFill,
 } from 'react-icons/ri';
-import { Loader2 } from 'lucide-react';
-import { counterAgentApi, type Commission } from '@/lib/api/counterAgent';
+import { Loader2, Award, CheckCircle2 } from 'lucide-react';
+import { counterAgentApi, type Commission, type DashboardStats } from '@/lib/api/counterAgent';
 import { useAuthStore } from '@/lib/store/authStore';
 import { useLanguageStore } from '@/lib/store/languageStore';
 import { getTranslation } from '@/lib/utils/translations';
@@ -23,13 +24,19 @@ export default function CommissionsPage() {
   const { clearAuth } = useAuthStore();
   const { lang } = useLanguageStore();
   const [commissions, setCommissions] = useState<Commission[]>([]);
+  const [bonusStats, setBonusStats] = useState<DashboardStats['monthlySalesBonus'] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    counterAgentApi
-      .getCommissions()
-      .then(setCommissions)
+    Promise.all([
+      counterAgentApi.getCommissions(),
+      counterAgentApi.getDashboardStats(),
+    ])
+      .then(([commRes, dashRes]) => {
+        setCommissions(commRes);
+        setBonusStats(dashRes.monthlySalesBonus || null);
+      })
       .catch(() => setError(lang === 'BN' ? 'কমিশন ইতিহাস লোড করতে ব্যর্থ হয়েছে।' : 'Failed to load commission history.'))
       .finally(() => setLoading(false));
   }, [lang]);
@@ -50,7 +57,7 @@ export default function CommissionsPage() {
           {getTranslation(lang, 'commissionTitle', lang === 'BN' ? 'কমিশন লেজার এবং ইতিহাস' : 'Commission Ledger & History')}
         </h1>
         <p className="text-xs sm:text-sm text-gray-500 mt-1">
-          {getTranslation(lang, 'commissionSubtitle', lang === 'BN' ? 'গ্রাহকদের টিকিট বুকিং থেকে অর্জিত আপনার কমিশন হিসেব' : 'Complete record of your earned split commissions from user ticket bookings')}
+          {getTranslation(lang, 'commissionSubtitle', lang === 'BN' ? 'গ্রাহকদের টিকিট বুকিং এবং সেলস বোনাস থেকে অর্জিত আপনার আয় হিসেব' : 'Complete record of your earned split commissions and monthly sales bonuses')}
         </p>
       </div>
 
@@ -89,6 +96,119 @@ export default function CommissionsPage() {
           </div>
         </div>
       </div>
+
+      {/* Clean & Simple Monthly Sales Bonus Target Progress */}
+      {bonusStats && (
+        <div className="bg-white rounded-3xl border border-gray-200/80 shadow-xs p-6 sm:p-8 space-y-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-gray-100 pb-5">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="px-2.5 py-0.5 rounded-md bg-purple-100 text-purple-800 text-[11px] font-extrabold uppercase">
+                  {lang === 'BN' ? 'মাসিক সেলস বোনাস' : 'Monthly Sales Bonus'}
+                </span>
+                <span className="text-xs text-gray-400 font-medium">
+                  {lang === 'BN' ? 'প্রতি মাসের ১ তারিখে হিসাব করা হয়' : 'Calculated on the 1st of every month'}
+                </span>
+              </div>
+              <h2 className="text-lg sm:text-xl font-black text-gray-900 mt-1.5 tracking-tight">
+                {lang === 'BN' ? 'আপনার বর্তমান মাসের টিকিট বিক্রি এবং বোনাস টার্গেট' : 'Your Monthly Ticket Sales & Bonus Target Progress'}
+              </h2>
+            </div>
+            <div className="bg-gray-50 px-4 py-2.5 rounded-2xl border border-gray-200 text-right self-start sm:self-auto">
+              <span className="text-[10px] font-bold uppercase text-gray-400 block">
+                {lang === 'BN' ? 'চলতি মাসের বিক্রি' : 'Current Month Sales'}
+              </span>
+              <span className="text-xl font-black text-gray-900">
+                {bonusStats.currentMonthTicketsSold} <span className="text-xs text-gray-500 font-normal">{lang === 'BN' ? 'টি টিকিট' : 'tickets'}</span>
+              </span>
+            </div>
+          </div>
+
+          {/* Target 1 to 4 Clean Cards */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div className={`p-4 rounded-2xl border transition-all ${
+              bonusStats.currentMonthTicketsSold >= 100
+                ? 'bg-emerald-50/60 border-emerald-300 text-emerald-900'
+                : 'bg-gray-50/60 border-gray-200 text-gray-700'
+            }`}>
+              <div className="flex items-center justify-between text-[11px] font-bold uppercase text-gray-400 mb-1">
+                <span>Target 1</span>
+                {bonusStats.currentMonthTicketsSold >= 100 && (
+                  <span className="px-2 py-0.5 rounded bg-emerald-600 text-white font-extrabold text-[9px]">ACHIEVED</span>
+                )}
+              </div>
+              <div className="text-base sm:text-lg font-black text-gray-900">100 Tickets</div>
+              <div className="text-xs font-bold text-emerald-600 mt-0.5">৳5,000 Bonus</div>
+            </div>
+
+            <div className={`p-4 rounded-2xl border transition-all ${
+              bonusStats.currentMonthTicketsSold >= 500
+                ? 'bg-emerald-50/60 border-emerald-300 text-emerald-900'
+                : 'bg-gray-50/60 border-gray-200 text-gray-700'
+            }`}>
+              <div className="flex items-center justify-between text-[11px] font-bold uppercase text-gray-400 mb-1">
+                <span>Target 2</span>
+                {bonusStats.currentMonthTicketsSold >= 500 && (
+                  <span className="px-2 py-0.5 rounded bg-emerald-600 text-white font-extrabold text-[9px]">ACHIEVED</span>
+                )}
+              </div>
+              <div className="text-base sm:text-lg font-black text-gray-900">500 Tickets</div>
+              <div className="text-xs font-bold text-emerald-600 mt-0.5">৳25,000 Bonus</div>
+            </div>
+
+            <div className={`p-4 rounded-2xl border transition-all ${
+              bonusStats.currentMonthTicketsSold >= 1000
+                ? 'bg-emerald-50/60 border-emerald-300 text-emerald-900'
+                : 'bg-gray-50/60 border-gray-200 text-gray-700'
+            }`}>
+              <div className="flex items-center justify-between text-[11px] font-bold uppercase text-gray-400 mb-1">
+                <span>Target 3</span>
+                {bonusStats.currentMonthTicketsSold >= 1000 && (
+                  <span className="px-2 py-0.5 rounded bg-emerald-600 text-white font-extrabold text-[9px]">ACHIEVED</span>
+                )}
+              </div>
+              <div className="text-base sm:text-lg font-black text-gray-900">1,000 Tickets</div>
+              <div className="text-xs font-bold text-emerald-600 mt-0.5">৳50,000 Bonus</div>
+            </div>
+
+            <div className={`p-4 rounded-2xl border transition-all ${
+              bonusStats.currentMonthTicketsSold >= 5000
+                ? 'bg-emerald-50/60 border-emerald-300 text-emerald-900'
+                : 'bg-gray-50/60 border-gray-200 text-gray-700'
+            }`}>
+              <div className="flex items-center justify-between text-[11px] font-bold uppercase text-gray-400 mb-1">
+                <span>Target 4</span>
+                {bonusStats.currentMonthTicketsSold >= 5000 && (
+                  <span className="px-2 py-0.5 rounded bg-emerald-600 text-white font-extrabold text-[9px]">ACHIEVED</span>
+                )}
+              </div>
+              <div className="text-base sm:text-lg font-black text-gray-900">5,000 Tickets</div>
+              <div className="text-xs font-bold text-emerald-600 mt-0.5">৳250,000 Bonus</div>
+            </div>
+          </div>
+
+          {/* Simple Progress Bar */}
+          <div className="space-y-1.5 pt-1">
+            <div className="flex items-center justify-between text-xs font-bold text-gray-700">
+              <span>
+                {lang === 'BN' ? 'পরবর্তী টার্গেটের অগ্রগতি:' : 'Progress to next tier:'} <strong className="text-gray-900">{bonusStats.currentMonthTicketsSold} / {bonusStats.nextTierTickets} {lang === 'BN' ? 'টিকিট' : 'tickets'}</strong>
+              </span>
+              <span className="text-[#E31B23] font-black">{bonusStats.progressPct}%</span>
+            </div>
+            <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
+              <div
+                className="bg-[#E31B23] h-full rounded-full transition-all duration-500"
+                style={{ width: `${bonusStats.progressPct}%` }}
+              />
+            </div>
+            <p className="text-[11px] text-gray-400 font-medium">
+              {lang === 'BN'
+                ? 'দ্রষ্টব্য: টার্গেট পূরণ না করতে পারলে কোনো বোনাস দেওয়া হবে না। বোনাস স্বয়ংক্রিয়ভাবে প্রতি মাসের ১ তারিখে গত মাসের বিক্রির উপর হিসাব ও বিতরণ করা হয়।'
+                : 'Note: If monthly target is not reached, no bonus is granted. Bonus is calculated & disbursed on the 1st date of each month for the preceding month.'}
+            </p>
+          </div>
+        </div>
+      )}
 
       {error && (
         <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-sm flex items-center gap-3">
