@@ -48,12 +48,16 @@ export default function AdminCounterAgentsPage() {
 
   // Agent Details Modal States
   const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
+  const [selectedAgentSummary, setSelectedAgentSummary] = useState<any | null>(null);
   const [agentDetails, setAgentDetails] = useState<any | null>(null);
   const [detailsLoading, setDetailsLoading] = useState(false);
   const [modalTab, setModalTab] = useState<'overview' | 'bulk' | 'referrals' | 'sales' | 'ledger'>('overview');
 
-  const handleOpenAgentDetails = async (agentId: string) => {
+  const handleOpenAgentDetails = async (agent: any) => {
+    const agentId = typeof agent === 'string' ? agent : agent.id;
+    const summary = typeof agent === 'object' ? agent : agents.find((a) => a.id === agentId) || null;
     setSelectedAgentId(agentId);
+    setSelectedAgentSummary(summary);
     setModalTab('overview');
     setDetailsLoading(true);
     try {
@@ -389,7 +393,7 @@ export default function AdminCounterAgentsPage() {
                     <tr key={ag.id} className="hover:bg-gray-50/80 transition-colors">
                       <td className="py-4 px-4 font-bold text-gray-900">
                         <button
-                          onClick={() => handleOpenAgentDetails(ag.id)}
+                          onClick={() => handleOpenAgentDetails(ag)}
                           className="text-left font-bold text-gray-900 hover:text-[#E31B23] transition-colors group flex flex-col"
                           title={isBn ? 'এজেন্টের বিস্তারিত তথ্য দেখুন' : 'Click to view full agent details'}
                         >
@@ -448,7 +452,7 @@ export default function AdminCounterAgentsPage() {
                       <td className="py-4 px-4 text-right">
                         <div className="flex justify-end items-center gap-1.5">
                           <button
-                            onClick={() => handleOpenAgentDetails(ag.id)}
+                            onClick={() => handleOpenAgentDetails(ag)}
                             className="p-1.5 rounded-lg border border-blue-200 text-blue-600 hover:bg-blue-50 transition-colors inline-flex items-center gap-1 font-bold text-xs"
                             title={isBn ? 'এজেন্টের সকল তথ্য ও অ্যাক্টিভিটি দেখুন' : 'View full agent details and activity'}
                           >
@@ -702,53 +706,67 @@ export default function AdminCounterAgentsPage() {
           <div className="bg-white rounded-3xl border border-gray-200 shadow-2xl w-full max-w-5xl my-8 overflow-hidden flex flex-col max-h-[90vh]">
             
             {/* Modal Header */}
-            <div className="p-6 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shrink-0">
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#E31B23] to-red-700 text-white font-black text-xl flex items-center justify-center shadow-lg shrink-0">
-                  {agentDetails?.agent?.firstName?.[0] || 'A'}{agentDetails?.agent?.lastName?.[0] || 'G'}
-                </div>
-                <div>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h2 className="text-xl font-black tracking-tight text-white">
-                      {agentDetails?.agent ? `${agentDetails.agent.firstName} ${agentDetails.agent.lastName}` : 'Agent Details'}
-                    </h2>
-                    {agentDetails?.agent?.status && (
-                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase ${
-                        agentDetails.agent.status === 'INACTIVE' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                      }`}>
-                        {agentDetails.agent.status}
-                      </span>
-                    )}
-                    {agentDetails?.agent?.kycStatus && (
-                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase flex items-center gap-1 ${
-                        agentDetails.agent.kycStatus === 'VERIFIED' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
-                      }`}>
-                        <ShieldCheck size={12} />
-                        KYC: {agentDetails.agent.kycStatus}
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-4 text-xs text-gray-300 mt-1 flex-wrap font-medium">
-                    {agentDetails?.agent?.phone && (
-                      <span className="flex items-center gap-1"><Phone size={12} className="text-[#E31B23]" /> {agentDetails.agent.phone}</span>
-                    )}
-                    {agentDetails?.agent?.email && (
-                      <span className="flex items-center gap-1"><Mail size={12} className="text-[#E31B23]" /> {agentDetails.agent.email}</span>
-                    )}
-                    {agentDetails?.agent?.counter && (
-                      <span className="flex items-center gap-1 text-amber-400 font-bold"><Building2 size={12} /> {agentDetails.agent.counter.name}</span>
-                    )}
-                  </div>
-                </div>
-              </div>
+            {(() => {
+              const displayAgent = agentDetails?.agent || selectedAgentSummary;
+              const fName = displayAgent?.firstName || (displayAgent?.name ? displayAgent.name.split(' ')[0] : '');
+              const lName = displayAgent?.lastName || (displayAgent?.name ? displayAgent.name.split(' ').slice(1).join(' ') : '');
+              const fullName = fName || lName ? `${fName} ${lName}`.trim() : (displayAgent?.name || 'Agent Details');
+              const initials = `${fName?.[0] || 'A'}${lName?.[0] || 'G'}`.toUpperCase();
+              const phoneNum = displayAgent?.phone || selectedAgentSummary?.phone;
+              const emailAdd = displayAgent?.email || selectedAgentSummary?.email;
+              const statusVal = displayAgent?.status || selectedAgentSummary?.status || 'ACTIVE';
+              const counterName = displayAgent?.counter?.name || selectedAgentSummary?.counter?.name;
 
-              <button
-                onClick={() => { setSelectedAgentId(null); setAgentDetails(null); }}
-                className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition-colors shrink-0"
-              >
-                <X size={20} />
-              </button>
-            </div>
+              return (
+                <div className="p-6 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shrink-0">
+                  <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#E31B23] to-red-700 text-white font-black text-xl flex items-center justify-center shadow-lg shrink-0">
+                      {initials}
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h2 className="text-xl font-black tracking-tight text-white">
+                          {fullName}
+                        </h2>
+                        {statusVal && (
+                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase ${
+                            statusVal === 'INACTIVE' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                          }`}>
+                            {statusVal}
+                          </span>
+                        )}
+                        {displayAgent?.kycStatus && (
+                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase flex items-center gap-1 ${
+                            displayAgent.kycStatus === 'VERIFIED' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                          }`}>
+                            <ShieldCheck size={12} />
+                            KYC: {displayAgent.kycStatus}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-4 text-xs text-gray-300 mt-1 flex-wrap font-medium">
+                        {phoneNum && (
+                          <span className="flex items-center gap-1"><Phone size={12} className="text-[#E31B23]" /> {phoneNum}</span>
+                        )}
+                        {emailAdd && (
+                          <span className="flex items-center gap-1"><Mail size={12} className="text-[#E31B23]" /> {emailAdd}</span>
+                        )}
+                        {counterName && (
+                          <span className="flex items-center gap-1 text-amber-400 font-bold"><Building2 size={12} /> {counterName}</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => { setSelectedAgentId(null); setSelectedAgentSummary(null); setAgentDetails(null); }}
+                    className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition-colors shrink-0"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+              );
+            })()}
 
             {/* Modal Tabs Navigation */}
             <div className="bg-gray-100 p-2 border-b border-gray-200 flex items-center gap-2 overflow-x-auto shrink-0">
@@ -790,7 +808,7 @@ export default function AdminCounterAgentsPage() {
                   modalTab === 'ledger' ? 'bg-white text-gray-900 shadow-xs' : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
-                <DollarSign size={14} className="text-emerald-600" /> {isBn ? 'কমিশন লেজার' : 'Commission Ledger'} ({agentDetails?.commissions?.length || 0})
+                <Wallet size={14} className="text-emerald-600" /> {isBn ? 'কমিশন লেজার' : 'Commission Ledger'} ({agentDetails?.commissions?.length || 0})
               </button>
             </div>
 
@@ -1148,7 +1166,7 @@ export default function AdminCounterAgentsPage() {
             {/* Modal Footer */}
             <div className="p-4 bg-gray-100 border-t border-gray-200 flex justify-end shrink-0">
               <button
-                onClick={() => { setSelectedAgentId(null); setAgentDetails(null); }}
+                onClick={() => { setSelectedAgentId(null); setSelectedAgentSummary(null); setAgentDetails(null); }}
                 className="px-5 py-2.5 bg-gray-900 hover:bg-black text-white font-bold text-xs rounded-xl transition-all"
               >
                 {isBn ? 'বন্ধ করুন' : 'Close Details'}

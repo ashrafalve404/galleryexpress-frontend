@@ -107,7 +107,7 @@ export default function CommissionsPage() {
                   {lang === 'BN' ? 'মাসিক সেলস বোনাস' : 'Monthly Sales Bonus'}
                 </span>
                 <span className="text-xs text-gray-400 font-medium">
-                  {lang === 'BN' ? 'প্রতি মাসের ১ তারিখে হিসাব করা হয়' : 'Calculated on the 1st of every month'}
+                  {lang === 'BN' ? 'প্রতি মাসের 1 তারিখে হিসাব করা হয়' : 'Calculated on the 1st of every month'}
                 </span>
               </div>
               <h2 className="text-lg sm:text-xl font-black text-gray-900 mt-1.5 tracking-tight">
@@ -203,7 +203,7 @@ export default function CommissionsPage() {
             </div>
             <p className="text-[11px] text-gray-400 font-medium">
               {lang === 'BN'
-                ? 'দ্রষ্টব্য: টার্গেট পূরণ না করতে পারলে কোনো বোনাস দেওয়া হবে না। বোনাস স্বয়ংক্রিয়ভাবে প্রতি মাসের ১ তারিখে গত মাসের বিক্রির উপর হিসাব ও বিতরণ করা হয়।'
+                ? 'দ্রষ্টব্য: টার্গেট পূরণ না করতে পারলে কোনো বোনাস দেওয়া হবে না। বোনাস স্বয়ংক্রিয়ভাবে প্রতি মাসের 1 তারিখে গত মাসের বিক্রির উপর হিসাব ও বিতরণ করা হয়।'
                 : 'Note: If monthly target is not reached, no bonus is granted. Bonus is calculated & disbursed on the 1st date of each month for the preceding month.'}
             </p>
           </div>
