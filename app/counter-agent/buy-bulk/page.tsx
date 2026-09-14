@@ -79,10 +79,11 @@ export default function BuyBulkPage() {
 
   const handleOpenPaymentModal = (e: React.FormEvent) => {
     e.preventDefault();
-    if (kycData?.kycStatus !== 'VERIFIED') {
-      setError(lang === 'BN' ? 'বাল্ক টিকিট কেনার আগে কেওয়াইসি ভেরিফিকেশন সম্পন্ন করা আবশ্যক।' : 'KYC Verification Required before purchasing bulk tickets.');
-      return;
-    }
+    // KYC verification temporarily optional
+    // if (kycData?.kycStatus !== 'VERIFIED') {
+    //   setError(lang === 'BN' ? 'বাল্ক টিকিট কেনার আগে কেওয়াইসি ভেরিফিকেশন সম্পন্ন করা আবশ্যক।' : 'KYC Verification Required before purchasing bulk tickets.');
+    //   return;
+    // }
     if (quantity < 2) {
       setError(lang === 'BN' ? 'সর্বনিম্ন বাল্ক অর্ডারের পরিমাণ 2টি টিকিট।' : 'Minimum bulk order quantity is 2 tickets.');
       return;
@@ -97,7 +98,7 @@ export default function BuyBulkPage() {
     setShowPaymentModal(true);
   };
 
-  const isKycVerified = kycData?.kycStatus === 'VERIFIED';
+  const isKycVerified = true;
 
   const handleFinalPaymentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
