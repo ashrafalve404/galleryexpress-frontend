@@ -50,6 +50,10 @@ export default function CounterAgentDashboard() {
       const data = await counterAgentApi.getDashboardStats();
       setStats(data);
     } catch (e: any) {
+      if (e?.response?.status === 401 || e?.message?.includes('sign in') || e?.message?.includes('token')) {
+        // Suppress setting error box on session expiration; auth guard handles smooth redirect
+        return;
+      }
       setError(e?.response?.data?.message || 'Failed to load counter agent stats.');
     } finally {
       setLoading(false);

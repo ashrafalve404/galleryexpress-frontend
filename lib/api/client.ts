@@ -96,9 +96,15 @@ client.interceptors.response.use(
         processQueue(cleanErr, null);
         // Clear auth state on refresh failure
         if (typeof window !== 'undefined') {
-          localStorage.removeItem('accessToken');
-          localStorage.removeItem('refreshToken');
-          localStorage.removeItem('user');
+          try {
+            const { useAuthStore } = require('../store/authStore');
+            useAuthStore.getState().clearAuth();
+          } catch {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('user');
+          }
+
           const isUrlAdmin = originalRequest?.url?.includes('/admin/');
           const isPageAdmin = typeof window !== 'undefined' && window.location.pathname.startsWith('/admin');
           if (isUrlAdmin || isPageAdmin) {
