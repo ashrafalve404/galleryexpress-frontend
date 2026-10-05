@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Save, Building2, Mail, Phone, MapPin, Globe } from 'lucide-react';
+import { Save, Building2, Mail, Phone, MapPin, Globe, Lock, Eye, EyeOff, KeyRound } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import client from '@/lib/api/client';
 import { toast } from 'sonner';
@@ -26,6 +26,16 @@ export default function AdminSettingsPage() {
     currency: 'BDT',
     timezone: 'Asia/Dhaka',
   });
+
+  // Password Change Form State
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const { data: settingsData } = useQuery({
     queryKey: ['admin', 'settings'],
@@ -73,6 +83,28 @@ export default function AdminSettingsPage() {
     },
   });
 
+  const passwordMutation = useMutation({
+    mutationFn: async () => {
+      const { data } = await client.patch('/api/v1/auth/change-password', {
+        currentPassword: passwordForm.currentPassword,
+        newPassword: passwordForm.newPassword,
+      });
+      return data;
+    },
+    onSuccess: () => {
+      toast.success(isBn ? 'পাসওয়ার্ড সফলভাবে পরিবর্তন করা হয়েছে!' : 'Password changed successfully!');
+      setPasswordForm({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+      });
+    },
+    onError: (err: any) => {
+      const msg = err.response?.data?.message || err.message || (isBn ? 'পাসওয়ার্ড পরিবর্তন ব্যর্থ হয়েছে' : 'Failed to change password');
+      toast.error(Array.isArray(msg) ? msg.join(', ') : msg);
+    },
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isAdmin) {
@@ -82,13 +114,30 @@ export default function AdminSettingsPage() {
     saveMutation.mutate(form);
   };
 
+  const handlePasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!passwordForm.currentPassword) {
+      toast.error(isBn ? 'বর্তমান পাসওয়ার্ড লিখুন' : 'Please enter your current password');
+      return;
+    }
+    if (passwordForm.newPassword.length < 8) {
+      toast.error(isBn ? 'নতুন পাসওয়ার্ড অন্তত ৮ অক্ষরের হতে হবে' : 'New password must be at least 8 characters long');
+      return;
+    }
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      toast.error(isBn ? 'নতুন পাসওয়ার্ড ও নিশ্চিতকরণ পাসওয়ার্ড মেলেনি' : 'New passwords do not match');
+      return;
+    }
+    passwordMutation.mutate();
+  };
+
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-4xl space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
           <h1 className="text-xl sm:text-2xl font-black text-[#111111]">{isBn ? 'সিস্টেম সেটিংস' : 'System Settings'}</h1>
           <p className="text-gray-500 text-xs sm:text-sm mt-0.5 font-medium">
-            {isBn ? 'কোম্পানির তথ্য ও অপারেশনাল পছন্দ পরিচালনা করুন' : 'Manage company info and operational preferences'}
+            {isBn ? 'কোম্পানির তথ্য ও অ্যাকউন্ট সিকিউরিটি পরিচালনা করুন' : 'Manage company info and account security'}
           </p>
         </div>
       </div>
@@ -100,6 +149,7 @@ export default function AdminSettingsPage() {
         />
       )}
 
+      {/* Section 1: Company Profile */}
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="bg-white rounded-2xl border border-gray-100 p-6 space-y-4 shadow-xs">
           <h2 className="text-base font-bold text-[#111111] flex items-center gap-2 border-b border-gray-100 pb-3">
@@ -178,9 +228,107 @@ export default function AdminSettingsPage() {
           <button
             type="submit"
             disabled={saveMutation.isPending}
-            className="flex items-center gap-2 bg-[#E31B23] hover:bg-[#C41920] text-white px-6 py-3 rounded-xl font-bold text-sm transition-all shadow-md active:scale-95 disabled:opacity-50"
+            className="flex items-center gap-2 bg-[#E31B23] hover:bg-[#C41920] text-white px-6 py-3 rounded-xl font-bold text-sm transition-all shadow-md active:scale-95 disabled:opacity-50 cursor-pointer"
           >
             <Save size={16} /> {saveMutation.isPending ? (isBn ? 'সংরক্ষণ করা হচ্ছে...' : 'Saving...') : (isBn ? 'সেটিংস সংরক্ষণ করুন' : 'Save Settings')}
+          </button>
+        </div>
+      </form>
+
+      {/* Section 2: Admin Password Change */}
+      <form onSubmit={handlePasswordSubmit} className="space-y-6">
+        <div className="bg-white rounded-2xl border border-gray-100 p-6 space-y-4 shadow-xs">
+          <div className="border-b border-gray-100 pb-3">
+            <h2 className="text-base font-bold text-[#111111] flex items-center gap-2">
+              <Lock size={18} className="text-[#E31B23]" /> {isBn ? 'অ্যাডমিন সিকিউরিটি ও পাসওয়ার্ড পরিবর্তন' : 'Admin Security & Change Password'}
+            </h2>
+            <p className="text-xs text-gray-500 mt-1">
+              {isBn ? 'আপনার নিরাপত্তার জন্য বর্তমান পাসওয়ার্ড নিশ্চিত করে নতুন পাসওয়ার্ড নির্ধারণ করুন।' : 'Confirm your current password to set a new admin password.'}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Current Password */}
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                {isBn ? 'বর্তমান পাসওয়ার্ড' : 'Current Password'}
+              </label>
+              <div className="relative">
+                <input
+                  type={showCurrentPassword ? 'text' : 'password'}
+                  value={passwordForm.currentPassword}
+                  onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
+                  placeholder={isBn ? 'বর্তমান পাসওয়ার্ড লিখুন' : 'Enter current password'}
+                  required
+                  className="w-full pl-4 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold focus:outline-none focus:border-[#E31B23]"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+                >
+                  {showCurrentPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+            </div>
+
+            {/* New Password */}
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                {isBn ? 'নতুন পাসওয়ার্ড' : 'New Password'}
+              </label>
+              <div className="relative">
+                <input
+                  type={showNewPassword ? 'text' : 'password'}
+                  value={passwordForm.newPassword}
+                  onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
+                  placeholder={isBn ? 'ন্যূনতম ৮ অক্ষর' : 'At least 8 characters'}
+                  required
+                  className="w-full pl-4 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold focus:outline-none focus:border-[#E31B23]"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowNewPassword(!showNewPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+                >
+                  {showNewPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+            </div>
+
+            {/* Confirm New Password */}
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                {isBn ? 'পাসওয়ার্ড নিশ্চিত করুন' : 'Confirm New Password'}
+              </label>
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  value={passwordForm.confirmPassword}
+                  onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
+                  placeholder={isBn ? 'নতুন পাসওয়ার্ড পুনরায় লিখুন' : 'Re-enter new password'}
+                  required
+                  className="w-full pl-4 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold focus:outline-none focus:border-[#E31B23]"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+                >
+                  {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            disabled={passwordMutation.isPending}
+            className="flex items-center gap-2 bg-[#111111] hover:bg-black text-white px-6 py-3 rounded-xl font-bold text-sm transition-all shadow-md active:scale-95 disabled:opacity-50 cursor-pointer"
+          >
+            <KeyRound size={16} /> {passwordMutation.isPending ? (isBn ? 'হালনাগাদ করা হচ্ছে...' : 'Updating...') : (isBn ? 'পাসওয়ার্ড হালনাগাদ করুন' : 'Update Password')}
           </button>
         </div>
       </form>
