@@ -179,12 +179,14 @@ export function Footer() {
                     : 'Navana Shopping Centre, Gulshan Avenue 01, Gulshan, Dhaka, Bangladesh'}
                 </span>
               </li>
+              {/* Temporarily hidden contact number
               <li className="flex gap-2.5 text-xs sm:text-sm text-gray-300">
                 <RiPhoneFill size={18} className="text-[#E31B23] shrink-0 mt-0.5" />
                 <a href="tel:01826110036" className="hover:text-white transition-colors">
                   01826-110036
                 </a>
               </li>
+              */}
               <li className="flex gap-2.5 text-xs sm:text-sm text-gray-300">
                 <RiMailFill size={18} className="text-[#E31B23] shrink-0 mt-0.5" />
                 <a href="mailto:ticketdorkarltd@gmail.com" className="hover:text-white transition-colors">

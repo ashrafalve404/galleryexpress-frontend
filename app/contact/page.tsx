@@ -5,7 +5,7 @@ import { ContactContent } from '@/components/contact/ContactContent';
 
 export const metadata: Metadata = {
   title: 'Contact Us — Ticket Dorkar Limited',
-  description: 'Get in touch with Ticket Dorkar Limited customer support for bus ticket bookings, counter locations, cancellations, and inquiries. Hotline: 01826-110036.',
+  description: 'Get in touch with Ticket Dorkar Limited customer support for bus ticket bookings, counter locations, cancellations, and inquiries.',
   alternates: {
     canonical: 'https://www.ticketdorkar.xyz/contact',
   },

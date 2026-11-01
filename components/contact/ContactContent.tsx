@@ -8,6 +8,7 @@ export function ContactContent() {
   const { lang } = useLanguageStore();
 
   const contactItems = [
+    /* Temporarily hidden contact number
     {
       icon: RiPhoneFill,
       label: lang === 'BN' ? 'গ্রাহক সহায়তা' : 'Customer Support',
@@ -15,6 +16,7 @@ export function ContactContent() {
       sub: lang === 'BN' ? 'সপ্তাহে ৭ দিন উন্মুক্ত' : 'Available 7 days a week',
       href: 'tel:01826110036',
     },
+    */
     {
       icon: RiMailFill,
       label: lang === 'BN' ? 'ইমেইল' : 'Email',

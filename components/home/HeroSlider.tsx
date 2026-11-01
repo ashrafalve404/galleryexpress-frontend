@@ -7,6 +7,7 @@ import { SearchCard } from './SearchCard';
 import { useLanguageStore } from '@/lib/store/languageStore';
 
 const rawSlides = [
+  /* Temporarily hidden hero banner
   {
     image: '/herro-image0.webp',
     titleEn: 'Premium Executive Coach Travel',
@@ -15,6 +16,7 @@ const rawSlides = [
     subtitleBn: 'বাংলাদেশজুড়ে সেরা আরামদায়ক ও বিলাসবহুল আন্তঃনগর বাস ভ্রমণের অভিজ্ঞতা',
     position: 'object-top',
   },
+  */
   {
     image: '/hero-image1.webp',
     titleEn: "Explore Cox's Bazar Coastal Highway",
@@ -39,6 +41,7 @@ const rawSlides = [
     subtitleBn: 'ঢাকা, চট্টগ্রাম ও কক্সবাজারের মধ্যে প্রতিদিনের বিশ্বস্ত যাতায়াত',
     position: 'object-bottom',
   },
+  /* Temporarily hidden hero banner
   {
     image: '/hero-image4.webp',
     titleEn: 'Safe & Seamless Online Booking',
@@ -47,6 +50,7 @@ const rawSlides = [
     subtitleBn: 'তাৎক্ষণিক সিট সিলেক্ট ও ই-টিকিট নিশ্চিতকরণ',
     position: 'object-bottom',
   },
+  */
 ];
 
 export function HeroSlider() {
